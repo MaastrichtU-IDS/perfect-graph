@@ -1,0 +1,190 @@
+{
+	"parser": "@typescript-eslint/parser",
+	"extends": [
+		"eslint:recommended",
+		"airbnb-typescript",
+		"plugin:@typescript-eslint/eslint-recommended",
+		"plugin:@typescript-eslint/recommended"
+	],
+	"plugins": [
+		"react-hooks",
+		"@typescript-eslint",
+		"react-hooks"
+	],
+	"parserOptions": {
+		"project": "./tsconfig.json"
+	},
+	"env": {
+		"browser": true,
+		"es6": true
+	},
+	"globals": {
+		"__DEV__": "readonly"
+	},
+	"settings": {
+		"import/resolver": {
+			"alias": {
+				"map": [
+					[
+						"@constants",
+						"./src/constants"
+					],
+					[
+						"@utils",
+						"./src/utils"
+					],
+					[
+						"@components",
+						"./src/components"
+					],
+					[
+						"@assets",
+						"./src/assets"
+					],
+					[
+						"@screens",
+						"./src/screens"
+					],
+					[
+						"@navigation",
+						"./src/navigation"
+					],
+					[
+						"@views",
+						"./src/views"
+					],
+					[
+						"@machine",
+						"./src/machine"
+					],
+					[
+						"@store",
+						"./src/machine/store"
+					],
+					[
+						"@type",
+						"./src/type"
+					],
+					[
+						"@root",
+						"./src"
+					],
+					[
+						"@core",
+						"./src/core"
+					],
+					[
+						"@hooks",
+						"./src/hooks"
+					],
+					[
+						"@storybookComponents",
+						"./docs/components"
+					]
+				],
+				"extensions": [
+					".ts",
+					".tsx",
+					".d.ts",
+					".js",
+					".jsx",
+					".json"
+				]
+			}
+		}
+	},
+	"rules": {
+		"linebreak-style": [
+			"error",
+			"unix"
+		],
+		"quotes": [
+			"error",
+			"single"
+		],
+		"@typescript-eslint/semi": [
+			"error",
+			"never"
+		],
+		"functional/functional-parameters": 0,
+		"functional/prefer-readonly-type": 0,
+		"functional/no-return-void": 0,
+		"functional/no-mixed-type": 0,
+		"import/prefer-default-export": 0,
+		"no-loop-func": 0,
+		"@typescript-eslint/explicit-function-return-type": 0,
+		"@typescript-eslint/no-use-before-define": 0,
+		"@typescript-eslint/ban-ts-ignore": 0,
+		"@typescript-eslint/no-unused-expressions": 0,
+		"@typescript-eslint/no-unused-vars": [
+			"error",
+			{
+				"vars": "all",
+				"args": "after-used",
+				"ignoreRestSiblings": false,
+				"argsIgnorePattern": "^_",
+				"varsIgnorePattern": "^React|^_"
+			}
+		],
+		"no-underscore-dangle": 0,
+		"no-nested-ternary": 0,
+		"functional/no-expression-statement": [
+			"error",
+			{
+				"ignorePattern": [
+					"^use",
+					"^React.use",
+					"setState",
+					"^mutable.*.",
+					".*.current"
+				]
+			}
+		],
+		"functional/immutable-data": [
+			"error",
+			{
+				"ignorePattern": [
+					"^mutable.*."
+				],
+				"ignoreAccessorPattern": [
+					"**.current"
+				]
+			}
+		],
+		"react-hooks/rules-of-hooks": "error",
+		"react-hooks/exhaustive-deps": "warn",
+		"react/jsx-filename-extension": 0,
+		"react/prefer-stateless-function": 0,
+		"jsx-a11y/label-has-for": 0,
+		"jsx-a11y/label-has-associated-control": 0,
+		"react/forbid-prop-types": 0,
+		"react/prop-types": 0,
+		"react/jsx-max-props-per-line": [
+			1,
+			{
+				"maximum": 1
+			}
+		],
+		"react/jsx-props-no-spreading": 0,
+		"react/sort-comp": [
+			2,
+			{
+				"order": [
+					"static-variables",
+					"instance-variables",
+					"constructor",
+					"static-methods",
+					"lifecycle",
+					"render",
+					"instance-methods"
+				],
+				"groups": {
+					"rendering": [
+						"/^render.+$/",
+						"render"
+					]
+				}
+			}
+		]
+	}
+}

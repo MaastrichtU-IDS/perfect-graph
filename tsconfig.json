@@ -1,0 +1,152 @@
+{
+	"compilerOptions": {
+		"allowJs": true,
+		"checkJs": false,
+		"allowSyntheticDefaultImports": true,
+		"forceConsistentCasingInFileNames": true,
+		"noImplicitReturns": true,
+		"strict": true,
+		"noUnusedLocals": true,
+		"skipLibCheck": true,
+		"resolveJsonModule": true,
+		"jsx": "react-native",
+		"lib": [
+			"esnext",
+			"dom"
+		],
+		"moduleResolution": "node",
+		"module": "esnext",
+		"target": "ES5",
+		"declaration": true,
+		"outDir": "dist",
+		"emitDeclarationOnly": true,
+		"esModuleInterop": true,
+		"experimentalDecorators": true,
+		"baseUrl": "./",
+		"paths": {
+			"@components/*": [
+				"./src/components/*"
+			],
+			"@components": [
+				"./src/components"
+			],
+			"@utils": [
+				"./src/utils"
+			],
+			"@utils/*": [
+				"./src/utils/*"
+			],
+			"@hooks": [
+				"./src/hooks"
+			],
+			"@hooks/*": [
+				"./src/hooks/*"
+			],
+			"@constants": [
+				"./src/constants"
+			],
+			"@assets/*": [
+				"./src/assets/*"
+			],
+			"@screens/*": [
+				"./src/screens/*"
+			],
+			"@navigation/*": [
+				"./src/navigation/*"
+			],
+			"@views/*": [
+				"./src/views/*"
+			],
+			"@machine": [
+				"./src/machine"
+			],
+			"@machine/*": [
+				"./src/machine/*"
+			],
+			"@core/*": [
+				"./src/core/*"
+			],
+			"@core": [
+				"./src/core"
+			],
+			"@store/*": [
+				"./src/machine/store/*"
+			],
+			"@store": [
+				"./src/machine/store"
+			],
+			"@type": [
+				"./src/type"
+			],
+			"@root": [
+				"./src"
+			],
+			"@root/*": [
+				"./src/*"
+			],
+			"@storybookComponents": [
+				"./docs/components"
+			]
+		}
+	},
+	"include": [
+		"src/**/*"
+	],
+	"exclude": {
+		"allowJs": true,
+		"checkJs": false,
+		"allowSyntheticDefaultImports": true,
+		"forceConsistentCasingInFileNames": true,
+		"noImplicitReturns": true,
+		"strict": true,
+		"noUnusedLocals": true,
+		"skipLibCheck": true,
+		"resolveJsonModule": true,
+		"jsx": "react-native",
+		"lib": [
+			"esnext",
+			"dom"
+		],
+		"moduleResolution": "node",
+		"module": "esnext",
+		"target": "ES5",
+		"declaration": true,
+		"outDir": "dist",
+		"emitDeclarationOnly": true,
+		"esModuleInterop": true,
+		"experimentalDecorators": true,
+		"baseUrl": "./",
+		"paths": {
+			"@utils": [
+				"./src/utils"
+			],
+			"@utils/*": [
+				"./src/utils/*"
+			],
+			"@root": [
+				"./src"
+			],
+			"@root/*": [
+				"./src/*"
+			],
+			"@machine": [
+				"./src/machine"
+			],
+			"@machine/*": [
+				"./src/machine/*"
+			],
+			"@store/*": [
+				"./src/machine/store/*"
+			],
+			"@store": [
+				"./src/machine/store"
+			],
+			"@type": [
+				"./src/type"
+			],
+			"@constants": [
+				"./src/constants"
+			]
+		}
+	}
+}
