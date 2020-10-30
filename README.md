@@ -45,4 +45,4 @@ function MyGraph() {
 }
 ```
 
-Furthermore please refer to the Components Section.
+Furthermore please refer to the Components Section of the documentation website.
