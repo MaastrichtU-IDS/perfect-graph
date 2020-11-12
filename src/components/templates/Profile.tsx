@@ -7,10 +7,10 @@ import {
 } from '@type'
 import { ForwardRef, Position } from 'unitx-ui/type'
 // import { dataListToObject } from '@core/utils'
-import Touchable from '@components/components/Touchable'
-import Image from '@components/components/Image'
-import Text from '@components/components/Text'
-import ViewPIXI from '@components/components/View'
+import Touchable from '@components/Touchable'
+import Image from '@components/Image'
+import Text from '@components/Text'
+import ViewPIXI from '@components/View'
 
 export type NodeData = {
   id: string;

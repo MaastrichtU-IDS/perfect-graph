@@ -117,7 +117,7 @@ export const SECOND_FILTER_SCHEMA = {
     extendProperties: {},
     properties: {
       title: {
-        type: 'string',
+        type: 'boolean',
       },
       year: {
         type: 'array',

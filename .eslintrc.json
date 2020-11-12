@@ -8,8 +8,7 @@
 	],
 	"plugins": [
 		"react-hooks",
-		"@typescript-eslint",
-		"react-hooks"
+		"@typescript-eslint"
 	],
 	"parserOptions": {
 		"project": "./tsconfig.json"
@@ -166,6 +165,11 @@
 			}
 		],
 		"react/jsx-props-no-spreading": 0,
+		"react/no-unused-prop-types": 0,
+		"react/require-default-props": 0,
+		"react/destructuring-assignment": 0,
+		"no-param-reassign": 0,
+		"no-shadow": 0,
 		"react/sort-comp": [
 			2,
 			{

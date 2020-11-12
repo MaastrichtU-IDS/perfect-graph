@@ -1,110 +1,100 @@
+// @ts-nocheck
 import React from 'react'
-import { ApplicationProvider, Text } from 'unitx-ui'
-import RDFEditor from './editor/components/RDFDataEditor'
-import TripleInput from './editor/components/Triple/TripleInput'
+import {
+  ApplicationProvider,
+  useData,
+} from 'unitx-ui'
+import { RDFType } from '@type'
+import { DATA_TYPE, EVENT } from '@utils/constants'
+import { DataEditor } from './components/GraphEditor/DataEditor'
+import { MockTripleItemProps } from './components/GraphEditor/DataEditor/TripleItem'
 
-export default () => {
-  return (
-    <ApplicationProvider>
-       <TripleInput 
-            placeholder="Enter"
-            termInfo={{type: 'id '}}
-            value="iz"
-            getSuggestions={(text) => {
-               return [{ title: 'Izmir', value: 'Izmir'}]
-            }}
-       />
-      {/* <RDFEditor 
-        style={{
-          width: '50%',
-          height: '50%'
-        }}
-       data={RDFData}
-      /> */}
-    </ApplicationProvider>
-    
-  )
-}
+
+export default () => (
+  <ApplicationProvider>
+  </ApplicationProvider>
+
+)
 
 const RDFData = {
-  "Person": "http://xmlns.com/foaf/0.1/Person",
-  "xsd": "http://www.w3.org/2001/XMLSchema#",
-  "name": "http://xmlns.com/foaf/0.1/name",
-  "nickname": "http://xmlns.com/foaf/0.1/nick",
-  "affiliation": "http://schema.org/affiliation",
-  "depiction":
+  Person: 'http://xmlns.com/foaf/0.1/Person',
+  xsd: 'http://www.w3.org/2001/XMLSchema#',
+  name: 'http://xmlns.com/foaf/0.1/name',
+  nickname: 'http://xmlns.com/foaf/0.1/nick',
+  affiliation: 'http://schema.org/affiliation',
+  depiction:
   {
-     "@id": "http://xmlns.com/foaf/0.1/depiction",
-     "@type": "@id"
+    '@id': 'http://xmlns.com/foaf/0.1/depiction',
+    '@type': '@id',
   },
-  "image":
+  image:
   {
-     "@id": "http://xmlns.com/foaf/0.1/img",
-     "@type": "@id"
+    '@id': 'http://xmlns.com/foaf/0.1/img',
+    '@type': '@id',
   },
-  "born":
+  born:
   {
-     "@id": "http://schema.org/birthDate",
-     "@type": "xsd:date"
+    '@id': 'http://schema.org/birthDate',
+    '@type': 'xsd:date',
   },
-  "child":
+  child:
   {
-     "@id": "http://schema.org/children",
-     "@type": "@id"
+    '@id': 'http://schema.org/children',
+    '@type': '@id',
   },
-  "colleague":
+  colleague:
   {
-     "@id": "http://schema.org/colleagues",
-     "@type": "@id"
+    '@id': 'http://schema.org/colleagues',
+    '@type': '@id',
   },
-  "knows":
+  knows:
   {
-     "@id": "http://xmlns.com/foaf/0.1/knows",
-     "@type": "@id"
+    '@id': 'http://xmlns.com/foaf/0.1/knows',
+    '@type': '@id',
   },
-  "died":
+  died:
   {
-     "@id": "http://schema.org/deathDate",
-     "@type": "xsd:date"
+    '@id': 'http://schema.org/deathDate',
+    '@type': 'xsd:date',
   },
-  "email":
+  email:
   {
-     "@id": "http://xmlns.com/foaf/0.1/mbox",
-     "@type": "@id"
+    '@id': 'http://xmlns.com/foaf/0.1/mbox',
+    '@type': '@id',
   },
-  "familyName": "http://xmlns.com/foaf/0.1/familyName",
-  "givenName": "http://xmlns.com/foaf/0.1/givenName",
-  "gender": "http://schema.org/gender",
-  "homepage":
+  familyName: 'http://xmlns.com/foaf/0.1/familyName',
+  givenName: 'http://xmlns.com/foaf/0.1/givenName',
+  gender: 'http://schema.org/gender',
+  homepage:
   {
-     "@id": "http://xmlns.com/foaf/0.1/homepage",
-     "@type": "@id"
+    '@id': 'http://xmlns.com/foaf/0.1/homepage',
+    '@type': '@id',
   },
-  "honorificPrefix": "http://schema.org/honorificPrefix",
-  "honorificSuffix": "http://schema.org/honorificSuffix",
-  "jobTitle": "http://xmlns.com/foaf/0.1/title",
-  "nationality": "http://schema.org/nationality",
-  "parent":
+  honorificPrefix: 'http://schema.org/honorificPrefix',
+  honorificSuffix: 'http://schema.org/honorificSuffix',
+  jobTitle: 'http://xmlns.com/foaf/0.1/title',
+  nationality: 'http://schema.org/nationality',
+  parent:
   {
-     "@id": "http://schema.org/parent",
-     "@type": "@id"
+    '@id': 'http://schema.org/parent',
+    '@type': '@id',
   },
-  "sibling":
+  sibling:
   {
-     "@id": "http://schema.org/sibling",
-     "@type": "@id"
+    '@id': 'http://schema.org/sibling',
+    '@type': '@id',
   },
-  "spouse":
+  spouse:
   {
-     "@id": "http://schema.org/spouse",
-     "@type": "@id"
+    '@id': 'http://schema.org/spouse',
+    '@type': '@id',
   },
-  "telephone": "http://schema.org/telephone",
-  "Address": "http://www.w3.org/2006/vcard/ns#Address",
-  "address": "http://www.w3.org/2006/vcard/ns#address",
-  "street": "http://www.w3.org/2006/vcard/ns#street-address",
-  "locality": "http://www.w3.org/2006/vcard/ns#locality",
-  "region": "http://www.w3.org/2006/vcard/ns#region",
-  "country": "http://www.w3.org/2006/vcard/ns#country",
-  "postalCode": "http://www.w3.org/2006/vcard/ns#postal-code"
+  telephone: 'http://schema.org/telephone',
+  Address: 'http://www.w3.org/2006/vcard/ns#Address',
+  address: 'http://www.w3.org/2006/vcard/ns#address',
+  street: 'http://www.w3.org/2006/vcard/ns#street-address',
+  locality: 'http://www.w3.org/2006/vcard/ns#locality',
+  region: 'http://www.w3.org/2006/vcard/ns#region',
+  country: 'http://www.w3.org/2006/vcard/ns#country',
+  postalCode: 'http://www.w3.org/2006/vcard/ns#postal-code',
 }

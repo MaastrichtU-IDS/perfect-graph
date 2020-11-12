@@ -1,7 +1,7 @@
 import React from 'react'
 import * as R from 'unitx/ramda'
 import mingo from 'unitx/mingo'
-import { ApplicationProvider, Button, Surface,useTheme, } from 'unitx-ui'
+import { ApplicationProvider, Button, Layout,useTheme, } from 'unitx-ui'
 import { 
   DarkTheme,
   DefaultTheme,
@@ -68,8 +68,9 @@ const AppContainer = ({
   //     sync()
   //   }
   // })
+
   return (
-      <Surface style={{ width: '100%', height: '100%'}}>
+      <Layout style={{ width: '100%', height: '100%'}}>
       <GraphEditor
         ref={graphRef}
         // controller={controller}
@@ -162,7 +163,7 @@ const AppContainer = ({
         onFilterChange={onFilterChangeCallback}
         {...rest}
       />
-      </Surface>
+      </Layout>
   )
 }
 

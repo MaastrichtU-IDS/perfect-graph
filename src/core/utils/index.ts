@@ -48,7 +48,7 @@ export type Props = {
 
 export const dataListToObject = (data: DataItem[]) => R.pipe(
   R.map(
-    ({ value, key }: DataItem) => ([key, value]),
+    ({ value, name }: DataItem) => ([name, value]),
   ),
   R.fromPairs,
 )(data)

@@ -1,14 +1,14 @@
 import ProfileTemplate from '@components/templates/Profile'
 import { ComponentType } from 'unitx-ui/type'
 import Layouts from '@core/layouts'
-import { ElementType } from '@utils/constants'
-import View from './components/View'
-import Graphics from './components/Graphics'
-import Touchable from './components/Touchable'
-import Text from './components/Text'
-import Image from './components/Image'
-import HoverContainer from './components/HoverContainer'
-import NativeGraph, { GraphProps } from './components/Graph'
+import { ELEMENT_TYPE } from '@utils/constants'
+import View from './View'
+import Graphics from './Graphics'
+import Touchable from './Touchable'
+import Text from './Text'
+import Image from './Image'
+import HoverContainer from './HoverContainer'
+import NativeGraph, { GraphProps } from './Graph'
 
 export const Graph = NativeGraph as ComponentType<GraphProps> & {
   View: typeof View;
@@ -19,10 +19,9 @@ export const Graph = NativeGraph as ComponentType<GraphProps> & {
   ProfileTemplate: typeof ProfileTemplate;
   Layouts: typeof Layouts;
   HoverContainer: typeof HoverContainer;
-  elementType: typeof ElementType;
+  elementType: typeof ELEMENT_TYPE;
 }
 
-/* eslint-disable functional/immutable-data, functional/no-expression-statement */
 Graph.View = View
 Graph.Text = Text
 Graph.Image = Image
@@ -31,12 +30,11 @@ Graph.Graphics = Graphics
 Graph.ProfileTemplate = ProfileTemplate
 Graph.Layouts = Layouts
 Graph.HoverContainer = HoverContainer
-Graph.elementType = ElementType
-/* eslint-enable functional/immutable-data, functional/no-expression-statement */
+Graph.elementType = ELEMENT_TYPE
 
-export { DefaultRenderEdge, DefaultRenderNode } from './components/Graph'
+export { DefaultRenderEdge, DefaultRenderNode } from './Graph'
 export {
   default as ProfileTemplate,
 } from './templates/Profile'
 
-export { GraphProps, GraphConfig } from './components/Graph'
+export { GraphProps } from './Graph'
