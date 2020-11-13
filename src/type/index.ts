@@ -100,11 +100,16 @@ export type {
   Theme,
 } from '../core/theme'
 
+export type CytoscapeEvent = 'select' | 'unselect' | 'position'
+
 export type GraphConfig = {
   layout?: typeof GraphLayouts['cose'];
   zoom?: ViewportProps['zoom'];
   transform?: ViewportProps['transform'];
   positions?: { [id: string]: Position };
+  elements?: {
+    renderEvents?: { [id: string]: CytoscapeEvent[] };
+  };
   backgroundColor?: string;
 }
 

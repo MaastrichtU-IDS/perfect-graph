@@ -53,7 +53,7 @@ const AppContainer = () => {
         }}
         dataBar={{
           ...controllerProps.dataBar,
-          editable: false
+          // editable: false
         }}
         renderNode={({item, label})=> (
           <Graph.View style={{

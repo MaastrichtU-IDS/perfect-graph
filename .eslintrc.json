@@ -127,29 +127,6 @@
 		],
 		"no-underscore-dangle": 0,
 		"no-nested-ternary": 0,
-		"functional/no-expression-statement": [
-			"error",
-			{
-				"ignorePattern": [
-					"^use",
-					"^React.use",
-					"setState",
-					"^mutable.*.",
-					".*.current"
-				]
-			}
-		],
-		"functional/immutable-data": [
-			"error",
-			{
-				"ignorePattern": [
-					"^mutable.*."
-				],
-				"ignoreAccessorPattern": [
-					"**.current"
-				]
-			}
-		],
 		"react-hooks/rules-of-hooks": "error",
 		"react-hooks/exhaustive-deps": "warn",
 		"react/jsx-filename-extension": 0,

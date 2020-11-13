@@ -2,7 +2,7 @@ import React from 'react'
 import { useStateWithCallback } from 'unitx-ui/hooks'
 import { NodeSingular } from 'cytoscape'
 import { Position } from 'unitx/type'
-import { Context } from '@type'
+import { Context, CytoscapeEvent } from '@type'
 import { mutableGraphMap } from './useGraph'
 
 export type Props = {
@@ -10,6 +10,7 @@ export type Props = {
   graphID: string;
   position: Position;
   onPositionChange?: (c: {element: NodeSingular; context: Context }) => void|any;
+  renderEvents?: CytoscapeEvent[];
 }
 
 type Result = {
@@ -23,6 +24,7 @@ export default (props: Props): Result => {
     position,
     onPositionChange,
     graphID,
+    renderEvents = [],
   } = props
   const mutableCy = mutableGraphMap[graphID]
   const [, setState] = useStateWithCallback({}, () => {})
@@ -35,19 +37,37 @@ export default (props: Props): Result => {
     group: 'nodes',
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }) as NodeSingular, [mutableCy, id])
-  React.useEffect(() => {
-    mutableElement.on('position', () => {
-      mutableElement.connectedEdges().forEach((mutableEdge) => {
-        mutableEdge.data().onPositionChange()
-      })
+  React.useEffect(
+    () => {
+      mutableElement.on('position', () => {
+        mutableElement.connectedEdges().forEach((mutableEdge) => {
+          mutableEdge.data().onPositionChange()
+        })
       onPositionChange?.({ element: mutableElement, context: contextRef.current })
-    })
-    return () => {
-      mutableCy!.remove(mutableElement!)
-    }
-  }, // destroy
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  [mutableCy, id])
+      })
+      return () => {
+        mutableCy!.remove(mutableElement!)
+      }
+    }, // destroy
+    [mutableCy, id],
+  )
+
+  // EventListeners
+  React.useEffect(
+    () => {
+      renderEvents.forEach((eventName) => {
+        mutableElement.on(eventName, () => {
+          contextRef.current.render()
+        })
+      })
+      return () => {
+        renderEvents.forEach((eventName) => {
+          mutableElement.off(eventName)
+        })
+      }
+    },
+    [mutableElement, renderEvents],
+  )
 
   return {
     element: mutableElement,

@@ -1,5 +1,6 @@
 import {
-  DefaultRenderEdge, DefaultRenderNode, Graph, GraphProps,
+  DefaultRenderEdge,
+  DefaultRenderNode, Graph, GraphProps,
 } from '@components'
 import {
   EventInfo,

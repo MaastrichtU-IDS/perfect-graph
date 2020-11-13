@@ -11,7 +11,7 @@ import { ViewStyle, View } from 'react-native'
 import { useGraph } from '@hooks'
 import {
   NodeData, EdgeData, RenderEdge, RenderNode,
-  GraphConfig,
+  GraphConfig, Element,
 } from '@type'
 import { ForwardRef } from 'unitx-ui/type'
 import DataRender from 'unitx-ui/components/DataRender'
@@ -32,6 +32,7 @@ export type GraphProps = {
   onPress?: ViewportProps['onPress'];
   drawLine?: DrawLine;
   config?: GraphConfig;
+  selectedElements?: Element[];
 }
 
 export const DefaultRenderNode: RenderNode = ({ item }) => (

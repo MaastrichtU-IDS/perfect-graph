@@ -1,11 +1,12 @@
 import React from 'react'
 import { Pressable, TextStyle, ViewStyle } from 'react-native'
 import {
-  Grid, Input,
-
+  Grid,
+  Input,
   Text,
   useData,
-  useForwardRef, wrapComponent
+  useForwardRef,
+  wrapComponent,
 } from 'unitx-ui'
 import { ForwardRef } from 'unitx-ui/type'
 

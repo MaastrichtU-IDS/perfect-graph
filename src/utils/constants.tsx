@@ -59,6 +59,7 @@ export const DATA_TYPE = {
   number: 'number',
   string: 'string',
   id: 'id',
+  unknown: 'unknown',
 } as const
 
 export const TYPE_ICONS = {
@@ -100,10 +101,17 @@ export const TYPE_ICONS = {
       </Text>
     </TouchableOpacity>
   ),
+  [DATA_TYPE.unknown]: (props: any) => (
+    <Icon
+      name="alpha-x"
+      {...props}
+    />
+  ),
 } as const
 
 export const DATA_TYPE_BY_INDEX = [
   'string',
   'number',
   'id',
+  'unknown',
 ] as const
