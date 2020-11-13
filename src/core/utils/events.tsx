@@ -35,11 +35,9 @@ export function dragTrack(
       )(result ?? {})
     },
   )(mutableData.position)
-  /* eslint-disable functional/immutable-data, functional/no-expression-statement */
   document.addEventListener('mouseup', () => {
     mutableData.position = null
   })
-  /* eslint-enable functional/immutable-data, functional/no-expression-statement */
   return {
     onDown,
     onMove,

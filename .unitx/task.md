@@ -5,7 +5,6 @@
 
 - rewrite yoga layout pixi implementation
   // Old Package Dependencies
-- add theme support
 - Work on Form option to show unrequired fields
   - Add expand button
   - Add auto apply filter checkbox
@@ -14,13 +13,17 @@
   - order
   - Add expand button
   - Add renderCell
-- Hover Label FontSize scale with zoom
+
+
+  
 - Large Graph Example
-- Change selectedNodeStyle and Connected Edges
-- Add unspecified type for NewTripleItem
+- Hover Label FontSize scale with zoom
+<!-- - Change selectedNodeStyle and Connected Edges -->
+<!-- - Add unspecified type for NewTripleItem -->
 <!-- - Triple Mode Add - Delete -->
 <!-- - Create controller -->
 <!-- - Remove add icon NewTripleItem -->
 <!-- - Show TripleInput when extended additionalInfo -->
 <!-- - Don't show id as label fallback -->
+<!-- - add theme support -->
 

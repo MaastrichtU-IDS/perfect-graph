@@ -125,8 +125,8 @@ function Graph(props: GraphProps, ref: ForwardRef<typeof Graph>) {
         options={{
           width,
           height,
-          resolution: 1,
-          antialias: true,
+          // resolution: 1,
+          // antialias: true,
           autoDensity: true,
           backgroundColor,
         }}

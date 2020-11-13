@@ -40,11 +40,12 @@
     "chromatic": "chromatic --project-token 1un5jqj6bcs"
   },
   "dependencies": {
-    "@inlet/react-pixi": "^5.0.4",
-    "cytoscape": "^3.16.1",
+    "@inlet/react-pixi": "5.2.0",
+    "cytoscape": "3.17.0",
     "jsonld": "^3.1.1",
     "jsonld-context-parser": "^2.1.1",
     "n3": "^1.6.3",
+    "pixi-cull": "^1.0.0",
     "pixi-flex-layout": "^1.0.3",
     "pixi-viewport": "^4.13.2",
     "pixi.js": "^5.3.3",

@@ -2,8 +2,9 @@ import { PixiComponent, useApp } from '@inlet/react-pixi'
 import * as R from 'unitx/ramda'
 import { Viewport } from 'pixi-viewport'
 import * as PIXI from 'pixi.js'
+// import Cull from 'pixi-cull'
 import React from 'react'
-import { wrapComponent } from 'unitx-ui'
+import { wrapComponent, useForwardRef } from 'unitx-ui'
 import { ForwardRef, Position } from 'unitx-ui/type'
 
 type NativeViewportProps = {
@@ -50,7 +51,6 @@ const ReactViewportComp = PixiComponent('Viewport', {
       interaction: renderer.plugins.interaction,
       passiveWheel: false,
     }) as ViewportType
-    /* eslint-disable functional/immutable-data, functional/no-expression-statement */
     onCreate?.(viewport)
     viewport.sortableChildren = true
     viewport
@@ -79,7 +79,6 @@ const ReactViewportComp = PixiComponent('Viewport', {
       // @ts-ignore
       data.event.preventDefault()
     })
-    /* eslint-enable functional/immutable-data, functional/no-expression-statement */
     return viewport
   },
   applyProps: (
@@ -107,7 +106,6 @@ const ReactViewportComp = PixiComponent('Viewport', {
       },
       R.identity,
     )(e.currentTarget)
-    /* eslint-disable functional/immutable-data, functional/no-expression-statement */
     R.unless(
       R.equals(oldProps.zoom),
       () => mutableViewport.setZoom(zoom ?? 1, true),
@@ -126,7 +124,6 @@ const ReactViewportComp = PixiComponent('Viewport', {
         transform?.pivotY,
       ),
     )(transform)
-    /* eslint-enable functional/immutable-data, functional/no-expression-statement */
     return mutableViewport.on('click', mutableViewport.clickEvent)
   },
   didMount: () => {
@@ -145,9 +142,28 @@ function ViewPortElement(props: ViewportProps, ref: ForwardRef<typeof ViewPortEl
     ...rest
   } = props
   const app = useApp()
+  const viewportRef = useForwardRef(ref, {})
+  // Culling
+  // const cull = React.useMemo(() => new Cull.Simple(), [])
+  // React.useEffect(() => {
+  //   cull.addList(viewportRef.current.children)
+  //   cull.cull(viewportRef.current.getVisibleBounds())
+  //   return () => {
+  //     cull.removeList(viewportRef.current.children)
+  //   }
+  // }, [children])
+  // React.useEffect(() => {
+  //   /// Culling
+  //   PIXI.Ticker.shared.add(() => {
+  //     if (viewportRef.current.dirty) {
+  //       cull.cull(viewportRef.current.getVisibleBounds())
+  //       viewportRef.current.dirty = false
+  //     }
+  //   })
+  // }, [])
   return (
     <ReactViewportComp
-      ref={ref}
+      ref={viewportRef}
       app={app}
       {...rest}
     >
