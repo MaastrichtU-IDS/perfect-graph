@@ -145,7 +145,6 @@ const GraphEditorElement = (props: GraphEditorProps, ref: ForwardRef<typeof Grap
               type: EVENT.ELEMENT_SELECTED,
               item,
               element,
-
             })}
           >
 

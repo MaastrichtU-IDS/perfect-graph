@@ -25,11 +25,11 @@ function NodeContainer(props: NodeContainerProps, __: ForwardRef<typeof NodeCont
     graphID,
     config,
     position: config.position ?? item.position ?? { x: 0, y: 0 },
-    // onPositionChange: ({ element }) => {
-    //   const { x, y } = element.position()
-    //   containerRef.current.x = x
-    //   containerRef.current.y = y
-    // },
+    onPositionChange: ({ element }) => {
+      const { x, y } = element.position()
+      containerRef.current.x = x
+      containerRef.current.y = y
+    },
   })
   const { x, y } = element.position()
   const onDrag = React.useCallback(
@@ -38,7 +38,7 @@ function NodeContainer(props: NodeContainerProps, __: ForwardRef<typeof NodeCont
     },
     [element],
   )
-  console.log('RenderNode: ', item.id, element.data('label'))
+  console.log('RenderNode: ', item.id)
   return (
     <Container
       ref={containerRef}

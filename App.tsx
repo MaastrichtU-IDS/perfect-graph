@@ -18,6 +18,7 @@ import App from './src/App'
 
 
 
+
 type Props = {
   skipLoadingScreen: boolean;
 }
@@ -87,7 +88,8 @@ const AppContainer = () => {
               position: { x: 300, y: 100 },
               // renderEvents: ['select']
             }
-          }
+          },
+          layout: Graph.Layouts.cose
         }}
         renderNode={({ item, label, element })=> (
           // <Sprite
