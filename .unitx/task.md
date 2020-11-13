@@ -14,9 +14,9 @@
   - order
   - Add expand button
   - Add renderCell
-- Change selectedNodeStyle and Connected Edges
 - Hover Label FontSize scale with zoom
 - Large Graph Example
+- Change selectedNodeStyle and Connected Edges
 - Add unspecified type for NewTripleItem
 <!-- - Triple Mode Add - Delete -->
 <!-- - Create controller -->
