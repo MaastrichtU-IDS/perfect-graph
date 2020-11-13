@@ -31,10 +31,10 @@ type Props = {
 //   }
 // )),}
 
-const COUNT = 500
+const COUNT = 10
 const data = {
   nodes: new Array(COUNT).fill(0).map((_, index) => (
-    { id: `${index}`, position: { x: index, y: index },  data: [{ name: 'foaf:name', value: ['ts','saba'], additional: []}]}
+    { id: `${index}`, position: { x: index * 100, y: index * 100 },  data: [{ name: 'foaf:name', value: ['ts','saba'], additional: []}]}
   )),
   edges: new Array(COUNT - 1).fill(0).map((_,index) => (
     { id: `edge:${index}`, source: `${index}`,  target: `${index+1}`,  data: [{ name: 'foaf:name', value: ['ts','saba'], additional: []}]}
