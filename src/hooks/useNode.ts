@@ -2,20 +2,21 @@ import React from 'react'
 import { useStateWithCallback } from 'unitx-ui/hooks'
 import { NodeSingular } from 'cytoscape'
 import { Position } from 'unitx/type'
-import { Context, CytoscapeEvent } from '@type'
+import { ElementContext, NodeConfig } from '@type'
 import { mutableGraphMap } from './useGraph'
+import { useElement } from './useElement'
 
 export type Props = {
   id: string;
   graphID: string;
   position: Position;
-  onPositionChange?: (c: {element: NodeSingular; context: Context }) => void|any;
-  renderEvents?: CytoscapeEvent[];
+  onPositionChange?: (c: {element: NodeSingular; context: ElementContext }) => void|any;
+  config?: NodeConfig;
 }
 
 type Result = {
   element: NodeSingular;
-  context: Context;
+  context: ElementContext;
 }
 
 export default (props: Props): Result => {
@@ -24,53 +25,58 @@ export default (props: Props): Result => {
     position,
     onPositionChange,
     graphID,
-    renderEvents = [],
+    config,
   } = props
-  const mutableCy = mutableGraphMap[graphID]
+  const cy = mutableGraphMap[graphID]
   const [, setState] = useStateWithCallback({}, () => {})
-  const contextRef = React.useRef<Context>({
+  const contextRef = React.useRef<ElementContext>({
     render: (callback: () => {}) => setState({}, callback),
-  } as Context)
-  const mutableElement = React.useMemo(() => mutableCy!.add({
+  } as ElementContext)
+  const element = React.useMemo(() => cy!.add({
     data: { id, context: contextRef.current }, // ...(parentID ? { parent: parentID } : {}),
     position: { ...position },
     group: 'nodes',
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }) as NodeSingular, [mutableCy, id])
+  }) as NodeSingular, [cy, id])
   React.useEffect(
     () => {
-      mutableElement.on('position', () => {
-        mutableElement.connectedEdges().forEach((mutableEdge) => {
+      element.on('position', () => {
+        element.connectedEdges().forEach((mutableEdge) => {
           mutableEdge.data().onPositionChange()
         })
-      onPositionChange?.({ element: mutableElement, context: contextRef.current })
+      onPositionChange?.({ element, context: contextRef.current })
       })
       return () => {
-        mutableCy!.remove(mutableElement!)
+        cy!.remove(element!)
       }
     }, // destroy
-    [mutableCy, id],
+    [cy, id],
   )
-
-  // EventListeners
-  React.useEffect(
-    () => {
-      renderEvents.forEach((eventName) => {
-        mutableElement.on(eventName, () => {
-          contextRef.current.render()
-        })
-      })
-      return () => {
-        renderEvents.forEach((eventName) => {
-          mutableElement.off(eventName)
-        })
-      }
-    },
-    [mutableElement, renderEvents],
-  )
+  useElement({
+    contextRef,
+    cy,
+    element,
+    config,
+  })
+  // // EventListeners
+  // React.useEffect(
+  //   () => {
+  //     renderEvents.forEach((eventName) => {
+  //       element.on(eventName, () => {
+  //         contextRef.current.render()
+  //       })
+  //     })
+  //     return () => {
+  //       renderEvents.forEach((eventName) => {
+  //         element.off(eventName)
+  //       })
+  //     }
+  //   },
+  //   [element, renderEvents],
+  // )
 
   return {
-    element: mutableElement,
+    element,
     context: contextRef.current,
   }
 }

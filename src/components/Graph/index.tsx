@@ -106,7 +106,10 @@ function Graph(props: GraphProps, ref: ForwardRef<typeof Graph>) {
     )('')
   }, [initialized, config.layout])
   const theme = useTheme()
-  const backgroundColor = React.useMemo(() => C.rgbNumber(theme.colors.background), [theme.colors.background])
+  const backgroundColor = React.useMemo(
+    () => C.rgbNumber(theme.colors.background),
+    [theme.colors.background],
+  )
   React.useEffect(() => {
     stageRef.current.app.renderer.backgroundColor = backgroundColor
   }, [backgroundColor])
@@ -141,7 +144,7 @@ function Graph(props: GraphProps, ref: ForwardRef<typeof Graph>) {
             {...{ width, height }}
           >
             <DataRender
-              extraData={[extraData, config.positions]}
+              extraData={[extraData, config.nodes]}
               data={nodes}
               accessor={['children']}
               keyExtractor={(item) => item.id}
@@ -149,14 +152,14 @@ function Graph(props: GraphProps, ref: ForwardRef<typeof Graph>) {
                 <NodeContainer
                   graphID={graphID}
                   item={item}
-                  position={config.positions?.[item.id]}
+                  config={config.nodes?.[item.id]}
                 >
                   {renderNode}
                 </NodeContainer>
               )}
             />
             <DataRender
-              extraData={extraData}
+              extraData={[extraData, config.edges]}
               data={edges}
               accessor={['children']}
               keyExtractor={(item) => item.id}
@@ -165,6 +168,7 @@ function Graph(props: GraphProps, ref: ForwardRef<typeof Graph>) {
                   graphID={graphID}
                   item={item}
                   drawLine={drawLine}
+                  config={config.edges?.[item.id]}
                 >
                   {renderEdge}
                 </EdgeContainer>

@@ -1,8 +1,9 @@
 import { useStateWithCallback } from 'unitx-ui/hooks'
 import { EdgeSingular } from 'cytoscape'
 import React, { useEffect, useMemo, useRef } from 'react'
-import { Context } from '@type'
+import { ElementContext, ElementConfig } from '@type'
 import { mutableGraphMap } from './useGraph'
+import { useElement } from './useElement'
 
 export type Props<T> = {
   children?: React.ReactNode;
@@ -10,12 +11,13 @@ export type Props<T> = {
   source: string;
   target: string;
   graphID: string;
-  onPositionChange?: (c: {element: EdgeSingular; context: Context }) => void;
+  onPositionChange?: (c: {element: EdgeSingular; context: ElementContext }) => void;
+  config?: ElementConfig;
 }
 
 type Result<T> = {
   element: EdgeSingular;
-  context: Context;
+  context: ElementContext;
 }
 
 export default <T>(props: Props<T>): Result<T> => {
@@ -25,17 +27,18 @@ export default <T>(props: Props<T>): Result<T> => {
     target,
     onPositionChange,
     graphID,
+    config,
   } = props
-  const mutableCy = mutableGraphMap[graphID]
+  const cy = mutableGraphMap[graphID]
   const [, setState] = useStateWithCallback({}, () => {
   })
-  const contextRef = useRef<Context>({
+  const contextRef = useRef<ElementContext>({
     render: (callback: () => {}) => {
       setState({}, callback)
     },
-  } as Context)
+  } as ElementContext)
 
-  const element = useMemo(() => mutableCy!.add({
+  const element = useMemo(() => cy!.add({
     data: {
       id,
       source,
@@ -47,7 +50,7 @@ export default <T>(props: Props<T>): Result<T> => {
     group: 'edges',
   }),
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  [mutableCy, id, source, target])
+  [cy, id, source, target])
   useEffect(
     () => {
       element.data(
@@ -59,9 +62,16 @@ export default <T>(props: Props<T>): Result<T> => {
     [onPositionChange],
   )
 
-  useEffect(() => () => { mutableCy!.remove(element!) },
+  useEffect(() => () => { cy!.remove(element!) },
   // eslint-disable-next-line react-hooks/exhaustive-deps
-    [mutableCy, id, source, target])
+    [cy, id, source, target])
+
+  useElement({
+    contextRef,
+    cy,
+    element,
+    config,
+  })
   return {
     element,
     context: contextRef.current,

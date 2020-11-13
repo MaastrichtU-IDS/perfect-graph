@@ -7,6 +7,7 @@ import { Position } from 'unitx/type'
 import { useEdge } from '@hooks'
 import {
   RenderEdge,
+  EdgeConfig,
 } from '@type'
 import * as V from 'unitx/vector'
 import Graphics, { drawLine as defaultDrawLine } from '../Graphics'
@@ -18,6 +19,7 @@ export type EdgeContainerProps = {
   item: any;
   graphID: string;
   drawLine?: DrawLine;
+  config?: EdgeConfig;
 }
 
 const calculateMidpoint = (from: Position) => (to: Position) => R.pipe(

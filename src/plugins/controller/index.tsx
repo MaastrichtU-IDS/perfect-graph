@@ -45,7 +45,7 @@ export const useController = (data: GraphData, options: ControllerOptions = {}) 
     mode: EDITOR_MODE.DEFAULT as EditorMode,
     selectedElement: null as Element | null,
   })
-  const onEvent = React.useCallback((eventInfo) => {
+  const onEvent = React.useCallback((eventInfo: EventInfo) => {
     const {
       type,
       element,
@@ -172,6 +172,7 @@ export const useController = (data: GraphData, options: ControllerOptions = {}) 
             }
             break
           }
+          element.select()
           draft.selectedElement = element
           break
         }
@@ -182,7 +183,9 @@ export const useController = (data: GraphData, options: ControllerOptions = {}) 
         }
         case EVENT.CHANGE_DATA_VALUE_ADDITIONAL: {
           const additionalItem = targetDataList[index]!.additional![extraData.index]
-          targetDataList[index]!.additional![extraData.index].value[extraData.valueIndex] = getValueByType(additionalItem.type, extraData.value)
+          targetDataList[index]!.additional![extraData.index].value[extraData.valueIndex] = getValueByType(
+            additionalItem.type, extraData.value,
+          )
           break
         }
         case EVENT.ADD_DATA_ADDITIONAL:
@@ -219,57 +222,21 @@ export const useController = (data: GraphData, options: ControllerOptions = {}) 
     {
       ...state,
       onEvent,
-      // onEventAdditional: ({
-      //   type,
-      //   element,
-      //   extraData,
-      //   index,
-      // }) => {
-      //   update((draft) => {
-      //     const targetDataList = getSelectedItemByElement(element, draft).item.data
-      //     switch (type) {
-      //       case EVENT.CHANGE_DATA_NAME:
-      //         targetDataList[index].additional[extraData.index].name = extraData.value
-      //         break
-      //       case EVENT.CHANGE_DATA_VALUE: {
-      //         const additionalItem = targetDataList[index].additional[extraData.index]
-      //         targetDataList[index].additional[extraData.index].value[extraData.valueIndex] = getValueByType(additionalItem.type, extraData.value)
-      //         break
-      //       }
-      //       case EVENT.ADD_DATA_ADDITIONAL:
-      //         targetDataList[index].additional.push(extraData)
-      //         break
-      //       case EVENT.ADD_DATA_VALUE: {
-      //         const additionalItem = targetDataList[index].additional[extraData.index]
-      //         targetDataList[index].additional[extraData.index].value.push(additionalItem.type === DATA_TYPE.number ? 0 : '')
-      //         break
-      //       }
-      //       case EVENT.DELETE_DATA_VALUE:
-      //         targetDataList[index].additional[extraData.index].value.splice(extraData.valueIndex, 1)
-      //         break
-      //       case EVENT.DELETE_DATA:
-      //         targetDataList[index].additional.splice(extraData.index, 1)
-      //         break
-      //       default:
-      //         break
-      //     }
-      //   })
-      // },
     } as Pick<GraphEditorProps, 'nodes' | 'edges' | 'onEvent'>,
     {},
   ]
 }
 
-const getValueByType = (type: RDFType, value: string) =>
-  // if (type === DATA_TYPE.number) {
-  //   try {
-  //     return Number.parseFloat(value)
-  //   } catch (error) {
-  //     // Toast.show({
-  //     //   color: 'danger',
-  //     //   text: 'Please enter number value!!!',
-  //     //   title: 'Error',
-  //     // })
-  //   }
-  // }
-  value
+const getValueByType = (type: RDFType, value: string) => value
+// if (type === DATA_TYPE.number) {
+//   try {
+//     return Number.parseFloat(value)
+//   } catch (error) {
+//     // Toast.show({
+//     //   color: 'danger',
+//     //   text: 'Please enter number value!!!',
+//     //   title: 'Error',
+//     // })
+//   }
+// }
+// return value

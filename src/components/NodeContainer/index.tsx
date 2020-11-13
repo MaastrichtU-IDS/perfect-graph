@@ -1,15 +1,15 @@
 import React from 'react'
 import { wrapComponent } from 'unitx-ui'
-import { ForwardRef, Position } from 'unitx-ui/type'
+import { ForwardRef } from 'unitx-ui/type'
 import { useNode } from '@hooks'
-import { RenderNode } from '@type'
+import { RenderNode, NodeConfig } from '@type'
 import Container from '../Container'
 
 export type NodeContainerProps = {
   children: RenderNode;
   item: any;
   graphID: string;
-  position?: Position;
+  config?: NodeConfig;
 }
 
 function NodeContainer(props: NodeContainerProps, __: ForwardRef<typeof NodeContainer>) {
@@ -17,13 +17,14 @@ function NodeContainer(props: NodeContainerProps, __: ForwardRef<typeof NodeCont
     item,
     graphID,
     children,
-    position = item.position ?? { x: 0, y: 0 },
+    config = {} as NodeConfig,
   } = props
   const containerRef = React.useRef(null)
   const { element } = useNode({
     id: item.id,
-    position,
     graphID,
+    config,
+    position: config.position ?? item.position ?? { x: 0, y: 0 },
     // onPositionChange: ({ element }) => {
     //   const { x, y } = element.position()
     //   containerRef.current.x = x
@@ -37,6 +38,7 @@ function NodeContainer(props: NodeContainerProps, __: ForwardRef<typeof NodeCont
     },
     [element],
   )
+  console.log('RenderNode: ', item.id, element.data('label'))
   return (
     <Container
       ref={containerRef}

@@ -13,7 +13,7 @@ import GraphLayouts from '@core/layouts'
 
 export type Style = {[k: string]: any}
 export type OnLayout = (event: LayoutChangeEvent) => void
-export type Context = { render: () => void }
+export type ElementContext = { render: (callback?: () => void) => void }
 
 export type Event = keyof typeof EVENT
 export type EditorMode = keyof typeof EDITOR_MODE
@@ -102,13 +102,26 @@ export type {
 
 export type CytoscapeEvent = 'select' | 'unselect' | 'position'
 
+export type ElementConfig = {
+  renderEvents?: CytoscapeEvent[];
+}
+export type NodeConfig = {
+  position: Position;
+} & ElementConfig
+
+export type EdgeConfig = {
+} & ElementConfig
+
 export type GraphConfig = {
   layout?: typeof GraphLayouts['cose'];
   zoom?: ViewportProps['zoom'];
   transform?: ViewportProps['transform'];
-  positions?: { [id: string]: Position };
-  elements?: {
-    renderEvents?: { [id: string]: CytoscapeEvent[] };
+  renderEvents?: CytoscapeEvent[];
+  nodes: {
+    [id: string]: NodeConfig;
+  };
+  edges: {
+    [id: string]: EdgeConfig;
   };
   backgroundColor?: string;
 }

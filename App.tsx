@@ -23,8 +23,8 @@ type Props = {
 const AppContainer = () => {
   const [controllerProps] = useController({
     nodes: [
-         { id: '1', position: { x: 10, y: 10 } , data: [{ name: 'foaf:name', value: ['ts','saba'], additional: []}]},
-         { id: '2', position: { x: 300, y: 100 } , data: []},
+         { id: '1',  data: [{ name: 'foaf:name', value: ['ts','saba'], additional: []}]},
+         { id: '2' , data: []},
        ],
     edges: [
          { id: '51', source: '1', target:  '2',  }
@@ -55,16 +55,31 @@ const AppContainer = () => {
           ...controllerProps.dataBar,
           // editable: false
         }}
-        renderNode={({item, label})=> (
+        graphConfig={{
+          nodes: {
+            '1': {
+              position: { x: 10, y: 10 },
+              renderEvents: ['select']
+              // renderEvents: ['select', 'position']
+            },
+            '2': {
+              position: { x: 300, y: 100 },
+              // renderEvents: ['select']
+            }
+          }
+        }}
+        renderNode={({ item, label, element })=> (
           <Graph.View style={{
             width: 100,
             height: 100,
             justifyContent: 'center',
             alignItems: 'center',
-            borderRadius: 50
+            borderRadius: 50,
+            backgroundColor: element.selected() ? 'red' : 'blue'
           }}
           >
             <Graph.Text>{label}</Graph.Text>
+            {/* <Graph.Text>{element.position().x}</Graph.Text> */}
           </Graph.View>
         )}
         // onElementSelected={({ item}) => {
