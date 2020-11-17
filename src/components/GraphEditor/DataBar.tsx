@@ -60,6 +60,9 @@ const DataBar = (props: DataBarProps) => {
     ) => () => onEvent?.({ type, extraData }),
     [onEvent],
   )
+  // React.useEffect(() => {
+  //   animationRef?.current?.start()
+  // }, [])
   return (
     <AnimatedSurface
       style={{

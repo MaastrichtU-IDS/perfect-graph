@@ -71,7 +71,7 @@ const AppContainer = () => {
         {...controllerProps}
         filterBar={{
           ...controllerProps.filterBar,
-          ...SECOND_FILTER_SCHEMA
+          ...SECOND_FILTER_SCHEMA,
         }}
         dataBar={{
           ...controllerProps.dataBar,

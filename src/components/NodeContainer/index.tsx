@@ -27,7 +27,9 @@ function NodeContainer(props: NodeContainerProps, __: ForwardRef<typeof NodeCont
     position: config.position ?? item.position ?? { x: 0, y: 0 },
     onPositionChange: ({ element }) => {
       const { x, y } = element.position()
+      // @ts-ignore
       containerRef.current.x = x
+      // @ts-ignore
       containerRef.current.y = y
     },
   })
@@ -38,7 +40,6 @@ function NodeContainer(props: NodeContainerProps, __: ForwardRef<typeof NodeCont
     },
     [element],
   )
-  console.log('RenderNode: ', item.id)
   return (
     <Container
       ref={containerRef}

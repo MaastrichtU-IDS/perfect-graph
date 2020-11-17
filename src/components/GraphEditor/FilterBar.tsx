@@ -15,7 +15,7 @@ import useAnimation, { animated } from 'unitx-ui/hooks/useAnimation'
 export type FilterBarProps = Partial<
 Pick<
 FormProps<any>,
-'schema' | 'onChange'|'onSubmit'|'formData'| 'uiSchema'
+'schema' | 'onChange'|'onSubmit'|'formData'| 'uiSchema' | 'children'
 >
 > & {
   opened?: boolean;
@@ -29,6 +29,7 @@ const FilterBar = (props: FilterBarProps) => {
     opened = false,
     schema = {},
     onEvent,
+    children,
     ...formProps
   } = props
   const {
@@ -62,6 +63,9 @@ const FilterBar = (props: FilterBarProps) => {
     [onEvent],
   )
   const theme = useTheme()
+  React.useEffect(() => {
+    animationRef?.current?.start()
+  }, [])
   return (
     <AnimatedSurface
       style={{
@@ -78,7 +82,7 @@ const FilterBar = (props: FilterBarProps) => {
         schema={schema}
         {...formProps}
       >
-        <View />
+        {children === undefined ? <View /> : children}
       </Form>
       <Icon
         style={{

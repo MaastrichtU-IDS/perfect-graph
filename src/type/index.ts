@@ -117,10 +117,10 @@ export type GraphConfig = {
   zoom?: ViewportProps['zoom'];
   transform?: ViewportProps['transform'];
   renderEvents?: CytoscapeEvent[];
-  nodes: {
+  nodes?: {
     [id: string]: NodeConfig;
   };
-  edges: {
+  edges?: {
     [id: string]: EdgeConfig;
   };
   backgroundColor?: string;
