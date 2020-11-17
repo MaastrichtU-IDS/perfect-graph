@@ -1,6 +1,6 @@
 {
   "name": "perfect-graph",
-  "version": "0.0.43",
+  "version": "0.0.44",
   "description": "",
   "main": "node_modules/expo/AppEntry.js",
   "types": "dist/index.d.ts",
@@ -118,7 +118,7 @@
     "unitx": "^0.0.433",
     "unitx-docs": "^0.0.5",
     "unitx-docs-pack": "^0.0.20",
-    "unitx-ui": "^0.0.329",
+    "unitx-ui": "^0.0.330",
     "webpack-bundle-analyzer": "^3.8.0",
     "webpack-merge": "^5.0.9",
     "worker-loader": "^2.0.0"
