@@ -1,7 +1,9 @@
 import { useStateWithCallback } from 'unitx-ui/hooks'
 import { EdgeSingular } from 'cytoscape'
 import React, { useEffect, useMemo, useRef } from 'react'
-import { ElementContext, ElementConfig } from '@type'
+import {
+  EdgeContext, ElementConfig, EdgeElement,
+} from '@type'
 import { mutableGraphMap } from './useGraph'
 import { useElement } from './useElement'
 
@@ -11,13 +13,13 @@ export type Props<T> = {
   source: string;
   target: string;
   graphID: string;
-  onPositionChange?: (c: {element: EdgeSingular; context: ElementContext }) => void;
+  onPositionChange?: (c: {element: EdgeSingular; context: EdgeContext }) => void;
   config?: ElementConfig;
 }
 
 type Result<T> = {
   element: EdgeSingular;
-  context: ElementContext;
+  context: EdgeContext;
 }
 
 export default <T>(props: Props<T>): Result<T> => {
@@ -32,25 +34,45 @@ export default <T>(props: Props<T>): Result<T> => {
   const cy = mutableGraphMap[graphID]
   const [, setState] = useStateWithCallback({}, () => {
   })
-  const contextRef = useRef<ElementContext>({
+  const contextRef = useRef<EdgeContext>({
     render: (callback: () => {}) => {
       setState({}, callback)
     },
-  } as ElementContext)
+    element: null as unknown as EdgeElement,
+  } as EdgeContext)
 
-  const element = useMemo(() => cy!.add({
-    data: {
-      id,
-      source,
-      target,
-      onPositionChange: () => {
-        onPositionChange?.({ element, context: contextRef.current })
+  contextRef.current.element = useMemo(() => {
+    const {
+      current: {
+        element,
       },
-    },
-    group: 'edges',
-  }),
+    } = contextRef
+    if (element) {
+      cy.remove(element)
+    }
+    return cy!.add({
+      data: {
+        id,
+        source,
+        target,
+        onPositionChange: () => {
+        onPositionChange?.({
+          // @ts-ignore
+          element: contextRef.current.element,
+          context: contextRef.current,
+        })
+        },
+      },
+      group: 'edges',
+    })
+  },
   // eslint-disable-next-line react-hooks/exhaustive-deps
   [cy, id, source, target])
+  const {
+    current: {
+      element,
+    },
+  } = contextRef
   useEffect(
     () => {
       element.data(

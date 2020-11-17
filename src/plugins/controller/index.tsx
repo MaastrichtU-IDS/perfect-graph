@@ -25,19 +25,7 @@ GraphEditorProps,
 >
 
 export const useController = (data: GraphData, options: ControllerOptions = {}) => {
-  const ref = React.useRef({
-    initialized: false,
-  })
-  React.useEffect(() => {
-    ref.current.initialized = true
-  }, [])
-  React.useMemo(() => {
-    if (ref.current.initialized) {
-      // @ts-ignore
-      dataController.set(data, { isSilent: true })
-    }
-  }, [data])
-  const [state, update, dataController] = useData<ControllerState, void>({
+  const [state, update] = useData<ControllerState, void>({
     ...data,
     label: {
       global: { nodes: ['id'], edges: ['id'] },
@@ -56,6 +44,8 @@ export const useController = (data: GraphData, options: ControllerOptions = {}) 
     },
     mode: EDITOR_MODE.DEFAULT as EditorMode,
     selectedElement: null as Element | null,
+  }, {
+    deps: [data],
   })
 
   const onEvent = React.useCallback((eventInfo: EventInfo) => {

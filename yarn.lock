@@ -19725,10 +19725,10 @@ stealthy-require@^1.1.1:
   resolved "https://registry.yarnpkg.com/stealthy-require/-/stealthy-require-1.1.1.tgz#35b09875b4ff49f26a777e509b3090a3226bf24b"
   integrity sha1-NbCYdbT/SfJqd35QmzCQoyJr8ks=
 
-store-provider@^0.0.22:
-  version "0.0.22"
-  resolved "https://registry.yarnpkg.com/store-provider/-/store-provider-0.0.22.tgz#f1ba2d4736c457482672f9e1484468c4c56df488"
-  integrity sha512-/eHKReCoS/bfIoBhWMMu/7nFWIbFoKGNAzgFVtGcb1XUpYpTo6ewimlEmgxL11+ytseutoIQ7oqcP6LlNPJN7A==
+store-provider@^0.0.24:
+  version "0.0.24"
+  resolved "https://registry.yarnpkg.com/store-provider/-/store-provider-0.0.24.tgz#3564c41d97231fbfe9f7e1b9c7408c75038e281f"
+  integrity sha512-Zcnwas3wvs6yvHOypZYfjnK1y+SYdp2QIgyAIyJ7Mc+ztwWbUw+qI75JjDOOhItMT+zcOW4l5KRi7WZgfkfLqw==
 
 store2@^2.7.1:
   version "2.12.0"
@@ -21113,10 +21113,10 @@ unitx-docs@^0.0.5:
     ts-to-schema "^2.1.174"
     unitx "^0.0.253"
 
-unitx-ui@^0.0.330:
-  version "0.0.330"
-  resolved "https://registry.yarnpkg.com/unitx-ui/-/unitx-ui-0.0.330.tgz#78b8b07d4d0125a4b7ed5d753847c7f91cf73e1c"
-  integrity sha512-NUl2EV9o7Yr8LG7wNBKzH1HJfBYqdIQGsgkKhnubBDM2EamlQ7W5DB3A87bHnSb0D1Mqow+932ODyA2WeXbiaQ==
+unitx-ui@^0.0.332:
+  version "0.0.332"
+  resolved "https://registry.yarnpkg.com/unitx-ui/-/unitx-ui-0.0.332.tgz#bdc1bebf4da3f0268b09a184c42d727790969462"
+  integrity sha512-jRBOK7q+0lXZUKvUWjokWY9OIW3ZErvThU225shD/K6I9M+xNnKX0hJtPGQRMHRbUsC/DU4ofnD0t/nZKM2Fiw==
   dependencies:
     "@eva-design/eva" "^2.0.0"
     "@eva-design/material" "^2.0.0"
@@ -21198,7 +21198,7 @@ unitx-ui@^0.0.330:
     react-spring "9.0.0-rc.3"
     react-use-gesture "^8.0.0-alpha.2"
     rn-range-slider "^1.3.2"
-    store-provider "^0.0.22"
+    store-provider "^0.0.24"
     use-immer "^0.4.1"
     victory "^34.0.0"
     victory-native "^34.0.0"

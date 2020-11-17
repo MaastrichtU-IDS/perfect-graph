@@ -13,8 +13,17 @@ import GraphLayouts from '@core/layouts'
 
 export type Style = {[k: string]: any}
 export type OnLayout = (event: LayoutChangeEvent) => void
-export type ElementContext = { render: (callback?: () => void) => void }
+export type ElementContext = {
+  render: (callback?: () => void) => void;
+}
 
+export type NodeContext = ElementContext & {
+  element: NodeElement;
+}
+
+export type EdgeContext = ElementContext & {
+  element: EdgeElement;
+}
 export type Event = keyof typeof EVENT
 export type EditorMode = keyof typeof EDITOR_MODE
 
