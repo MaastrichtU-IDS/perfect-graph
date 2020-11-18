@@ -1,6 +1,6 @@
 {
   "name": "perfect-graph",
-  "version": "0.0.49",
+  "version": "0.0.50",
   "description": "",
   "main": "node_modules/expo/AppEntry.js",
   "types": "dist/index.d.ts",
