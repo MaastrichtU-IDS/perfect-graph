@@ -38,3 +38,12 @@ export {
 } from './templates/Profile'
 
 export { GraphProps } from './Graph'
+
+export {
+  drawLine,
+} from './Graphics'
+
+export {
+  GraphEditor,
+  GraphEditorProps,
+} from './GraphEditor'
