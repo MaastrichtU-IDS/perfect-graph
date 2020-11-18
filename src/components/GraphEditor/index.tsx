@@ -10,12 +10,13 @@ import {
   RenderEdge,
   RenderNode,
   Element,
+  GraphEditorRef,
 } from '@type'
 import { getLabel, getSelectedItemByElement } from '@utils'
 import { EDITOR_MODE, EVENT } from '@utils/constants'
 import React from 'react'
 import { View, wrapComponent } from 'unitx-ui'
-import { ForwardRef, Position } from 'unitx-ui/type'
+import { ForwardRef, Position, PropsWithRef } from 'unitx-ui/type'
 import * as R from 'unitx/ramda'
 import ActionBar, { ActionBarProps } from './ActionBar'
 import DataBar, { DataBarProps } from './DataBar'
@@ -39,7 +40,7 @@ export type GraphEditorProps = {
   renderNode?: RenderNode<RenderElementAdditionalInfo>;
 } & Omit<
 GraphProps,
-'config'|'onPress'
+'config'|'onPress' | 'renderNode' | 'renderEdge'
 >
 
 const MODE_ICON_MAP = {
@@ -51,7 +52,7 @@ const MODE_ICON_MAP = {
 }
 const DEFAULT_HANDLER = R.identity as (info: EventInfo) => void
 
-const GraphEditorElement = (props: GraphEditorProps, ref: ForwardRef<typeof Graph>) => {
+const GraphEditorElement = (props: GraphEditorProps, ref: ForwardRef<GraphEditorRef>) => {
   const {
     onEvent = DEFAULT_HANDLER,
     renderEdge,
@@ -225,7 +226,9 @@ const GraphEditorElement = (props: GraphEditorProps, ref: ForwardRef<typeof Grap
  * }
  * ```
  */
-export const GraphEditor = wrapComponent<GraphEditorProps>(
+export const GraphEditor = wrapComponent<
+PropsWithRef<GraphEditorRef, GraphEditorProps>
+>(
   GraphEditorElement,
   {
     isEqual: R.equalsExclude(R.isFunction),

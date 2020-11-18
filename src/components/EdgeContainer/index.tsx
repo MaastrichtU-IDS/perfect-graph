@@ -8,12 +8,12 @@ import { useEdge } from '@hooks'
 import {
   RenderEdge,
   EdgeConfig,
+  DrawLine,
 } from '@type'
 import * as V from 'unitx/vector'
 import Graphics, { drawLine as defaultDrawLine } from '../Graphics'
 import Container from '../Container'
 
-export type DrawLine = (arg: Parameters<RenderEdge>[0] &{ graphics: PIXI.Graphics}) => void
 export type EdgeContainerProps = {
   children: RenderEdge;
   item: any;
@@ -122,6 +122,8 @@ function EdgeContainer(props: EdgeContainerProps, __: ForwardRef<typeof EdgeCont
             element,
             sourceElement,
             targetElement,
+            to,
+            from,
           })
         }
       </Container>

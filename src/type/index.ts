@@ -1,6 +1,6 @@
 import React from 'react'
 import { LayoutChangeEvent } from 'react-native'
-import { EdgeSingular, NodeSingular } from 'cytoscape'
+import { EdgeSingular, NodeSingular, Core } from 'cytoscape'
 import { Position, Enumerable } from 'unitx/type'
 import {
   ELEMENT_TYPE, EVENT, DATA_TYPE, EDITOR_MODE,
@@ -157,3 +157,18 @@ export type EventInfo = {
 }
 
 export type OnEvent = (eventInfo: EventInfo) => void
+
+export type DrawLine = (
+  arg: Parameters<RenderEdge>[0] & {
+    graphics: PIXI.Graphics;
+    to: Position;
+    from: Position;
+  }) => void
+
+export type GraphRef = {
+  cy: Core;
+  app: PIXI.Application;
+}
+
+export type GraphEditorRef = GraphRef & {
+}

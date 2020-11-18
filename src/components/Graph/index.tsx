@@ -11,14 +11,14 @@ import { ViewStyle, View } from 'react-native'
 import { useGraph } from '@hooks'
 import {
   NodeData, EdgeData, RenderEdge, RenderNode,
-  GraphConfig, Element,
+  GraphConfig, Element, DrawLine, GraphRef,
 } from '@type'
-import { ForwardRef } from 'unitx-ui/type'
+import { ForwardRef, PropsWithRef } from 'unitx-ui/type'
 import DataRender from 'unitx-ui/components/DataRender'
 import '@utils/addFlexLayout'
 import Viewport, { ViewportProps } from '../Viewport'
 import NodeContainer from '../NodeContainer'
-import EdgeContainer, { DrawLine } from '../EdgeContainer'
+import EdgeContainer from '../EdgeContainer'
 import ViewPIXI from '../View'
 import Text from '../Text'
 
@@ -54,7 +54,7 @@ export const DefaultRenderEdge: RenderEdge = () => (
 )
 // <ViewPIXI style={{ width: 100, height: 100, backgroundColor: 'blue' }} />
 
-function Graph(props: GraphProps, ref: ForwardRef<typeof Graph>) {
+function Graph(props: GraphProps, ref: ForwardRef<GraphRef>) {
   const {
     style,
     nodes = [],
@@ -67,7 +67,8 @@ function Graph(props: GraphProps, ref: ForwardRef<typeof Graph>) {
     config = {} as Partial<GraphConfig>,
   } = props
   const graphID = React.useMemo<string>(R.uuid, [])
-  const stageRef = useForwardRef(ref)
+
+  const stageRef = React.useRef<{ app: PIXI.Application }>(null)
   const viewportRef = useForwardRef(null)
   const containerRef = React.useRef(null)
   const { cy } = useGraph({
@@ -75,10 +76,14 @@ function Graph(props: GraphProps, ref: ForwardRef<typeof Graph>) {
     onLoad: () => {
     },
   })
+  const graphRef = useForwardRef<GraphRef>(ref, { cy })
   const {
     onLayout, width, height, initialized,
   } = useLayout()
   const graphLayoutRef = React.useRef<cytoscape.Layouts>(null)
+  React.useEffect(() => {
+    graphRef.current.app = stageRef.current?.app!
+  }, [stageRef.current])
   React.useEffect(() => {
     R.when(
       () => initialized && config.layout,
@@ -111,6 +116,7 @@ function Graph(props: GraphProps, ref: ForwardRef<typeof Graph>) {
     [theme.colors.background],
   )
   React.useEffect(() => {
+    // @ts-ignore
     stageRef.current.app.renderer.backgroundColor = backgroundColor
   }, [backgroundColor])
   return (
@@ -120,13 +126,14 @@ function Graph(props: GraphProps, ref: ForwardRef<typeof Graph>) {
       onLayout={onLayout}
     >
       <Stage
+        // @ts-ignore
         ref={stageRef}
         {...{ width, height }}
         options={{
           width,
           height,
-          // resolution: 1,
-          // antialias: true,
+          resolution: 1,
+          antialias: true,
           autoDensity: true,
           backgroundColor,
         }}
@@ -216,7 +223,7 @@ function Graph(props: GraphProps, ref: ForwardRef<typeof Graph>) {
  * }
  * ```
  */
-export default wrapComponent<GraphProps>(
+export default wrapComponent<PropsWithRef<GraphRef, GraphProps>>(
   Graph,
   {
     isForwardRef: true,

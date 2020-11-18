@@ -23,8 +23,15 @@ GraphEditorProps,
 'nodes' | 'edges' | 'mode' | 'selectedElement'
 | 'actionBar' | 'dataBar' | 'filterBar'
 >
+export type UseControllerResult = [
+  Pick<GraphEditorProps, 'nodes' | 'edges' | 'onEvent'>,
+  {}
+]
 
-export const useController = (data: GraphData, options: ControllerOptions = {}) => {
+export const useController = (
+  data: GraphData,
+  options: ControllerOptions = {},
+): UseControllerResult => {
   const [state, update] = useData<ControllerState, void>({
     ...data,
     label: {
