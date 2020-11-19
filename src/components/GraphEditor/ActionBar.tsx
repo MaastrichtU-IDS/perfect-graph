@@ -1,13 +1,18 @@
 import { Event, OnEvent, EditorMode } from '@type'
-import { EDITOR_MODE, EVENT } from '@utils/constants'
+import { EDITOR_MODE, EVENT, LAYOUT_NAMES } from '@utils/constants'
 import React from 'react'
 import { StyleSheet } from 'react-native'
 import {
   Button,
   Icon,
   OverflowMenu,
-  useData, useTheme, View,
+  useData,
+  useTheme, View,
   wrapComponent,
+  Select,
+  SelectItem,
+  IndexPath,
+  MenuItem,
 } from 'unitx-ui'
 import useAnimation, { animated } from 'unitx-ui/hooks/useAnimation'
 
@@ -16,6 +21,7 @@ export type ActionBarProps = {
   opened?: boolean;
   onEvent?: OnEvent;
   mode?: EditorMode;
+  layoutName?: string;
 }
 
 const HEIGHT = 40
@@ -26,6 +32,7 @@ const ActionBar = (props: ActionBarProps) => {
     renderMoreAction,
     mode,
     opened,
+    layoutName,
   } = props
   const {
     props: animatedProps,
@@ -49,9 +56,7 @@ const ActionBar = (props: ActionBarProps) => {
     }
     initialized.current = true
   }, [animationRef, opened])
-  const [, updateState] = useData({
-    morePopupVisible: false,
-  })
+
   const createOnActionCallback = React.useCallback(
     (
       type: Event,
@@ -61,9 +66,10 @@ const ActionBar = (props: ActionBarProps) => {
     [onEvent],
   )
   const theme = useTheme()
-  // React.useEffect(() => {
-  //   animationRef?.current?.start()
-  // }, [])
+  React.useEffect(() => {
+    animationRef?.current?.start()
+  }, [])
+  const selectedLayoutIndex = LAYOUT_NAMES.indexOf(layoutName)
   return (
     <AnimatedSurface
       style={{
@@ -144,39 +150,18 @@ const ActionBar = (props: ActionBarProps) => {
         >
           Delete
         </Button>
-        <OverflowMenu
-          anchor={(anchorProps) => (
-            <Icon
-              {...anchorProps}
-              name="dots-vertical"
-              onPress={() => updateState((draft) => {
-                draft.morePopupVisible = !draft.morePopupVisible
-              })}
-            />
-          )}
-          // visible={visible}
-          // selectedIndex={selectedIndex}
-          // onSelect={onItemSelect}
-          // onBackdropPress={() => setVisible(false)}
+        <Select
+          selectedIndex={new IndexPath(selectedLayoutIndex)}
+          onSelect={(index) => createOnActionCallback(EVENT.LAYOUT_SELECTED, { value: LAYOUT_NAMES[index.row] })()}
+          value={selectedLayoutIndex < 0 ? 'Select Layout' : LAYOUT_NAMES[selectedLayoutIndex]}
         >
-          {renderMoreAction?.()}
-        </OverflowMenu>
-        {/* <Menu
-          visible={state.morePopupVisible}
-          anchor={(
-            <Icon
-              name="dots-horizontal"
-              onPress={() => updateState((draft) => {
-                draft.morePopupVisible = !draft.morePopupVisible
-              })}
-            />
-          )}
-          onDismiss={() => updateState((draft) => {
-            draft.morePopupVisible = !draft.morePopupVisible
-          })}
-        >
-          {renderMoreAction?.()}
-        </Menu> */}
+          {LAYOUT_NAMES.map((name) => (
+            <SelectItem title={name} />
+          ))}
+        </Select>
+        <MoreOptions
+          renderMoreAction={renderMoreAction}
+        />
       </View>
       <Icon
         style={{
@@ -191,7 +176,48 @@ const ActionBar = (props: ActionBarProps) => {
     </AnimatedSurface>
   )
 }
+type MoreOptionsProps = {
 
+} & Pick<ActionBarProps, 'renderMoreAction'>
+
+const MoreOptions = (props: MoreOptionsProps) => {
+  const {
+    renderMoreAction,
+  } = props
+  const [state, setState] = React.useState({
+    visible: false,
+  })
+  return (
+    <OverflowMenu
+      anchor={(anchorProps) => (
+        <Icon
+          {...anchorProps}
+          name="dots-vertical"
+          onPress={() => setState({ ...state, visible: !state.visible })}
+        />
+      )}
+      visible={state.visible}
+          // selectedIndex={selectedIndex}
+      onSelect={(index) => {
+        console.log('itemSelected', index)
+        setState({
+          ...state,
+          visible: false,
+        })
+      }}
+      onBackdropPress={() => {
+        setState({
+          ...state,
+          visible: false,
+        })
+      }}
+    >
+      <MenuItem title="Import" />
+      <MenuItem title="Export" />
+      {renderMoreAction?.()}
+    </OverflowMenu>
+  )
+}
 export default wrapComponent<ActionBarProps>(ActionBar, {})
 
 const styles = StyleSheet.create({

@@ -7,6 +7,7 @@ import { GraphEditorProps } from '@components/GraphEditor'
 import {
   EVENT, ELEMENT_DATA_FIELDS, EDITOR_MODE,
 } from '@utils/constants'
+import GraphLayouts from '@core/layouts'
 import { getSelectedItemByElement } from '@utils'
 import {
   useData,
@@ -51,6 +52,7 @@ export const useController = (
     },
     mode: EDITOR_MODE.DEFAULT as EditorMode,
     selectedElement: null as Element | null,
+    graphConfig: {},
   }, {
     deps: [data],
   })
@@ -66,6 +68,7 @@ export const useController = (
     const isNode = element?.isNode()
     const targetPath = isNode ? 'nodes' : 'edges'
     update((draft) => {
+      console.log('event', eventInfo)
       const isAllowedToProcess = options.onEvent?.(eventInfo, draft)
       if (isAllowedToProcess === false) {
         return
@@ -75,6 +78,7 @@ export const useController = (
         index: itemIndex,
       } = (element && getSelectedItemByElement(element, draft)) ?? {}
       const targetDataList = item?.data!// getSelectedItemByElement(element, draft).data
+
       switch (type) {
         case EVENT.ADD_DATA:
           targetDataList.push({
@@ -222,6 +226,13 @@ export const useController = (
         case EVENT.TOGGLE_ACTION_BAR:
           draft.actionBar!.opened = !draft.actionBar?.opened
           break
+        case EVENT.LAYOUT_SELECTED:
+          draft.graphConfig.layout = GraphLayouts[extraData.value]
+          draft.actionBar.layoutName = extraData.value
+          break
+        case EVENT.IMPORT_DATA:
+          
+          break
           // draft.
         default:
           break
@@ -232,7 +243,7 @@ export const useController = (
     {
       ...state,
       onEvent,
-    } as Pick<GraphEditorProps, 'nodes' | 'edges' | 'onEvent'>,
+    } as Pick<GraphEditorProps, 'nodes' | 'edges' | 'onEvent' | 'graphConfig'>,
     {},
   ]
 }

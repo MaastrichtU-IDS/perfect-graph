@@ -63,9 +63,9 @@ const FilterBar = (props: FilterBarProps) => {
     [onEvent],
   )
   const theme = useTheme()
-  React.useEffect(() => {
-    animationRef?.current?.start()
-  }, [])
+  // React.useEffect(() => {
+  //   animationRef?.current?.start()
+  // }, [])
   return (
     <AnimatedSurface
       style={{

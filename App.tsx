@@ -63,6 +63,7 @@ const AppContainer = () => {
   // })
 
   // useWhyDidUpdate('Heyy', controllerProps)
+  console.log(controllerProps.graphConfig)
   return (
     <ApplicationProvider>
       {/* <App /> */}
@@ -78,6 +79,7 @@ const AppContainer = () => {
           // editable: false
         }}
         graphConfig={{
+          ...controllerProps.graphConfig,
           nodes: {
             '1': {
               position: { x: 10, y: 10 },
@@ -89,7 +91,7 @@ const AppContainer = () => {
               // renderEvents: ['select']
             }
           },
-          layout: Graph.Layouts.cose
+          // layout: Graph.Layouts.cose,
         }}
         renderNode={({ item, label, element })=> (
           // <Sprite
@@ -109,7 +111,6 @@ const AppContainer = () => {
             {/* <Graph.Text>{element.position().x}</Graph.Text> */}
           </Graph.View>
         )}
-        draw
         // onElementSelected={({ item}) => {
         //   console.log('selection',item)
         // }}

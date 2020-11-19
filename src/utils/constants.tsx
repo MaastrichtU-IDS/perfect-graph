@@ -1,5 +1,6 @@
 import React from 'react'
 import { Icon, Text, TouchableOpacity } from 'unitx-ui'
+import Layouts from '@core/layouts'
 
 export const THEME = {
   backgroundColor: '#3287a8',
@@ -39,6 +40,8 @@ export const EVENT = {
   TOGGLE_ACTION_BAR: 'TOGGLE_ACTION_BAR',
   TOGGLE_DATA_BAR: 'TOGGLE_DATA_BAR',
   TOGGLE_FILTER_BAR: 'TOGGLE_FILTER_BAR',
+  LAYOUT_SELECTED: 'LAYOUT_SELECTED',
+  IMPORT_DATA: 'IMPORT_DATA',
 } as const
 
 export const ELEMENT_DATA_FIELDS = {
@@ -115,3 +118,5 @@ export const DATA_TYPE_BY_INDEX = [
   'id',
   'unknown',
 ] as const
+
+export const LAYOUT_NAMES = Object.keys(Layouts)
