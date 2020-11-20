@@ -8,6 +8,7 @@ import MusicGraph from './examples/Music'
 import CaseLawExplorerGraph from './examples/CaseLawExplorer'
 import {useController} from './src/plugins/controller'
 import {getLabel} from './src/utils'
+import { DynamicRender } from './src/components/DynamicRender'
 import { SECOND_FILTER_SCHEMA} from './examples/CaseLawExplorer/constants'
 // import './src/plugins/dataConverter'
 // import './src/plugins/parseContext'
@@ -96,18 +97,43 @@ const AppContainer = () => {
           //   image="https://s3-us-west-2.amazonaws.com/s.cdpn.io/693612/coin.png"
           //   // scale={{ x: 0.5, y: 0.5 }}
           // />
-          <Graph.View style={{
-            width: 100,
-            height: 100,
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderRadius: 50,
-            backgroundColor: element.selected() ? 'red' : 'blue'
-          }}
-          >
-            <Graph.Text>{label}</Graph.Text>
-            {/* <Graph.Text>{element.position().x}</Graph.Text> */}
-          </Graph.View>
+          <DynamicRender 
+           components={Graph}
+            data={[
+              {
+                type: 'View', 
+                props: {
+                  style: {
+                width: 100,
+                height: 100,
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderRadius: 50,
+                backgroundColor: element.selected() ? 'red' : 'blue'
+              },
+            },
+            children: [
+              {
+                type: 'Text', 
+                props: {},
+                children: [{ component: label }]
+              }
+            ]
+            }
+            ]}
+          />
+          // <Graph.View style={{
+          //   width: 100,
+          //   height: 100,
+          //   justifyContent: 'center',
+          //   alignItems: 'center',
+          //   borderRadius: 50,
+          //   backgroundColor: element.selected() ? 'red' : 'blue'
+          // }}
+          // >
+          //   <Graph.Text>{label}</Graph.Text>
+          //   {/* <Graph.Text>{element.position().x}</Graph.Text> */}
+          // </Graph.View>
         )}
         // onElementSelected={({ item}) => {
         //   console.log('selection',item)
