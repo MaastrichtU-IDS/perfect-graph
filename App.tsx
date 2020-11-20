@@ -51,7 +51,28 @@ const AppContainer = () => {
   //        { id: '51', source: '1', target:  '2',  }
   //      ]
   // },)
-  const [controllerProps] = useController(data)
+  const [controllerProps] = useController({
+    ...data,
+    filterBar: {
+      ...SECOND_FILTER_SCHEMA,
+    },
+
+    graphConfig: {
+      nodes: {
+        '1': {
+          position: { x: 10, y: 10 },
+          renderEvents: ['select']
+          // renderEvents: ['select', 'position']
+        },
+        '2': {
+          position: { x: 300, y: 100 },
+          // renderEvents: ['select']
+        }
+      },
+
+      // layout: Graph.Layouts.cose,
+    }
+  })
   // const [data, setData] = React.useState({
   //   nodes: [
   //        { id: 1, position: { x: 10, y: 10 } , data: []},
@@ -63,36 +84,13 @@ const AppContainer = () => {
   // })
 
   // useWhyDidUpdate('Heyy', controllerProps)
-  console.log(controllerProps.graphConfig)
+  console.log(controllerProps)
   return (
     <ApplicationProvider>
       {/* <App /> */}
       <GraphEditor
         style={{ width: '100%', height: '100%'}}
         {...controllerProps}
-        filterBar={{
-          ...controllerProps.filterBar,
-          ...SECOND_FILTER_SCHEMA,
-        }}
-        dataBar={{
-          ...controllerProps.dataBar,
-          // editable: false
-        }}
-        graphConfig={{
-          ...controllerProps.graphConfig,
-          nodes: {
-            '1': {
-              position: { x: 10, y: 10 },
-              renderEvents: ['select']
-              // renderEvents: ['select', 'position']
-            },
-            '2': {
-              position: { x: 300, y: 100 },
-              // renderEvents: ['select']
-            }
-          },
-          // layout: Graph.Layouts.cose,
-        }}
         renderNode={({ item, label, element })=> (
           // <Sprite
           //   image="https://s3-us-west-2.amazonaws.com/s.cdpn.io/693612/coin.png"

@@ -18,6 +18,8 @@ import {
 } from 'unitx-ui'
 import useAnimation, { animated } from 'unitx-ui/hooks/useAnimation'
 import Recorder from 'unitx-ui/components/Recorder'
+import { DocumentPicker } from 'unitx-ui/@/DocumentPicker'
+import { readTextFile } from '@utils'
 
 export type ActionBarProps = {
   renderMoreAction?: () => React.ReactElement;
@@ -228,6 +230,7 @@ const ActionBar = (props: ActionBarProps) => {
         />
         <MoreOptions
           renderMoreAction={renderMoreAction}
+          createOnActionCallback={createOnActionCallback}
         />
       </View>
       <Icon
@@ -245,12 +248,20 @@ const ActionBar = (props: ActionBarProps) => {
   )
 }
 type MoreOptionsProps = {
-
+  createOnActionCallback: (
+    type: Event,
+    extraData?: any,
+  ) => () => void;
 } & Pick<ActionBarProps, 'renderMoreAction'>
 
+const OPTIONS = {
+  Import: 'Import',
+  Export: 'Export',
+} as const
 const MoreOptions = (props: MoreOptionsProps) => {
   const {
     renderMoreAction,
+    createOnActionCallback,
   } = props
   const [state, setState] = React.useState({
     visible: false,
@@ -266,11 +277,31 @@ const MoreOptions = (props: MoreOptionsProps) => {
       )}
       visible={state.visible}
           // selectedIndex={selectedIndex}
-      onSelect={(index) => {
+      onSelect={async (indexPath) => {
         setState({
           ...state,
           visible: false,
         })
+        const action = Object.values(OPTIONS)[indexPath.row]
+        switch (action) {
+          case OPTIONS.Import: {
+            const result = await DocumentPicker.getDocumentAsync({ type: 'application/json' })
+            if (result.type === 'success') {
+              const fileText = await readTextFile(result.file)
+              createOnActionCallback(
+                EVENT.IMPORT_DATA,
+                { value: JSON.parse(fileText) },
+              )()
+            }
+            break
+          }
+          case OPTIONS.Export:
+            createOnActionCallback(EVENT.EXPORT_DATA)()
+            break
+
+          default:
+            break
+        }
       }}
       onBackdropPress={() => {
         setState({
@@ -279,8 +310,9 @@ const MoreOptions = (props: MoreOptionsProps) => {
         })
       }}
     >
-      <MenuItem title="Import" />
-      <MenuItem title="Export" />
+      {Object.values(OPTIONS).map((title) => (
+        <MenuItem title={title} />
+      ))}
       {renderMoreAction?.()}
     </OverflowMenu>
   )

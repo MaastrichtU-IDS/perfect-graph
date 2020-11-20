@@ -1,6 +1,7 @@
 import React from 'react'
 import {
-  GraphData, Element, EditorMode, GraphLabelData, RDFType,
+  Element, EditorMode, 
+  GraphLabelData, RDFType,
   DataItem, EventInfo,
 } from '@type'
 import { GraphEditorProps } from '@components/GraphEditor'
@@ -16,7 +17,7 @@ import { download } from 'unitx-ui/utils'
 import * as R from 'unitx/ramda'
 
 type ControllerOptions = {
-  onEvent?: (info: EventInfo, draft: ControllerState) => boolean;
+  // onEvent?: (info: EventInfo, draft: ControllerState) => boolean;
 }
 type ControllerState = {
   label: GraphLabelData;
@@ -25,38 +26,38 @@ GraphEditorProps,
 'nodes' | 'edges' | 'mode' | 'selectedElement'
 | 'actionBar' | 'dataBar' | 'filterBar'
 >
+
+type UseControllerData = Pick<
+GraphEditorProps,
+'nodes'| 'edges' | 'mode'
+| 'actionBar' | 'dataBar' | 'filterBar'
+| 'graphConfig'
+> & {
+  onEvent?: (info: EventInfo, draft: ControllerState) => boolean;
+}
+
 export type UseControllerResult = [
-  Pick<GraphEditorProps, 'nodes' | 'edges' | 'onEvent'>,
+  UseControllerData,
   {}
 ]
 
 export const useController = (
-  data: GraphData,
+  useControllerData: UseControllerData,
   options: ControllerOptions = {},
 ): UseControllerResult => {
-  const [state, update] = useData<ControllerState, void>({
-    ...data,
-    label: {
-      global: { nodes: ['id'], edges: ['id'] },
-      nodes: {},
-      edges: {},
-      isGlobalFirst: false,
-    } as GraphLabelData,
-    actionBar: {
-      opened: false,
+  const controllerConfig: UseControllerData = React.useMemo<UseControllerData>(
+    () => R.mergeDeepAll([
+      controllerConfig ?? DEFAULT_CONTROLLER_CONFIG,
+      R.omit(['onEvent'], useControllerData),
+    ]) as UseControllerData, [useControllerData],
+  )
+  const [state, update] = useData<ControllerState, void>(
+    // @ts-ignore
+    controllerConfig,
+    {
+      // deps: [useControllerData],
     },
-    dataBar: {
-      opened: false,
-    },
-    filterBar: {
-      opened: false,
-    },
-    mode: EDITOR_MODE.DEFAULT as EditorMode,
-    selectedElement: null as Element | null,
-    graphConfig: {},
-  }, {
-    deps: [data],
-  })
+  )
 
   const onEvent = React.useCallback((eventInfo: EventInfo) => {
     const {
@@ -70,7 +71,7 @@ export const useController = (
     const targetPath = isNode ? 'nodes' : 'edges'
     update((draft) => {
       console.log('event', eventInfo)
-      const isAllowedToProcess = options.onEvent?.(eventInfo, draft)
+      const isAllowedToProcess = controllerConfig.onEvent?.(eventInfo, draft)
       if (isAllowedToProcess === false) {
         return
       }
@@ -232,17 +233,16 @@ export const useController = (
           draft.actionBar.layoutName = extraData.value
           break
         case EVENT.IMPORT_DATA:
-
+          
           break
         case EVENT.EXPORT_DATA:
-          // download(JSON.stringify(value))
+          download(JSON.stringify(draft), 'perfect-graph.json')
           break
         case EVENT.TOGGLE_RECORD:
           draft.actionBar.recording = !draft.actionBar?.recording
           break
         case EVENT.RECORD_FINISHED:
-          console.log(eventInfo)
-          download(eventInfo.extraData.value, 'video/mp4')
+          download(eventInfo.extraData.value, 'perfect-graph.mp4')
           break
           // draft.
         default:
@@ -260,6 +260,27 @@ export const useController = (
 }
 
 const getValueByType = (type: RDFType, value: string) => value
+
+const DEFAULT_CONTROLLER_CONFIG = {
+  label: {
+    global: { nodes: ['id'], edges: ['id'] },
+    nodes: {},
+    edges: {},
+    isGlobalFirst: false,
+  } as GraphLabelData,
+  actionBar: {
+    opened: false,
+  },
+  dataBar: {
+    opened: false,
+  },
+  filterBar: {
+    opened: false,
+  },
+  mode: EDITOR_MODE.DEFAULT as EditorMode,
+  selectedElement: null as Element | null,
+  graphConfig: {},
+}
 // if (type === DATA_TYPE.number) {
 //   try {
 //     return Number.parseFloat(value)
