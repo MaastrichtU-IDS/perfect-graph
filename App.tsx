@@ -41,38 +41,29 @@ const data = {
   edges: new Array(COUNT - 1).fill(0).map((_,index) => (
     { id: `edge:${index}`, source: `${index}`,  target: `${index+1}`,  data: [{ name: 'foaf:name', value: ['ts','saba'], additional: []}]}
   )),
-}
-const AppContainer = () => {
-  // const [controllerProps] = useController({
-  //   nodes: [
-  //        { id: '1',  data: [{ name: 'foaf:name', value: ['ts','saba'], additional: []}]},
-  //        { id: '2' , data: []},
-  //      ],
-  //   edges: [
-  //        { id: '51', source: '1', target:  '2',  }
-  //      ]
-  // },)
-  const [controllerProps] = useController({
-    ...data,
-    filterBar: {
-      ...SECOND_FILTER_SCHEMA,
+  filterBar: {
+    ...SECOND_FILTER_SCHEMA,
+  },
+  graphConfig: {
+    nodes: {
+      '1': {
+        position: { x: 10, y: 10 },
+        renderEvents: ['select']
+        // renderEvents: ['select', 'position']
+      },
+      '2': {
+        position: { x: 300, y: 100 },
+        // renderEvents: ['select']
+      }
     },
 
-    graphConfig: {
-      nodes: {
-        '1': {
-          position: { x: 10, y: 10 },
-          renderEvents: ['select']
-          // renderEvents: ['select', 'position']
-        },
-        '2': {
-          position: { x: 300, y: 100 },
-          // renderEvents: ['select']
-        }
-      },
-
-      // layout: Graph.Layouts.cose,
-    }
+    // layout: Graph.Layouts.cose,
+  }
+}
+const AppContainer = () => {
+  const [controllerProps] = useController({
+    // ...PROFILE_GRAPH,
+    ...data
   })
   // const [data, setData] = React.useState({
   //   nodes: [
@@ -92,49 +83,58 @@ const AppContainer = () => {
       <GraphEditor
         style={{ width: '100%', height: '100%'}}
         {...controllerProps}
-        renderNode={({ item, label, element })=> (
-          // <Sprite
-          //   image="https://s3-us-west-2.amazonaws.com/s.cdpn.io/693612/coin.png"
-          //   // scale={{ x: 0.5, y: 0.5 }}
-          // />
-          <DynamicRender 
-           components={Graph}
-            data={[
-              {
-                type: 'View', 
-                props: {
-                  style: {
-                width: 100,
-                height: 100,
-                justifyContent: 'center',
-                alignItems: 'center',
-                borderRadius: 50,
-                backgroundColor: element.selected() ? 'red' : 'blue'
-              },
-            },
-            children: [
-              {
-                type: 'Text', 
-                props: {},
-                children: [{ component: label }]
-              }
-            ]
-            }
-            ]}
-          />
-          // <Graph.View style={{
-          //   width: 100,
-          //   height: 100,
-          //   justifyContent: 'center',
-          //   alignItems: 'center',
-          //   borderRadius: 50,
-          //   backgroundColor: element.selected() ? 'red' : 'blue'
-          // }}
-          // >
-          //   <Graph.Text>{label}</Graph.Text>
-          //   {/* <Graph.Text>{element.position().x}</Graph.Text> */}
-          // </Graph.View>
-        )}
+        renderNode={({ item, label, element })=> {
+          // const itemDataMap = R.
+          return (
+            // <Sprite
+            //   image="https://s3-us-west-2.amazonaws.com/s.cdpn.io/693612/coin.png"
+            //   // scale={{ x: 0.5, y: 0.5 }}
+            // />
+            // <DynamicRender 
+            //  components={Graph}
+            //   data={[
+            //     {
+            //       type: 'View', 
+            //       props: {
+            //         style: {
+            //       width: 300,
+            //       height: 100,
+            //       justifyContent: 'center',
+            //       alignItems: 'center',
+            //       borderRadius: 50,
+            //       backgroundColor: element.selected() ? 'red' : 'blue'
+            //     },
+            //   },
+            //   children: [
+            //     {
+            //       type: 'Text', 
+            //       props: {},
+            //       children: [{ component: label }]
+            //     }
+            //   ]
+            //   }
+            //   // {
+            //   //   type: 'ProfileTemplate',
+            //   //   props: {
+            //   //     image: item.data
+            //   //   }
+            //   // }
+            //   ]}
+            // />
+            <Graph.View style={{
+              width: 100,
+              height: 100,
+              justifyContent: 'center',
+              alignItems: 'center',
+              borderRadius: 50,
+              // backgroundColor: element.selected() ? 'red' : 'blue'
+            }}
+            >
+              <Graph.Text>{label}</Graph.Text>
+              {/* <Graph.Text>{element.position().x}</Graph.Text> */}
+            </Graph.View>
+          )
+        }}
         // onElementSelected={({ item}) => {
         //   console.log('selection',item)
         // }}
@@ -164,27 +164,51 @@ export default ({ skipLoadingScreen }: Props) => {
   )
 }
 
+const PROFILE_GRAPH = {
+  nodes: [
+    {
+      id: '1',
+      data: [
+        {
+          name: 'name',
+          value: ['Maastricht']
+        },
+        {
+          name: 'image',
+          value: ['https://images.pexels.com/photos/105599/pexels-photo-105599.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500']
+        },
+        {
+          name: 'story',
+          value: ['Maastricht, a university city on the southern tip of the Netherlands, is distinguished by its medieval-era architecture and vibrant cultural scene.']
+        },
+      ]
+    },
+    {
+      id: '2',
+      data: [
+        {
+          name: 'name',
+          value: ['Amsterdam']
+        },
+        {
+          name: 'image',
+          value: ['https://images.pexels.com/photos/2031706/pexels-photo-2031706.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500']
+        },
+        {
+          name: 'story',
+          value: ['Amsterdam is the Netherlands’ capital, known for its artistic heritage, elaborate canal system and narrow houses with gabled facades.']
+        },
+      ]
+    }
+  ],
+  edges: [
+    { id: '51', source: '1', target: '2' }
+  ],
+  graphConfig: {
+    nodes: {
+      '1': { position: { x: 100, y: 100} },
+      '2': { position: { x: 500, y: 500} },
+    },
+  }
+}
 
-// const AppContainer = () => {
-//   const applicationRef = React.useRef(null)
-//   const _ = React.useEffect(() => {
-//     sender.idle.INITIALIZE({
-//       navigationRef: R.path(['current', 'navigation'])(applicationRef),
-//     })
-//   },
-//   [])
-//   const appSettings = useSelector(({ settings }) => ({
-//     theme: settings.theme,
-//     designSystem: settings.designSystem,
-//     isLoading: settings.initialized,
-//   }))
-//   return (
-//     // <Storybook/>
-//     <Application
-//       ApplicationContainer={{
-//         ref: applicationRef,
-//         ...appSettings,
-//       }}
-//     />
-//   )
-// }

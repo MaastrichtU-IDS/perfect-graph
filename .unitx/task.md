@@ -18,6 +18,9 @@
   
 - Large Graph Example
 - Hover Label FontSize scale with zoom
+- Add Animation time of the layout
+- Change mouse indicator as mode icon
+- Record Actions (JSON-patch by time)
 <!-- - Change selectedNodeStyle and Connected Edges -->
 <!-- - Add unspecified type for NewTripleItem -->
 <!-- - Triple Mode Add - Delete -->
