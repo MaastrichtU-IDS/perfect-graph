@@ -1,4 +1,6 @@
-import { Event, OnEvent, EditorMode } from '@type'
+import {
+  Event, OnEvent, EditorMode, GraphEditorRef,
+} from '@type'
 import { EDITOR_MODE, EVENT, LAYOUT_NAMES } from '@utils/constants'
 import React from 'react'
 import { StyleSheet } from 'react-native'
@@ -6,8 +8,8 @@ import {
   Button,
   Icon,
   OverflowMenu,
-  useData,
-  useTheme, View,
+  useTheme,
+  View,
   wrapComponent,
   Select,
   SelectItem,
@@ -15,6 +17,7 @@ import {
   MenuItem,
 } from 'unitx-ui'
 import useAnimation, { animated } from 'unitx-ui/hooks/useAnimation'
+import Recorder from 'unitx-ui/components/Recorder'
 
 export type ActionBarProps = {
   renderMoreAction?: () => React.ReactElement;
@@ -22,6 +25,14 @@ export type ActionBarProps = {
   onEvent?: OnEvent;
   mode?: EditorMode;
   layoutName?: string;
+  recording?: boolean;
+  graphEditorRef: React.MutableRefObject<GraphEditorRef>;
+}
+const RECORDING_STATUS_MAP = {
+  START: 'START',
+  STOP: 'STOP',
+  RECORDING: 'RECORDING',
+  IDLE: 'IDLE',
 }
 
 const HEIGHT = 40
@@ -33,6 +44,8 @@ const ActionBar = (props: ActionBarProps) => {
     mode,
     opened,
     layoutName,
+    recording = false,
+    graphEditorRef,
   } = props
   const {
     props: animatedProps,
@@ -66,10 +79,33 @@ const ActionBar = (props: ActionBarProps) => {
     [onEvent],
   )
   const theme = useTheme()
+
+  const selectedLayoutIndex = LAYOUT_NAMES.indexOf(layoutName)
+  const recordingRef = React.useRef(
+    RECORDING_STATUS_MAP.IDLE,
+  )
+  React.useMemo(() => {
+    switch (recordingRef.current) {
+      case RECORDING_STATUS_MAP.IDLE:
+        recordingRef.current = recording ? RECORDING_STATUS_MAP.START : RECORDING_STATUS_MAP.IDLE
+        break
+      case RECORDING_STATUS_MAP.START:
+        recordingRef.current = recording ? RECORDING_STATUS_MAP.RECORDING : RECORDING_STATUS_MAP.STOP
+        break
+      case RECORDING_STATUS_MAP.RECORDING:
+        recordingRef.current = recording ? RECORDING_STATUS_MAP.RECORDING : RECORDING_STATUS_MAP.STOP
+        break
+      case RECORDING_STATUS_MAP.STOP:
+        recordingRef.current = recording ? RECORDING_STATUS_MAP.START : RECORDING_STATUS_MAP.IDLE
+        break
+
+      default:
+        break
+    }
+  }, [recording])
   React.useEffect(() => {
     animationRef?.current?.start()
   }, [])
-  const selectedLayoutIndex = LAYOUT_NAMES.indexOf(layoutName)
   return (
     <AnimatedSurface
       style={{
@@ -159,6 +195,37 @@ const ActionBar = (props: ActionBarProps) => {
             <SelectItem title={name} />
           ))}
         </Select>
+        <Recorder
+          getStream={() => graphEditorRef.current.app.renderer.view.captureStream(25)}
+          render={({
+            startRecording,
+            stopRecording,
+            status,
+          }) => {
+            if (recordingRef.current === RECORDING_STATUS_MAP.START) {
+              recordingRef.current = RECORDING_STATUS_MAP.RECORDING
+              startRecording()
+            }
+            if (recordingRef.current === RECORDING_STATUS_MAP.STOP) {
+              recordingRef.current = RECORDING_STATUS_MAP.IDLE
+              stopRecording()
+            }
+            return (
+              <Icon
+                name="record-rec"
+                color={status !== 'recording' ? 'black' : 'red'}
+                size={32}
+                onPress={createOnActionCallback(EVENT.TOGGLE_RECORD)}
+              />
+            )
+          }}
+          onStop={(_, blob) => {
+            createOnActionCallback(
+              EVENT.RECORD_FINISHED,
+              { value: blob },
+            )()
+          }}
+        />
         <MoreOptions
           renderMoreAction={renderMoreAction}
         />
@@ -173,6 +240,7 @@ const ActionBar = (props: ActionBarProps) => {
         size={24}
         onPress={createOnActionCallback(EVENT.TOGGLE_ACTION_BAR)}
       />
+
     </AnimatedSurface>
   )
 }
@@ -199,7 +267,6 @@ const MoreOptions = (props: MoreOptionsProps) => {
       visible={state.visible}
           // selectedIndex={selectedIndex}
       onSelect={(index) => {
-        console.log('itemSelected', index)
         setState({
           ...state,
           visible: false,

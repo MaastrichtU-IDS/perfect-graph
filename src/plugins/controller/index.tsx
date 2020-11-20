@@ -12,6 +12,7 @@ import { getSelectedItemByElement } from '@utils'
 import {
   useData,
 } from 'unitx-ui'
+import { download } from 'unitx-ui/utils'
 import * as R from 'unitx/ramda'
 
 type ControllerOptions = {
@@ -231,7 +232,17 @@ export const useController = (
           draft.actionBar.layoutName = extraData.value
           break
         case EVENT.IMPORT_DATA:
-          
+
+          break
+        case EVENT.EXPORT_DATA:
+          // download(JSON.stringify(value))
+          break
+        case EVENT.TOGGLE_RECORD:
+          draft.actionBar.recording = !draft.actionBar?.recording
+          break
+        case EVENT.RECORD_FINISHED:
+          console.log(eventInfo)
+          download(eventInfo.extraData.value, 'video/mp4')
           break
           // draft.
         default:

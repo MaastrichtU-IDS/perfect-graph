@@ -15,7 +15,7 @@ import {
 import { getLabel, getSelectedItemByElement } from '@utils'
 import { EDITOR_MODE, EVENT } from '@utils/constants'
 import React from 'react'
-import { View, wrapComponent } from 'unitx-ui'
+import { View, wrapComponent, useForwardRef } from 'unitx-ui'
 import { ForwardRef, Position, PropsWithRef } from 'unitx-ui/type'
 import * as R from 'unitx/ramda'
 import ActionBar, { ActionBarProps } from './ActionBar'
@@ -33,7 +33,7 @@ export type GraphEditorProps = {
   label?: GraphLabelData;
   filterBar?: FilterBarProps;
   dataBar?: Pick<DataBarProps, 'editable'| 'opened'>;
-  actionBar?: Pick<ActionBarProps, 'renderMoreAction'|'opened'>;
+  actionBar?: Pick<ActionBarProps, 'renderMoreAction' | 'opened' | 'recording'>;
   selectedElement?: Element | null;
   mode?: EditorMode;
   renderEdge?: RenderEdge<RenderElementAdditionalInfo>;
@@ -69,6 +69,7 @@ const GraphEditorElement = (props: GraphEditorProps, ref: ForwardRef<GraphEditor
     mode = EDITOR_MODE.DEFAULT,
     ...rest
   } = props
+  const graphEditorRef = useForwardRef(ref)
   const onPress = React.useCallback(({ position }: { position: Position}) => {
     // @ts-ignore
     onEvent({
@@ -104,7 +105,7 @@ const GraphEditorElement = (props: GraphEditorProps, ref: ForwardRef<GraphEditor
     >
       <Graph
         // @ts-ignore
-        ref={ref}
+        ref={graphEditorRef}
         style={{
           width: '100%',
           height: '100%',
@@ -187,6 +188,7 @@ const GraphEditorElement = (props: GraphEditorProps, ref: ForwardRef<GraphEditor
         actionBar && (
         <ActionBar
           onEvent={onEvent}
+          graphEditorRef={graphEditorRef}
           mode={mode}
           {...actionBar}
         />
