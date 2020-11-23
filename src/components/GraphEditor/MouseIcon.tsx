@@ -5,10 +5,12 @@ import { fromEvent } from 'unitx/rxjs'
 
 export type MouseIconProps = {
   name?: string|null;
+  cursor?: boolean;
 }
 export const MouseIcon = (props: MouseIconProps) => {
   const {
     name,
+    cursor = false,
   } = props
   const [state, update] = useData({
     x: 0,
@@ -16,14 +18,22 @@ export const MouseIcon = (props: MouseIconProps) => {
   })
   useSubscription(() => fromEvent<MouseEvent>(document, 'mousemove').subscribe(
     (event) => {
+      if (cursor) {
+        return
+      }
       update((draft) => {
         draft.x = event.clientX + 30
         draft.y = event.clientY + 30
       })
     },
-  ), [])
+  ), [cursor])
+  React.useEffect(() => {
+    if (cursor) {
+      document.body.style.cursor = `url(${name}), auto`
+    }
+  }, [cursor, name])
   return (
-    name
+    name && !cursor
       ? (
         <Icon
           name={name}

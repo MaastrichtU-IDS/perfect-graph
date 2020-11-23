@@ -67,7 +67,6 @@ function Graph(props: GraphProps, ref: ForwardRef<GraphRef>) {
     config = {} as Partial<GraphConfig>,
   } = props
   const graphID = React.useMemo<string>(R.uuid, [])
-
   const stageRef = React.useRef<{ app: PIXI.Application }>(null)
   const viewportRef = useForwardRef(null)
   const containerRef = React.useRef(null)

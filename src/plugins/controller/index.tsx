@@ -1,6 +1,6 @@
 import React from 'react'
 import {
-  Element, EditorMode, 
+  Element, EditorMode,
   GraphLabelData, RDFType,
   DataItem, EventInfo,
 } from '@type'
@@ -25,6 +25,7 @@ type ControllerState = {
 GraphEditorProps,
 'nodes' | 'edges' | 'mode' | 'selectedElement'
 | 'actionBar' | 'dataBar' | 'filterBar'
+| 'graphConfig'
 >
 
 type UseControllerData = Pick<
@@ -70,7 +71,7 @@ export const useController = (
     const isNode = element?.isNode()
     const targetPath = isNode ? 'nodes' : 'edges'
     update((draft) => {
-      console.log('event', eventInfo)
+      // console.log('event', eventInfo)
       const isAllowedToProcess = controllerConfig.onEvent?.(eventInfo, draft)
       if (isAllowedToProcess === false) {
         return
@@ -228,12 +229,8 @@ export const useController = (
         case EVENT.TOGGLE_ACTION_BAR:
           draft.actionBar!.opened = !draft.actionBar?.opened
           break
-        case EVENT.LAYOUT_SELECTED:
-          draft.graphConfig.layout = GraphLayouts[extraData.value]
-          draft.actionBar.layoutName = extraData.value
-          break
         case EVENT.IMPORT_DATA:
-          
+
           break
         case EVENT.EXPORT_DATA:
           download(JSON.stringify(draft), 'perfect-graph.json')
@@ -244,7 +241,18 @@ export const useController = (
         case EVENT.RECORD_FINISHED:
           download(eventInfo.extraData.value, 'perfect-graph.mp4')
           break
-          // draft.
+        case EVENT.LAYOUT_SELECTED: {
+          const animationDuration = draft.graphConfig.layout?.animationDuration ?? 5000
+          draft.graphConfig.layout = GraphLayouts[extraData.value]
+          draft.graphConfig.layout.animationDuration = animationDuration
+          break
+        }
+        case EVENT.LAYOUT_ANIMATION_DURATION_CHANGED: {
+          if (draft.graphConfig?.layout) {
+            draft.graphConfig.layout.animationDuration = eventInfo.extraData.value
+          }
+          break
+        }
         default:
           break
       }

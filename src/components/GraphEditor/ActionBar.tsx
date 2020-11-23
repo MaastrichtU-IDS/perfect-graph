@@ -1,25 +1,24 @@
 import {
-  Event, OnEvent, EditorMode, GraphEditorRef,
+  EditorMode, Event,
+  GraphConfig, GraphEditorRef, OnEvent,
 } from '@type'
+import { readTextFile } from '@utils'
 import { EDITOR_MODE, EVENT, LAYOUT_NAMES } from '@utils/constants'
 import React from 'react'
 import { StyleSheet } from 'react-native'
 import {
   Button,
-  Icon,
-  OverflowMenu,
-  useTheme,
+  Divider, Icon,
+  MenuItem, OverflowMenu,
+  Popover, SelectItem,
+  Slider,
+  Text, useTheme,
   View,
   wrapComponent,
-  Select,
-  SelectItem,
-  IndexPath,
-  MenuItem,
 } from 'unitx-ui'
-import useAnimation, { animated } from 'unitx-ui/hooks/useAnimation'
-import Recorder from 'unitx-ui/components/Recorder'
 import { DocumentPicker } from 'unitx-ui/@/DocumentPicker'
-import { readTextFile } from '@utils'
+import Recorder from 'unitx-ui/components/Recorder'
+import useAnimation, { animated } from 'unitx-ui/hooks/useAnimation'
 
 export type ActionBarProps = {
   renderMoreAction?: () => React.ReactElement;
@@ -29,6 +28,8 @@ export type ActionBarProps = {
   layoutName?: string;
   recording?: boolean;
   graphEditorRef: React.MutableRefObject<GraphEditorRef>;
+  // layout?: LayoutOptionsValue;
+  graphConfig: GraphConfig;
 }
 const RECORDING_STATUS_MAP = {
   START: 'START',
@@ -39,15 +40,22 @@ const RECORDING_STATUS_MAP = {
 
 const HEIGHT = 40
 const AnimatedSurface = animated(View)
+
+type CreateActionCallback = (
+  type: Event,
+  extraData?: any,
+) => () => void
+
 const ActionBar = (props: ActionBarProps) => {
   const {
     onEvent,
     renderMoreAction,
     mode,
     opened,
-    layoutName,
     recording = false,
+    // recordingActions = false,
     graphEditorRef,
+    graphConfig,
   } = props
   const {
     props: animatedProps,
@@ -82,7 +90,6 @@ const ActionBar = (props: ActionBarProps) => {
   )
   const theme = useTheme()
 
-  const selectedLayoutIndex = LAYOUT_NAMES.indexOf(layoutName)
   const recordingRef = React.useRef(
     RECORDING_STATUS_MAP.IDLE,
   )
@@ -188,15 +195,15 @@ const ActionBar = (props: ActionBarProps) => {
         >
           Delete
         </Button>
-        <Select
-          selectedIndex={new IndexPath(selectedLayoutIndex)}
-          onSelect={(index) => createOnActionCallback(EVENT.LAYOUT_SELECTED, { value: LAYOUT_NAMES[index.row] })()}
-          value={selectedLayoutIndex < 0 ? 'Select Layout' : LAYOUT_NAMES[selectedLayoutIndex]}
-        >
-          {LAYOUT_NAMES.map((name) => (
-            <SelectItem title={name} />
-          ))}
-        </Select>
+        <LayoutOptions
+          layout={graphConfig.layout}
+          createOnActionCallback={createOnActionCallback}
+        />
+        {/* <Icon
+          name="playlist-play"
+          color={recordingActions ? 'red' : 'black'}
+          onPress={createOnActionCallback(EVENT.TOGGLE_RECORD_ACTIONS)}
+        /> */}
         <Recorder
           getStream={() => graphEditorRef.current.app.renderer.view.captureStream(25)}
           render={({
@@ -316,6 +323,103 @@ const MoreOptions = (props: MoreOptionsProps) => {
       {renderMoreAction?.()}
     </OverflowMenu>
   )
+}
+
+type LayoutOptionsValue = {
+  name?: string;
+  animationDuration?: number;
+}
+type LayoutOptionsProps = {
+  createOnActionCallback: CreateActionCallback;
+  layout?: LayoutOptionsValue;
+}
+const LayoutOptions = (props: LayoutOptionsProps) => {
+  const {
+    layout = {},
+    createOnActionCallback,
+  } = props
+  const [state, setState] = React.useState({
+    visible: false,
+  })
+  const onItemSelect = React.useCallback((layoutName: string) => {
+    setState({
+      ...state,
+      visible: false,
+    })
+    createOnActionCallback(
+      EVENT.LAYOUT_SELECTED,
+      {
+        value: layoutName,
+      },
+    )()
+  }, [setState, createOnActionCallback])
+  const animationDuration = layout.animationDuration ?? 5000
+  return (
+    <Popover
+      anchor={(anchorProps) => (
+        <View {...anchorProps}>
+          <SelectItem
+            title={layout.name ?? 'Select Layout'}
+            onPress={() => setState({ ...state, visible: !state.visible })}
+          />
+        </View>
+      )}
+      visible={state.visible}
+      onBackdropPress={() => setState({ ...state, visible: false })}
+    >
+      <View>
+        <View>
+          <Text>{Math.floor(animationDuration)}</Text>
+          <Slider
+            value={animationDuration}
+            minimumValue={0}
+            maximumValue={10000}
+            onSlidingComplete={(animationDuration) => createOnActionCallback(
+              EVENT.LAYOUT_ANIMATION_DURATION_CHANGED,
+              {
+                value: animationDuration,
+              },
+            )()}
+          />
+          <Divider />
+        </View>
+        {LAYOUT_NAMES.map((name) => (
+          <SelectItem
+            title={name}
+            onPress={() => onItemSelect(name)}
+            selected={layout.name === name}
+          />
+        ))}
+      </View>
+    </Popover>
+  )
+  // return (
+  //   <Select
+  //     selectedIndex={new IndexPath(selectedLayoutIndex)}
+  //     onSelect={(index) => }
+  // value={selectedLayoutIndex < 0
+  //   ? 'Select Layout'
+  //   : LAYOUT_NAMES[selectedLayoutIndex]}
+  //   >
+  //     <Card>
+  //         <Text>{layout.animationDuration ?? 5000}</Text>
+  //         <Slider
+  //           value={layout.animationDuration}
+  //           minimumValue={0}
+  //           maximumValue={10000}
+  //           onSlidingComplete={(animationDuration) => createOnActionCallback(
+  //             EVENT.LAYOUT_ANIMATION_DURATION_CHANGED,
+  //             {
+  //               value: animationDuration,
+  //             },
+  //           )()}
+  //         />
+  //     </Card>
+  //     {LAYOUT_NAMES.map((name) => (
+  //       <SelectItem title={name} />
+  //     ))}
+  //   </Select>
+  // )
 }
 export default wrapComponent<ActionBarProps>(ActionBar, {})
 

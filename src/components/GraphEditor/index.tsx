@@ -50,6 +50,16 @@ const MODE_ICON_MAP = {
   [EDITOR_MODE.CONTINUES_DELETE]: 'minus-circle-outline',
   [EDITOR_MODE.DEFAULT]: null,
 }
+
+const MODE_ICON_SCALE = 0.8
+const MODE_ICON_MAP_BY_URL = {
+  [EDITOR_MODE.ADD]: `https://img.icons8.com/material/${MODE_ICON_SCALE}x/plus-math.png`,
+  [EDITOR_MODE.DELETE]: `https://img.icons8.com/material/${MODE_ICON_SCALE}x/minus--v2.png`,
+  [EDITOR_MODE.CONTINUES_ADD]: `https://img.icons8.com/material/${MODE_ICON_SCALE}x/plus.png`,
+  [EDITOR_MODE.CONTINUES_DELETE]: `https://img.icons8.com/material/${MODE_ICON_SCALE}x/minus-sign.png`,
+  [EDITOR_MODE.DEFAULT]: null,
+}
+
 const DEFAULT_HANDLER = R.identity as (info: EventInfo) => void
 
 const GraphEditorElement = (props: GraphEditorProps, ref: ForwardRef<GraphEditorRef>) => {
@@ -190,12 +200,15 @@ const GraphEditorElement = (props: GraphEditorProps, ref: ForwardRef<GraphEditor
           onEvent={onEvent}
           graphEditorRef={graphEditorRef}
           mode={mode}
+          graphConfig={graphConfig}
           {...actionBar}
         />
         )
 }
       <MouseIcon
-        name={MODE_ICON_MAP[mode]}
+        // name={MODE_ICON_MAP[mode]}
+        name={MODE_ICON_MAP_BY_URL[mode]}
+        cursor
       />
     </View>
   )
