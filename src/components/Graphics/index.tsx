@@ -100,7 +100,7 @@ export const drawLine = (
     fill = THEME.fillColor,
     box,
     directed,
-    type,
+    type, //= 'bezier',
     graphics: mutableInstance,
   } = config
   const {
@@ -142,7 +142,6 @@ export const drawLine = (
       )(defaultTo),
     }),
   )(directed)
-
   // const midpoint = R.pipe(
   //   V.divideScalar(2),
   //   V.add(from),
@@ -150,7 +149,6 @@ export const drawLine = (
   const unit = V.normalize(distanceVector)
   mutableInstance.clear()
   mutableInstance.lineStyle(2, fill, 1)
-  /* eslint-disable functional/immutable-data, functional/no-expression-statement */
   drawArrowHead({
     graphics: mutableInstance,
     unit,
@@ -165,7 +163,7 @@ export const drawLine = (
         const controlPoints = controlPointsCreator.bezier({
           from,
           to,
-          count: 4,
+          count: 2,
           distance: 100,
           unit,
         })

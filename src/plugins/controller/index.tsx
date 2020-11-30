@@ -24,14 +24,14 @@ type ControllerState = {
 } & Pick<
 GraphEditorProps,
 'nodes' | 'edges' | 'mode' | 'selectedElement'
-| 'actionBar' | 'dataBar' | 'filterBar'
+| 'actionBar' | 'dataBar' | 'settingsBar'
 | 'graphConfig'
 >
 
 type UseControllerData = Pick<
 GraphEditorProps,
 'nodes'| 'edges' | 'mode'
-| 'actionBar' | 'dataBar' | 'filterBar'
+| 'actionBar' | 'dataBar' | 'settingsBar'
 | 'graphConfig'
 > & {
   onEvent?: (info: EventInfo, draft: ControllerState) => boolean;
@@ -49,7 +49,8 @@ export const useController = (
   const controllerConfig: UseControllerData = React.useMemo<UseControllerData>(
     () => R.mergeDeepAll([
       controllerConfig ?? DEFAULT_CONTROLLER_CONFIG,
-      R.omit(['onEvent'], useControllerData),
+      useControllerData,
+      // R.omit(['onEvent'], useControllerData),
     ]) as UseControllerData, [useControllerData],
   )
   const [state, update] = useData<ControllerState, void>(
@@ -70,6 +71,7 @@ export const useController = (
     } = eventInfo
     const isNode = element?.isNode()
     const targetPath = isNode ? 'nodes' : 'edges'
+    console.log(type, extraData)
     update((draft) => {
       // console.log('event', eventInfo)
       const isAllowedToProcess = controllerConfig.onEvent?.(eventInfo, draft)
@@ -221,7 +223,7 @@ export const useController = (
           targetDataList[index]!.additional!.splice(extraData.index, 1)
           break
         case EVENT.TOGGLE_FILTER_BAR:
-          draft.filterBar!.opened = !draft.filterBar?.opened
+          draft.settingsBar!.opened = !draft.settingsBar?.opened
           break
         case EVENT.TOGGLE_DATA_BAR:
           draft.dataBar!.opened = !draft.dataBar?.opened
@@ -282,7 +284,7 @@ const DEFAULT_CONTROLLER_CONFIG = {
   dataBar: {
     opened: false,
   },
-  filterBar: {
+  settingsBar: {
     opened: false,
   },
   mode: EDITOR_MODE.DEFAULT as EditorMode,

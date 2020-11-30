@@ -4,6 +4,7 @@ import {
   wrapComponent,
   useTheme,
   Icon,
+  ScrollView,
 } from 'unitx-ui'
 import { EVENT } from '@utils/constants'
 import { Event, OnEvent } from '@type'
@@ -12,25 +13,28 @@ import Form, {
 } from 'unitx-ui/components/Form'
 import useAnimation, { animated } from 'unitx-ui/hooks/useAnimation'
 
-export type FilterBarProps = Partial<
+type SettingsForm = Partial<
 Pick<
 FormProps<any>,
 'schema' | 'onChange'|'onSubmit'|'formData'| 'uiSchema' | 'children'
 >
-> & {
+>
+export type SettingsBarProps = {
   opened?: boolean;
   onEvent?: OnEvent;
+  forms?: SettingsForm[];
 }
 
 const WIDTH_PROPORTION = 30
 const AnimatedSurface = animated(View)
-const FilterBar = (props: FilterBarProps) => {
+const SettingsBar = (props: SettingsBarProps) => {
   const {
     opened = false,
-    schema = {},
     onEvent,
-    children,
-    ...formProps
+    // schema = {},
+    forms = [],
+    // children,
+    // ...formProps
   } = props
   const {
     props: animatedProps,
@@ -78,12 +82,25 @@ const FilterBar = (props: FilterBarProps) => {
         ...animatedProps,
       }}
     >
-      <Form
-        schema={schema}
-        {...formProps}
-      >
-        {children === undefined ? <View /> : children}
-      </Form>
+      <ScrollView>
+        {
+        forms.map((form) => (
+          <Form
+            // schema={schema}
+            // {...formProps}
+            {...form}
+            onSubmit={(
+              formValue,
+            ) => createOnActionCallback(
+              EVENT.SETTINGS_FORM_CHANGED,
+              { form, value: formValue },
+            )()}
+          />
+          //   {children === undefined ? <View /> : children}
+          // </Form>
+        ))
+      }
+      </ScrollView>
       <Icon
         style={{
           position: 'absolute',
@@ -99,4 +116,4 @@ const FilterBar = (props: FilterBarProps) => {
   )
 }
 
-export default wrapComponent<FilterBarProps>(FilterBar, {})
+export default wrapComponent<SettingsBarProps>(SettingsBar, {})

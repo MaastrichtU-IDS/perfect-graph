@@ -20,7 +20,7 @@ import { ForwardRef, Position, PropsWithRef } from 'unitx-ui/type'
 import * as R from 'unitx/ramda'
 import ActionBar, { ActionBarProps } from './ActionBar'
 import DataBar, { DataBarProps } from './DataBar'
-import FilterBar, { FilterBarProps } from './FilterBar'
+import SettingsBar, { SettingsBarProps } from './SettingsBar'
 import { MouseIcon } from './MouseIcon'
 
 type RenderElementAdditionalInfo = {
@@ -31,7 +31,7 @@ export type GraphEditorProps = {
   graphConfig?: GraphConfig;
   renderMoreAction?: () => React.ReactElement;
   label?: GraphLabelData;
-  filterBar?: FilterBarProps;
+  settingsBar?: SettingsBarProps;
   dataBar?: Pick<DataBarProps, 'editable'| 'opened'>;
   actionBar?: Pick<ActionBarProps, 'renderMoreAction' | 'opened' | 'recording'>;
   selectedElement?: Element | null;
@@ -69,7 +69,7 @@ const GraphEditorElement = (props: GraphEditorProps, ref: ForwardRef<GraphEditor
     renderNode,
     graphConfig,
     style,
-    filterBar,
+    settingsBar,
     actionBar,
     dataBar = {},
     nodes,
@@ -108,7 +108,7 @@ const GraphEditorElement = (props: GraphEditorProps, ref: ForwardRef<GraphEditor
       item: selectedItem!,
     })
   }, [selectedElement, selectedItem])
-
+  console.log('a', rest)
   return (
     <View
       style={style}
@@ -187,9 +187,9 @@ const GraphEditorElement = (props: GraphEditorProps, ref: ForwardRef<GraphEditor
         onEvent={onEventCallback}
       />
       {
-        filterBar && (
-          <FilterBar
-            {...filterBar}
+        settingsBar && (
+          <SettingsBar
+            {...settingsBar}
             onEvent={onEvent}
           />
         )

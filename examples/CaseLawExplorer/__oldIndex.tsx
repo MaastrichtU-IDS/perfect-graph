@@ -6,14 +6,12 @@ import {
   DarkTheme,
   DefaultTheme,
 } from 'unitx-ui'
-import  { GraphEditorProps,GraphEditor } from '../../src/components/GraphEditor'
+import GraphEditor, { GraphEditorProps } from '../../src/editor/components/GraphEditor'
 import { Graph } from '../../src/components'
-import {drawLine} from '../../src/components/Graphics'
+import {drawLine} from '../../src/components/components/Graphics'
 import data from './data'
 import * as C from 'unitx/color'
-import { FILTER_SCHEMA, VIEW_CONFIG_SCHEMA  } from './constants'
-import { EVENT } from '../../src/utils/constants'
-import {useController} from '../../src/plugins/controller'
+import { FILTER_SCHEMA,  } from './constants'
 
 type Props = Partial<GraphEditorProps>
 
@@ -21,61 +19,99 @@ const NODE_SIZE = {
   width: 80,
   height: 80,
 }
-const NODE_SIZE_RANGE = [50, 100]
-const NODE_COLOUR_RANGE = ['000000', 'FFFFFF']
+
 const AppContainer = ({
   changeTheme,
   ...rest
 }) => {
-  const configRef = React.useRef({
-    visualization: {
-      nodeSize: null,
-      nodeColor: null
-    },
-  })
-  const [controllerProps] = useController({
-    ...data,
-    settingsBar: {
-      opened: true,
-      forms: [FILTER_SCHEMA, VIEW_CONFIG_SCHEMA]
-    },
-    extraData: [configRef.current.visualization],
-    onEvent: ({
-      type,
-      extraData
-    }) => {
-      console.log('all', type,extraData)
-      switch (type) {
-        
-        case EVENT.SETTINGS_FORM_CHANGED:{
-          if (extraData.form.schema.title === FILTER_SCHEMA.schema.title) {
-
-          } else {
-            console.log('all2', extraData)
-            configRef.current.visualization = extraData.value
-          }
-          break
-        }
-      
-        default:
-          break;
-      }
-      return null
+  const modalRef = React.useRef(null)
+  const [state, setState] = React.useState({
+    visible: false, 
+    data,
+    filteredData: data,
+    filterData: { 
+      'in_degree': [0, 20]
     }
-  },)
+})
+  const onFilterChangeCallback = React.useCallback((filterData) => {
+    setTimeout(
+      () => {
+        const processedFilterData = R.toMongoQuery({
+          data: filterData,
+        }, {
+          processItem: (value, path) => R.cond([
+            [R.equals(['data', 'in_degree']), () => ({ 
+              $gte: value[0], $lte: value[1]
+            })]
+          ])(path)
+        })
+
+        const cursor = mingo.find(state.data.nodes, processedFilterData)
+        const filteredData = cursor.all()
+        setState({
+          ...state,
+          filterData,
+          filteredData: {
+            edges: filterEdges(filteredData)(state.filteredData.edges),
+            nodes: filteredData
+          },
+        })
+      }
+    )
+  }, [])
   const graphRef = React.useRef(null)
+  const containerRef = React.useRef(null)
   const theme = useTheme()
+  // const controller = useController({ nodes: [], edges: []}, {
+  //   onAdd: () => {
+  //     console.log()
+  //     sync()
+  //   }
+  // })
+
   return (
       <Layout style={{ width: '100%', height: '100%'}}>
       <GraphEditor
         ref={graphRef}
-        {...controllerProps}
-        extraData={[configRef.current.visualization]}
+        // controller={controller}
+        extraData={{ theme }}
         style={{ width: '100%', height: '100%', }}
-        // graphConfig={{
-        //   // layout: Graph.Layouts.breadthfirst,
-        //   zoom: 0.5
-        // }}
+        graphConfig={{
+          // layout: Graph.Layouts.breadthfirst,
+          zoom: 0.5
+        }}
+        configExtractor={({ item, element }) => R.ifElse(
+          R.isNil,
+          () => ({
+            filter: {
+              onChange: onFilterChangeCallback,
+              formData: state.filterData,
+              ...FILTER_SCHEMA
+            },
+            action: {
+              // renderMoreAction: () => (
+              //     // <Menu.Item value="Show Clusters" title="Show Clusters"/>
+              //     <Button onPress={() => setTimeout(() => changeTheme('dark'))}>Change Theme</Button>
+              // )
+            }
+          }),
+          () => {
+            const schemaInfo = FILTER_SCHEMA
+            // const schemaInfo = item.data.community === '27' 
+            // ? FILTER_SCHEMA
+            // : SECOND_FILTER_SCHEMA
+            return {
+              filter: {
+                onChange: onFilterChangeCallback,
+                formData: state.filterData,
+                ...schemaInfo
+              },
+              data: {
+                data: item.data
+              }
+            }
+          }
+          )(item)}
         drawLine={({ graphics, to, from }) => {
           drawLine({
             graphics,
@@ -91,7 +127,6 @@ const AppContainer = ({
           })
         }}
         renderNode={({ item: { id, data } }) => {
-          console.log(id, configRef.current.visualization)
           return (
             <Graph.HoverContainer
               style={{
@@ -124,6 +159,8 @@ const AppContainer = ({
             </Graph.HoverContainer>
           )
         }}
+        {...state.filteredData}
+        onFilterChange={onFilterChangeCallback}
         {...rest}
       />
       </Layout>

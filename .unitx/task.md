@@ -17,6 +17,15 @@
 - Large Graph Example
 - Hover Label FontSize scale with zoom
 - Record Actions (JSON-patch by time)
+- introspect the seperated-thread for layout calculation
+- determine on the layout computation time (iteration) (TextInput)
+    refresh: 10, // number of ticks per frame; higher is faster but more jerky
+    maxIterations: 1000, // max iterations before the layout will bail out
+    maxSimulationTime: 4000,
+- fix  Layout animation duration time 
+- Replace the layout names with cytoscape desktop app layout names
+- https://cytoscape.org/cytoscape.js-edgehandles/demo-snap.html
+- Default Layout
 <!-- - Change mouse indicator as mode iscon -->
 <!-- - Add Animation time of the layout -->
 <!-- - Change selectedNodeStyle and Connected Edges -->

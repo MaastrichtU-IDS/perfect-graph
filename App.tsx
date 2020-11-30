@@ -9,7 +9,7 @@ import CaseLawExplorerGraph from './examples/CaseLawExplorer'
 import {useController} from './src/plugins/controller'
 import {getLabel} from './src/utils'
 import { DynamicRender } from './src/components/DynamicRender'
-import { SECOND_FILTER_SCHEMA} from './examples/CaseLawExplorer/constants'
+import { FILTER_SCHEMA, VIEW_CONFIG_SCHEMA } from './examples/CaseLawExplorer/constants'
 // import './src/plugins/dataConverter'
 // import './src/plugins/parseContext'
 import App from './src/App'
@@ -41,8 +41,8 @@ const data = {
   edges: new Array(COUNT - 1).fill(0).map((_,index) => (
     { id: `edge:${index}`, source: `${index}`,  target: `${index+1}`,  data: [{ name: 'foaf:name', value: ['ts','saba'], additional: []}]}
   )),
-  filterBar: {
-    ...SECOND_FILTER_SCHEMA,
+  settingsBar: {
+    forms: [FILTER_SCHEMA, VIEW_CONFIG_SCHEMA],
   },
   graphConfig: {
     nodes: {
@@ -126,7 +126,7 @@ const AppContainer = () => {
               height: 100,
               justifyContent: 'center',
               alignItems: 'center',
-              borderRadius: 50,
+              // borderRadius: 50,
               // backgroundColor: element.selected() ? 'red' : 'blue'
             }}
             >
@@ -153,8 +153,8 @@ const AppContainer = () => {
 export default ({ skipLoadingScreen }: Props) => {
   return (
     // <App/>
-      <AppContainer />
-      // <CaseLawExplorerGraph />
+      // <AppContainer />
+      <CaseLawExplorerGraph />
       // <StoreProvider
       //   store={store.store}
       //   context={store.StoreContext}

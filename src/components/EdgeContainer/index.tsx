@@ -28,6 +28,11 @@ const calculateMidpoint = (from: Position) => (to: Position) => R.pipe(
   V.add(from),
 )(to)
 
+const DEFAULT_BOX = {
+  width: 90,
+  height: 90,
+}
+
 function EdgeContainer(props: EdgeContainerProps, __: ForwardRef<typeof EdgeContainer>) {
   const {
     item,
@@ -59,10 +64,7 @@ function EdgeContainer(props: EdgeContainerProps, __: ForwardRef<typeof EdgeCont
       () => defaultDrawLine({
         to,
         from,
-        box: {
-          width: 100,
-          height: 100,
-        },
+        box: DEFAULT_BOX,
         graphics: graphicsRef.current,
         directed: true,
       }),
@@ -91,10 +93,7 @@ function EdgeContainer(props: EdgeContainerProps, __: ForwardRef<typeof EdgeCont
         () => defaultDrawLine({
           to,
           from,
-          box: {
-            width: 100,
-            height: 100,
-          },
+          box: DEFAULT_BOX,
           graphics: graphicsRef.current,
           directed: true,
         }),
