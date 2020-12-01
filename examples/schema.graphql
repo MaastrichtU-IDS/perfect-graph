@@ -1,0 +1,38 @@
+type Project @model {
+  id: ID!
+  name: String!
+  nodes: [Element] @connection(keyName: "byProject", fields: ["id"])
+  edges: [Element] @connection(keyName: "byProject", fields: ["id"])
+}
+
+type Element @model @key(name: "byProject", fields: ["projectID"]) {
+  id: ID!
+  source: String!
+  target: String!
+  projectID: ID
+  project: Project @connection(fields: ["projectID"])
+  dataItems: [DataItem] @connection(keyName: "byNode", fields: ["id"])
+}
+
+type DataItem @model @key(name: "byNode", fields: ["elementID"]) {
+  id: ID!
+  elementID: ID
+  element: Element @connection(fields: ["elementID"])
+  name: String
+  value: String[]
+  type: String
+  additional: [DataItem] @connection(keyName: "byDataItem", fields: ["id"])
+}
+type AdditionalDataItem @model @key(name: "byDataItem", fields: ["dataItemID"]) {
+  id: ID!
+  dataItemID: ID
+  dataItem: DataItem @connection(fields: ["dataItemID"])
+  name: String
+  value: String[]
+  type: String
+}
+
+
+# type Query {
+#   getTriples(id: ID!): Post[]  @function("/getTriplesFunction")
+# }

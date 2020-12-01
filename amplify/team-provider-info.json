@@ -10,6 +10,11 @@
       "StackName": "amplify-perfectgraph-dev-111847",
       "StackId": "arn:aws:cloudformation:us-east-1:665988736951:stack/amplify-perfectgraph-dev-111847/763d04c0-24d0-11eb-8cfd-0a8534d05dcd",
       "AmplifyAppId": "d235lr1q7om7lm"
+    },
+    "categories": {
+      "auth": {
+        "perfectgraph58f32522": {}
+      }
     }
   },
   "prod": {

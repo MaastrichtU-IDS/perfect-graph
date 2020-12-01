@@ -1,0 +1,12 @@
+projects:
+  perfectgraph:
+    schemaPath: ../../../../../graphql/schema.json
+    includes:
+      - graphql/**/*.ts
+    excludes:
+      - ./amplify/**
+    extensions:
+      amplify:
+        codeGenTarget: typescript
+        generatedFileName: graphql/API.ts
+        docsFilePath: /graphql
