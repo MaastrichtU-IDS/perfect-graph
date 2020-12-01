@@ -11,7 +11,7 @@ import { ViewStyle, View } from 'react-native'
 import { useGraph } from '@hooks'
 import {
   NodeData, EdgeData, RenderEdge, RenderNode,
-  GraphConfig, Element, DrawLine, GraphRef,
+  GraphConfig, Element, DrawLine, GraphRef, ViewportRef
 } from '@type'
 import { ForwardRef, PropsWithRef } from 'unitx-ui/type'
 import DataRender from 'unitx-ui/components/DataRender'
@@ -68,7 +68,7 @@ function Graph(props: GraphProps, ref: ForwardRef<GraphRef>) {
   } = props
   const graphID = React.useMemo<string>(R.uuid, [])
   const stageRef = React.useRef<{ app: PIXI.Application }>(null)
-  const viewportRef = useForwardRef(null)
+  const viewportRef = React.useRef<ViewportRef>(null)
   const containerRef = React.useRef(null)
   const { cy } = useGraph({
     id: graphID,
@@ -82,18 +82,19 @@ function Graph(props: GraphProps, ref: ForwardRef<GraphRef>) {
   const graphLayoutRef = React.useRef<cytoscape.Layouts>(null)
   React.useEffect(() => {
     graphRef.current.app = stageRef.current?.app!
-  }, [stageRef.current])
+    graphRef.current.viewport = viewportRef.current!
+  }, [initialized])
   React.useEffect(() => {
     R.when(
       () => initialized && config.layout,
       () => {
         // @ts-ignore
-        const { lastViewport } = viewportRef.current
+        const { hitArea } = viewportRef.current
         const boundingBox = {
-          x1: lastViewport.x,
-          y1: lastViewport.y,
-          w: width / lastViewport.scaleX,
-          h: height / lastViewport.scaleY,
+          x1: hitArea.x,
+          y1: hitArea.y,
+          w: hitArea.width,
+          h: hitArea.height,
         }
         graphLayoutRef.current?.stop()
         // @ts-ignore
@@ -115,8 +116,7 @@ function Graph(props: GraphProps, ref: ForwardRef<GraphRef>) {
     [theme.colors.background],
   )
   React.useEffect(() => {
-    // @ts-ignore
-    stageRef.current.app.renderer.backgroundColor = backgroundColor
+    stageRef.current!.app.renderer.backgroundColor = backgroundColor
   }, [backgroundColor])
   return (
     <View

@@ -16,10 +16,14 @@ import {
   View,
   wrapComponent,
 } from 'unitx-ui'
+import * as R from 'unitx/ramda'
 import { DocumentPicker } from 'unitx-ui/@/DocumentPicker'
 import Recorder from 'unitx-ui/components/Recorder'
 import useAnimation, { animated } from 'unitx-ui/hooks/useAnimation'
 
+type ActionOption = {
+  visible?: boolean;
+}
 export type ActionBarProps = {
   renderMoreAction?: () => React.ReactElement;
   opened?: boolean;
@@ -30,6 +34,24 @@ export type ActionBarProps = {
   graphEditorRef: React.MutableRefObject<GraphEditorRef>;
   // layout?: LayoutOptionsValue;
   graphConfig: GraphConfig;
+  actions?: {
+    add: ActionOption;
+    delete: ActionOption;
+    // record: { visible: boolean; };
+    options: {
+      actions: { import: ActionOption };
+    };
+    layout: ActionOption;
+  };
+}
+
+const DEFAULT_ACTIONS = {
+  add: { visible: true },
+  delete: { visible: true },
+  options: {
+    actions: { import: { visible: true } },
+  },
+  layout: { visible: true },
 }
 const RECORDING_STATUS_MAP = {
   START: 'START',
@@ -115,6 +137,7 @@ const ActionBar = (props: ActionBarProps) => {
   React.useEffect(() => {
     animationRef?.current?.start()
   }, [])
+  const actions = R.mergeDeepRight(DEFAULT_ACTIONS, props.actions ?? {})
   return (
     <AnimatedSurface
       style={{
@@ -136,69 +159,81 @@ const ActionBar = (props: ActionBarProps) => {
           // width: '100%',
         }}
       >
-        <Button
-          style={styles.button}
-          accessoryLeft={(props) => (
-            <Icon
-              {...props}
-              name="plus-circle"
-            />
-          )}
-          onPress={createOnActionCallback(EVENT.MODE_CHANGED, {
-            value: [
+        {
+          actions.add.visible && (
+          <Button
+            style={styles.button}
+            accessoryLeft={(props) => (
+              <Icon
+                {...props}
+                name="plus-circle"
+              />
+            )}
+            onPress={createOnActionCallback(EVENT.MODE_CHANGED, {
+              value: [
+                EDITOR_MODE.ADD,
+                EDITOR_MODE.CONTINUES_ADD,
+                // @ts-ignore
+              ].includes(mode)
+                ? EDITOR_MODE.DEFAULT
+                : EDITOR_MODE.ADD,
+            })}
+            appearance={EDITOR_MODE.CONTINUES_ADD === mode ? 'filled' : 'outline'}
+            status={[
               EDITOR_MODE.ADD,
               EDITOR_MODE.CONTINUES_ADD,
               // @ts-ignore
-            ].includes(mode)
-              ? EDITOR_MODE.DEFAULT
-              : EDITOR_MODE.ADD,
-          })}
-          appearance={EDITOR_MODE.CONTINUES_ADD === mode ? 'filled' : 'outline'}
-          status={[
-            EDITOR_MODE.ADD,
-            EDITOR_MODE.CONTINUES_ADD,
-            // @ts-ignore
-          ].includes(mode) ? 'warning' : 'primary'}
-          onLongPress={createOnActionCallback(
-            EVENT.MODE_CHANGED,
-            { value: EDITOR_MODE.CONTINUES_ADD },
-          )}
-        >
-          Add
-        </Button>
-        <Button
-          style={styles.button}
-          accessoryLeft={(leftProps) => (
-            <Icon
-              {...leftProps}
-              name="delete-circle"
-            />
-          )}
-          status={[
-            EDITOR_MODE.DELETE,
-            EDITOR_MODE.CONTINUES_DELETE,
-            // @ts-ignore
-          ].includes(mode)
-            ? 'warning'
-            : 'danger'}
-          appearance={EDITOR_MODE.CONTINUES_DELETE === mode ? 'filled' : 'outline'}
-          onPress={createOnActionCallback(EVENT.MODE_CHANGED, {
-            value: [
+            ].includes(mode) ? 'warning' : 'primary'}
+            onLongPress={createOnActionCallback(
+              EVENT.MODE_CHANGED,
+              { value: EDITOR_MODE.CONTINUES_ADD },
+            )}
+          >
+            Add
+          </Button>
+          )
+        }
+        {
+          actions.delete.visible && (
+          <Button
+            style={styles.button}
+            accessoryLeft={(leftProps) => (
+              <Icon
+                {...leftProps}
+                name="delete-circle"
+              />
+            )}
+            status={[
               EDITOR_MODE.DELETE,
               EDITOR_MODE.CONTINUES_DELETE,
               // @ts-ignore
             ].includes(mode)
-              ? EDITOR_MODE.DEFAULT
-              : EDITOR_MODE.DELETE,
-          })}
-          onLongPress={createOnActionCallback(EVENT.MODE_CHANGED, { value: EDITOR_MODE.CONTINUES_DELETE })}
-        >
-          Delete
-        </Button>
-        <LayoutOptions
-          layout={graphConfig.layout}
-          createOnActionCallback={createOnActionCallback}
-        />
+              ? 'warning'
+              : 'danger'}
+            appearance={EDITOR_MODE.CONTINUES_DELETE === mode ? 'filled' : 'outline'}
+            onPress={createOnActionCallback(EVENT.MODE_CHANGED, {
+              value: [
+                EDITOR_MODE.DELETE,
+                EDITOR_MODE.CONTINUES_DELETE,
+                // @ts-ignore
+              ].includes(mode)
+                ? EDITOR_MODE.DEFAULT
+                : EDITOR_MODE.DELETE,
+            })}
+            onLongPress={createOnActionCallback(EVENT.MODE_CHANGED, { value: EDITOR_MODE.CONTINUES_DELETE })}
+          >
+            Delete
+          </Button>
+          )
+        }
+        {
+          actions.layout.visible && (
+          <LayoutOptions
+            layout={graphConfig.layout}
+            createOnActionCallback={createOnActionCallback}
+          />
+          )
+        }
         {/* <Icon
           name="playlist-play"
           color={recordingActions ? 'red' : 'black'}

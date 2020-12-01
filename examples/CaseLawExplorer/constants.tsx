@@ -12,9 +12,6 @@ export const FILTER_SCHEMA = {
       // 'adjustLayout',
     ],
     additionalProperties: false,
-    extendTypeAnnotation: '',
-    extendAnnotation: '',
-    extendProperties: {},
     properties: {
       title: {
         type: 'boolean',
@@ -30,9 +27,6 @@ export const FILTER_SCHEMA = {
       live: {
         title: 'boolean',
         type: 'boolean',
-        extendTypeAnnotation: '',
-        extendAnnotation: '',
-        extendProperties: {},
       },
     },
   },
@@ -69,9 +63,9 @@ export const VIEW_CONFIG_SCHEMA = {
           "year",
         ]
       },
-      nodeColour: {
+      nodeColor: {
         "type": "string",
-        "title": "Node Colour",
+        "title": "Node Color",
         "enum": [
           "community",
           "degree",

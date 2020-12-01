@@ -68,10 +68,11 @@ export const useController = (
       extraData = {},
       index = 0,
       dataItem = {} as DataItem,
+      graphEditor,
     } = eventInfo
     const isNode = element?.isNode()
     const targetPath = isNode ? 'nodes' : 'edges'
-    console.log(type, extraData)
+    console.log(type, eventInfo )
     update((draft) => {
       // console.log('event', eventInfo)
       const isAllowedToProcess = controllerConfig.onEvent?.(eventInfo, draft)

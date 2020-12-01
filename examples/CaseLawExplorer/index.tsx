@@ -21,8 +21,61 @@ const NODE_SIZE = {
   width: 80,
   height: 80,
 }
-const NODE_SIZE_RANGE = [50, 100]
-const NODE_COLOUR_RANGE = ['000000', 'FFFFFF']
+
+const NODE_SIZE_RANGE_MAP = {
+  size: [100, 300],
+  in_degree: [0, 10],
+  out_degree: [0, 10],
+  degree: [0, 20],
+  year: [
+    1969,
+    2015
+  ],
+}
+const calculateNodeSize = (data: object, fieldName?: keyof typeof NODE_SIZE_RANGE_MAP) => {
+  if (!fieldName) {
+    return NODE_SIZE_RANGE_MAP.size[0]
+  }
+  const fieldRange = NODE_SIZE_RANGE_MAP[fieldName]
+  const sizeRangeGap = NODE_SIZE_RANGE_MAP.size[1] - NODE_SIZE_RANGE_MAP.size[0]
+  const fieldRangeGap = fieldRange[1] - fieldRange[0]
+  const fieldRangeValue = (data[fieldName] ?? fieldRange[0]) - fieldRange[0]
+  return  ((fieldRangeValue / fieldRangeGap) * sizeRangeGap) + NODE_SIZE_RANGE_MAP.size[0]
+}
+const calculateColor = (data: object, fieldName?: keyof typeof NODE_SIZE_RANGE_MAP) => {
+  if (!fieldName) {
+    return perc2color(0)
+  }
+  const fieldRange = NODE_SIZE_RANGE_MAP[fieldName]
+  const sizeRangeGap = NODE_SIZE_RANGE_MAP.size[1] - NODE_SIZE_RANGE_MAP.size[0]
+  const fieldRangeGap = fieldRange[1] - fieldRange[0]
+  const fieldRangeValue = (data[fieldName] ?? fieldRange[0]) - fieldRange[0]
+  return  perc2color((fieldRangeValue / fieldRangeGap) * 100)
+}
+const perc2color = (
+  perc: number,
+  min = 20, 
+  max = 80
+) => {
+  var base = (max - min);
+
+  if (base === 0) { perc = 100; }
+  else {
+      perc = (perc - min) / base * 100; 
+  }
+  var r, g, b = 0;
+  if (perc < 50) {
+      r = 255;
+      g = Math.round(5.1 * perc);
+  }
+  else {
+      g = 255;
+      r = Math.round(510 - 5.10 * perc);
+  }
+  var h = r * 0x10000 + g * 0x100 + b * 0x1;
+  return '#' + ('000000' + h.toString(16)).slice(-6);
+}
+
 const AppContainer = ({
   changeTheme,
   ...rest
@@ -39,19 +92,22 @@ const AppContainer = ({
       opened: true,
       forms: [FILTER_SCHEMA, VIEW_CONFIG_SCHEMA]
     },
-    extraData: [configRef.current.visualization],
+    actionBar: {
+      actions: {
+        add: { visible: false },
+        delete: { visible: false },
+      }
+    },
     onEvent: ({
       type,
       extraData
     }) => {
-      console.log('all', type,extraData)
       switch (type) {
         
         case EVENT.SETTINGS_FORM_CHANGED:{
           if (extraData.form.schema.title === FILTER_SCHEMA.schema.title) {
 
           } else {
-            console.log('all2', extraData)
             configRef.current.visualization = extraData.value
           }
           break
@@ -91,22 +147,26 @@ const AppContainer = ({
           })
         }}
         renderNode={({ item: { id, data } }) => {
-          console.log(id, configRef.current.visualization)
+          const size = calculateNodeSize(data, configRef.current.visualization.nodeSize)
+          const color = calculateColor(data, configRef.current.visualization.nodeColor)
           return (
             <Graph.HoverContainer
               style={{
-                ...NODE_SIZE,
+                width: size,
+                height: size,
                 alignItems: 'center',
                 justifyContent: 'center',
-                borderRadius: 25
+                borderRadius: 25,
+                backgroundColor: color
                 }}
                 renderHoverElement={() => (
                   <Graph.View
                     style={{
-                      width: NODE_SIZE.width * 2,
+                      width: size,
                       height: 20,
                       position: 'absolute',
                       left: 0,
+                      backgroundColor: color
                     }}
                   >
                     <Graph.Text style={{

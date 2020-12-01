@@ -80,13 +80,7 @@ const GraphEditorElement = (props: GraphEditorProps, ref: ForwardRef<GraphEditor
     ...rest
   } = props
   const graphEditorRef = useForwardRef(ref)
-  const onPress = React.useCallback(({ position }: { position: Position}) => {
-    // @ts-ignore
-    onEvent({
-      type: EVENT.PRESS_BACKGROUND,
-      extraData: position,
-    })
-  }, [])
+
   const selectedItem = selectedElement && getSelectedItemByElement(
     selectedElement, { nodes, edges },
   ).item
@@ -103,12 +97,12 @@ const GraphEditorElement = (props: GraphEditorProps, ref: ForwardRef<GraphEditor
   const onEventCallback = React.useCallback((eventInfo) => {
     const { selectedElement, selectedItem } = selectedElementRef.current
     onEvent({
-      ...eventInfo,
       element: selectedElement!,
       item: selectedItem!,
+      ...eventInfo,
+      graphEditor: graphEditorRef.current,
     })
   }, [selectedElement, selectedItem])
-  console.log('a', rest)
   return (
     <View
       style={style}
@@ -128,10 +122,15 @@ const GraphEditorElement = (props: GraphEditorProps, ref: ForwardRef<GraphEditor
           extraData: rest.extraData,
         }}
         config={graphConfig}
-        onPress={onPress}
+        onPress={({ position }) => {
+          onEventCallback({
+            type: EVENT.PRESS_BACKGROUND,
+            extraData: position,
+          })
+        }}
         renderNode={({ item, element, ...rest }) => (
           <Graph.Touchable
-            onPress={() => onEvent({
+            onPress={() => onEventCallback({
               type: EVENT.ELEMENT_SELECTED,
               item,
               element,

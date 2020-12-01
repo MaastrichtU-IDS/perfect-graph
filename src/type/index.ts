@@ -5,6 +5,7 @@ import { Position, Enumerable } from 'unitx/type'
 import {
   ELEMENT_TYPE, EVENT, DATA_TYPE, EDITOR_MODE,
 } from '@utils/constants'
+import { Viewport } from 'pixi-viewport'
 import { ViewportProps } from '@components/Viewport'
 import * as PIXI from 'pixi.js'
 import { YogaConstants } from '@utils/addFlexLayout/flex-layout/YogaContants'
@@ -154,6 +155,7 @@ export type EventInfo = {
   extraData?: any;
   dataItem?: DataItem;
   index?: number;
+  graphEditor: GraphEditorRef;
 }
 
 export type OnEvent = (eventInfo: EventInfo) => void
@@ -165,9 +167,12 @@ export type DrawLine = (
     from: Position;
   }) => void
 
+export type ViewportRef = Viewport
+
 export type GraphRef = {
   cy: Core;
   app: PIXI.Application;
+  viewport: ViewportRef;
 }
 
 export type GraphEditorRef = GraphRef & {
