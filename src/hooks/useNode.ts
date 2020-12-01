@@ -2,7 +2,7 @@ import React from 'react'
 import { useStateWithCallback } from 'unitx-ui/hooks'
 import { NodeSingular } from 'cytoscape'
 import { Position } from 'unitx/type'
-import { ElementContext, NodeConfig } from '@type'
+import { NodeContext, NodeConfig } from '@type'
 import { mutableGraphMap } from './useGraph'
 import { useElement } from './useElement'
 
@@ -10,13 +10,19 @@ export type Props = {
   id: string;
   graphID: string;
   position: Position;
-  onPositionChange?: (c: {element: NodeSingular; context: ElementContext }) => void|any;
+  onPositionChange?: (c: {element: NodeSingular; context: NodeContext }) => void|any;
   config?: NodeConfig;
 }
 
 type Result = {
   element: NodeSingular;
-  context: ElementContext;
+  context: NodeContext;
+}
+const DEFAULT_BOUNDING_BOX = {
+  x: 0,
+  y: 0,
+  width: 0,
+  height: 0,
 }
 
 export default (props: Props): Result => {
@@ -29,9 +35,10 @@ export default (props: Props): Result => {
   } = props
   const cy = mutableGraphMap[graphID]
   const [, setState] = useStateWithCallback({}, () => {})
-  const contextRef = React.useRef<ElementContext>({
+  const contextRef = React.useRef<NodeContext>({
     render: (callback: () => {}) => setState({}, callback),
-  } as ElementContext)
+    boundingBox: DEFAULT_BOUNDING_BOX,
+  } as NodeContext)
   const element = React.useMemo(() => cy!.add({
     data: { id, context: contextRef.current }, // ...(parentID ? { parent: parentID } : {}),
     position: { ...position },

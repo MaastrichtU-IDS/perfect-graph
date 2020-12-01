@@ -5,6 +5,7 @@ import { ForwardRef } from 'unitx-ui/type'
 import * as R from 'unitx/ramda'
 import { Position } from 'unitx/type'
 import { useEdge } from '@hooks'
+import { getNodeContextByElement } from '@utils'
 import {
   RenderEdge,
   EdgeConfig,
@@ -38,37 +39,51 @@ function EdgeContainer(props: EdgeContainerProps, __: ForwardRef<typeof EdgeCont
     item,
     graphID,
     children,
-    drawLine,
+    drawLine = defaultDrawLine,
   } = props
   const graphicsRef = React.useRef<PIXI.Graphics>(null)
   const containerRef = React.useRef<PIXI.DisplayObject>(null)
-  const onPositionChange = React.useCallback(({ element }) => {
+  const drawLineCallback = (element: Element) => {
     const targetElement = element.target()
     const sourceElement = element.source()
     const to = targetElement.position()
     const from = sourceElement.position()
     const midpoint = calculateMidpoint(from)(to)
+    const sourceElementContext = getNodeContextByElement(sourceElement)
+    const targetElementContext = getNodeContextByElement(targetElement)
     containerRef.current.x = midpoint.x
     containerRef.current.y = midpoint.y
-    return R.ifElse(
-      R.isNotNil,
-      () => drawLine?.({
-        element,
-        item,
-        sourceElement,
-        targetElement,
-        graphics: graphicsRef.current,
-        to,
-        from,
-      }),
-      () => defaultDrawLine({
-        to,
-        from,
-        box: DEFAULT_BOX,
-        graphics: graphicsRef.current,
-        directed: true,
-      }),
-    )(drawLine)
+    return drawLine({
+      element,
+      item,
+      sourceElement,
+      targetElement,
+      graphics: graphicsRef.current,
+      to: targetElementContext.boundingBox,
+      from: sourceElementContext.boundingBox,
+      directed: true,
+    })
+  }
+  const onPositionChange = React.useCallback(({ element }) => {
+    drawLineCallback(element)
+    // R.ifElse(
+    //   R.isNotNil,
+    //   () => drawLine?.({
+    // element,
+    // item,
+    // sourceElement,
+    // targetElement,
+    // graphics: graphicsRef.current,
+    // to: targetElementContext.boundingBox,
+    // from: sourceElementContext.boundingBox,
+    //   }),
+    //   () => defaultDrawLine({
+    //     to: targetElementContext.boundingBox,
+    //     from: sourceElementContext.boundingBox,
+    //     graphics: graphicsRef.current,
+    //     directed: true,
+    //   }),
+    // )(drawLine)
   }, [drawLine])
   const { element } = useEdge({
     id: item.id,
@@ -79,25 +94,7 @@ function EdgeContainer(props: EdgeContainerProps, __: ForwardRef<typeof EdgeCont
   })
   React.useEffect(
     () => {
-      R.ifElse(
-        R.isNotNil,
-        () => drawLine?.({
-          element,
-          item,
-          sourceElement,
-          targetElement,
-          graphics: graphicsRef.current,
-          to,
-          from,
-        }),
-        () => defaultDrawLine({
-          to,
-          from,
-          box: DEFAULT_BOX,
-          graphics: graphicsRef.current,
-          directed: true,
-        }),
-      )(drawLine)
+      drawLineCallback(element)
     },
     [drawLine],
   )

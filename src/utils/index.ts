@@ -7,7 +7,7 @@ import { NativeEventMap } from 'unitx-ui/type'
 // import * as C from 'unitx/color'
 import {
   Element, NodeData, EdgeData, ElementData,
-  DisplayObjectWithYoga,
+  DisplayObjectWithYoga, NodeContext, EdgeContext
 } from '@type'
 import { ELEMENT_DATA_FIELDS } from '@utils/constants'
 
@@ -362,4 +362,21 @@ export const readTextFile = async (blob: Blob, encoding?: string) => new Promise
     })
     reader.readAsText(blob, encoding)
   },
+)
+
+export const calculateDisplayObjectBounds = (object: PIXI.DisplayObject) => {
+  const box = object.getLocalBounds()
+  return {
+    x: object.x + (box.x - object.pivot.x) * object.scale.x,
+    y: object.y + (box.y - object.pivot.y) * object.scale.y,
+    width: box.width * object.scale.x,
+    height: box.height * object.scale.y,
+  }
+}
+
+export const getNodeContextByElement = (element: Element): NodeContext => element.data(
+  ELEMENT_DATA_FIELDS.CONTEXT,
+)
+export const getEdgeContextByElement = (element: Element): EdgeContext => element.data(
+  ELEMENT_DATA_FIELDS.CONTEXT,
 )

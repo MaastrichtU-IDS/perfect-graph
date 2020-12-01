@@ -18,13 +18,21 @@ export type ElementContext = {
   render: (callback?: () => void) => void;
 }
 
+export type BoundingBox = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 export type NodeContext = ElementContext & {
-  element: NodeElement;
+  boundingBox: BoundingBox;
 }
 
 export type EdgeContext = ElementContext & {
-  element: EdgeElement;
+
 }
+
 export type Event = keyof typeof EVENT
 export type EditorMode = keyof typeof EDITOR_MODE
 

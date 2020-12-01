@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { PixiComponent } from '@inlet/react-pixi'
 import { Position, Size } from 'unitx-ui/type'
+import { BoundingBox } from '@type'
 import * as PIXI from 'pixi.js'
 import * as R from 'unitx/ramda'
 import * as V from 'unitx/vector'
@@ -85,61 +86,80 @@ const drawArrowHead = ({
 
 export const drawLine = (
   config: {
-    from: Position;
-    to: Position;
+    from: BoundingBox;
+    to: BoundingBox;
     fill?: number;
-    box: Size;
     directed?: boolean;
     graphics: PIXI.Graphics;
     type?: 'bezier' | 'segments' | 'straight';
   },
 ) => {
   const {
-    from: defaultFrom,
-    to: defaultTo,
+    from: fromBoundingBox,
+    to: toBoundingBox,
     fill = THEME.fillColor,
-    box,
     directed,
     type, //= 'bezier',
     graphics: mutableInstance,
   } = config
+  const fromPos = {
+    x: fromBoundingBox.x,
+    y: fromBoundingBox.y,
+  }
+  const toPos = {
+    x: toBoundingBox.x,
+    y: toBoundingBox.y,
+  }
   const {
     to,
     from,
-    radius,
     distanceVector,
   } = R.ifElse(
     R.isTrue,
     () => {
-      const centerOfFrom = V.add(box.width / 2, box.height / 2)(defaultFrom)
-      const centerOfTo = V.add(box.width / 2, box.height / 2)(defaultTo)
-      const radius = Math.hypot(box.width, box.height) / 2
+      const centerOfFrom = V.add(
+        fromBoundingBox.width / 2,
+        fromBoundingBox.height / 2,
+      )(fromPos)
+      const centerOfTo = V.add(
+        toBoundingBox.width / 2,
+        toBoundingBox.height / 2,
+      )(toPos)
+      const radiusFrom = Math.hypot(fromBoundingBox.width, fromBoundingBox.height) / 2
+      const radiusTo = Math.hypot(toBoundingBox.width, toBoundingBox.height) / 2
       const distanceVector = R.pipe(
         V.subtract(centerOfFrom),
       )(centerOfTo)
-      const radiusDistanceVector = R.pipe(
+      const radiusDistanceVectorFrom = R.pipe(
         V.subtract(centerOfFrom),
         V.normalize,
-        V.multiplyScalar(radius),
+        V.multiplyScalar(radiusFrom),
       )(centerOfTo)
+      const radiusDistanceVectorTo = R.pipe(
+        V.subtract(centerOfTo),
+        V.normalize,
+        V.multiplyScalar(radiusTo),
+      )(centerOfFrom)
       return {
         from: R.pipe(
-          V.add(radiusDistanceVector),
+          V.add(radiusDistanceVectorFrom),
         )(centerOfFrom),
         to: R.pipe(
-          V.subtract(radiusDistanceVector),
+          V.add(radiusDistanceVectorTo),
         )(centerOfTo),
-        radius,
+        // radiusFrom,
+        // radiusTo,
         distanceVector,
       }
     },
     R.always({
-      to: defaultTo,
-      from: defaultFrom,
-      radius: 50,
+      to: toPos,
+      from: fromPos,
+      // radiusTo: 50,
+      // radiusFrom: 50,
       distanceVector: R.pipe(
-        V.subtract(defaultFrom),
-      )(defaultTo),
+        V.subtract(fromPos),
+      )(toPos),
     }),
   )(directed)
   // const midpoint = R.pipe(
@@ -209,7 +229,6 @@ export const drawLine = (
       },
     ],
   ])(type)
-  /* eslint-enable functional/immutable-data, functional/no-expression-statement */
   mutableInstance.endFill()
   mutableInstance.zIndex = -100
 }

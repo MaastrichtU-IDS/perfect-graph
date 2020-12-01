@@ -3,6 +3,7 @@ import { wrapComponent } from 'unitx-ui'
 import { ForwardRef } from 'unitx-ui/type'
 import { useNode } from '@hooks'
 import { RenderNode, NodeConfig } from '@type'
+import { calculateDisplayObjectBounds } from '@utils'
 import Container from '../Container'
 
 export type NodeContainerProps = {
@@ -20,7 +21,7 @@ function NodeContainer(props: NodeContainerProps, __: ForwardRef<typeof NodeCont
     config = {} as NodeConfig,
   } = props
   const containerRef = React.useRef(null)
-  const { element } = useNode({
+  const { element, context } = useNode({
     id: item.id,
     graphID,
     config,
@@ -31,6 +32,8 @@ function NodeContainer(props: NodeContainerProps, __: ForwardRef<typeof NodeCont
       containerRef.current.x = x
       // @ts-ignore
       containerRef.current.y = y
+      context.boundingBox.x = x
+      context.boundingBox.y = y
     },
   })
   const { x, y } = element.position()
@@ -40,6 +43,10 @@ function NodeContainer(props: NodeContainerProps, __: ForwardRef<typeof NodeCont
     },
     [element],
   )
+  React.useEffect(() => {
+    // @ts-ignore
+    context.boundingBox = calculateDisplayObjectBounds(containerRef.current)
+  })
   return (
     <Container
       ref={containerRef}

@@ -54,6 +54,7 @@ export const ELEMENT_DATA_FIELDS = {
   POSITION: 'position',
   ID: 'id',
   DATA: 'data',
+  CONTEXT: 'context',
 } as const
 
 export const EDITOR_MODE = {

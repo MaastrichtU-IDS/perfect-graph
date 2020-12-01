@@ -92,6 +92,9 @@ const AppContainer = ({
       opened: true,
       forms: [FILTER_SCHEMA, VIEW_CONFIG_SCHEMA]
     },
+    dataBar: {
+      editable: false,
+    },
     actionBar: {
       actions: {
         add: { visible: false },
@@ -100,7 +103,8 @@ const AppContainer = ({
     },
     onEvent: ({
       type,
-      extraData
+      extraData,
+      element
     }) => {
       switch (type) {
         
@@ -138,10 +142,6 @@ const AppContainer = ({
             to,
             from,
             directed: true,
-            box: {
-              width: NODE_SIZE.width + 10,
-              height: NODE_SIZE.height + 10
-            },
             fill:C.rgbNumber(theme.colors.text)
             // type: 'bezier'
           })
