@@ -8,7 +8,7 @@ import MusicGraph from './examples/Music'
 import CaseLawExplorerGraph from './examples/CaseLawExplorer'
 import {useController} from './src/plugins/controller'
 import {getLabel} from './src/utils'
-import { DynamicRender } from './src/components/DynamicRender'
+import { RenderJSON,mockRenderJSON } from './src/components/RenderJSON'
 import { FILTER_SCHEMA, VIEW_CONFIG_SCHEMA } from './examples/CaseLawExplorer/constants'
 // import './src/plugins/dataConverter'
 // import './src/plugins/parseContext'
@@ -86,53 +86,27 @@ const AppContainer = () => {
         renderNode={({ item, label, element })=> {
           // const itemDataMap = R.
           return (
+            <RenderJSON 
+            {...mockRenderJSON}
+            context={{item, label, element}}
+            />
             // <Sprite
             //   image="https://s3-us-west-2.amazonaws.com/s.cdpn.io/693612/coin.png"
             //   // scale={{ x: 0.5, y: 0.5 }}
             // />
-            // <DynamicRender 
-            //  components={Graph}
-            //   data={[
-            //     {
-            //       type: 'View', 
-            //       props: {
-            //         style: {
-            //       width: 300,
-            //       height: 100,
-            //       justifyContent: 'center',
-            //       alignItems: 'center',
-            //       borderRadius: 50,
-            //       backgroundColor: element.selected() ? 'red' : 'blue'
-            //     },
-            //   },
-            //   children: [
-            //     {
-            //       type: 'Text', 
-            //       props: {},
-            //       children: [{ component: label }]
-            //     }
-            //   ]
-            //   }
-            //   // {
-            //   //   type: 'ProfileTemplate',
-            //   //   props: {
-            //   //     image: item.data
-            //   //   }
-            //   // }
-            //   ]}
-            // />
-            <Graph.View style={{
-              width: 100,
-              height: 100,
-              justifyContent: 'center',
-              alignItems: 'center',
-              // borderRadius: 50,
-              // backgroundColor: element.selected() ? 'red' : 'blue'
-            }}
-            >
-              <Graph.Text>{label}</Graph.Text>
-              {/* <Graph.Text>{element.position().x}</Graph.Text> */}
-            </Graph.View>
+            
+            // <Graph.View style={{
+            //   width: 100,
+            //   height: 100,
+            //   justifyContent: 'center',
+            //   alignItems: 'center',
+            //   // borderRadius: 50,
+            //   // backgroundColor: element.selected() ? 'red' : 'blue'
+            // }}
+            // >
+            //   <Graph.Text>{label}</Graph.Text>
+            //   {/* <Graph.Text>{element.position().x}</Graph.Text> */}
+            // </Graph.View>
           )
         }}
         // onElementSelected={({ item}) => {
@@ -153,8 +127,8 @@ const AppContainer = () => {
 export default ({ skipLoadingScreen }: Props) => {
   return (
     // <App/>
-      // <AppContainer />
-      <CaseLawExplorerGraph />
+      <AppContainer />
+      // <CaseLawExplorerGraph />
       // <StoreProvider
       //   store={store.store}
       //   context={store.StoreContext}
@@ -211,4 +185,5 @@ const PROFILE_GRAPH = {
     },
   }
 }
+
 

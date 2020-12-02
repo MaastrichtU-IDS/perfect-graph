@@ -115,7 +115,7 @@
     "react-test-renderer": "^16.13.1",
     "tscpaths": "^0.0.9",
     "typescript": "~3.9.5",
-    "unitx": "^0.0.433",
+    "unitx": "^0.0.435",
     "unitx-docs": "^0.0.5",
     "unitx-docs-pack": "^0.0.20",
     "unitx-ui": "^0.0.332",

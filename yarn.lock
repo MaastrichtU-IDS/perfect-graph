@@ -13479,6 +13479,11 @@ jsonpath-plus@^3.0.0:
   resolved "https://registry.yarnpkg.com/jsonpath-plus/-/jsonpath-plus-3.0.0.tgz#194ab4792a5e9b4ed27bf442188c8eb7e697a04b"
   integrity sha512-WQwgWEBgn+SJU1tlDa/GiY5/ngRpa9yrSj8n4BYPHcwoxTDaMEaYCHMOn42hIHHDd3CrUoRr3+HpsK0hCKoxzA==
 
+jsonpath-plus@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/jsonpath-plus/-/jsonpath-plus-4.0.0.tgz#954b69faa3d8b07f30ae2f9e601176a4b0d2806e"
+  integrity sha512-e0Jtg4KAzDJKKwzbLaUtinCn0RZseWBVRTRGihSpvFlM3wTR7ExSp+PTdeTsDrLNJUe7L7JYJe8mblHX5SCT6A==
+
 jsonpointer@^4.0.0, jsonpointer@^4.0.1:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/jsonpointer/-/jsonpointer-4.1.0.tgz#501fb89986a2389765ba09e6053299ceb4f2c2cc"
@@ -21387,10 +21392,10 @@ unitx@^0.0.361:
     victor "^1.1.0"
     xstate "^4.9.1"
 
-unitx@^0.0.433:
-  version "0.0.433"
-  resolved "https://registry.yarnpkg.com/unitx/-/unitx-0.0.433.tgz#df714b0d51b8bea2876ae9b797793b00de1b502e"
-  integrity sha512-dbkH5chiTHd/A3x7Eqkj4ItOH+a3OAr78zFKjlUzc+FsPk59Wiy++oT1ijUEXRZPti6mgP9QBGvRMscJSISPtQ==
+unitx@^0.0.435:
+  version "0.0.435"
+  resolved "https://registry.yarnpkg.com/unitx/-/unitx-0.0.435.tgz#ac50532bfa459440f7de08d02faf5da870f5e6d1"
+  integrity sha512-Jvwn01ZvUhUr/aOa6piZ0KfT6NyqsnESKoQIOlPCVsI6piGihu1EGcOr4vfEaZEOTqwkabt6kEHYsL/8EPUxRA==
   dependencies:
     "@xstate/test" "^0.3.0"
     ajv "^6.12.0"
@@ -21405,6 +21410,7 @@ unitx@^0.0.433:
     flatted "^2.0.2"
     immer "^7.0.8"
     json-schema-faker "^0.5.0-rcv.24"
+    jsonpath-plus "^4.0.0"
     jsonwebtoken "8.5.1"
     mingo "^3.0.6"
     ncp "^2.0.0"
