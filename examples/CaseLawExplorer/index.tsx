@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from 'react'
 import * as R from 'unitx/ramda'
 import mingo from 'unitx/mingo'
@@ -24,6 +25,7 @@ const NODE_SIZE = {
 
 const NODE_SIZE_RANGE_MAP = {
   size: [100, 300],
+  community: [0, 10],
   in_degree: [0, 10],
   out_degree: [0, 10],
   degree: [0, 20],
@@ -156,7 +158,7 @@ const AppContainer = ({
                 height: size,
                 alignItems: 'center',
                 justifyContent: 'center',
-                borderRadius: 25,
+                borderRadius: 25,//(size/2 )+10,
                 backgroundColor: color
                 }}
                 renderHoverElement={() => (

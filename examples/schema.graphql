@@ -21,7 +21,7 @@ type DataItem @model @key(name: "byNode", fields: ["elementID"]) {
   name: String
   value: String[]
   type: String
-  additional: [DataItem] @connection(keyName: "byDataItem", fields: ["id"])
+  additional: [AdditionalDataItem] @connection(keyName: "byDataItem", fields: ["id"])
 }
 type AdditionalDataItem @model @key(name: "byDataItem", fields: ["dataItemID"]) {
   id: ID!
