@@ -9,7 +9,7 @@ import CaseLawExplorerGraph from './examples/CaseLawExplorer'
 import {useController} from './src/plugins/controller'
 import {getLabel} from './src/utils'
 import { RenderJSON,mockRenderJSON } from './src/components/RenderJSON'
-import { FILTER_SCHEMA, VIEW_CONFIG_SCHEMA } from './examples/CaseLawExplorer/constants'
+// import { VIEW_CONFIG_SCHEMA } from './examples/CaseLawExplorer/constants'
 // import './src/plugins/dataConverter'
 // import './src/plugins/parseContext'
 import App from './src/App'
@@ -42,7 +42,7 @@ const data = {
     { id: `edge:${index}`, source: `${index}`,  target: `${index+1}`,  data: [{ name: 'foaf:name', value: ['ts','saba'], additional: []}]}
   )),
   settingsBar: {
-    forms: [FILTER_SCHEMA, VIEW_CONFIG_SCHEMA],
+    // forms: [FILTER_SCHEMA, VIEW_CONFIG_SCHEMA],
   },
   graphConfig: {
     nodes: {
@@ -127,8 +127,8 @@ const AppContainer = () => {
 export default ({ skipLoadingScreen }: Props) => {
   return (
     // <App/>
-      <AppContainer />
-      // <CaseLawExplorerGraph />
+      // <AppContainer />
+      <CaseLawExplorerGraph />
       // <StoreProvider
       //   store={store.store}
       //   context={store.StoreContext}

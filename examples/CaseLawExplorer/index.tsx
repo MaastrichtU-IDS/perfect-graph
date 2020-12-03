@@ -12,7 +12,7 @@ import { Graph } from '../../src/components'
 import {drawLine} from '../../src/components/Graphics'
 import data from './data'
 import * as C from 'unitx/color'
-import { FILTER_SCHEMA, VIEW_CONFIG_SCHEMA  } from './constants'
+import { getFilterSchema, VIEW_CONFIG_SCHEMA  } from './constants'
 import { EVENT } from '../../src/utils/constants'
 import {useController} from '../../src/plugins/controller'
 
@@ -88,6 +88,10 @@ const AppContainer = ({
       nodeColor: null
     },
   })
+  const FILTER_SCHEMA = React.useMemo(() => getFilterSchema({
+    onPopupPress: () => console.log('popup')
+  }), [])
+  console.log('a',FILTER_SCHEMA)
   const [controllerProps] = useController({
     ...data,
     graphConfig: {

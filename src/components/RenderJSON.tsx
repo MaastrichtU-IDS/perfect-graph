@@ -11,6 +11,7 @@ export type RenderJSONProps = {
   context: Parameters<RenderNode>[0];
   ui: DynamicRenderProps['data'][];
 }
+
 const runFunctionByString = (
   functionString: string,
   params: any[] = [],

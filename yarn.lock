@@ -21118,10 +21118,10 @@ unitx-docs@^0.0.5:
     ts-to-schema "^2.1.174"
     unitx "^0.0.253"
 
-unitx-ui@^0.0.332:
-  version "0.0.332"
-  resolved "https://registry.yarnpkg.com/unitx-ui/-/unitx-ui-0.0.332.tgz#bdc1bebf4da3f0268b09a184c42d727790969462"
-  integrity sha512-jRBOK7q+0lXZUKvUWjokWY9OIW3ZErvThU225shD/K6I9M+xNnKX0hJtPGQRMHRbUsC/DU4ofnD0t/nZKM2Fiw==
+unitx-ui@^0.0.335:
+  version "0.0.335"
+  resolved "https://registry.yarnpkg.com/unitx-ui/-/unitx-ui-0.0.335.tgz#ab480558b3d90331737d07aebd31946cd11f1ecf"
+  integrity sha512-spNaSPua7noVwtMLqq17EnucbTtf57IUSFhxg2+hEMTqkOekUDut6Z60gKaItFd6bXvf+LJeh/X3tT71J3+lmg==
   dependencies:
     "@eva-design/eva" "^2.0.0"
     "@eva-design/material" "^2.0.0"
@@ -21392,10 +21392,10 @@ unitx@^0.0.361:
     victor "^1.1.0"
     xstate "^4.9.1"
 
-unitx@^0.0.435:
-  version "0.0.435"
-  resolved "https://registry.yarnpkg.com/unitx/-/unitx-0.0.435.tgz#ac50532bfa459440f7de08d02faf5da870f5e6d1"
-  integrity sha512-Jvwn01ZvUhUr/aOa6piZ0KfT6NyqsnESKoQIOlPCVsI6piGihu1EGcOr4vfEaZEOTqwkabt6kEHYsL/8EPUxRA==
+unitx@^0.0.436:
+  version "0.0.436"
+  resolved "https://registry.yarnpkg.com/unitx/-/unitx-0.0.436.tgz#9c251671fcf16ae1ab99e98ba7c7b30de9fe9117"
+  integrity sha512-R8XottzMOtR0DD1Yg4LXpugilpyf0b6WGoBMIT8TLBm+zwIgfwvxV/AYdq/W7PeaKQ9pl6Aip1v3QNbuBGQrdw==
   dependencies:
     "@xstate/test" "^0.3.0"
     ajv "^6.12.0"
