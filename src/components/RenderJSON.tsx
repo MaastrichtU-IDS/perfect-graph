@@ -5,13 +5,18 @@ import json from 'unitx/json'
 import Graph from './Graph'
 import { DynamicRender, DynamicRenderProps } from './DynamicRender'
 
+type RenderJSONContext = Parameters<RenderNode>[0]
+
 export type RenderJSONProps = {
   params?: string;
   select?: string;
-  context: Parameters<RenderNode>[0];
+  context: RenderJSONContext;
   ui: DynamicRenderProps['data'][];
 }
-
+type RenderJSONCalculatedContext = RenderJSONContext & {
+  ui: RenderJSONProps['ui'];
+  params: any;
+}
 const runFunctionByString = (
   functionString: string,
   params: any[] = [],
@@ -26,13 +31,14 @@ export const RenderJSON = (props: RenderJSONProps) => {
     select,
     params,
   } = props
-  context.ui = ui
-  context.params = React.useMemo(
-    () => (params ? runFunctionByString(params, [context]) : {}),
+  const calculatedContext = { ...context } as RenderJSONCalculatedContext
+  calculatedContext.ui = ui
+  calculatedContext.params = React.useMemo(
+    () => (params ? runFunctionByString(params, [calculatedContext]) : {}),
     [params, context],
   )
   const selectedUI = React.useMemo(
-    () => (select ? runFunctionByString(select, [context]) : ui[0]),
+    () => (select ? runFunctionByString(select, [calculatedContext]) : ui[0]),
     [ui, context, select],
   )
   const data = R.traverseJSON(
@@ -40,7 +46,7 @@ export const RenderJSON = (props: RenderJSONProps) => {
     (value) => {
       if (typeof value === 'string' && value.startsWith('$.')) {
         return json.path({
-          json: context,
+          json: calculatedContext,
           path: value,
         })[0]
       }
@@ -49,6 +55,7 @@ export const RenderJSON = (props: RenderJSONProps) => {
   )
   return (
     <DynamicRender
+      // @ts-ignore
       components={Graph}
       data={data}
     />
@@ -56,6 +63,8 @@ export const RenderJSON = (props: RenderJSONProps) => {
 }
 
 export const mockRenderJSON: RenderJSONProps = {
+  // @ts-ignore
+  context: {},
   ui: [
     [
       {

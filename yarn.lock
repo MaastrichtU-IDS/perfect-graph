@@ -21392,10 +21392,10 @@ unitx@^0.0.361:
     victor "^1.1.0"
     xstate "^4.9.1"
 
-unitx@^0.0.436:
-  version "0.0.436"
-  resolved "https://registry.yarnpkg.com/unitx/-/unitx-0.0.436.tgz#9c251671fcf16ae1ab99e98ba7c7b30de9fe9117"
-  integrity sha512-R8XottzMOtR0DD1Yg4LXpugilpyf0b6WGoBMIT8TLBm+zwIgfwvxV/AYdq/W7PeaKQ9pl6Aip1v3QNbuBGQrdw==
+unitx@^0.0.438:
+  version "0.0.438"
+  resolved "https://registry.yarnpkg.com/unitx/-/unitx-0.0.438.tgz#a60268e3bdec62b2c892343b603e0e297bbcb4e1"
+  integrity sha512-Jp9jszCLUpL1ZOE/OzQry9fvARD+R3fykJxD/Veyc1n7+PwxfPcu1QzUSLVkHc5K2mfsSys4egdcoibQTgKjTQ==
   dependencies:
     "@xstate/test" "^0.3.0"
     ajv "^6.12.0"

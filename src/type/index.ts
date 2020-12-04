@@ -27,10 +27,11 @@ export type BoundingBox = {
 
 export type NodeContext = ElementContext & {
   boundingBox: BoundingBox;
+  element: NodeElement;
 }
 
 export type EdgeContext = ElementContext & {
-
+  element: EdgeElement;
 }
 
 export type Event = keyof typeof EVENT

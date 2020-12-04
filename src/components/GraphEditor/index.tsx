@@ -16,7 +16,7 @@ import { getLabel, getSelectedItemByElement } from '@utils'
 import { EDITOR_MODE, EVENT } from '@utils/constants'
 import React from 'react'
 import { View, wrapComponent, useForwardRef } from 'unitx-ui'
-import { ForwardRef, Position, PropsWithRef } from 'unitx-ui/type'
+import { ForwardRef, PropsWithRef } from 'unitx-ui/type'
 import * as R from 'unitx/ramda'
 import ActionBar, { ActionBarProps } from './ActionBar'
 import DataBar, { DataBarProps } from './DataBar'
@@ -43,13 +43,13 @@ GraphProps,
 'config'|'onPress' | 'renderNode' | 'renderEdge'
 >
 
-const MODE_ICON_MAP = {
-  [EDITOR_MODE.ADD]: 'plus',
-  [EDITOR_MODE.DELETE]: 'minus',
-  [EDITOR_MODE.CONTINUES_ADD]: 'plus-circle-outline',
-  [EDITOR_MODE.CONTINUES_DELETE]: 'minus-circle-outline',
-  [EDITOR_MODE.DEFAULT]: null,
-}
+// const MODE_ICON_MAP = {
+//   [EDITOR_MODE.ADD]: 'plus',
+//   [EDITOR_MODE.DELETE]: 'minus',
+//   [EDITOR_MODE.CONTINUES_ADD]: 'plus-circle-outline',
+//   [EDITOR_MODE.CONTINUES_DELETE]: 'minus-circle-outline',
+//   [EDITOR_MODE.DEFAULT]: null,
+// }
 
 const MODE_ICON_SCALE = 0.8
 const MODE_ICON_MAP_BY_URL = {
@@ -152,7 +152,7 @@ const GraphEditorElement = (props: GraphEditorProps, ref: ForwardRef<GraphEditor
         )}
         renderEdge={({ item, element, ...rest }) => (
           <Graph.Touchable
-            onPress={() => onEvent({
+            onPress={() => onEventCallback({
               type: EVENT.ELEMENT_SELECTED,
               item,
               element,

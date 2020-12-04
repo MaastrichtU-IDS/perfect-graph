@@ -6,7 +6,7 @@ export type DynamicRenderData = {
   type?: string;
   props?: Record<string, any>;
   children?: DynamicRenderData[];
-  component: React.ReactNode;
+  component?: React.ReactNode;
 }
 
 export type DynamicRenderProps = {
@@ -23,19 +23,25 @@ const DynamicRenderElement = (props: DynamicRenderProps) => {
   return (
     <DataRender
       accessor={['children']}
+      // @ts-ignore
       data={data}
       renderItem={({ item, children }) => {
+        // @ts-ignore
         if (item.component) {
+          // @ts-ignore
           return item.component
         }
+        // @ts-ignore
         const ItemComponent = components[item?.type!]
         return (
           <ItemComponent
+          // @ts-ignore
             {...item?.props}
           >
             {
               React.Children.map(
                 children,
+                // @ts-ignore
                 (child, index) => item.children?.[index].component ?? child,
               )
             }

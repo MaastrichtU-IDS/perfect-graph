@@ -13,10 +13,12 @@ import Form, {
 } from 'unitx-ui/components/Form'
 import useAnimation, { animated } from 'unitx-ui/hooks/useAnimation'
 
-type SettingsForm = Partial<
+type SettingsForm = {
+  schema: FormProps<any>['schema'];
+} & Partial<
 Pick<
 FormProps<any>,
-'schema' | 'onChange'|'onSubmit'|'formData'| 'uiSchema' | 'children'
+'onChange'|'onSubmit'|'formData'| 'uiSchema' | 'children'
 >
 >
 export type SettingsBarProps = {
@@ -96,8 +98,6 @@ const SettingsBar = (props: SettingsBarProps) => {
               { form, value: formValue },
             )()}
           />
-          //   {children === undefined ? <View /> : children}
-          // </Form>
         ))
       }
       </ScrollView>

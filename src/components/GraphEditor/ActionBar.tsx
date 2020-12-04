@@ -33,7 +33,7 @@ export type ActionBarProps = {
   recording?: boolean;
   graphEditorRef: React.MutableRefObject<GraphEditorRef>;
   // layout?: LayoutOptionsValue;
-  graphConfig: GraphConfig;
+  graphConfig?: GraphConfig;
   actions?: {
     add: ActionOption;
     delete: ActionOption;
@@ -121,10 +121,14 @@ const ActionBar = (props: ActionBarProps) => {
         recordingRef.current = recording ? RECORDING_STATUS_MAP.START : RECORDING_STATUS_MAP.IDLE
         break
       case RECORDING_STATUS_MAP.START:
-        recordingRef.current = recording ? RECORDING_STATUS_MAP.RECORDING : RECORDING_STATUS_MAP.STOP
+        recordingRef.current = recording
+          ? RECORDING_STATUS_MAP.RECORDING
+          : RECORDING_STATUS_MAP.STOP
         break
       case RECORDING_STATUS_MAP.RECORDING:
-        recordingRef.current = recording ? RECORDING_STATUS_MAP.RECORDING : RECORDING_STATUS_MAP.STOP
+        recordingRef.current = recording
+          ? RECORDING_STATUS_MAP.RECORDING
+          : RECORDING_STATUS_MAP.STOP
         break
       case RECORDING_STATUS_MAP.STOP:
         recordingRef.current = recording ? RECORDING_STATUS_MAP.START : RECORDING_STATUS_MAP.IDLE
@@ -220,7 +224,10 @@ const ActionBar = (props: ActionBarProps) => {
                 ? EDITOR_MODE.DEFAULT
                 : EDITOR_MODE.DELETE,
             })}
-            onLongPress={createOnActionCallback(EVENT.MODE_CHANGED, { value: EDITOR_MODE.CONTINUES_DELETE })}
+            onLongPress={createOnActionCallback(
+              EVENT.MODE_CHANGED,
+              { value: EDITOR_MODE.CONTINUES_DELETE },
+            )}
           >
             Delete
           </Button>
@@ -229,7 +236,7 @@ const ActionBar = (props: ActionBarProps) => {
         {
           actions.layout.visible && (
           <LayoutOptions
-            layout={graphConfig.layout}
+            layout={graphConfig?.layout}
             createOnActionCallback={createOnActionCallback}
           />
           )
@@ -240,6 +247,7 @@ const ActionBar = (props: ActionBarProps) => {
           onPress={createOnActionCallback(EVENT.TOGGLE_RECORD_ACTIONS)}
         /> */}
         <Recorder
+          // @ts-ignore
           getStream={() => graphEditorRef.current.app.renderer.view.captureStream(25)}
           render={({
             startRecording,
@@ -329,7 +337,7 @@ const MoreOptions = (props: MoreOptionsProps) => {
           case OPTIONS.Import: {
             const result = await DocumentPicker.getDocumentAsync({ type: 'application/json' })
             if (result.type === 'success') {
-              const fileText = await readTextFile(result.file)
+              const fileText = await readTextFile(result.file!)
               createOnActionCallback(
                 EVENT.IMPORT_DATA,
                 { value: JSON.parse(fileText) },
@@ -352,10 +360,12 @@ const MoreOptions = (props: MoreOptionsProps) => {
         })
       }}
     >
-      {Object.values(OPTIONS).map((title) => (
-        <MenuItem title={title} />
-      ))}
-      {renderMoreAction?.()}
+      <>
+        {Object.values(OPTIONS).map((title) => (
+          <MenuItem title={title} />
+        ))}
+        {renderMoreAction?.()}
+      </>
     </OverflowMenu>
   )
 }

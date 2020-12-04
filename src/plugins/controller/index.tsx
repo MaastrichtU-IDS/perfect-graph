@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from 'react'
 import {
   Element, EditorMode,
@@ -68,7 +69,7 @@ export const useController = (
       extraData = {},
       index = 0,
       dataItem = {} as DataItem,
-      graphEditor,
+      // graphEditor,
     } = eventInfo
     const isNode = element?.isNode()
     const targetPath = isNode ? 'nodes' : 'edges'
@@ -261,6 +262,7 @@ export const useController = (
     })
   }, [update])
   return [
+    // @ts-ignore
     {
       ...state,
       onEvent,
