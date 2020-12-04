@@ -7,9 +7,9 @@ import { NativeEventMap } from 'unitx-ui/type'
 // import * as C from 'unitx/color'
 import {
   Element, NodeData, EdgeData, ElementData,
-  DisplayObjectWithYoga, NodeContext, EdgeContext
+  DisplayObjectWithYoga, NodeContext, EdgeContext,
 } from '@type'
-import { ELEMENT_DATA_FIELDS } from '@utils/constants'
+import { ELEMENT_DATA_FIELDS, PIXI_EVENT_NAMES } from '@utils/constants'
 
 // type Result = {
 //   x: number;
@@ -112,7 +112,7 @@ export const processTextStyle = (style: {
     // wordWrapWidth: 440,
   })
 }
-// export const EVENT_NAMES = {
+// export const PIXI_EVENT_NAMES = {
 //   onAdded: 'added',
 //   onClick: 'click',
 //   onMouseDown: 'mousedown',
@@ -142,17 +142,39 @@ export const processTextStyle = (style: {
 //   onTouchStart: 'touchstart',
 // }
 
-export const EVENT_NAMES = {
-  onClick: 'pointertap',
-  onMouseDown: 'pointerdown',
-  onMouseMove: 'pointermove',
-  onMouseOut: 'pointerout',
-  onMouseOver: 'pointerover',
-  onMouseUp: 'pointerup',
-}
-
 export type EventType = (e: PIXI.InteractionEvent) => void
 export type Events = NativeEventMap
+
+// export const processEventProps = (props: Record<string, any>) => {
+//   const newProps = { ...props }
+//   Object
+//     .keys(PIXI_EVENT_NAMES)
+//     .map((eventName) => {
+//       // @ts-ignore
+//       const domEventName = PIXI_EVENT_NAMES[eventName]
+//       const callback = props[eventName]
+//       if (callback) {
+//         newProps[domEventName] = callback
+//       }
+//     })
+//   return newProps
+// }
+
+export const applyEvents = (
+  instance: PIXI.DisplayObject,
+  props: Record<string, any>,
+) => {
+  Object
+    .keys(PIXI_EVENT_NAMES)
+    .map((eventName) => {
+      // @ts-ignore
+      const domEventName = PIXI_EVENT_NAMES[eventName]
+      const callback = props[eventName]
+      if (callback) {
+        instance.on(domEventName, callback)
+      }
+    })
+}
 
 // const processProps = (props: Record<string, any>) => {
 //   const {
@@ -181,7 +203,7 @@ export type Events = NativeEventMap
 //             R.has(key),
 //             R.prop(key),
 //             R.always(key),
-//           )(EVENT_NAMES),
+//           )(PIXI_EVENT_NAMES),
 //           value,
 //         ]),
 //       ),
@@ -199,22 +221,20 @@ export type Events = NativeEventMap
 //   processProps(newProps),
 // )
 
-const processProps = (props: Record<string, any>) => ({
-  ...R.pipe(
-    R.toPairs,
-    R.map(
-      ([key, value]: [string, any]) => ([
-        R.ifElse(
-          R.has(key),
-          R.prop(key),
-          R.always(key),
-        )(EVENT_NAMES),
-        value,
-      ]),
-    ),
-    R.fromPairs,
-  )(props),
-})
+const processProps = (props: Record<string, any>) => {
+  const newProps = { ...props }
+  Object
+    .keys(PIXI_EVENT_NAMES)
+    .map((eventName) => {
+      // @ts-ignore
+      const domEventName = PIXI_EVENT_NAMES[eventName]
+      const callback = props[eventName]
+      if (callback) {
+        newProps[domEventName] = callback
+      }
+    })
+  return newProps
+}
 
 type ApplyDefaultPropsConfig = {
   isFlex?: boolean;

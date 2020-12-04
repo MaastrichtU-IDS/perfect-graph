@@ -138,9 +138,9 @@ const ActionBar = (props: ActionBarProps) => {
         break
     }
   }, [recording])
-  React.useEffect(() => {
-    animationRef?.current?.start()
-  }, [])
+  // React.useEffect(() => {
+  //   animationRef?.current?.start()
+  // }, [])
   const actions = R.mergeDeepRight(DEFAULT_ACTIONS, props.actions ?? {})
   return (
     <AnimatedSurface

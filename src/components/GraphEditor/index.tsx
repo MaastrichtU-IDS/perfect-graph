@@ -129,7 +129,7 @@ const GraphEditorElement = (props: GraphEditorProps, ref: ForwardRef<GraphEditor
           })
         }}
         renderNode={({ item, element, ...rest }) => (
-          <Graph.Touchable
+          <Graph.Pressable
             onPress={() => onEventCallback({
               type: EVENT.ELEMENT_SELECTED,
               item,
@@ -148,10 +148,10 @@ const GraphEditorElement = (props: GraphEditorProps, ref: ForwardRef<GraphEditor
               ),
               ...rest,
             })}
-          </Graph.Touchable>
+          </Graph.Pressable>
         )}
         renderEdge={({ item, element, ...rest }) => (
-          <Graph.Touchable
+          <Graph.Pressable
             onPress={() => onEventCallback({
               type: EVENT.ELEMENT_SELECTED,
               item,
@@ -173,7 +173,7 @@ const GraphEditorElement = (props: GraphEditorProps, ref: ForwardRef<GraphEditor
               ...rest,
             })
 }
-          </Graph.Touchable>
+          </Graph.Pressable>
         )}
       />
 

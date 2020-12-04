@@ -127,3 +127,13 @@ export const DATA_TYPE_BY_INDEX = [
 ] as const
 
 export const LAYOUT_NAMES = Object.keys(Layouts)
+
+export const PIXI_EVENT_NAMES = {
+  onPress: 'click',
+  onHoverEnd: 'mouseout',
+  onHoverStart: 'mouseover',
+  onPressEnd: 'mouseup',
+  onPressMove: 'mousemove',
+  onPressStart: 'mousedown',
+  onRightPress: 'rightclick',
+}

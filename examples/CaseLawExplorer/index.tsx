@@ -94,8 +94,8 @@ const AppContainer = ({
   const [controllerProps] = useController({
     ...data,
     graphConfig: {
-      layout: Graph.Layouts.grid,
-      zoom: 0.2
+      // layout: Graph.Layouts.grid,
+      // zoom: 0.2
     },
     settingsBar: {
       opened: true,

@@ -4,6 +4,7 @@ import { EdgeSingular, NodeSingular, Core } from 'cytoscape'
 import { Position, Enumerable } from 'unitx/type'
 import {
   ELEMENT_TYPE, EVENT, DATA_TYPE, EDITOR_MODE,
+  PIXI_EVENT_NAMES,
 } from '@utils/constants'
 import { Viewport } from 'pixi-viewport'
 import { ViewportProps } from '@components/Viewport'
@@ -149,6 +150,15 @@ export type DisplayObjectWithYoga = PIXI.DisplayObject & {
   flex: boolean;
   yoga: YogaLayout;
 }
+
+export type PIXIEvents = {
+  [k in keyof typeof PIXI_EVENT_NAMES]: (event: PIXI.InteractionEvent) => void
+}
+
+export type PIXIDisplayObjectProps = {
+  interactive?: boolean;
+  buttonMode?: boolean;
+} & Partial<PIXIEvents>
 
 export type GraphLabelData = {
   global: { nodes: string[]; edges: string[] };

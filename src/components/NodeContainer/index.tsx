@@ -56,6 +56,12 @@ function NodeContainer(props: NodeContainerProps, __: ForwardRef<typeof NodeCont
       }}
       draggable
       onDrag={onDrag}
+      // onRightPress={(event) => {
+      //   console.log('rightPress')
+      //   event.data.originalEvent.preventDefault()
+      //   event.data.originalEvent.stopPropagation()
+      // }}
+      // onPress={(e) => console.log('press')}
     >
       {children({ item, element })}
     </Container>

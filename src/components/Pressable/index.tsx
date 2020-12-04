@@ -1,6 +1,6 @@
 import React from 'react'
 import { PropsWithRef } from 'unitx-ui/type'
-import useEvents from 'unitx-ui/hooks/useEvents'
+// import useEvents from 'unitx-ui/hooks/useEvents'
 import * as PIXI from 'pixi.js'
 import * as R from 'unitx/ramda'
 import { wrapComponent } from 'unitx-ui'
@@ -8,13 +8,13 @@ import { Events } from '@utils'
 import { PIXIBasicStyle, PIXIShapeStyle } from '@type'
 import View from '../View'
 
-export type TouchableProps = {
+export type PressableProps = {
   style?: PIXIBasicStyle & PIXIShapeStyle;
   children?: React.ReactNode;
   buttonMode?: boolean;
 } & Events
 
-// const TouchablePIXI = PixiComponent<TouchableProps, PIXI.Container>('TouchablePIXI', {
+// const PressablePIXI = PixiComponent<PressableProps, PIXI.Container>('PressablePIXI', {
 //   create: () => {
 //     const mutableInstance = new PIXI.Container()
 //     mutableInstance.interactive = true
@@ -29,46 +29,46 @@ export type TouchableProps = {
 //   ,
 // })
 
-function Touchable(props: TouchableProps) {
+function Pressable(props: PressableProps) {
   const {
-    onLongPress,
-    onPress,
-    onDoublePress,
-    onHoverEnd,
-    onHoverStart,
-    onPressChange,
-    onPressEnd,
-    onPressMove,
-    onPressStart,
+    // onLongPress,
+    // onPress,
+    // onDoublePress,
+    // onHoverEnd,
+    // onHoverStart,
+    // onPressChange,
+    // onPressEnd,
+    // onPressMove,
+    // onPressStart,
     buttonMode,
     ...rest
   } = props
-  const events = useEvents(
-    R.omitBy(R.isNil, {
-      onLongPress,
-      onPress,
-      onDoublePress,
-      onHoverEnd,
-      onHoverStart,
-      onPressChange,
-      onPressEnd,
-      onPressMove,
-      onPressStart,
-    }),
-    {
-      extraData: [
-        onLongPress,
-        onPress,
-        onDoublePress,
-        onHoverEnd,
-        onHoverStart,
-        onPressChange,
-        onPressEnd,
-        onPressMove,
-        onPressStart,
-      ],
-    },
-  )
+  // const events = useEvents(
+  //   R.omitBy(R.isNil, {
+  //     onLongPress,
+  //     onPress,
+  //     onDoublePress,
+  //     onHoverEnd,
+  //     onHoverStart,
+  //     onPressChange,
+  //     onPressEnd,
+  //     onPressMove,
+  //     onPressStart,
+  //   }),
+  //   {
+  //     extraData: [
+  //       onLongPress,
+  //       onPress,
+  //       onDoublePress,
+  //       onHoverEnd,
+  //       onHoverStart,
+  //       onPressChange,
+  //       onPressEnd,
+  //       onPressMove,
+  //       onPressStart,
+  //     ],
+  //   },
+  // )
   const viewRef = React.useRef<PIXI.Container>(null)
   React.useEffect(() => {
     R.when(
@@ -84,7 +84,7 @@ function Touchable(props: TouchableProps) {
     <View
       ref={viewRef}
       {...rest}
-      {...events}
+      // {...events}
     />
   )
 }
@@ -113,7 +113,7 @@ function Touchable(props: TouchableProps) {
  *    { id: 51, source: 1, target: 2 }
  *  ]}
  *  renderNode={({ item: { data } }) => (
- *    <Graph.Touchable
+ *    <Graph.Pressable
  *      onPress={() => alert('Pressed!!')}
  *      onLongPress={() => alert('LongPressed!!')}
  *    >
@@ -126,14 +126,14 @@ function Touchable(props: TouchableProps) {
  *           {data.city}
  *          </Graph.Text>
  *       </Graph.View>
- *    </Graph.Touchable>
+ *    </Graph.Pressable>
  * )}
  * />
  * ```
  */
 export default wrapComponent<
-PropsWithRef<{}, TouchableProps>
+PropsWithRef<{}, PressableProps>
 >(
-  Touchable,
+  Pressable,
   {},
 )

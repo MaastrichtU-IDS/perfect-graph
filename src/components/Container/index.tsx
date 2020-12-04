@@ -1,17 +1,17 @@
 import React from 'react'
-import { PixiComponent } from '@inlet/react-pixi'
+import { PixiComponent, Container as PIXIReactContainer } from '@inlet/react-pixi'
 import * as PIXI from 'pixi.js'
-import * as R from 'unitx/ramda'
 import { dragTrack } from '@core/utils/events'
 import {
   applyDefaultProps, preprocessProps,
 } from '@utils'
 import {
-  PIXIFlexStyle, PIXIBasicStyle,
+  PIXIFlexStyle, PIXIBasicStyle, PIXIDisplayObjectProps,
 } from '@type'
 import { Position } from 'unitx-ui/type'
 
-export type ContainerProps = {
+export type ContainerProps = PIXIDisplayObjectProps
+& React.ComponentProps<typeof PIXIReactContainer> &{
   style: PIXIFlexStyle & PIXIBasicStyle;
   children: React.ReactNode;
   draggable?: boolean;
@@ -24,37 +24,36 @@ export type ContainerProps = {
 // }
 
 const Container = PixiComponent<ContainerProps, PIXI.Container>('PIXIContainer', {
-  create: ({
-    onDrag, draggable = false,
-  }) => {
+  create: (props) => {
+    const {
+      onDrag,
+      draggable = false,
+      interactive = false,
+    } = props
     const instance = new PIXI.Container()
-    instance.interactive = draggable
-    R.when(
-      R.isTrue,
-      () => {
-        const { onDown, onMove } = dragTrack((posDiff) => {
-          const { parent: { scale } } = instance
-          instance.x += posDiff.x / scale.x
-          instance.y += posDiff.y / scale.y
-          onDrag && onDrag({ x: instance.x, y: instance.y })
-        })
-        instance.on('pointerdown', (e: PIXI.InteractionEvent) => {
+    instance.interactive = interactive || draggable
+    if (draggable) {
+      const { onDown, onMove } = dragTrack((posDiff) => {
+        const { parent: { scale } } = instance
+        instance.x += posDiff.x / scale.x
+        instance.y += posDiff.y / scale.y
+        onDrag && onDrag({ x: instance.x, y: instance.y })
+      })
+      instance
+        .on('mousedown', (e: PIXI.InteractionEvent) => {
+          const { originalEvent } = e.data
           // @ts-ignore
-          const { x, y } = e.data.originalEvent
+          const { x, y } = originalEvent
           onDown({ x, y })
         })
-          .on('pointermove', (e: PIXI.InteractionEvent) => {
-            // @ts-ignore
-            const { x, y } = e.data.originalEvent
-            onMove({ x, y })
-          })
-          // .on('pointertap', (e: PIXI.InteractionEvent) => {
-          //   e.data.originalEvent.stopPropagation()
-          //   e.data.originalEvent.preventDefault()
-          // })
-      },
-    )(draggable)
-
+        .on('mousemove', (e: PIXI.InteractionEvent) => {
+          const { originalEvent } = e.data
+          // @ts-ignore
+          const { x, y } = originalEvent
+          onMove({ x, y })
+        })
+    }
+    // applyEvents(instance, props)
     return instance
   },
   applyProps: (mutableInstance: PIXI.Container, oldProps, _props) => {

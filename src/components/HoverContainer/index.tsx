@@ -1,6 +1,6 @@
 import React from 'react'
 import { ViewProps } from '../View'
-import Touchable from '../Touchable'
+import Pressable from '../Pressable'
 
 export type HoverContainerProps = {
   renderHoverElement: () => React.ReactChild;
@@ -20,14 +20,14 @@ const HoverContainer = (props: HoverContainerProps) => {
     setState({ hovered: false })
   }, [])
   return (
-    <Touchable
+    <Pressable
       {...rest}
       onHoverStart={onHoverStart}
       onHoverEnd={onHoverEnd}
     >
       {children}
       {state.hovered && renderHoverElement()}
-    </Touchable>
+    </Pressable>
   )
 }
 

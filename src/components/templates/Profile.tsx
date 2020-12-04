@@ -7,7 +7,7 @@ import {
 } from '@type'
 import { ForwardRef, Position } from 'unitx-ui/type'
 // import { dataListToObject } from '@core/utils'
-import Touchable from '@components/Touchable'
+import Pressable from '@components/Pressable'
 import Image from '@components/Image'
 import Text from '@components/Text'
 import ViewPIXI from '@components/View'
@@ -53,7 +53,7 @@ function Profile(props: ProfileProps, __: ForwardRef<typeof Profile>) {
         <ViewPIXI
           style={{ flexDirection: 'column', width: 200 }}
         >
-          <Touchable
+          <Pressable
             style={{
               left: 10,
             }}
@@ -63,7 +63,7 @@ function Profile(props: ProfileProps, __: ForwardRef<typeof Profile>) {
             >
               {name}
             </Text>
-          </Touchable>
+          </Pressable>
           <Text
           // @ts-ignore
             style={[style.paragraph, {
