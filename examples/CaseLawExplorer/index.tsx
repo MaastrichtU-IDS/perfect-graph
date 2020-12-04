@@ -91,7 +91,6 @@ const AppContainer = ({
   const FILTER_SCHEMA = React.useMemo(() => getFilterSchema({
     onPopupPress: () => console.log('popup')
   }), [])
-  console.log('a',FILTER_SCHEMA)
   const [controllerProps] = useController({
     ...data,
     graphConfig: {

@@ -50,6 +50,7 @@ const ReactViewportComp = PixiComponent('Viewport', {
       ticker,
       interaction: renderer.plugins.interaction,
       passiveWheel: false,
+      divWheel: renderer.view,
     }) as ViewportType
     onCreate?.(viewport)
     viewport.sortableChildren = true
@@ -61,10 +62,9 @@ const ReactViewportComp = PixiComponent('Viewport', {
     viewport.on(
       'pointerdown',
       (e) => {
-        R.when(
-          R.propNotEq('target', viewport),
-          () => viewport.plugins.pause('drag'),
-        )(e)
+        if (e.target !== viewport) {
+          viewport.plugins.pause('drag')
+        }
         // const { x, y } = viewport.toWorld(e.data.global)
         viewport.isClick = true
         setTimeout(() => {

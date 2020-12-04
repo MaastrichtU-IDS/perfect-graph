@@ -49,9 +49,8 @@ export const useController = (
 ): UseControllerResult => {
   const controllerConfig: UseControllerData = React.useMemo<UseControllerData>(
     () => R.mergeDeepAll([
-      controllerConfig ?? DEFAULT_CONTROLLER_CONFIG,
+      DEFAULT_CONTROLLER_CONFIG,
       useControllerData,
-      // R.omit(['onEvent'], useControllerData),
     ]) as UseControllerData, [useControllerData],
   )
   const [state, update] = useData<ControllerState, void>(
