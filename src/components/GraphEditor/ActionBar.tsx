@@ -8,22 +8,28 @@ import React from 'react'
 import { StyleSheet } from 'react-native'
 import {
   Button,
-  Divider, Icon,
-  MenuItem, OverflowMenu,
-  Popover, SelectItem,
-  Slider,
-  Text, useTheme,
+  Icon,
+  MenuItem,
+  OverflowMenu,
+  Popover,
+  SelectItem,
+  useTheme,
   View,
   wrapComponent,
 } from 'unitx-ui'
+import Form from 'unitx-ui/components/Form'
 import * as R from 'unitx/ramda'
 import { DocumentPicker } from 'unitx-ui/@/DocumentPicker'
 import Recorder from 'unitx-ui/components/Recorder'
 import useAnimation, { animated } from 'unitx-ui/hooks/useAnimation'
 
+export const ACTION = {
+  EXPORT_DATA: 'EXPORT_DATA',
+}
 type ActionOption = {
   visible?: boolean;
 }
+
 export type ActionBarProps = {
   renderMoreAction?: () => React.ReactElement;
   opened?: boolean;
@@ -43,6 +49,7 @@ export type ActionBarProps = {
     };
     layout: ActionOption;
   };
+  onAction: (action: { type: string; value?: any }) => void;
 }
 
 const DEFAULT_ACTIONS = {
@@ -78,6 +85,7 @@ const ActionBar = (props: ActionBarProps) => {
     // recordingActions = false,
     graphEditorRef,
     graphConfig,
+    onAction,
   } = props
   const {
     props: animatedProps,
@@ -91,17 +99,12 @@ const ActionBar = (props: ActionBarProps) => {
     },
     autoStart: false,
   })
-  const initialized = React.useRef(false)
+  // const initialized = React.useRef(false)
   React.useEffect(() => {
-    if (initialized.current) {
-      animationRef?.current?.start()
-      animationRef?.current?.update({
-        reverse: true,
-      })
-    }
-    initialized.current = true
+    animationRef.current.reverse({
+      reversed: !opened,
+    })
   }, [animationRef, opened])
-
   const createOnActionCallback = React.useCallback(
     (
       type: Event,
@@ -281,6 +284,7 @@ const ActionBar = (props: ActionBarProps) => {
         <MoreOptions
           renderMoreAction={renderMoreAction}
           createOnActionCallback={createOnActionCallback}
+          onAction={onAction}
         />
       </View>
       <Icon
@@ -302,7 +306,7 @@ type MoreOptionsProps = {
     type: Event,
     extraData?: any,
   ) => () => void;
-} & Pick<ActionBarProps, 'renderMoreAction'>
+} & Pick<ActionBarProps, 'renderMoreAction' | 'onAction'>
 
 const OPTIONS = {
   Import: 'Import',
@@ -310,8 +314,9 @@ const OPTIONS = {
 } as const
 const MoreOptions = (props: MoreOptionsProps) => {
   const {
-    renderMoreAction,
+    renderMoreAction = () => <View />,
     createOnActionCallback,
+    onAction,
   } = props
   const [state, setState] = React.useState({
     visible: false,
@@ -346,7 +351,8 @@ const MoreOptions = (props: MoreOptionsProps) => {
             break
           }
           case OPTIONS.Export:
-            createOnActionCallback(EVENT.EXPORT_DATA)()
+            onAction({ type: ACTION.EXPORT_DATA })
+            // createOnActionCallback(EVENT.EXPORT_DATA)()
             break
 
           default:
@@ -364,7 +370,7 @@ const MoreOptions = (props: MoreOptionsProps) => {
         {Object.values(OPTIONS).map((title) => (
           <MenuItem title={title} />
         ))}
-        {renderMoreAction?.()}
+        {renderMoreAction()}
       </>
     </OverflowMenu>
   )
@@ -413,7 +419,7 @@ const LayoutOptions = (props: LayoutOptionsProps) => {
       onBackdropPress={() => setState({ ...state, visible: false })}
     >
       <View>
-        <View>
+        {/* <View>
           <Text>{Math.floor(animationDuration)}</Text>
           <Slider
             value={animationDuration}
@@ -427,14 +433,61 @@ const LayoutOptions = (props: LayoutOptionsProps) => {
             )()}
           />
           <Divider />
-        </View>
-        {LAYOUT_NAMES.map((name) => (
+        </View> */}
+        <Form
+          schema={{
+            title: 'Layout',
+            properties: {
+              name: {
+                type: 'string',
+                enum: LAYOUT_NAMES,
+              },
+              animationDuration: {
+                type: 'number',
+                minimum: 0,
+                maximum: 10000,
+              },
+              refresh: {
+                type: 'number',
+                minimum: 0,
+                maximum: 100,
+              },
+              maxIterations: {
+                type: 'number',
+                minimum: 0,
+                maximum: 1000,
+              },
+              maxSimulationTime: {
+                type: 'number',
+                minimum: 0,
+                maximum: 1000,
+              },
+            },
+          }}
+          extraData={[layout]}
+          formData={{
+            name: layout.name,
+            animationDuration: layout.animationDuration,
+            refresh: layout.refresh,
+            maxIterations: layout.maxIterations,
+            maxSimulationTime: layout.maxSimulationTime,
+          }}
+          onSubmit={(formData) => {
+            createOnActionCallback(
+              EVENT.LAYOUT_CHANGED,
+              {
+                value: formData,
+              },
+            )()
+          }}
+        />
+        {/* {LAYOUT_NAMES.map((name) => (
           <SelectItem
             title={name}
             onPress={() => onItemSelect(name)}
             selected={layout.name === name}
           />
-        ))}
+        ))} */}
       </View>
     </Popover>
   )

@@ -1,7 +1,6 @@
 import { Parser, Quad } from 'n3'
 import * as jsonld from 'jsonld'
 import * as R from 'unitx/ramda'
-// import toJsonSchema from 'to-json-schema'
 
 type ToNquadResult = {
   quadList: Quad[];

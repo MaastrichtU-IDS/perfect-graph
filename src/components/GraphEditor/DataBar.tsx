@@ -42,15 +42,11 @@ const DataBar = (props: DataBarProps) => {
     autoStart: false,
   })
   const theme = useTheme()
-  const initialized = React.useRef(false)
+  // const initialized = React.useRef(false)
   React.useEffect(() => {
-    if (initialized.current) {
-      animationRef?.current?.start()
-      animationRef?.current?.update({
-        reverse: true,
-      })
-    }
-    initialized.current = true
+    animationRef.current?.reverse?.({
+      reversed: !opened,
+    })
   }, [animationRef, opened])
   const createOnActionCallback = React.useCallback(
     (

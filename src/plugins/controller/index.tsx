@@ -232,10 +232,12 @@ export const useController = (
           draft.actionBar!.opened = !draft.actionBar?.opened
           break
         case EVENT.IMPORT_DATA:
-
+          R.mapObjIndexed((value, key) => {
+            draft[key] = value
+          })(extraData.value)
           break
         case EVENT.EXPORT_DATA:
-          download(JSON.stringify(draft), 'perfect-graph.json')
+          download(JSON.stringify(extraData.value), 'perfect-graph.json')
           break
         case EVENT.TOGGLE_RECORD:
           draft.actionBar.recording = !draft.actionBar?.recording
@@ -247,6 +249,17 @@ export const useController = (
           const animationDuration = draft.graphConfig.layout?.animationDuration ?? 5000
           draft.graphConfig.layout = GraphLayouts[extraData.value]
           draft.graphConfig.layout.animationDuration = animationDuration
+          break
+        }
+        case EVENT.LAYOUT_CHANGED: {
+          let layout
+          if (extraData.value.name) {
+            layout = {
+              ...GraphLayouts[extraData.value.name],
+              ...extraData.value,
+            }
+          }
+          draft.graphConfig.layout = layout
           break
         }
         case EVENT.LAYOUT_ANIMATION_DURATION_CHANGED: {
@@ -292,6 +305,7 @@ const DEFAULT_CONTROLLER_CONFIG = {
   selectedElement: null as Element | null,
   graphConfig: {},
 }
+
 // if (type === DATA_TYPE.number) {
 //   try {
 //     return Number.parseFloat(value)

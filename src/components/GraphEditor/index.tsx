@@ -18,7 +18,7 @@ import React from 'react'
 import { View, wrapComponent, useForwardRef } from 'unitx-ui'
 import { ForwardRef, PropsWithRef } from 'unitx-ui/type'
 import * as R from 'unitx/ramda'
-import ActionBar, { ActionBarProps } from './ActionBar'
+import ActionBar, { ACTION, ActionBarProps } from './ActionBar'
 import DataBar, { DataBarProps } from './DataBar'
 import SettingsBar, { SettingsBarProps } from './SettingsBar'
 import { MouseIcon } from './MouseIcon'
@@ -189,7 +189,7 @@ const GraphEditorElement = (props: GraphEditorProps, ref: ForwardRef<GraphEditor
         settingsBar && (
           <SettingsBar
             {...settingsBar}
-            onEvent={onEvent}
+            onEvent={onEventCallback}
           />
         )
       }
@@ -200,6 +200,21 @@ const GraphEditorElement = (props: GraphEditorProps, ref: ForwardRef<GraphEditor
           graphEditorRef={graphEditorRef}
           mode={mode}
           graphConfig={graphConfig}
+          onAction={({ type }) => {
+            switch (type) {
+              case ACTION.EXPORT_DATA:
+                onEventCallback({
+                  type: EVENT.EXPORT_DATA,
+                  extraData: {
+                    value: extractGraphEditorData(props)
+                  },
+                })
+                break
+
+              default:
+                break
+            }
+          }}
           {...actionBar}
         />
         )
@@ -213,6 +228,20 @@ const GraphEditorElement = (props: GraphEditorProps, ref: ForwardRef<GraphEditor
   )
 }
 
+const extractGraphEditorData = (props: GraphEditorProps) => {
+  const x = {}
+
+  return {
+    graphConfig: props.graphConfig,
+    label: props.label,
+    settingsBar: props.settingsBar,
+    dataBar: props.dataBar,
+    actionBar: props.actionBar,
+    mode: props.mode,
+    nodes: props.nodes,
+    edges: props.edges,
+  }
+}
 /**
  * ## Usage
  * To create a GraphEditor easily, you can just pass data and render methods.
