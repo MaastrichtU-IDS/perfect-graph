@@ -92,6 +92,11 @@ export const drawLine = (
     directed?: boolean;
     graphics: PIXI.Graphics;
     type?: 'bezier' | 'segments' | 'straight';
+    width?: number;
+    alpha?: number;
+    arrowHead?: {
+      radius?: number;
+    };
   },
 ) => {
   const {
@@ -101,6 +106,11 @@ export const drawLine = (
     directed,
     type, //= 'bezier',
     graphics: mutableInstance,
+    width = 4,
+    alpha = 1,
+    arrowHead = {
+      radius: 2,
+    },
   } = config
   const fromPos = {
     x: fromBoundingBox.x,
@@ -168,13 +178,13 @@ export const drawLine = (
   // )(distanceVector)
   const unit = V.normalize(distanceVector)
   mutableInstance.clear()
-  mutableInstance.lineStyle(2, fill, 1)
+  mutableInstance.lineStyle(width, fill, alpha)
   drawArrowHead({
     graphics: mutableInstance,
     unit,
-    radius: 5,
     to,
     fill,
+    ...arrowHead,
   })
   R.cond([
     [

@@ -2,7 +2,7 @@ import React from 'react'
 import { useStateWithCallback } from 'unitx-ui/hooks'
 import { NodeSingular } from 'cytoscape'
 import { Position } from 'unitx/type'
-import { NodeContext, NodeConfig } from '@type'
+import { NodeContext, NodeConfig, ClusterInfo } from '@type'
 import { mutableGraphMap } from './useGraph'
 import { useElement } from './useElement'
 
@@ -17,6 +17,7 @@ export type Props = {
 type Result = {
   element: NodeSingular;
   context: NodeContext;
+  cluster?: ClusterInfo;
 }
 const DEFAULT_BOUNDING_BOX = {
   x: 0,
@@ -33,7 +34,7 @@ export default (props: Props): Result => {
     graphID,
     config,
   } = props
-  const cy = mutableGraphMap[graphID]
+  const { cy, clustersByID } = mutableGraphMap[graphID]
   const [, setState] = useStateWithCallback({}, () => {})
   const contextRef = React.useRef<NodeContext>({
     render: (callback: () => {}) => setState({}, callback),
@@ -85,5 +86,6 @@ export default (props: Props): Result => {
   return {
     element,
     context: contextRef.current,
+    cluster: clustersByID[id],
   }
 }

@@ -132,8 +132,19 @@ export type NodeConfig = {
 export type EdgeConfig = {
 } & ElementConfig
 
+export type ClusterInfo = {
+  clusterName: string;
+  expand: boolean;
+}
+export type ClusterConfig = Record<string, {
+  ids: string[];
+  expand: boolean;
+}>
+export type ClusterInfoByID = Record<string, ClusterInfo>
+
 export type GraphConfig = {
   layout?: typeof GraphLayouts['cose'];
+  clusters?: ClusterConfig;
   zoom?: ViewportProps['zoom'];
   transform?: ViewportProps['transform'];
   renderEvents?: CytoscapeEvent[];

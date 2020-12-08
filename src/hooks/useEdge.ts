@@ -31,7 +31,7 @@ export default <T>(props: Props<T>): Result<T> => {
     graphID,
     config,
   } = props
-  const cy = mutableGraphMap[graphID]
+  const { cy } = mutableGraphMap[graphID]
   const [, setState] = useStateWithCallback({}, () => {
   })
   const contextRef = useRef<EdgeContext>({

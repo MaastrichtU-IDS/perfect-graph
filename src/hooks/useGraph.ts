@@ -1,5 +1,6 @@
 import cytoscape, { Core } from 'cytoscape'
 import { useEffect, useMemo, useRef } from 'react'
+import { ClusterConfig, ClusterInfoByID } from '@type'
 // import d3Force from 'cytoscape-d3-force'
 // import euler from 'cytoscape-euler'
 // import cola from 'cytoscape-cola'
@@ -8,11 +9,15 @@ import { useEffect, useMemo, useRef } from 'react'
 // cytoscape.use(euler)
 // cytoscape.use(cola)
 
-export const mutableGraphMap: Record<string, Core> = {}
+export const mutableGraphMap: Record<string, {
+  cy: Core;
+  clustersByID: ClusterInfoByID;
+}> = {}
 export type Props = {
   id: string;
   onLoad?: (cy: Core) => void;
   create?: true;
+  clusters?: ClusterConfig;
 }
 
 // const createCanvas = () => {
@@ -26,12 +31,13 @@ export default (props: Props) => {
   const {
     onLoad,
     id,
+    clusters = {},
   } = props
   const isExistRef = useRef(false)
   const cy = useMemo(() => {
     if (mutableGraphMap[id]) {
       isExistRef.current = true
-      return mutableGraphMap[id]
+      return mutableGraphMap[id].cy
     }
     const cyInstance = cytoscape({ // // create
       elements: [],
@@ -62,9 +68,23 @@ export default (props: Props) => {
       // ],
 
     })
-    mutableGraphMap[id] = cyInstance
+    mutableGraphMap[id] = { cy: cyInstance, clustersByID: {} }
     return cyInstance
   }, [id])
+  const clustersByID = useMemo(() => {
+    const clustersByID: ClusterInfoByID = {}
+    Object.keys(clusters).forEach((clusterName) => {
+      const cluster = clusters[clusterName]
+      cluster.ids.forEach((nodeID) => {
+        clustersByID[nodeID] = {
+          clusterName,
+          expand: cluster.expand,
+        }
+      })
+    })
+    mutableGraphMap[id].clustersByID = clustersByID
+    return clustersByID
+  }, [clusters])
   useEffect(() => {
     if (isExistRef.current) return
     setTimeout(() => {
@@ -76,5 +96,6 @@ export default (props: Props) => {
   [cy])
   return {
     cy,
+    clustersByID,
   }
 }

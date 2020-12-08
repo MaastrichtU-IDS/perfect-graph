@@ -7,6 +7,7 @@ import { Text as PIXIText, Sprite } from '@inlet/react-pixi'
 import MusicGraph from './examples/Music'
 import CaseLawExplorerGraph from './examples/CaseLawExplorer'
 import {useController} from './src/plugins/controller'
+import {createSchema} from './src/plugins/createSchema'
 import {getLabel} from './src/utils'
 import { RenderJSON,mockRenderJSON } from './src/components/RenderJSON'
 // import { VIEW_CONFIG_SCHEMA } from './examples/CaseLawExplorer/constants'
@@ -125,6 +126,10 @@ const AppContainer = () => {
 }
 
 export default ({ skipLoadingScreen }: Props) => {
+  // console.log('schema',createSchema([
+  //   { name: 'string', age: 12},
+  //   { name: 'string', },
+  // ]))
   return (
     // <App/>
       // <AppContainer />

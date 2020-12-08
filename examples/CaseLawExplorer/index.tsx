@@ -142,10 +142,10 @@ const AppContainer = ({
         {...controllerProps}
         extraData={[configRef.current.visualization]}
         style={{ width: '100%', height: '100%', }}
-        // graphConfig={{
-        //   // layout: Graph.Layouts.breadthfirst,
-        //   zoom: 0.5
-        // }}
+        graphConfig={{
+          // layout: Graph.Layouts.breadthfirst,
+          zoom: 0.5
+        }}
         drawLine={({ graphics, to, from }) => {
           drawLine({
             graphics,
