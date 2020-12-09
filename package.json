@@ -42,6 +42,10 @@
   "dependencies": {
     "@inlet/react-pixi": "5.2.0",
     "cytoscape": "3.17.0",
+    "cytoscape-cise": "^1.0.0",
+    "cytoscape-cola": "^2.4.0",
+    "cytoscape-euler": "^1.2.2",
+    "cytoscape-fcose": "^1.2.3",
     "jsonld": "^3.1.1",
     "jsonld-context-parser": "^2.1.1",
     "n3": "^1.6.3",

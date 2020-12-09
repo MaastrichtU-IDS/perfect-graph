@@ -1,6 +1,13 @@
 import cytoscape, { Core } from 'cytoscape'
 import { useEffect, useMemo, useRef } from 'react'
 import { ClusterConfig, ClusterInfoByID } from '@type'
+// @ts-ignore
+import euler from 'cytoscape-euler'
+// @ts-ignore
+import cise from 'cytoscape-cise'
+
+cytoscape.use(euler)
+// cytoscape.use(cise)
 // import d3Force from 'cytoscape-d3-force'
 // import euler from 'cytoscape-euler'
 // import cola from 'cytoscape-cola'
