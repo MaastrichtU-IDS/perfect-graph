@@ -105,6 +105,10 @@ function Graph(props: GraphProps, ref: ForwardRef<GraphRef>) {
         graphLayoutRef.current.on('layoutstop', () => {
           // @ts-ignore
           graphLayoutRef.current = null
+          // Fix the edge lines
+          cy.edges().forEach((edge) => {
+            edge.data().onPositionChange()
+          })
         })
         graphLayoutRef.current.start()
       },
