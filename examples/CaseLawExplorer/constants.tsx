@@ -19,7 +19,7 @@ export const getFilterSchema  = (props: {onPopupPress: () => void}) => {
       additionalProperties: false,
       properties: {
         title: {
-          type: 'boolean',
+          type: 'string',
         },
         year: {
           type: 'array',
@@ -30,7 +30,7 @@ export const getFilterSchema  = (props: {onPopupPress: () => void}) => {
           maximum: 2015,
         },
         live: {
-          title: 'boolean',
+          title: 'live',
           type: 'boolean',
         },
         popup: {

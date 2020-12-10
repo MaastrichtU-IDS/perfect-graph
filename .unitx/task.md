@@ -26,6 +26,8 @@
 - Replace the layout names with cytoscape desktop app layout names
 - https://cytoscape.org/cytoscape.js-edgehandles/demo-snap.html
 - Default Layout
+- Reset Button
+- replace options component (Select) with Autocomplete Select
 <!-- - Change mouse indicator as mode iscon -->
 <!-- - Add Animation time of the layout -->
 <!-- - Change selectedNodeStyle and Connected Edges -->

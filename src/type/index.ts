@@ -140,8 +140,8 @@ export type ClusterInfo = {
 export type ClusterConfig = Record<string, {
   ids: string[];
   expand: boolean;
-  clusters?: ClusterConfig;
 }>
+
 export type ClusterInfoByID = Record<string, ClusterInfo>
 
 export type GraphConfig = {
