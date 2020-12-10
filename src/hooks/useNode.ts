@@ -66,23 +66,6 @@ export default (props: Props): Result => {
     element,
     config,
   })
-  // // EventListeners
-  // React.useEffect(
-  //   () => {
-  //     renderEvents.forEach((eventName) => {
-  //       element.on(eventName, () => {
-  //         contextRef.current.render()
-  //       })
-  //     })
-  //     return () => {
-  //       renderEvents.forEach((eventName) => {
-  //         element.off(eventName)
-  //       })
-  //     }
-  //   },
-  //   [element, renderEvents],
-  // )
-
   return {
     element,
     context: contextRef.current,

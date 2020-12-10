@@ -136,9 +136,11 @@ export type ClusterInfo = {
   clusterName: string;
   expand: boolean;
 }
+
 export type ClusterConfig = Record<string, {
   ids: string[];
   expand: boolean;
+  clusters?: ClusterConfig;
 }>
 export type ClusterInfoByID = Record<string, ClusterInfo>
 

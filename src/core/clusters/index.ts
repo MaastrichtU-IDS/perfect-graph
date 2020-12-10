@@ -1,3 +1,9 @@
+// configSchema: {
+//   required: [],
+//   properties: {
+
+//   },
+// },
 export const Clusters = {
   markov: {
     /**
@@ -11,6 +17,36 @@ export const Clusters = {
         (edge) => edge.data(attributes),
       ],
     }),
+    configSchema: {
+      required: ['attributes'],
+      properties: {
+        attributes: {
+          type: 'string',
+          default: 'label',
+          info: 'each of which returns a numeric attribute value for the specified edge. Attributes are used to cluster the nodes; i.e. the attributes of an edge indicate similarity between its nodes.',
+        },
+        expandFactor: {
+          type: 'number',
+          default: 2,
+          info: 'A number that affects time of computation and cluster granularity to some extent: M * M (defaultValue 2)',
+        },
+        inflateFactor: {
+          type: 'number',
+          default: 1,
+          info: 'A number that affects cluster granularity (the greater the value, the more clusters): M(i,j) / E(j)',
+        },
+        multFactor: {
+          type: 'number',
+          default: 1,
+          info: 'Optional number of self loops for each node. Use a neutral value to improve cluster computations',
+        },
+        maxIterations: {
+          type: 'number',
+          default: 20,
+          info: 'Maximum number of iterations of the MCL algorithm in a single run',
+        },
+      },
+    },
     configForm: {
       attributes: {
         type: 'string',
@@ -52,6 +88,37 @@ export const Clusters = {
         (node) => node.data(attributes),
       ],
     }),
+    configSchema: {
+      required: ['attributes', 'k', 'distance'],
+      properties: {
+        attributes: {
+          type: 'string',
+          default: 'label',
+          info: 'each of which returns a numeric attribute value for the specified node. Attributes are used to cluster the nodes; i.e. two nodes with similar attributes tend to be in the same cluster. Each attribute may have to be normalised in order for the chosen distance metric to make sense. Attributes must be specified unless a custom distance: function( nodeP, nodeQ ) is specified.',
+        },
+        k: {
+          type: 'number',
+          default: 2,
+          info: 'The number of clusters to return.',
+        },
+        distance: {
+          type: 'string',
+          default: 'euclidean',
+          enum: ['euclidean', 'squaredEuclidean', 'manhattan', 'max'],
+          info: 'The distance classifier used to compare attribute vectors. It is optional if attributes are specified.',
+        },
+        maxIterations: {
+          type: 'number',
+          default: 10,
+          info: 'The maximum number of iterations of the algorithm to run ',
+        },
+        sensitivityThreshold: {
+          type: 'number',
+          default: 0.001,
+          info: 'The coefficients difference threshold used to determine whether the algorithm has converged',
+        },
+      },
+    },
     configForm: {
       attributes: {
         type: 'string',
@@ -96,6 +163,32 @@ export const Clusters = {
         (node) => node.data(attributes),
       ],
     }),
+    configSchema: {
+      required: ['attributes', 'k', 'distance'],
+      properties: {
+        attributes: {
+          type: 'string',
+          default: 'label',
+          info: 'each of which returns a numeric attribute value for the specified node. Attributes are used to cluster the nodes; i.e. two nodes with similar attributes tend to be in the same cluster. Each attribute may have to be normalised in order for the chosen distance metric to make sense',
+        },
+        k: {
+          type: 'number',
+          default: 2,
+          info: 'The number of clusters to return.',
+        },
+        distance: {
+          type: 'string',
+          default: 'euclidean',
+          enum: ['euclidean', 'squaredEuclidean', 'manhattan', 'max'],
+          info: 'The distance classifier used to compare attribute vectors. It is optional if attributes are specified.',
+        },
+        maxIterations: {
+          type: 'number',
+          default: 10,
+          info: 'The maximum number of iterations of the algorithm to run ',
+        },
+      },
+    },
     configForm: {
       attributes: {
         type: 'string',
@@ -135,6 +228,41 @@ export const Clusters = {
         (node) => node.data(attributes),
       ],
     }),
+    configSchema: {
+      required: [
+        'attributes',
+        'k',
+        'distance',
+      ],
+      properties: {
+        attributes: {
+          type: 'string',
+          default: 'label',
+          info: 'each of which returns a numeric attribute value for the specified node. Attributes are used to cluster the nodes; i.e. two nodes with similar attributes tend to be in the same cluster. Each attribute may have to be normalised in order for the chosen distance metric to make sense',
+        },
+        k: {
+          type: 'number',
+          default: 2,
+          info: 'The number of clusters to return.',
+        },
+        distance: {
+          type: 'string',
+          default: 'euclidean',
+          enum: ['euclidean', 'squaredEuclidean', 'manhattan', 'max'],
+          info: 'The distance classifier used to compare attribute vectors. It is optional if attributes are specified.',
+        },
+        maxIterations: {
+          type: 'number',
+          default: 10,
+          info: 'The maximum number of iterations of the algorithm to run ',
+        },
+        sensitivityThreshold: {
+          type: 'number',
+          default: 0.001,
+          info: 'The coefficients difference threshold used to determine whether the algorithm has converged',
+        },
+      },
+    },
     configForm: {
       attributes: {
         type: 'string',
@@ -179,6 +307,50 @@ export const Clusters = {
         (node) => node.data(attributes),
       ],
     }),
+    configSchema: {
+      required: ['attributes', 'distance', 'mode'],
+      properties: {
+        attributes: {
+          type: 'string',
+          default: 'label',
+          info: 'each of which returns a numeric attribute value for the specified node. Attributes are used to cluster the nodes; i.e. two nodes with similar attributes tend to be in the same cluster. Each attribute may have to be normalised in order for the chosen distance metric to make sense',
+        },
+        distance: {
+          type: 'string',
+          default: 'euclidean',
+          enum: ['euclidean', 'squaredEuclidean', 'manhattan', 'max'],
+          info: 'The distance classifier used to compare attribute vectors. It is optional if attributes are specified.',
+          required: true,
+        },
+        linkage: {
+          type: 'string',
+          default: 'single',
+          enum: ['mean', 'min', 'complete', 'max'],
+          info: 'The linkage criterion for measuring the distance between two clusters;',
+        },
+        mode: {
+          type: 'string',
+          default: 'threshold',
+          enum: ['threshold', 'dendogram'],
+          info: ' The mode of the algorithm. For \'threshold\' (defaultValue), clusters are merged until they are at least the specified distance apart. For \'dendrogram\', the clusters are recursively merged using the branches in a dendrogram (tree) structure beyond a specified depth.',
+        },
+        threshold: {
+          type: 'number',
+          default: null,
+          info: 'In mode: \'threshold\', distance threshold for stopping the algorithm. All pairs of the returned clusters are at least threshold distance apart. Without specifying this value for mode: \'threshold\', all clusters will eventually be merged into a single cluster.',
+        },
+        dendrogramDepth: {
+          type: 'number',
+          default: null,
+          info: 'In mode: \'dendrogram\', the depth beyond which branches are merged in the tree. For example, a value of 0 (defaultValue) results in all branches being merged into a single cluster.',
+        },
+        addDendrogram: {
+          type: 'number',
+          default: null,
+          info: 'In mode: \'dendrogram\', whether to add nodes and edges to the graph for the dendrogram (defaultValue false). This is not necessary to run the algorithm, but it is useful for visualising the results.',
+        },
+      },
+    },
     configForm: {
       attributes: {
         type: 'string',
@@ -235,6 +407,46 @@ export const Clusters = {
         (node) => node.data(attributes),
       ],
     }),
+    configSchema: {
+      required: ['attributes', 'distance'],
+      properties: {
+        attributes: {
+          type: 'string',
+          default: 'label',
+          info: 'each of which returns a numeric attribute value for the specified node. Attributes are used to cluster the nodes; i.e. two nodes with similar attributes tend to be in the same cluster. Each attribute may have to be normalised in order for the chosen distance metric to make sense',
+        },
+        distance: {
+          type: 'string',
+          default: 'euclidean',
+          enum: ['euclidean', 'squaredEuclidean', 'manhattan', 'max'],
+          info: 'The distance classifier used to compare attribute vectors. It is optional if attributes are specified.',
+        },
+        preference: {
+          type: 'string',
+          default: 'median',
+          enum: ['mean', 'min', 'complete', 'max'],
+          info: 'The metric used to determine the suitability of a data point (i.e. node attribute vector) to serve as an exemplar. It may take on one of several special values, which are determined from the similarity matrix (i.e. the negative distance matrix). Or a manual, numeric value may be used (generally of the opposite sign of your distance values)',
+        },
+        damping: {
+          type: 'number',
+          default: 0.8,
+          maximum: 1,
+          minimum: 0.5,
+          includeMin: true,
+          info: 'A damping factor on [0.5, 1)',
+        },
+        minIterations: {
+          type: 'number',
+          default: 100,
+          info: 'The minimum number of iteraions the algorithm will run before stopping',
+        },
+        maxIterations: {
+          type: 'number',
+          default: 1000,
+          info: 'The maximum number of iteraions the algorithm will run before stopping',
+        },
+      },
+    },
     configForm: {
       attributes: {
         type: 'string',
