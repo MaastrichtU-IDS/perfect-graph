@@ -8,6 +8,6 @@ module.exports = {
     //   options: {}
     // }
   ],
-  webpackFinal: require('./_webpack.config'),
+  webpackFinal: require('./webpack.config'),
 };
 
