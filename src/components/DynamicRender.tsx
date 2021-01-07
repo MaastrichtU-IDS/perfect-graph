@@ -12,7 +12,6 @@ export type DynamicRenderData = {
 export type DynamicRenderProps = {
   data: DynamicRenderData[];
   components: Record<string, ComponentType>;
-  // wrapper:
 }
 
 const DynamicRenderElement = (props: DynamicRenderProps) => {

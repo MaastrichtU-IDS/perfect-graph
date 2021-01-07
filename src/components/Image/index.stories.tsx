@@ -1,13 +1,13 @@
-import { StageDecorator, createTemplate } from '@root/storybook'
-import Component from './index'
+import { createTemplate, StageDecorator } from '@root/story'
+import Image from './index'
 
 export default {
   title: 'Image',
-  component: Component,
+  component: Image,
   decorators: [StageDecorator],
 }
 
-const Template = createTemplate(Component)
+const Template = createTemplate(Image)
 
 export const Default = Template.bind({})
 // Default.parameters = {

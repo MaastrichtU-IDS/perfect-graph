@@ -1,18 +1,10 @@
-import React from 'react'
-// import {  ApplicationProvider } from 'unitx-ui';
-const { create } = require('@storybook/theming');
+const React = require('react')
+const { create } = require('unitx-docs-pack/storybook/theming');
+// const GithubEdit = require('unitx-docs-pack/components/GithubEdit').default
 const R = require('unitx/lib/ramda');
+const { StageDecorator } = require('../src/story');
+const { ApplicationProvider, } = require('unitx-ui')
 
-// export const decorators = [
-//   (Story) => (
-//     <ApplicationProvider>
-//       <Story />
-//     </ApplicationProvider>
-//   ),
-// ];
-
-
- 
 const SECTION_NAME_LIST =  ['intro','components', 'layoutengine', 'plugins', 'support', 'collaboration']
 // Option defaults:
 export const parameters = {
@@ -71,3 +63,13 @@ export const parameters = {
   }
 }
 
+export const decorators = [
+  (Story, {parameters}) => {
+    // const relativePath = parameters.fileName.replace('../../../../', '')
+    return (
+      <ApplicationProvider>
+        <Story />
+      </ApplicationProvider>
+    )
+  },
+];

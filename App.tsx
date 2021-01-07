@@ -79,49 +79,49 @@ const AppContainer = () => {
   // useWhyDidUpdate('Heyy', controllerProps)
   console.log(controllerProps)
   return (
-    <ApplicationProvider>
-      {/* <App /> */}
-      <GraphEditor
-        style={{ width: '100%', height: '100%'}}
-        {...controllerProps}
-        renderNode={({ item, label, element })=> {
-          // const itemDataMap = R.
-          return (
-            <RenderJSON 
-            {...mockRenderJSON}
-            context={{item, label, element}}
-            />
-            // <Sprite
-            //   image="https://s3-us-west-2.amazonaws.com/s.cdpn.io/693612/coin.png"
-            //   // scale={{ x: 0.5, y: 0.5 }}
-            // />
+      <App />
+    // <ApplicationProvider>
+    //   <GraphEditor
+    //     style={{ width: '100%', height: '100%'}}
+    //     {...controllerProps}
+    //     renderNode={({ item, label, element })=> {
+    //       // const itemDataMap = R.
+    //       return (
+    //         <RenderJSON 
+    //         {...mockRenderJSON}
+    //         context={{item, label, element}}
+    //         />
+    //         // <Sprite
+    //         //   image="https://s3-us-west-2.amazonaws.com/s.cdpn.io/693612/coin.png"
+    //         //   // scale={{ x: 0.5, y: 0.5 }}
+    //         // />
             
-            // <Graph.View style={{
-            //   width: 100,
-            //   height: 100,
-            //   justifyContent: 'center',
-            //   alignItems: 'center',
-            //   // borderRadius: 50,
-            //   // backgroundColor: element.selected() ? 'red' : 'blue'
-            // }}
-            // >
-            //   <Graph.Text>{label}</Graph.Text>
-            //   {/* <Graph.Text>{element.position().x}</Graph.Text> */}
-            // </Graph.View>
-          )
-        }}
-        // onElementSelected={({ item}) => {
-        //   console.log('selection',item)
-        // }}
-        // {...data}
-        // onEvent={(info) => {
-        //   console.log('event', info)
-        // }}
-        // onEventAdditional={(info) => {
-        //   console.log('eventAdd', info)
-        // }}
-      />
-    </ApplicationProvider>
+    //         // <Graph.View style={{
+    //         //   width: 100,
+    //         //   height: 100,
+    //         //   justifyContent: 'center',
+    //         //   alignItems: 'center',
+    //         //   // borderRadius: 50,
+    //         //   // backgroundColor: element.selected() ? 'red' : 'blue'
+    //         // }}
+    //         // >
+    //         //   <Graph.Text>{label}</Graph.Text>
+    //         //   {/* <Graph.Text>{element.position().x}</Graph.Text> */}
+    //         // </Graph.View>
+    //       )
+    //     }}
+    //     // onElementSelected={({ item}) => {
+    //     //   console.log('selection',item)
+    //     // }}
+    //     // {...data}
+    //     // onEvent={(info) => {
+    //     //   console.log('event', info)
+    //     // }}
+    //     // onEventAdditional={(info) => {
+    //     //   console.log('eventAdd', info)
+    //     // }}
+    //   />
+    // </ApplicationProvider>
   )
 }
 
@@ -132,8 +132,8 @@ export default ({ skipLoadingScreen }: Props) => {
   // ]))
   return (
     // <App/>
-      // <AppContainer />
-      <CaseLawExplorerGraph />
+      <AppContainer />
+      // <CaseLawExplorerGraph />
       // <StoreProvider
       //   store={store.store}
       //   context={store.StoreContext}

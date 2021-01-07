@@ -1,18 +1,11 @@
+
 import React from 'react'
-import {  ApplicationProvider } from 'unitx-ui';
-const { create } = require('@storybook/theming');
+const { create } = require('unitx-docs-pack/storybook/theming');
+const GithubEdit = require('unitx-docs-pack/components/GithubEdit').default
 const R = require('unitx/lib/ramda');
+const {MDX} = require('../src/story');
+const { ApplicationProvider } = require('unitx-ui')
 
-export const decorators = [
-  (Story) => (
-    <ApplicationProvider>
-      <Story />
-    </ApplicationProvider>
-  ),
-];
-
-
- 
 const SECTION_NAME_LIST =  ['intro','components', 'layoutengine', 'plugins', 'support', 'collaboration']
 // Option defaults:
 export const parameters = {
@@ -71,3 +64,27 @@ export const parameters = {
   }
 }
 
+const GITHUB_URL = ''
+export const decorators = [
+  (Story, {parameters}) => {
+    const relativePath = parameters.fileName.replace('../../../../', '')
+    const StoryResult = Story()
+    const isMDXText = typeof StoryResult === 'string'
+    return (
+      <ApplicationProvider>
+        <GithubEdit>
+          {`${GITHUB_URL}/blob/master/${relativePath}`}
+        </GithubEdit>
+        {
+          isMDXText
+          ? (
+            <MDX>
+              {StoryResult}
+            </MDX>
+          )
+          : {StoryResult}
+        }
+      </ApplicationProvider>
+    )
+  },
+];
