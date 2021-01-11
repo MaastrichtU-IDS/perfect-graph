@@ -1,4 +1,4 @@
-import { StageDecorator, createTemplate } from '@root/storybook'
+import { StageDecorator, createTemplate } from '@root/story'
 import Component from './index'
 
 export default {

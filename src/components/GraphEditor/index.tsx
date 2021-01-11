@@ -229,7 +229,7 @@ const GraphEditorElement = (props: GraphEditorProps, ref: ForwardRef<GraphEditor
 }
 
 const extractGraphEditorData = (props: GraphEditorProps) => {
-  const x = {}
+  // const x = {}
 
   return {
     graphConfig: props.graphConfig,

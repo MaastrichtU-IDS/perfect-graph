@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
   EditorMode, Event,
   GraphConfig, GraphEditorRef, OnEvent,
