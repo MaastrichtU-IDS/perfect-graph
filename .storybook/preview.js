@@ -1,9 +1,8 @@
-const React = require('react')
-const { create } = require('unitx-docs-pack/storybook/theming');
-// const GithubEdit = require('unitx-docs-pack/components/GithubEdit').default
-const R = require('unitx/lib/ramda');
-const { StageDecorator } = require('../src/story');
-const { ApplicationProvider, } = require('unitx-ui')
+import React from 'react'
+import { ThemeProvider } from '@material-ui/core/styles';
+const { create } = require('colay-docs/storybook/theming');
+const { GithubEdit, } = require('colay-docs')
+const R = require('colay/lib/ramda');
 
 const SECTION_NAME_LIST =  ['intro','components', 'layoutengine', 'plugins', 'support', 'collaboration']
 // Option defaults:
@@ -60,16 +59,84 @@ export const parameters = {
     }),
     panelPosition: 'bottom',
     showPanel: false,
-  }
+  },
+  layout: 'fullscreen',
+  actions: { argTypesRegex: '^on[A-Z].*' },
+  viewport: {
+    viewports: {
+      mobile: {
+        name: 'iPhone X',
+        styles: {
+          width: '375px',
+          height: '812px',
+        },
+      },
+      tablet: {
+        name: 'iPad',
+        styles: {
+          width: '768px',
+          height: '1024px',
+        },
+      },
+      laptop: {
+        name: 'Laptop',
+        styles: {
+          width: '1024px',
+          height: '768px',
+        },
+      },
+      desktop: {
+        name: 'Desktop',
+        styles: {
+          width: '1440px',
+          height: '1024px',
+        },
+      },
+    },
+  },
 }
+
+const GITHUB_URL = ''
 
 export const decorators = [
   (Story, {parameters}) => {
-    // const relativePath = parameters.fileName.replace('../../../../', '')
+    const relativePath = parameters.fileName.replace('../../../../', '')
     return (
-      <ApplicationProvider>
+      <ThemeProvider>
+        <GithubEdit>
+          {`${GITHUB_URL}/blob/master/${relativePath}`}
+        </GithubEdit>
         <Story />
-      </ApplicationProvider>
+      </ThemeProvider>
     )
   },
 ];
+
+
+// import * as nextImage from 'next/image'
+
+// // Replace next/image for Storybook
+// Object.defineProperty(nextImage, 'default', {
+//   configurable: true,
+//   value: (props) => {
+//     const { width, height } = props
+//     const ratio = (height / width) * 100
+//     return (
+//       <div
+//         style={{
+//           paddingBottom: `${ratio}%`,
+//           position: 'relative',
+//         }}>
+//         <img
+//           style={{
+//             objectFit: 'cover',
+//             position: 'absolute',
+//             width: '100%',
+//             height: '100%',
+//           }}
+//           {...props}
+//         />
+//       </div>
+//     )
+//   },
+// })
