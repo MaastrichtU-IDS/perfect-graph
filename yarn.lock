@@ -4549,10 +4549,10 @@ colay-ui@0.0.10:
   dependencies:
     react-error-boundary "3.1.0"
 
-colay@0.0.13:
-  version "0.0.13"
-  resolved "https://registry.yarnpkg.com/colay/-/colay-0.0.13.tgz#716eb1802050ed6075f592a4e52dc4630ac1d827"
-  integrity sha512-BY4fp+PPGjxoCep+bu3kev5G2rGBzOCHZskcm8Agl/8GlxFto3CKO2N4DIgdvdY3+s9pE70OUt5KQrRSfIccKg==
+colay@0.0.15:
+  version "0.0.15"
+  resolved "https://registry.yarnpkg.com/colay/-/colay-0.0.15.tgz#88eaad9f8161cf6b87e088a59f99a84a02587fd6"
+  integrity sha512-+BFZN4aDf0pT6iNiYBBI4jC0tXJEE58BL0FA2OCEgPDzIyMittOWId26Ebc17JcbiDcu7paKe4/U4o56XGsULw==
   dependencies:
     "@types/async" "3.2.5"
     "@types/ramda" "0.27.34"
