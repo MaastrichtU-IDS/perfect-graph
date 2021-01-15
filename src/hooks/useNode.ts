@@ -1,7 +1,7 @@
 import React from 'react'
 import { useStateWithCallback } from 'unitx-ui/hooks'
 import { NodeSingular } from 'cytoscape'
-import { Position } from 'unitx/type'
+import { Position } from 'colay/type'
 import { NodeContext, NodeConfig, ClusterInfo } from '@type'
 import { mutableGraphMap } from './useGraph'
 import { useElement } from './useElement'
@@ -52,7 +52,7 @@ export default (props: Props): Result => {
         element.connectedEdges().forEach((mutableEdge) => {
           mutableEdge.data().onPositionChange()
         })
-      onPositionChange?.({ element, context: contextRef.current })
+        onPositionChange?.({ element, context: contextRef.current })
       })
       return () => {
         cy!.remove(element!)

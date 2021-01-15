@@ -1,7 +1,7 @@
 import React from 'react'
 import { LayoutChangeEvent } from 'react-native'
 import { EdgeSingular, NodeSingular, Core } from 'cytoscape'
-import { Position, Enumerable } from 'unitx/type'
+import { Position, Enumerable } from 'colay/type'
 import {
   ELEMENT_TYPE, EVENT, DATA_TYPE, EDITOR_MODE,
   PIXI_EVENT_NAMES,

@@ -1,5 +1,5 @@
 import { PixiComponent, useApp } from '@inlet/react-pixi'
-import * as R from 'unitx/ramda'
+import * as R from 'colay/ramda'
 import { Viewport } from 'pixi-viewport'
 import * as PIXI from 'pixi.js'
 // import Cull from 'pixi-cull'

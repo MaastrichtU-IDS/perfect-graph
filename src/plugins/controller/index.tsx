@@ -15,7 +15,7 @@ import {
   useData,
 } from 'unitx-ui'
 import { download } from 'unitx-ui/utils'
-import * as R from 'unitx/ramda'
+import * as R from 'colay/ramda'
 
 type ControllerOptions = {
   // onEvent?: (info: EventInfo, draft: ControllerState) => boolean;
@@ -40,7 +40,7 @@ GraphEditorProps,
 
 export type UseControllerResult = [
   UseControllerData,
-  {}
+  {},
 ]
 
 export const useController = (

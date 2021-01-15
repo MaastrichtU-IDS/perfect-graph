@@ -1,7 +1,7 @@
 import React from 'react'
 import { PixiComponent } from '@inlet/react-pixi'
 import { ImageURISource } from 'react-native'
-import * as R from 'unitx/ramda'
+import * as R from 'colay/ramda'
 import { wrapComponent } from 'unitx-ui'
 import * as PIXI from 'pixi.js'
 import {

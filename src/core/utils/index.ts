@@ -3,8 +3,8 @@ import {
   EdgeSingular, LayoutOptions,
   Layouts, NodeSingular,
 } from 'cytoscape'
-import * as R from 'unitx/ramda'
-import { Position } from 'unitx/type'
+import * as R from 'colay/ramda'
+import { Position } from 'colay/type'
 import { DataItem } from '@type'
 
 export const filter = (

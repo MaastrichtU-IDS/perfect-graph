@@ -1,42 +1,37 @@
 // @ts-nocheck
 import React from 'react'
-import {
-  ApplicationProvider,
-} from 'unitx-ui'
 import { Graph } from './components'
 
 export default () => (
-  <ApplicationProvider>
-    <Graph
-      style={{ width: '100%', height: 1000 }}
-      nodes={[
-        {
-          id: '1',
-          position: { x: 10, y: 10 },
-          data: { city: 'Turkey', color: 'red' },
-        },
-        {
-          id: '2',
-          position: { x: 300, y: 10 },
-          data: { city: 'Maastricht', color: 'blue' },
-        },
-      ]}
-      edges={[
-        { id: '51', source: '1', target: '2' },
-      ]}
-      renderNode={({ item: { data } }) => (
-        <Graph.View
-          style={{ width: 100, height: 100, backgroundColor: data.color }}
+  <Graph
+    style={{ width: '100%', height: 1000 }}
+    nodes={[
+      {
+        id: '1',
+        position: { x: 10, y: 10 },
+        data: { city: 'Turkey', color: 'red' },
+      },
+      {
+        id: '2',
+        position: { x: 300, y: 10 },
+        data: { city: 'Maastricht', color: 'blue' },
+      },
+    ]}
+    edges={[
+      { id: '51', source: '1', target: '2' },
+    ]}
+    renderNode={({ item: { data } }) => (
+      <Graph.View
+        style={{ width: 100, height: 100, backgroundColor: data.color }}
+      >
+        <Graph.Text
+          style={{ fontSize: 20 }}
         >
-          <Graph.Text
-            style={{ fontSize: 20 }}
-          >
-            {data.city}
-          </Graph.Text>
-        </Graph.View>
-      )}
-    />
-  </ApplicationProvider>
+          {data.city}
+        </Graph.Text>
+      </Graph.View>
+    )}
+  />
 
 )
 

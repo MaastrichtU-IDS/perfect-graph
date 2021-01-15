@@ -19,7 +19,7 @@ import {
   wrapComponent,
 } from 'unitx-ui'
 import Form from 'unitx-ui/components/Form'
-import * as R from 'unitx/ramda'
+import * as R from 'colay/ramda'
 import { DocumentPicker } from 'unitx-ui/@/DocumentPicker'
 import Recorder from 'unitx-ui/components/Recorder'
 import useAnimation, { animated } from 'unitx-ui/hooks/useAnimation'

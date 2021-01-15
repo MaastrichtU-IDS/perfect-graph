@@ -1,10 +1,10 @@
 import React from 'react'
 import { TextStyle, StyleSheet } from 'react-native'
 import * as PIXI from 'pixi.js'
-import * as R from 'unitx/ramda'
+import * as R from 'colay/ramda'
 import { PixiComponent } from '@inlet/react-pixi'
 import { wrapComponent } from 'unitx-ui'
-import * as C from 'unitx/color'
+import * as C from 'colay/color'
 import { applyDefaultProps } from '@utils'
 
 type TextPIXIProps = {

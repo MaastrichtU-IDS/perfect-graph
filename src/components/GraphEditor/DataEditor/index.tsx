@@ -5,7 +5,7 @@ import {
   Divider, FlatList,
   ScrollView,
 } from 'unitx-ui'
-import * as R from 'unitx/ramda'
+import * as R from 'colay/ramda'
 import { EVENT, ELEMENT_DATA_FIELDS } from '@utils/constants'
 import { NewTripleItem } from './NewTripleItem'
 import {

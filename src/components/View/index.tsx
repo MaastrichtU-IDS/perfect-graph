@@ -3,7 +3,7 @@ import { PixiComponent } from '@inlet/react-pixi'
 import { Position, ForwardRef, PropsWithRef } from 'unitx-ui/type'
 import { wrapComponent, useTheme } from 'unitx-ui'
 import * as PIXI from 'pixi.js'
-import * as C from 'unitx/color'
+import * as C from 'colay/color'
 import {
   applyDefaultProps, preprocessProps,
 } from '@utils'

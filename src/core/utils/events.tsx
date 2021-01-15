@@ -1,6 +1,6 @@
-import * as R from 'unitx/ramda'
-import { Position } from 'unitx/type'
-import * as V from 'unitx/vector'
+import * as R from 'colay/ramda'
+import { Position } from 'colay/type'
+import * as V from 'colay/vector'
 
 export function dragTrack(
   onDrag: (pos: Position) => {keepDragging?: boolean; position?: Position }|void,

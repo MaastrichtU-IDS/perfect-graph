@@ -5,7 +5,7 @@ import {
   Collapsible, Layout,
   Divider,
 } from 'unitx-ui'
-import * as R from 'unitx/ramda'
+import * as R from 'colay/ramda'
 import { DataItem } from '@type'
 import { DATA_TYPE, EVENT } from '@utils/constants'
 import { TripleInput } from './TripleInput'

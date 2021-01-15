@@ -1,7 +1,6 @@
 import React from 'react'
 import { RenderNode } from '@type'
-import * as R from 'unitx/ramda'
-import json from 'unitx/json'
+import * as R from 'colay/ramda'
 import Graph from './Graph'
 import { DynamicRender, DynamicRenderProps } from './DynamicRender'
 
@@ -45,10 +44,11 @@ export const RenderJSON = (props: RenderJSONProps) => {
     selectedUI,
     (value) => {
       if (typeof value === 'string' && value.startsWith('$.')) {
-        return json.path({
-          json: calculatedContext,
-          path: value,
-        })[0]
+        return R.path(value.split('.'), calculatedContext)
+        // return json.path({
+        //   json: calculatedContext,
+        //   path: value,
+        // })[0]
       }
       return value
     },

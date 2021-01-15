@@ -1,10 +1,10 @@
-import * as R from 'unitx/ramda'
+import * as R from 'colay/ramda'
 import * as PIXI from 'pixi.js'
 import { StyleSheet } from 'react-native'
 import { applyDefaultProps as nativeApplyDefaultProps } from '@inlet/react-pixi'
 import { NativeEventMap } from 'unitx-ui/type'
 // import { Properties } from 'csstype'
-// import * as C from 'unitx/color'
+// import * as C from 'colay/color'
 import {
   Element, NodeData, EdgeData, ElementData,
   DisplayObjectWithYoga, NodeContext, EdgeContext,

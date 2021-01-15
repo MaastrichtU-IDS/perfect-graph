@@ -2,8 +2,8 @@
 import React from 'react'
 import { wrapComponent } from 'unitx-ui'
 import { ForwardRef } from 'unitx-ui/type'
-import * as R from 'unitx/ramda'
-import { Position } from 'unitx/type'
+import * as R from 'colay/ramda'
+import { Position } from 'colay/type'
 import { useEdge } from '@hooks'
 import { getNodeContextByElement } from '@utils'
 import {
@@ -11,7 +11,7 @@ import {
   EdgeConfig,
   DrawLine,
 } from '@type'
-import * as V from 'unitx/vector'
+import * as V from 'colay/vector'
 import Graphics, { drawLine as defaultDrawLine } from '../Graphics'
 import Container from '../Container'
 

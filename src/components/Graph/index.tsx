@@ -1,17 +1,17 @@
 import { Stage } from '@inlet/react-pixi'
-import * as R from 'unitx/ramda'
+import * as R from 'colay/ramda'
 import React from 'react'
 import {
   wrapComponent, useLayout,
   useForwardRef, ThemeProvider,
   useTheme,
 } from 'unitx-ui'
-import * as C from 'unitx/color'
+import * as C from 'colay/color'
 import { ViewStyle, View } from 'react-native'
 import { useGraph } from '@hooks'
 import {
   NodeData, EdgeData, RenderEdge, RenderNode,
-  GraphConfig, Element, DrawLine, GraphRef, ViewportRef
+  GraphConfig, Element, DrawLine, GraphRef, ViewportRef,
 } from '@type'
 import { ForwardRef, PropsWithRef } from 'unitx-ui/type'
 import DataRender from 'unitx-ui/components/DataRender'

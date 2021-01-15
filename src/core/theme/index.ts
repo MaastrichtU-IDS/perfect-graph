@@ -3,7 +3,7 @@ import {
   DefaultTheme as NativeDefaultTheme,
 } from 'unitx-ui'
 
-import * as R from 'unitx/ramda'
+import * as R from 'colay/ramda'
 
 export const DefaultTheme = R.mergeDeepRight(
   NativeDefaultTheme,

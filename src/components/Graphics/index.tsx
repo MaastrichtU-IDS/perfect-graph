@@ -3,8 +3,8 @@ import { PixiComponent } from '@inlet/react-pixi'
 import { Position, Size } from 'unitx-ui/type'
 import { BoundingBox } from '@type'
 import * as PIXI from 'pixi.js'
-import * as R from 'unitx/ramda'
-import * as V from 'unitx/vector'
+import * as R from 'colay/ramda'
+import * as V from 'colay/vector'
 import { THEME } from '@utils/constants'
 
 export type GraphicsProps = {
