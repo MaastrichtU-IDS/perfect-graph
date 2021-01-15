@@ -1,11 +1,10 @@
-// @ts-nocheck
 import React from 'react'
 import { StyleProp, ViewStyle, StyleSheet } from 'react-native'
 import { wrapComponent } from 'unitx-ui'
 import {
   DataItem,
 } from '@type'
-import { ForwardRef, Position } from 'unitx-ui/type'
+import { Position } from 'colay-ui/type'
 // import { dataListToObject } from '@core/utils'
 import Pressable from '@components/Pressable'
 import Image from '@components/Image'
@@ -27,7 +26,12 @@ export type ProfileProps = {
 }
 // const SWITCH_COLLAPSE = 'SWITCH_COLLAPSE'
 
-function Profile(props: ProfileProps, __: ForwardRef<typeof Profile>) {
+export type ProfileType = React.FC<ProfileProps>
+
+const Profile = (
+  props: ProfileProps,
+  __: React.ForwardedRef<ProfileType>,
+) => {
   const {
     name,
     image,

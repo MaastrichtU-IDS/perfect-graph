@@ -16,7 +16,7 @@ import { getLabel, getSelectedItemByElement } from '@utils'
 import { EDITOR_MODE, EVENT } from '@utils/constants'
 import React from 'react'
 import { View, wrapComponent, useForwardRef } from 'unitx-ui'
-import { ForwardRef, PropsWithRef } from 'unitx-ui/type'
+import { PropsWithRef } from 'colay-ui/type'
 import * as R from 'colay/ramda'
 import ActionBar, { ACTION, ActionBarProps } from './ActionBar'
 import DataBar, { DataBarProps } from './DataBar'
@@ -62,7 +62,12 @@ const MODE_ICON_MAP_BY_URL = {
 
 const DEFAULT_HANDLER = R.identity as (info: EventInfo) => void
 
-const GraphEditorElement = (props: GraphEditorProps, ref: ForwardRef<GraphEditorRef>) => {
+export type GraphEditorType = React.FC<GraphEditorProps>
+
+const GraphEditorElement = (
+  props: GraphEditorProps,
+  ref: React.ForwardedRef<GraphEditorType>,
+) => {
   const {
     onEvent = DEFAULT_HANDLER,
     renderEdge,
@@ -206,7 +211,7 @@ const GraphEditorElement = (props: GraphEditorProps, ref: ForwardRef<GraphEditor
                 onEventCallback({
                   type: EVENT.EXPORT_DATA,
                   extraData: {
-                    value: extractGraphEditorData(props)
+                    value: extractGraphEditorData(props),
                   },
                 })
                 break
@@ -228,10 +233,10 @@ const GraphEditorElement = (props: GraphEditorProps, ref: ForwardRef<GraphEditor
   )
 }
 
-const extractGraphEditorData = (props: GraphEditorProps) => {
-  // const x = {}
+const extractGraphEditorData = (props: GraphEditorProps) =>
+// const x = {}
 
-  return {
+  ({
     graphConfig: props.graphConfig,
     label: props.label,
     settingsBar: props.settingsBar,
@@ -240,8 +245,8 @@ const extractGraphEditorData = (props: GraphEditorProps) => {
     mode: props.mode,
     nodes: props.nodes,
     edges: props.edges,
-  }
-}
+  })
+
 /**
  * ## Usage
  * To create a GraphEditor easily, you can just pass data and render methods.

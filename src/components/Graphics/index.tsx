@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { PixiComponent } from '@inlet/react-pixi'
-import { Position, Size } from 'unitx-ui/type'
+import { Position, Size } from 'colay-ui/type'
 import { BoundingBox } from '@type'
 import * as PIXI from 'pixi.js'
 import * as R from 'colay/ramda'

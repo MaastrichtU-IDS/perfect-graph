@@ -2,7 +2,7 @@ import * as R from 'colay/ramda'
 import * as PIXI from 'pixi.js'
 import { StyleSheet } from 'react-native'
 import { applyDefaultProps as nativeApplyDefaultProps } from '@inlet/react-pixi'
-import { NativeEventMap } from 'unitx-ui/type'
+import { NativeEventMap } from 'colay-ui/type'
 // import { Properties } from 'csstype'
 // import * as C from 'colay/color'
 import {

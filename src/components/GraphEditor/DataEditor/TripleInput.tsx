@@ -8,7 +8,6 @@ import {
   useForwardRef,
   wrapComponent,
 } from 'unitx-ui'
-import { ForwardRef } from 'unitx-ui/type'
 
 export type Suggestion = {
   title: string;
@@ -49,10 +48,15 @@ export const TEXT_STYLE_MAP = {
   } as TextStyle,
   new: {
     fontStyle: 'italic',
-  }as TextStyle,
+  } as TextStyle,
 } as const
 
-const TripleInputElement = (props: TripleInputProps, ref: ForwardRef<{}>) => {
+export type TripleInputType = React.FC<TripleInputProps>
+
+const TripleInputElement = (
+  props: TripleInputProps,
+  ref: React.ForwardedRef<TripleInputType>,
+) => {
   const {
     value,
     textStyle,
@@ -91,7 +95,7 @@ const TripleInputElement = (props: TripleInputProps, ref: ForwardRef<{}>) => {
       draft.isLoading = false
       draft.selectedSuggestion = null
     })
-    onValueChange?.(value,)
+    onValueChange?.(value)
   }, [update, getSuggestions])
   const onBlur = React.useCallback(() => {
     setTimeout(() => {

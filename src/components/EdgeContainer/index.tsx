@@ -1,7 +1,5 @@
-// @ts-nocheck
 import React from 'react'
-import { wrapComponent } from 'unitx-ui'
-import { ForwardRef } from 'unitx-ui/type'
+import { wrapComponent } from 'colay-ui'
 import * as R from 'colay/ramda'
 import { Position } from 'colay/type'
 import { useEdge } from '@hooks'
@@ -10,10 +8,11 @@ import {
   RenderEdge,
   EdgeConfig,
   DrawLine,
+  EdgeElement,
 } from '@type'
 import * as V from 'colay/vector'
 import Graphics, { drawLine as defaultDrawLine } from '../Graphics'
-import Container from '../Container'
+import { Container } from '../Container'
 
 export type EdgeContainerProps = {
   children: RenderEdge;
@@ -23,18 +22,18 @@ export type EdgeContainerProps = {
   config?: EdgeConfig;
 }
 
-const calculateMidpoint = (from: Position) => (to: Position) => R.pipe(
+const calculateMidpoint = (from: Position) => R.pipe(
   V.subtract(from),
   V.divideScalar(2),
   V.add(from),
-)(to)
+)
 
-const DEFAULT_BOX = {
-  width: 90,
-  height: 90,
-}
+export type EdgeContainerType = React.FC<EdgeContainerProps>
 
-function EdgeContainer(props: EdgeContainerProps, __: ForwardRef<typeof EdgeContainer>) {
+const EdgeContainerElement = (
+  props: EdgeContainerProps,
+  __: React.ForwardedRef<EdgeContainerType>,
+) => {
   const {
     item,
     graphID,
@@ -43,7 +42,7 @@ function EdgeContainer(props: EdgeContainerProps, __: ForwardRef<typeof EdgeCont
   } = props
   const graphicsRef = React.useRef<PIXI.Graphics>(null)
   const containerRef = React.useRef<PIXI.DisplayObject>(null)
-  const drawLineCallback = (element: Element) => {
+  const drawLineCallback = (element: EdgeElement) => {
     const targetElement = element.target()
     const sourceElement = element.source()
     const to = targetElement.position()
@@ -130,8 +129,8 @@ function EdgeContainer(props: EdgeContainerProps, __: ForwardRef<typeof EdgeCont
   )
 }
 
-export default wrapComponent<EdgeContainerProps>(
-  EdgeContainer,
+export const EdgeContainer = wrapComponent<EdgeContainerProps>(
+  EdgeContainerElement,
   {
     isForwardRef: true,
   },

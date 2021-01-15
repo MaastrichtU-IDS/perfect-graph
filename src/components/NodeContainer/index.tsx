@@ -1,6 +1,5 @@
 import React from 'react'
 import { wrapComponent } from 'unitx-ui'
-import { ForwardRef } from 'unitx-ui/type'
 import { useNode } from '@hooks'
 import { RenderNode, NodeConfig } from '@type'
 import { calculateDisplayObjectBounds } from '@utils'
@@ -13,7 +12,12 @@ export type NodeContainerProps = {
   config?: NodeConfig;
 }
 
-function NodeContainer(props: NodeContainerProps, __: ForwardRef<typeof NodeContainer>) {
+export type NodeContainerType = React.ForwardedRef<NodeContainerProps>
+
+const NodeContainer = (
+  props: NodeContainerProps,
+  __: React.ForwardedRef<NodeContainerType>,
+) => {
   const {
     item,
     graphID,

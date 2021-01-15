@@ -2,23 +2,24 @@ import { Stage } from '@inlet/react-pixi'
 import * as R from 'colay/ramda'
 import React from 'react'
 import {
-  wrapComponent, useLayout,
-  useForwardRef, ThemeProvider,
-  useTheme,
-} from 'unitx-ui'
+  wrapComponent,
+  useForwardRef,
+  useMeasure,
+  Div,
+  DivProps,
+  DataRender,
+} from 'colay-ui'
 import * as C from 'colay/color'
-import { ViewStyle, View } from 'react-native'
 import { useGraph } from '@hooks'
 import {
   NodeData, EdgeData, RenderEdge, RenderNode,
   GraphConfig, Element, DrawLine, GraphRef, ViewportRef,
 } from '@type'
-import { ForwardRef, PropsWithRef } from 'unitx-ui/type'
-import DataRender from 'unitx-ui/components/DataRender'
+import { PropsWithRef } from 'colay-ui/type'
 import '@utils/addFlexLayout'
 import Viewport, { ViewportProps } from '../Viewport'
 import NodeContainer from '../NodeContainer'
-import EdgeContainer from '../EdgeContainer'
+import { EdgeContainer } from '../EdgeContainer'
 import ViewPIXI from '../View'
 import Text from '../Text'
 
@@ -54,7 +55,9 @@ export const DefaultRenderEdge: RenderEdge = () => (
 )
 // <ViewPIXI style={{ width: 100, height: 100, backgroundColor: 'blue' }} />
 
-function Graph(props: GraphProps, ref: ForwardRef<GraphRef>) {
+export type GraphType = React.FC<GraphProps>
+
+const Graph = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => {
   const {
     style,
     nodes = [],

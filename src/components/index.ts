@@ -1,5 +1,5 @@
 import ProfileTemplate from '@components/templates/Profile'
-import { ComponentType } from 'unitx-ui/type'
+import { ComponentType } from 'colay-ui/type'
 import Layouts from '@core/layouts'
 import { Clusters } from '@core/clusters'
 import { ELEMENT_TYPE } from '@utils/constants'

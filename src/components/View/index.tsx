@@ -1,6 +1,6 @@
 import React from 'react'
 import { PixiComponent } from '@inlet/react-pixi'
-import { Position, ForwardRef, PropsWithRef } from 'unitx-ui/type'
+import { Position, PropsWithRef } from 'colay-ui/type'
 import { wrapComponent, useTheme } from 'unitx-ui'
 import * as PIXI from 'pixi.js'
 import * as C from 'colay/color'
@@ -15,6 +15,8 @@ export type ViewProps = {
   children?: React.ReactNode;
   theme?: Theme;
 }
+
+export type ViewType = React.FC<ViewProps>
 
 const ViewPIXI = PixiComponent<ViewProps, PIXI.Graphics>('View', {
   create: () => {
@@ -49,7 +51,10 @@ const ViewPIXI = PixiComponent<ViewProps, PIXI.Graphics>('View', {
   },
 })
 
-function View(props: ViewProps, forwardedRef: ForwardRef<PIXI.Container>) {
+function View(
+  props: ViewProps,
+  forwardedRef: React.ForwardedRef<ViewType>,
+) {
   const theme = useTheme()
   return (
     <ViewPIXI

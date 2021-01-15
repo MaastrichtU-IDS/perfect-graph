@@ -1,5 +1,5 @@
 import React from 'react'
-import { PropsWithRef } from 'unitx-ui/type'
+import { PropsWithRef } from 'colay-ui/type'
 // import useEvents from 'unitx-ui/hooks/useEvents'
 import * as PIXI from 'pixi.js'
 import * as R from 'colay/ramda'

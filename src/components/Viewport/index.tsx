@@ -5,7 +5,7 @@ import * as PIXI from 'pixi.js'
 // import Cull from 'pixi-cull'
 import React from 'react'
 import { wrapComponent, useForwardRef } from 'unitx-ui'
-import { ForwardRef, Position } from 'unitx-ui/type'
+import { Position } from 'colay-ui/type'
 
 type NativeViewportProps = {
   app: PIXI.Application;
@@ -31,6 +31,7 @@ type NativeViewportProps = {
 
 }
 type ViewportType = Viewport & {clickEvent: any; isClick: boolean}
+
 const ReactViewportComp = PixiComponent('Viewport', {
   create: (props: NativeViewportProps) => {
     const {
@@ -100,7 +101,7 @@ const ReactViewportComp = PixiComponent('Viewport', {
       () => {
         const { x, y } = mutableViewport.toWorld(e.data.global)
         return R.when(
-          R.isTrue,
+          R.equals(true),
           () => onPress?.({ nativeEvent: e, position: { x, y } }),
         )(mutableViewport.isClick)
       },
@@ -136,7 +137,7 @@ export type ViewportProps = {
   children?: React.ReactNode;
 } & Omit<NativeViewportProps, 'app'>
 
-function ViewPortElement(props: ViewportProps, ref: ForwardRef<typeof ViewPortElement>) {
+function ViewportElement(props: ViewportProps, ref: React.ForwardedRef<ViewportType>) {
   const {
     children,
     ...rest
@@ -173,7 +174,7 @@ function ViewPortElement(props: ViewportProps, ref: ForwardRef<typeof ViewPortEl
 }
 
 const PreparedComponent = wrapComponent<ViewportProps>(
-  ViewPortElement, {
+  ViewportElement, {
     isForwardRef: true,
   },
 )
