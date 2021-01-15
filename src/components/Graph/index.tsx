@@ -17,6 +17,7 @@ import {
 } from '@type'
 import { PropsWithRef } from 'colay-ui/type'
 import '@utils/addFlexLayout'
+import { useTheme, ThemeProvider } from '@core/theme'
 import Viewport, { ViewportProps } from '../Viewport'
 import NodeContainer from '../NodeContainer'
 import { EdgeContainer } from '../EdgeContainer'
@@ -72,24 +73,24 @@ const Graph = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => {
   const graphID = React.useMemo<string>(R.uuid, [])
   const stageRef = React.useRef<{ app: PIXI.Application }>(null)
   const viewportRef = React.useRef<ViewportRef>(null)
-  const containerRef = React.useRef(null)
   const { cy } = useGraph({
     id: graphID,
     onLoad: () => {
     },
   })
   const graphRef = useForwardRef<GraphRef>(ref, { cy })
-  const {
-    onLayout, width, height, initialized,
-  } = useLayout()
+  const [
+    containerRef,
+    { width, height },
+  ] = useMeasure()
   const graphLayoutRef = React.useRef<cytoscape.Layouts>(null)
   React.useEffect(() => {
     graphRef.current.app = stageRef.current?.app!
     graphRef.current.viewport = viewportRef.current!
-  }, [initialized])
+  }, [containerRef.current])
   React.useEffect(() => {
     R.when(
-      () => initialized && config.layout,
+      () => containerRef.current && config.layout,
       () => {
         // @ts-ignore
         const { hitArea } = viewportRef.current
@@ -115,21 +116,21 @@ const Graph = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => {
         })
         graphLayoutRef.current.start()
       },
-    )('')
-  }, [initialized, config.layout])
+      true,
+    )
+  }, [containerRef.current, config.layout])
   const theme = useTheme()
   const backgroundColor = React.useMemo(
-    () => C.rgbNumber(theme.colors.background),
+    () => C.rgbNumber(theme.palette.background),
     [theme.colors.background],
   )
   React.useEffect(() => {
     stageRef.current!.app.renderer.backgroundColor = backgroundColor
   }, [backgroundColor])
   return (
-    <View
+    <Div
       ref={containerRef}
       style={style}
-      onLayout={onLayout}
     >
       <Stage
         // @ts-ignore
@@ -190,7 +191,7 @@ const Graph = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => {
           </Viewport>
         </ThemeProvider>
       </Stage>
-    </View>
+    </Div>
   )
 }
 
