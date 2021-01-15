@@ -1401,10 +1401,10 @@
     "@octokit/types" "^6.0.0"
     universal-user-agent "^6.0.0"
 
-"@octokit/openapi-types@^2.2.0":
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/@octokit/openapi-types/-/openapi-types-2.2.0.tgz#123e0438a0bc718ccdac3b5a2e69b3dd00daa85b"
-  integrity sha512-274lNUDonw10kT8wHg8fCcUc1ZjZHbWv0/TbAwb0ojhBQqZYc1cQ/4yqTVTtPMDeZ//g7xVEYe/s3vURkRghPg==
+"@octokit/openapi-types@^2.3.0":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@octokit/openapi-types/-/openapi-types-2.3.0.tgz#075c4e5a1d05d0b62cd8048b71764537aa870c00"
+  integrity sha512-Own8lHWVi5eEfLOnsIzAx16BoRbpkzac3QDUCxIqYMf4bjz+AGpv17UfRn1Va4lVmjwOpvZglpFI3mmxuQ+sIQ==
 
 "@octokit/plugin-paginate-rest@^2.2.3":
   version "2.7.0"
@@ -1445,11 +1445,11 @@
     universal-user-agent "^6.0.0"
 
 "@octokit/types@^6.0.0", "@octokit/types@^6.0.1", "@octokit/types@^6.0.3", "@octokit/types@^6.1.0":
-  version "6.2.1"
-  resolved "https://registry.yarnpkg.com/@octokit/types/-/types-6.2.1.tgz#7f881fe44475ab1825776a4a59ca1ae082ed1043"
-  integrity sha512-jHs9OECOiZxuEzxMZcXmqrEO8GYraHF+UzNVH2ACYh8e/Y7YoT+hUf9ldvVd6zIvWv4p3NdxbQ0xx3ku5BnSiA==
+  version "6.3.0"
+  resolved "https://registry.yarnpkg.com/@octokit/types/-/types-6.3.0.tgz#c4a7b945a53738ccdcfa172d58d08e4cbbb66e75"
+  integrity sha512-OYlk5Di9daD0x948qhMqIgq6XLkm/2w0lgzibDgqrf+LfuAPL12WQaF/N2dO6ipOMW7Xe1jMattZiEd2bRR4Rg==
   dependencies:
-    "@octokit/openapi-types" "^2.2.0"
+    "@octokit/openapi-types" "^2.3.0"
     "@types/node" ">= 8"
 
 "@pixi/accessibility@5.3.7":
@@ -4136,7 +4136,7 @@ cacheable-request@^6.0.0:
     normalize-url "^4.1.0"
     responselike "^1.0.2"
 
-call-bind@^1.0.0:
+call-bind@^1.0.0, call-bind@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/call-bind/-/call-bind-1.0.2.tgz#b1d4e89e688119c3c9a903ad30abb2f6a919be3c"
   integrity sha512-7O+FbCihrB5WGbFYesctwmTKae6rOiIzmz1icreWJ+0aA7LJfuqhEso2T9ncpcFtzMQtzXf2QGGueWJGTYsqrA==
@@ -4308,9 +4308,9 @@ chokidar@^2.1.8:
     fsevents "^1.2.7"
 
 chokidar@^3.2.2, chokidar@^3.4.0, chokidar@^3.4.1:
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/chokidar/-/chokidar-3.5.0.tgz#458a4816a415e9d3b3caa4faec2b96a6935a9e65"
-  integrity sha512-JgQM9JS92ZbFR4P90EvmzNpSGhpPBGBSj10PILeDyYFwp4h2/D9OM03wsJ4zW1fEp4ka2DGrnUeD7FuvQ2aZ2Q==
+  version "3.5.1"
+  resolved "https://registry.yarnpkg.com/chokidar/-/chokidar-3.5.1.tgz#ee9ce7bbebd2b79f49f304799d5468e31e14e68a"
+  integrity sha512-9+s+Od+W0VJJzawDma/gvBNQqkTiqYTWLuZoyAsivsI4AaWTCzHG06/TMjsf1cYe9Cb97UCEhjz7HvnPk2p/tw==
   dependencies:
     anymatch "~3.1.1"
     braces "~3.0.2"
@@ -5492,9 +5492,9 @@ ejs@^3.1.2:
     jake "^10.6.1"
 
 electron-to-chromium@^1.3.564, electron-to-chromium@^1.3.634:
-  version "1.3.639"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.639.tgz#0a27e3018ae3acf438a14a1dd4e41db4b8ab764e"
-  integrity sha512-bwl6/U6xb3d3CNufQU9QeO1L32ueouFwW4bWANSwdXR7LVqyLzWjNbynoKNfuC38QFB5Qn7O0l2KLqBkcXnC3Q==
+  version "1.3.640"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.640.tgz#94e68c0ae79181a1d6fd1ed9a42b9790d51a1bca"
+  integrity sha512-cU6wQdXYzuSPzLdszsa4whStYfmU7CVNnG6c5z6/z9YlCOQ2Xh/uKB1gTxlIRr0ubgSg1/dZuSbUAoeESeQ3sQ==
 
 elegant-spinner@^1.0.1:
   version "1.0.1"
@@ -8787,10 +8787,18 @@ ms@^2.1.1:
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.3.tgz#574c8138ce1d2b5861f0b44579dbadd60c6615b2"
   integrity sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==
 
-n3@1.7.0, n3@^1.6.4:
+n3@1.7.0:
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/n3/-/n3-1.7.0.tgz#618391e1685d24ff642213777156380653807405"
   integrity sha512-8R0Qj545WnVLQxOfxxyFKzOpO13hF3jhSMJfO0FNqvbsPZDiR9ZDmGGjXAlcoZDf/88OsCYd7rHML284vm1h6A==
+  dependencies:
+    queue-microtask "^1.1.2"
+    readable-stream "^3.6.0"
+
+n3@^1.6.4:
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/n3/-/n3-1.8.0.tgz#2fe804e8944f64941deee4ca47eb5ed98390deb9"
+  integrity sha512-/PEmoB3UJrG6aXGZenDHFBJtmPp2rtfB2YLzAm2dU9stInD+ztvy4fKv5fv2ggsrSlpu7BYDTsz/c6S391uuEg==
   dependencies:
     queue-microtask "^1.1.2"
     readable-stream "^3.6.0"
@@ -10519,12 +10527,12 @@ regex-not@^1.0.0, regex-not@^1.0.2:
     safe-regex "^1.1.0"
 
 regexp.prototype.flags@^1.3.0:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/regexp.prototype.flags/-/regexp.prototype.flags-1.3.0.tgz#7aba89b3c13a64509dabcf3ca8d9fbb9bdf5cb75"
-  integrity sha512-2+Q0C5g951OlYlJz6yu5/M33IcsESLlLfsyIaLJaG4FA2r4yP8MvVMJUUP/fVBkSpbbbZlS5gynbEWLipiiXiQ==
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/regexp.prototype.flags/-/regexp.prototype.flags-1.3.1.tgz#7ef352ae8d159e758c0eadca6f8fcb4eef07be26"
+  integrity sha512-JiBdRBq91WlY7uRJ0ds7R+dU02i6LKi8r3BuQhNXn+kmeLN+EfHhfjqMRis1zJxnlu88hq/4dx0P2OP3APRTOA==
   dependencies:
+    call-bind "^1.0.2"
     define-properties "^1.1.3"
-    es-abstract "^1.17.0-next.1"
 
 regexpp@^3.0.0, regexpp@^3.1.0:
   version "3.1.0"
