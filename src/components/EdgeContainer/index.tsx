@@ -12,7 +12,7 @@ import {
 } from '@type'
 import * as V from 'colay/vector'
 import { Graphics, drawLine as defaultDrawLine } from '../Graphics'
-import { Container } from '../Container'
+import { Container, ContainerRef } from '../Container'
 
 export type EdgeContainerProps = {
   children: RenderEdge;
@@ -42,7 +42,7 @@ const EdgeContainerElement = (
     drawLine = defaultDrawLine,
   } = props
   const graphicsRef = React.useRef<PIXI.Graphics>(null)
-  const containerRef = React.useRef<PIXI.DisplayObject>(null)
+  const containerRef = React.useRef<ContainerRef>(null)
   const drawLineCallback = (element: EdgeElement) => {
     const targetElement = element.target()
     const sourceElement = element.source()

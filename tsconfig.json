@@ -76,7 +76,7 @@
 	},
 	"include": [
 		"src/**/*"
-	],
+, "stories/components/View/index.stories.tsx", "stories/components/Text/index.stories.tsx", "stories/components/Image/index.stories.tsx"	],
 	"exclude": [
 		"node_modules"
 	]

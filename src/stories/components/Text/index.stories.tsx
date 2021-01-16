@@ -1,5 +1,5 @@
 import { StageDecorator, createTemplate } from '@root/story'
-import Component from './index'
+import Component from '../../../src/components/Text/index'
 
 export default {
   title: 'Text',

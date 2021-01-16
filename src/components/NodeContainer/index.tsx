@@ -14,7 +14,7 @@ export type NodeContainerProps = {
 
 export type NodeContainerType = React.ForwardedRef<NodeContainerProps>
 
-const NodeContainer = (
+const NodeContainerElement = (
   props: NodeContainerProps,
   __: React.ForwardedRef<NodeContainerType>,
 ) => {
@@ -72,8 +72,8 @@ const NodeContainer = (
   )
 }
 
-export default wrapComponent<NodeContainerProps>(
-  NodeContainer,
+export const NodeContainer =  wrapComponent<NodeContainerProps>(
+  NodeContainerElement,
   {
     isForwardRef: true,
   },

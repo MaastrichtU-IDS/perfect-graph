@@ -1,6 +1,6 @@
 import React from 'react'
 import { StageDecorator, createTemplate } from '@root/story'
-import Component from './index'
+import Component from '../../../src/components/View/index'
 import { Graph } from '@components'
 
 export default {

@@ -1,6 +1,5 @@
 import React from 'react'
 import { PixiComponent } from '@inlet/react-pixi'
-
 import * as R from 'colay/ramda'
 import { wrapComponent } from 'colay-ui'
 import * as PIXI from 'pixi.js'
@@ -88,4 +87,4 @@ function ImageElement(props: ImageProps) {
  * />
  * ```
  */
-export const Image =  wrapComponent<ImageProps>(ImageElement)
+export const Image = wrapComponent<ImageProps>(ImageElement)

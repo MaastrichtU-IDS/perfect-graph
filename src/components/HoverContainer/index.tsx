@@ -1,12 +1,12 @@
 import React from 'react'
 import { ViewProps } from '../View'
-import Pressable from '../Pressable'
+import { Pressable } from '../Pressable'
 
 export type HoverContainerProps = {
   renderHoverElement: () => React.ReactChild;
 } & ViewProps
 
-export const HoverContainerElement = (props: HoverContainerProps) => {
+export const HoverContainer = (props: HoverContainerProps) => {
   const {
     children,
     renderHoverElement,

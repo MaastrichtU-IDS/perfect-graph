@@ -19,6 +19,8 @@ export type ViewProps = {
 
 export type ViewType = React.FC<ViewProps>
 
+export type ViewRef = PIXI.Graphics
+
 const ViewPIXI = PixiComponent<ViewProps, PIXI.Graphics>('View', {
   create: () => {
     const instance = new PIXI.Graphics()
@@ -53,7 +55,7 @@ const ViewPIXI = PixiComponent<ViewProps, PIXI.Graphics>('View', {
 
 const ViewElement = (
   props: ViewProps,
-  forwardedRef: React.ForwardedRef<ViewType>,
+  forwardedRef: React.ForwardedRef<ViewRef>,
 ) => {
   const theme = useTheme()
   return (

@@ -18,11 +18,11 @@ import {
 import { PropsWithRef } from 'colay-ui/type'
 import '@utils/addFlexLayout'
 import { useTheme, ThemeProvider } from '@core/theme'
-import Viewport, { ViewportProps } from '../Viewport'
+import { Viewport, ViewportProps } from '../Viewport'
 import NodeContainer from '../NodeContainer'
 import { EdgeContainer } from '../EdgeContainer'
-import ViewPIXI from '../View'
-import Text from '../Text'
+import { View } from '../View'
+import { Text } from '../Text'
 
 export type GraphProps = {
   extraData?: any;
@@ -38,7 +38,7 @@ export type GraphProps = {
 }
 
 export const DefaultRenderNode: RenderNode = ({ item }) => (
-  <ViewPIXI style={{
+  <View style={{
     width: 100,
     height: 100,
     justifyContent: 'center',
@@ -47,14 +47,14 @@ export const DefaultRenderNode: RenderNode = ({ item }) => (
   }}
   >
     <Text>{item.id}</Text>
-  </ViewPIXI>
+  </View>
 )
 
 // @ts-ignore
 export const DefaultRenderEdge: RenderEdge = () => (
   null
 )
-// <ViewPIXI style={{ width: 100, height: 100, backgroundColor: 'blue' }} />
+// <View style={{ width: 100, height: 100, backgroundColor: 'blue' }} />
 
 export type GraphType = React.FC<GraphProps>
 

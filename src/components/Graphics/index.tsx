@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { PixiComponent } from '@inlet/react-pixi'
 import { Position } from 'colay-ui/type'
 import { BoundingBox } from '@type'
@@ -61,7 +60,7 @@ const drawArrowHead = ({
   graphics: PIXI.Graphics;
   unit: Position;
   to: Position;
-  radius: number;
+  radius?: number;
   fill: number;
 }) => {
   const bottomCenter = to
@@ -125,7 +124,7 @@ export const drawLine = (
     from,
     distanceVector,
   } = R.ifElse(
-    R.isTrue,
+    R.is(true),
     () => {
       const centerOfFrom = V.add(
         fromBoundingBox.width / 2,
@@ -251,5 +250,3 @@ export const Graphics = PixiComponent<GraphicsProps, PIXI.Graphics>('PIXIGraphic
   applyProps: (mutableInstance, __, _props) => {
   },
 })
-
-

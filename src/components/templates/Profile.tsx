@@ -1,5 +1,4 @@
 import React from 'react'
-import { StyleProp, ViewStyle, StyleSheet } from 'react-native'
 import { wrapComponent } from 'colay-ui'
 import {
   DataItem,
@@ -9,7 +8,7 @@ import { Position } from 'colay-ui/type'
 import { Pressable } from '@components/Pressable'
 import { Image } from '@components/Image'
 import { Text } from '@components/Text'
-import { View } from '@components/View'
+import { View, ViewProps } from '@components/View'
 
 export type NodeData = {
   id: string;
@@ -21,14 +20,14 @@ export type ProfileProps = {
   name: string;
   story: string;
   image: string;
-  style?: StyleProp<ViewStyle>;
+  style?: ViewProps['style'];
   onPress?: (p: { node: Node; data: NodeData }) => void;
 }
 // const SWITCH_COLLAPSE = 'SWITCH_COLLAPSE'
 
 export type ProfileType = React.FC<ProfileProps>
 
-const Profile = (
+const ProfileElement = (
   props: ProfileProps,
   __: React.ForwardedRef<ProfileType>,
 ) => {
@@ -125,14 +124,14 @@ const Profile = (
  * />
  * ```
  */
-export default wrapComponent<ProfileProps>(
-  Profile,
+export const ProfileTemplate = wrapComponent<ProfileProps>(
+  ProfileElement,
   {
     isForwardRef: true,
   },
 )
 
-const style = StyleSheet.create({
+const style = {
   paragraph: {
     // align: 'center',
     fontFamily: '"Source Sans Pro", Helvetica, sans-serif',
@@ -169,7 +168,7 @@ const style = StyleSheet.create({
     wordWrap: true,
     wordWrapWidth: 150,
   },
-})
+}
 
 // const createLayout = layoutCreator({
 //   graphID,
