@@ -28,7 +28,7 @@ export type GraphProps = {
   extraData?: any;
   nodes: NodeData[];
   edges: EdgeData[];
-  style?: ViewStyle;
+  style?: DivProps['style'];
   renderNode?: RenderNode;
   renderEdge?: RenderEdge;
   onPress?: ViewportProps['onPress'];
@@ -58,7 +58,7 @@ export const DefaultRenderEdge: RenderEdge = () => (
 
 export type GraphType = React.FC<GraphProps>
 
-const Graph = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => {
+const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => {
   const {
     style,
     nodes = [],
@@ -121,8 +121,8 @@ const Graph = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => {
   }, [containerRef.current, config.layout])
   const theme = useTheme()
   const backgroundColor = React.useMemo(
-    () => C.rgbNumber(theme.palette.background),
-    [theme.colors.background],
+    () => C.rgbNumber(theme.palette.background.default),
+    [theme.palette.background.default],
   )
   React.useEffect(() => {
     stageRef.current!.app.renderer.backgroundColor = backgroundColor
@@ -230,10 +230,10 @@ const Graph = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => {
  * }
  * ```
  */
-export default wrapComponent<PropsWithRef<GraphRef, GraphProps>>(
-  Graph,
+export const Graph = wrapComponent<PropsWithRef<GraphRef, GraphProps>>(
+  GraphElement,
   {
     isForwardRef: true,
-    isEqual: R.equalsExclude(R.isFunction),
+    isEqual: R.equalsExclude(R.is(Function)),
   },
 )

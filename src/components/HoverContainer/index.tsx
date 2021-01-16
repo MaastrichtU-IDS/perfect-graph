@@ -6,7 +6,7 @@ export type HoverContainerProps = {
   renderHoverElement: () => React.ReactChild;
 } & ViewProps
 
-const HoverContainer = (props: HoverContainerProps) => {
+export const HoverContainerElement = (props: HoverContainerProps) => {
   const {
     children,
     renderHoverElement,
@@ -95,4 +95,3 @@ const HoverContainer = (props: HoverContainerProps) => {
  * />
  * ```
  */
-export default HoverContainer

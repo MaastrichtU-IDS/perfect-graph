@@ -1,9 +1,9 @@
 import React from 'react'
-import { wrapComponent } from 'unitx-ui'
+import { wrapComponent } from 'colay-ui'
 import { useNode } from '@hooks'
 import { RenderNode, NodeConfig } from '@type'
 import { calculateDisplayObjectBounds } from '@utils'
-import Container from '../Container'
+import { Container } from '../Container'
 
 export type NodeContainerProps = {
   children: RenderNode;

@@ -1,15 +1,15 @@
 import React from 'react'
 import { StyleProp, ViewStyle, StyleSheet } from 'react-native'
-import { wrapComponent } from 'unitx-ui'
+import { wrapComponent } from 'colay-ui'
 import {
   DataItem,
 } from '@type'
 import { Position } from 'colay-ui/type'
 // import { dataListToObject } from '@core/utils'
-import Pressable from '@components/Pressable'
-import Image from '@components/Image'
-import Text from '@components/Text'
-import ViewPIXI from '@components/View'
+import { Pressable } from '@components/Pressable'
+import { Image } from '@components/Image'
+import { Text } from '@components/Text'
+import { View } from '@components/View'
 
 export type NodeData = {
   id: string;
@@ -39,7 +39,7 @@ const Profile = (
   } = props
   return (
     <>
-      <ViewPIXI style={{
+      <View style={{
         width: 300,
         height: 150,
         flexDirection: 'row',
@@ -54,7 +54,7 @@ const Profile = (
             height: 100,
           }}
         />
-        <ViewPIXI
+        <View
           style={{ flexDirection: 'column', width: 200 }}
         >
           <Pressable
@@ -77,8 +77,8 @@ const Profile = (
             {story}
           </Text>
 
-        </ViewPIXI>
-      </ViewPIXI>
+        </View>
+      </View>
 
     </>
   )

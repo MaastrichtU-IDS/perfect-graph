@@ -1,5 +1,4 @@
 import React from 'react'
-import { ThemeProvider } from '@material-ui/core/styles';
 const { create } = require('colay-docs/storybook/theming');
 const { GithubEdit, } = require('colay-docs')
 const R = require('colay/lib/ramda');
@@ -18,14 +17,14 @@ export const parameters = {
       return R.cond([
         [
           R.allPass([
-            () =>R.isNegative(sectionAIndex),
+            () =>sectionAIndex<0,
             () => sectionBIndex >= 0,
           ]),
           R.always(-1)
         ],
         [
           R.allPass([
-            () =>R.isNegative(sectionBIndex),
+            () =>sectionBIndex<0,
             () => sectionAIndex >= 0,
           ]),
           R.always(1)
@@ -95,19 +94,18 @@ export const parameters = {
     },
   },
 }
-
 const GITHUB_URL = ''
 
 export const decorators = [
   (Story, {parameters}) => {
     const relativePath = parameters.fileName.replace('../../../../', '')
     return (
-      <ThemeProvider>
+      <>
         <GithubEdit>
           {`${GITHUB_URL}/blob/master/${relativePath}`}
         </GithubEdit>
         <Story />
-      </ThemeProvider>
+      </>
     )
   },
 ];

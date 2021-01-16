@@ -1,4 +1,4 @@
-import { useStateWithCallback } from 'unitx-ui/hooks'
+import { useStateWithCallback } from 'colay-ui'
 import { EdgeSingular } from 'cytoscape'
 import React, { useEffect, useMemo, useRef } from 'react'
 import {

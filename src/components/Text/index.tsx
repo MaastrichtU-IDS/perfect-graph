@@ -1,11 +1,12 @@
 import React from 'react'
-import { TextStyle, StyleSheet } from 'react-native'
 import * as PIXI from 'pixi.js'
 import * as R from 'colay/ramda'
 import { PixiComponent } from '@inlet/react-pixi'
-import { wrapComponent } from 'unitx-ui'
+import { useTheme } from '@core/theme'
 import * as C from 'colay/color'
 import { applyDefaultProps } from '@utils'
+
+type TextStyle = any
 
 type TextPIXIProps = {
   text: string;
@@ -21,8 +22,7 @@ type TextPIXIProps = {
 // dropShadowDistance
 const PositionStyleKeys = ['left', 'top', 'width', 'height']
 const processTextProps = (props: TextPIXIProps) => {
-  const { style: defaultStyle = {}, color } = props
-  const style = StyleSheet.flatten(defaultStyle)
+  const { style = {}, color } = props
   return {
     ...props,
     style: R.pick(PositionStyleKeys)(style),
@@ -62,7 +62,7 @@ const TextPIXI = PixiComponent<TextPIXIProps, PIXI.Text>('PIXIText', {
     } = processTextProps(props)
     const mutableInstance = new PIXI.Text(text, textStyle)
     return R.ifElse(
-      R.isTrue,
+      R.is(true),
       () => {
         mutableInstance.updateText(false)
         return new PIXI.Sprite(mutableInstance.texture)
@@ -79,20 +79,18 @@ const TextPIXI = PixiComponent<TextPIXIProps, PIXI.Text>('PIXIText', {
     const {
       text = '', textStyle = {}, isSprite, ...propsRest
     } = processTextProps(props)
-    /* eslint-disable functional/immutable-data, functional/no-expression-statement */
     applyDefaultProps(
       mutableInstance,
       oldPropsRest,
       propsRest,
     )
     R.unless(
-      R.isTrue,
+      R.is(true),
       () => {
         mutableInstance.text = text
         mutableInstance.style = textStyle
       },
     )(isSprite)
-    /* eslint-enable functional/immutable-data, functional/no-expression-statement */
   },
 })
 
@@ -102,11 +100,13 @@ export type TextProps = {
   isSprite?: boolean;
 }
 
-const Text = (props: TextProps) => {
+export const Text = (props: TextProps) => {
   const { children, ...rest } = props
+  const theme = useTheme()
   return (
     <TextPIXI
       text={children}
+      theme={theme}
       {...rest}
     />
   )
@@ -149,9 +149,3 @@ const Text = (props: TextProps) => {
  * />
  * ```
  */
-export default wrapComponent<TextProps>(
-  Text,
-  {
-    withTheme: true,
-  },
-)

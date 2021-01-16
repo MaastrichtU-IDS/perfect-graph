@@ -4522,10 +4522,10 @@ colay-dev@0.0.8:
     prettier "2.2.1"
     tscpaths "0.0.9"
 
-colay-docs@0.0.48:
-  version "0.0.48"
-  resolved "https://registry.yarnpkg.com/colay-docs/-/colay-docs-0.0.48.tgz#86040e37347e1623c7135ab45f6268f18348b714"
-  integrity sha512-gCBD0QW6dbOTKPt5XV8/fipwlDXdrOnDpWgvXxWahlzPtP9oGqNGSDdUcmuD0BfKvopMIMy1Qlfa44rTcDJ+EQ==
+colay-docs@0.0.51:
+  version "0.0.51"
+  resolved "https://registry.yarnpkg.com/colay-docs/-/colay-docs-0.0.51.tgz#5a09a165a1beecd672ac683cf0cf7770c9f55048"
+  integrity sha512-Z874Z2ZwoQC8YIZcltt9aPiu0+mjSALltUjMXdJ2M/DSZCPt1B1KzacI1c4wI251fEEK/uZJO0mmSBrx4nXnww==
   dependencies:
     "@storybook/addon-actions" "6.2.0-alpha.14"
     "@storybook/addon-essentials" "6.2.0-alpha.14"

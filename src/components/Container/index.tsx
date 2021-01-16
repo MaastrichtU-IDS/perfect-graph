@@ -13,17 +13,19 @@ import {
   PIXIBasicStyle,
   PIXIDisplayObjectProps,
 } from '@type'
-import { Position } from 'colay-ui/type'
+import { Position, PropsWithRef } from 'colay-ui/type'
 
 export type ContainerProps = PIXIDisplayObjectProps
-& React.ComponentProps<typeof PIXIReactContainer> &{
+& Omit<React.ComponentProps<typeof PIXIReactContainer>, 'children'> &{
   style: PIXIFlexStyle & PIXIBasicStyle;
   children: React.ReactNode;
   draggable?: boolean;
   onDrag?: (param: Position) => void;
 }
 
-export type ContainerType = React.FC<ContainerProps>
+type ContainerPropsWithRef = PropsWithRef<ContainerProps, PIXI.Container>
+
+export type ContainerType = React.FC<ContainerPropsWithRef>
 export type ContainerRefType = PIXI.Container
 
 export const Container = PixiComponent<ContainerProps, PIXI.Container>(
@@ -83,4 +85,4 @@ export const Container = PixiComponent<ContainerProps, PIXI.Container>(
       height && (mutableInstance.height = height)
     },
   },
-)
+) as unknown as ContainerType

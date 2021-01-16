@@ -81,6 +81,8 @@ export type RenderEdge<Additional extends Record<string, any> = {}> = (c: {
   element: EdgeElement;
   sourceElement: NodeElement;
   targetElement: NodeElement;
+  from: Position;
+  to: Position;
 } & Additional) => React.ReactElement
 
 export type RenderNode<Additional extends Record<string, any> = {}> = (c: {

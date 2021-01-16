@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { PixiComponent } from '@inlet/react-pixi'
-import { Position, Size } from 'colay-ui/type'
+import { Position } from 'colay-ui/type'
 import { BoundingBox } from '@type'
 import * as PIXI from 'pixi.js'
 import * as R from 'colay/ramda'
@@ -243,7 +243,7 @@ export const drawLine = (
   mutableInstance.zIndex = -100
 }
 
-const Graphics = PixiComponent<GraphicsProps, PIXI.Graphics>('PIXIGraphics', {
+export const Graphics = PixiComponent<GraphicsProps, PIXI.Graphics>('PIXIGraphics', {
   create: () => {
     const mutableInstance = new PIXI.Graphics()
     return mutableInstance
@@ -252,4 +252,4 @@ const Graphics = PixiComponent<GraphicsProps, PIXI.Graphics>('PIXIGraphics', {
   },
 })
 
-export default Graphics
+

@@ -1,17 +1,17 @@
 import { PixiComponent, useApp } from '@inlet/react-pixi'
 import * as R from 'colay/ramda'
-import { Viewport } from 'pixi-viewport'
+import { Viewport as ViewportNative } from 'pixi-viewport'
 import * as PIXI from 'pixi.js'
 // import Cull from 'pixi-cull'
 import React from 'react'
-import { wrapComponent, useForwardRef } from 'unitx-ui'
+import { wrapComponent, useForwardRef } from 'colay-ui'
 import { Position } from 'colay-ui/type'
 
 type NativeViewportProps = {
   app: PIXI.Application;
   width: number;
   height: number;
-  onCreate?: (v: Viewport) => void;
+  onCreate?: (v: ViewportNative) => void;
   onPress?: (c: {
     nativeEvent: PIXI.InteractionEvent;
     position: Position;
@@ -30,7 +30,7 @@ type NativeViewportProps = {
   };
 
 }
-type ViewportType = Viewport & {clickEvent: any; isClick: boolean}
+type ViewportType = ViewportNative & {clickEvent: any; isClick: boolean}
 
 const ReactViewportComp = PixiComponent('Viewport', {
   create: (props: NativeViewportProps) => {
@@ -43,7 +43,7 @@ const ReactViewportComp = PixiComponent('Viewport', {
       width,
       onCreate,
     } = props
-    const viewport: ViewportType = new Viewport({
+    const viewport: ViewportType = new ViewportNative({
       screenWidth: width,
       screenHeight: height,
       worldWidth: width,
@@ -173,10 +173,8 @@ function ViewportElement(props: ViewportProps, ref: React.ForwardedRef<ViewportT
   )
 }
 
-const PreparedComponent = wrapComponent<ViewportProps>(
+export const Viewport = wrapComponent<ViewportProps>(
   ViewportElement, {
     isForwardRef: true,
   },
 )
-
-export default PreparedComponent

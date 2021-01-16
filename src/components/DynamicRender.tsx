@@ -1,5 +1,5 @@
 import React from 'react'
-import { DataRender, wrapComponent } from 'unitx-ui'
+import { DataRender, wrapComponent } from 'colay-ui'
 import { ComponentType } from 'colay-ui/type'
 
 export type DynamicRenderData = {

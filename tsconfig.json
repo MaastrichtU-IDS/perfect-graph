@@ -48,20 +48,8 @@
 			"@assets/*": [
 				"./src/assets/*"
 			],
-			"@screens/*": [
-				"./src/screens/*"
-			],
-			"@navigation/*": [
-				"./src/navigation/*"
-			],
-			"@views/*": [
-				"./src/views/*"
-			],
-			"@machine": [
-				"./src/machine"
-			],
-			"@machine/*": [
-				"./src/machine/*"
+			"@pages/*": [
+				"./src/pages/*"
 			],
 			"@core/*": [
 				"./src/core/*"
@@ -70,10 +58,10 @@
 				"./src/core"
 			],
 			"@store/*": [
-				"./src/machine/store/*"
+				"./src/store/*"
 			],
 			"@store": [
-				"./src/machine/store"
+				"./src/store"
 			],
 			"@type": [
 				"./src/type"
@@ -83,9 +71,6 @@
 			],
 			"@root/*": [
 				"./src/*"
-			],
-			"@storybookComponents": [
-				"./docs/components"
 			]
 		}
 	},
@@ -93,11 +78,6 @@
 		"src/**/*"
 	],
 	"exclude": [
-		"node_modules",
-		"**/node_modules/*",
-		"lib",
-		"dist",
-		"generated",
-		"examples"
+		"node_modules"
 	]
 }

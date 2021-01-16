@@ -11,7 +11,7 @@ import {
   EdgeElement,
 } from '@type'
 import * as V from 'colay/vector'
-import Graphics, { drawLine as defaultDrawLine } from '../Graphics'
+import { Graphics, drawLine as defaultDrawLine } from '../Graphics'
 import { Container } from '../Container'
 
 export type EdgeContainerProps = {
@@ -22,11 +22,12 @@ export type EdgeContainerProps = {
   config?: EdgeConfig;
 }
 
-const calculateMidpoint = (from: Position) => R.pipe(
+const calculateMidpoint = (from: Position) => (to: Position) => R.pipe(
   V.subtract(from),
   V.divideScalar(2),
   V.add(from),
-)
+  // @ts-ignore
+)(to)
 
 export type EdgeContainerType = React.FC<EdgeContainerProps>
 
@@ -50,14 +51,14 @@ const EdgeContainerElement = (
     const midpoint = calculateMidpoint(from)(to)
     const sourceElementContext = getNodeContextByElement(sourceElement)
     const targetElementContext = getNodeContextByElement(targetElement)
-    containerRef.current.x = midpoint.x
-    containerRef.current.y = midpoint.y
+    containerRef.current!.x = midpoint.x
+    containerRef.current!.y = midpoint.y
     return drawLine({
       element,
       item,
       sourceElement,
       targetElement,
-      graphics: graphicsRef.current,
+      graphics: graphicsRef.current!,
       to: targetElementContext.boundingBox,
       from: sourceElementContext.boundingBox,
       directed: true,

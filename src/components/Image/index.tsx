@@ -1,31 +1,27 @@
 import React from 'react'
 import { PixiComponent } from '@inlet/react-pixi'
-import { ImageURISource } from 'react-native'
+
 import * as R from 'colay/ramda'
-import { wrapComponent } from 'unitx-ui'
+import { wrapComponent } from 'colay-ui'
 import * as PIXI from 'pixi.js'
 import {
   applyDefaultProps, getTextureFromProps, preprocessProps,
 } from '@utils'
 import { PIXIBasicStyle, PIXIShapeStyle } from '@type'
 
+type ImageURISource = { uri: string}
+
 export type ImageProps = {
   style: PIXIBasicStyle & PIXIShapeStyle;
-  source: ImageURISource | ImageURISource;
+  source: ImageURISource;
 }
 
 const ImagePIXI = PixiComponent<ImageProps, PIXI.Sprite>('Image', {
   create: (props: ImageProps) => {
     const instance = new PIXI.Sprite(getTextureFromProps('Sprite', props))
-    // instance.width = 10
-    // instance.height = 10
-    /* eslint-disable functional/immutable-data, functional/no-expression-statement */
-    // instance.interactive = true
-    /* eslint-enable functional/immutable-data, functional/no-expression-statement */
     return instance
   },
   applyProps: (mutableInstance: PIXI.Sprite, oldProps, _props) => {
-    /* eslint-disable functional/immutable-data, functional/no-expression-statement */
     const props = preprocessProps(_props)
     const {
       // image,
@@ -42,13 +38,13 @@ const ImagePIXI = PixiComponent<ImageProps, PIXI.Sprite>('Image', {
       () => {
         mutableInstance.texture = getTextureFromProps('Sprite', props)
       },
-    )(source)
+      source,
+    )
     applyDefaultProps(mutableInstance, oldProps, restProps, { rescaleToYoga: true })
-    /* eslint-enable functional/immutable-data, functional/no-expression-statement */
   },
 })
 
-function Image(props: ImageProps) {
+function ImageElement(props: ImageProps) {
   return (
     <ImagePIXI
       {...props}
@@ -92,4 +88,4 @@ function Image(props: ImageProps) {
  * />
  * ```
  */
-export default wrapComponent<ImageProps>(Image)
+export const Image =  wrapComponent<ImageProps>(ImageElement)

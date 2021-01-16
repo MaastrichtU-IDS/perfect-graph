@@ -1,7 +1,7 @@
 import React from 'react'
 import { RenderNode } from '@type'
 import * as R from 'colay/ramda'
-import Graph from './Graph'
+import { Graph } from './Graph'
 import { DynamicRender, DynamicRenderProps } from './DynamicRender'
 
 type RenderJSONContext = Parameters<RenderNode>[0]

@@ -1,9 +1,8 @@
 import React from 'react'
 import { PropsWithRef } from 'colay-ui/type'
-// import useEvents from 'unitx-ui/hooks/useEvents'
 import * as PIXI from 'pixi.js'
 import * as R from 'colay/ramda'
-import { wrapComponent } from 'unitx-ui'
+import { wrapComponent } from 'colay-ui'
 import { Events } from '@utils'
 import { PIXIBasicStyle, PIXIShapeStyle } from '@type'
 import View from '../View'
@@ -29,7 +28,7 @@ export type PressableProps = {
 //   ,
 // })
 
-function Pressable(props: PressableProps) {
+export const Pressable = (props: PressableProps) => {
   const {
     // onLongPress,
     // onPress,
@@ -131,9 +130,3 @@ function Pressable(props: PressableProps) {
  * />
  * ```
  */
-export default wrapComponent<
-PropsWithRef<{}, PressableProps>
->(
-  Pressable,
-  {},
-)

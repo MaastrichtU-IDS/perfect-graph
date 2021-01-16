@@ -13,8 +13,8 @@ import GraphLayouts from '@core/layouts'
 import { getSelectedItemByElement } from '@utils'
 import {
   useData,
-} from 'unitx-ui'
-import { download } from 'unitx-ui/utils'
+} from 'colay-ui'
+import { download } from 'colay-ui/utils'
 import * as R from 'colay/ramda'
 
 type ControllerOptions = {

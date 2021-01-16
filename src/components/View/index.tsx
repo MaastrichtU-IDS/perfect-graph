@@ -1,7 +1,8 @@
 import React from 'react'
 import { PixiComponent } from '@inlet/react-pixi'
 import { Position, PropsWithRef } from 'colay-ui/type'
-import { wrapComponent, useTheme } from 'unitx-ui'
+import { wrapComponent } from 'colay-ui'
+import { useTheme } from '@core/theme'
 import * as PIXI from 'pixi.js'
 import * as C from 'colay/color'
 import {
@@ -22,7 +23,6 @@ const ViewPIXI = PixiComponent<ViewProps, PIXI.Graphics>('View', {
   create: () => {
     const instance = new PIXI.Graphics()
     // contextMenu
-    // @ts-ignore
     // instance.contextMenu = createContextMenu({ items: contextMenu })
     // instance.on('rightclick', (e: PIXI.interaction.InteractionEvent) => {
     //   // @ts-ignore
@@ -51,10 +51,10 @@ const ViewPIXI = PixiComponent<ViewProps, PIXI.Graphics>('View', {
   },
 })
 
-function View(
+const ViewElement = (
   props: ViewProps,
   forwardedRef: React.ForwardedRef<ViewType>,
-) {
+) => {
   const theme = useTheme()
   return (
     <ViewPIXI
@@ -97,9 +97,9 @@ function View(
  * />
  * ```
  */
-export default wrapComponent<
+export const View = wrapComponent<
 PropsWithRef<PIXI.Container, ViewProps>
->(View, { isForwardRef: true })
+>(ViewElement, { isForwardRef: true })
 // >
 //   <FlexContainer style={rest.style}>
 //     {children}
