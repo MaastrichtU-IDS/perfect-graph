@@ -1,6 +1,5 @@
 import * as R from 'colay/ramda'
 import * as PIXI from 'pixi.js'
-import { StyleSheet } from 'react-native'
 import { applyDefaultProps as nativeApplyDefaultProps } from '@inlet/react-pixi'
 import { NativeEventMap } from 'colay-ui/type'
 // import { Properties } from 'csstype'
@@ -243,7 +242,6 @@ type ApplyDefaultPropsConfig = {
 
 export const preprocessProps = <T extends Record<string, any>>(props: T): T => ({
   ...props,
-  style: StyleSheet.flatten(props.style),
 })
 
 export const applyDefaultProps = <P extends Record<string, any> >(

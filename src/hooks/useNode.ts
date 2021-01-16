@@ -1,5 +1,5 @@
 import React from 'react'
-import { useStateWithCallback } from 'unitx-ui/hooks'
+import { useStateWithCallback } from 'colay-ui'
 import { NodeSingular } from 'cytoscape'
 import { Position } from 'colay/type'
 import { NodeContext, NodeConfig, ClusterInfo } from '@type'

@@ -2,7 +2,7 @@ import React from 'react'
 const { create } = require('colay-docs/storybook/theming');
 const { GithubEdit, } = require('colay-docs')
 const R = require('colay/lib/ramda');
-
+const { StageDecorator } = require('../stories/Decorators')
 const SECTION_NAME_LIST =  ['intro','components', 'layoutengine', 'plugins', 'support', 'collaboration']
 // Option defaults:
 export const parameters = {
@@ -104,7 +104,9 @@ export const decorators = [
         <GithubEdit>
           {`${GITHUB_URL}/blob/master/${relativePath}`}
         </GithubEdit>
-        <Story />
+        <StageDecorator>
+          <Story />
+        </StageDecorator>
       </>
     )
   },

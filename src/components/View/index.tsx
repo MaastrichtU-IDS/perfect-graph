@@ -5,6 +5,7 @@ import { wrapComponent } from 'colay-ui'
 import { useTheme } from '@core/theme'
 import * as PIXI from 'pixi.js'
 import * as C from 'colay/color'
+import * as R from 'colay/ramda'
 import {
   applyDefaultProps, preprocessProps,
 } from '@utils'
@@ -38,7 +39,7 @@ const ViewPIXI = PixiComponent<ViewProps, PIXI.Graphics>('View', {
       style: {
         width = 0,
         height = 0,
-        backgroundColor = props.theme!.colors.primary,
+        backgroundColor = props.theme!.palette.background.default,
         borderRadius = 0,
         borderWidth = 0,
         borderColor = 'black',

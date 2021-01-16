@@ -124,7 +124,7 @@ export const drawLine = (
     from,
     distanceVector,
   } = R.ifElse(
-    R.is(true),
+    R.isTrue,
     () => {
       const centerOfFrom = V.add(
         fromBoundingBox.width / 2,

@@ -279,7 +279,7 @@ PropsWithRef<GraphEditorRef, GraphEditorProps>
 >(
   GraphEditorElement,
   {
-    isEqual: R.equalsExclude(R.isFunction),
+    isEqual: R.equalsExclude(R.is(Function)),
     isForwardRef: true,
   },
 )

@@ -62,7 +62,7 @@ const TextPIXI = PixiComponent<TextPIXIProps, PIXI.Text>('PIXIText', {
     } = processTextProps(props)
     const mutableInstance = new PIXI.Text(text, textStyle)
     return R.ifElse(
-      R.is(true),
+      R.isTrue,
       () => {
         mutableInstance.updateText(false)
         return new PIXI.Sprite(mutableInstance.texture)
@@ -85,7 +85,7 @@ const TextPIXI = PixiComponent<TextPIXIProps, PIXI.Text>('PIXIText', {
       propsRest,
     )
     R.unless(
-      R.is(true),
+      R.isTrue,
       () => {
         mutableInstance.text = text
         mutableInstance.style = textStyle
