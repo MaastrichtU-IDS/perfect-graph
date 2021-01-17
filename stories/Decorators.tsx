@@ -11,7 +11,7 @@ export const StageDecorator = (props) => {
   return (
     <Div
       ref={ref}
-      style={{ width: '100%', height: '100%' }}
+      style={{ width: '70%', height: 200 }}
     >
       <Stage
         options={{

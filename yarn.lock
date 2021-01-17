@@ -4522,10 +4522,10 @@ colay-dev@0.0.8:
     prettier "2.2.1"
     tscpaths "0.0.9"
 
-colay-docs@0.0.51:
-  version "0.0.51"
-  resolved "https://registry.yarnpkg.com/colay-docs/-/colay-docs-0.0.51.tgz#5a09a165a1beecd672ac683cf0cf7770c9f55048"
-  integrity sha512-Z874Z2ZwoQC8YIZcltt9aPiu0+mjSALltUjMXdJ2M/DSZCPt1B1KzacI1c4wI251fEEK/uZJO0mmSBrx4nXnww==
+colay-docs@0.0.56:
+  version "0.0.56"
+  resolved "https://registry.yarnpkg.com/colay-docs/-/colay-docs-0.0.56.tgz#835ba13d5deb2bf98364e68dc5f6712fa2211eb0"
+  integrity sha512-vOmCNuUWM9APjq9FxqeFj7LaiDjKO41nyQLDOYjvs6deBYeuQ4V3JpD1GKe3gtsMCLRkt3qz0rp6d/2n7bSWiA==
   dependencies:
     "@storybook/addon-actions" "6.2.0-alpha.14"
     "@storybook/addon-essentials" "6.2.0-alpha.14"
@@ -4536,6 +4536,7 @@ colay-docs@0.0.51:
     "@storybook/react" "6.2.0-alpha.14"
     "@storybook/theming" "6.2.0-alpha.14"
     css-loader "5.0.1"
+    prettier "2.2.1"
     prism-react-renderer "1.1.1"
     react-live "2.2.3"
     react-monaco-editor "0.41.2"
@@ -10234,7 +10235,7 @@ react-draggable@^4.0.3:
     classnames "^2.2.5"
     prop-types "^15.6.0"
 
-react-element-to-jsx-string@^14.3.1:
+react-element-to-jsx-string@14.3.2, react-element-to-jsx-string@^14.3.1:
   version "14.3.2"
   resolved "https://registry.yarnpkg.com/react-element-to-jsx-string/-/react-element-to-jsx-string-14.3.2.tgz#c0000ed54d1f8b4371731b669613f2d4e0f63d5c"
   integrity sha512-WZbvG72cjLXAxV7VOuSzuHEaI3RHj10DZu8EcKQpkKcAj7+qAkG5XUeSdX5FXrA0vPrlx0QsnAzZEBJwzV0e+w==
