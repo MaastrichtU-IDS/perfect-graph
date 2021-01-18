@@ -2,7 +2,8 @@ import React from 'react'
 import { DataItem } from '@type'
 import { ViewStyle } from 'react-native'
 import {
-  Divider, FlatList,
+  Divider,
+  FlatList,
   ScrollView,
 } from 'unitx-ui'
 import * as R from 'colay/ramda'

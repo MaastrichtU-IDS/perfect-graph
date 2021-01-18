@@ -99,7 +99,6 @@ const GITHUB_URL = ''
 export const decorators = [
   (Story, {parameters}) => {
     const relativePath = parameters.fileName.replace('../../../../', '')
-    console.log('a',Story())
     return (
       <>
         <GithubEdit>

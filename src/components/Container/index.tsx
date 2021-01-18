@@ -22,7 +22,7 @@ export type ContainerProps = PIXIDisplayObjectProps
   children: Enumerable<React.ReactNode>;
   draggable?: boolean;
   onDrag?: (param: Position) => void;
-}
+}    
 
 type ContainerPropsWithRef = PropsWithRef<
 PIXI.Container,

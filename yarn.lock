@@ -4522,10 +4522,10 @@ colay-dev@0.0.8:
     prettier "2.2.1"
     tscpaths "0.0.9"
 
-colay-docs@0.0.56:
-  version "0.0.56"
-  resolved "https://registry.yarnpkg.com/colay-docs/-/colay-docs-0.0.56.tgz#835ba13d5deb2bf98364e68dc5f6712fa2211eb0"
-  integrity sha512-vOmCNuUWM9APjq9FxqeFj7LaiDjKO41nyQLDOYjvs6deBYeuQ4V3JpD1GKe3gtsMCLRkt3qz0rp6d/2n7bSWiA==
+colay-docs@0.0.59:
+  version "0.0.59"
+  resolved "https://registry.yarnpkg.com/colay-docs/-/colay-docs-0.0.59.tgz#a561a22126f532c7898c36e173de00eedfa70470"
+  integrity sha512-sgjMnpK89bUJM/dOBmU8u6qq0Dp4VN86DY+MJctE5keV8SpAaqR5heDlKTEyH1qDlPRvmMhY5sesGm29bKy9wA==
   dependencies:
     "@storybook/addon-actions" "6.2.0-alpha.14"
     "@storybook/addon-essentials" "6.2.0-alpha.14"
@@ -4543,17 +4543,17 @@ colay-docs@0.0.56:
     sass-loader "10.1.1"
     style-loader "2.0.0"
 
-colay-ui@0.0.10:
-  version "0.0.10"
-  resolved "https://registry.yarnpkg.com/colay-ui/-/colay-ui-0.0.10.tgz#42ccd3e0e4c644cd8846510c5e3029a0e17e0f97"
-  integrity sha512-MiAIsi80O/oLqgNsyAFBM4QF1alW1FZQxwyjJ9IbmkJkszOfe5Vrl/iEGoZRrORccXx64/GazJ07QnhP6xUwjg==
+colay-ui@0.0.12:
+  version "0.0.12"
+  resolved "https://registry.yarnpkg.com/colay-ui/-/colay-ui-0.0.12.tgz#9001367b4d7f6e709cdec67fb68280c7aad2d9b9"
+  integrity sha512-nUGsV1jMy6Er6tm4VRKtwUIue5F0DZznrnd10mA/2REzHuNMMM0hICX4GwUIGN/lDnpKUGUWdw2CTBEdz5spkQ==
   dependencies:
     react-error-boundary "3.1.0"
 
-colay@0.0.18:
-  version "0.0.18"
-  resolved "https://registry.yarnpkg.com/colay/-/colay-0.0.18.tgz#affbac8652600f29a44ebc541e185d24bfad26fc"
-  integrity sha512-jPz2Rx5TYic5b8jYGrDfOWFrC5S2NLnCZoB7FS3uq7u8/9SugcnDanHF3CH62c0w8m5MkDqB0KDXnnMh1l1cgA==
+colay@0.0.20:
+  version "0.0.20"
+  resolved "https://registry.yarnpkg.com/colay/-/colay-0.0.20.tgz#33f5bb2767cc213fcc72cb681a0600e083001177"
+  integrity sha512-PEOnkUY6WtYvCKGD5rY8jo1H8PzNRSCf4qExsTol/DEiQxw+2qR/0irs0QJz7iwBRIkNJfzqrK4pVwSM6e4grQ==
   dependencies:
     "@types/async" "3.2.5"
     "@types/ramda" "0.27.34"
