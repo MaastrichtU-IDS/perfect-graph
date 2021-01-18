@@ -111,7 +111,11 @@ const GraphEditorElement = (
   }, [selectedElement, selectedItem])
   return (
     <Box
-      style={style}
+      style={{
+        ...style,
+        overflow: 'hidden',
+        position: 'relative',
+      }}
     >
       <Graph
         // @ts-ignore

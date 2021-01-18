@@ -155,6 +155,7 @@ const ActionBarElement = (props: ActionBarProps) => {
         height: HEIGHT,
         left: 0,
         flexDirection: 'row',
+        display: 'flex',
         // @ts-ignore
         backgroundColor: theme.palette.background.paper,
         ...animationStyle,
@@ -164,6 +165,7 @@ const ActionBarElement = (props: ActionBarProps) => {
         style={{
           flexDirection: 'row',
           alignItems: 'center',
+          display: 'flex',
           height: HEIGHT,
           // width: '100%',
         }}
@@ -287,15 +289,10 @@ const ActionBarElement = (props: ActionBarProps) => {
       </Box>
       <IconButton
         onClick={createOnActionCallback(EVENT.TOGGLE_ACTION_BAR)}
+        style={styles.icon}
       >
         <Icon
           name="delete_rounded"
-          style={{
-            position: 'absolute',
-            left: 0,
-            top: -(24),
-            fontSize: 24,
-          }}
         />
       </IconButton>
 
@@ -493,8 +490,9 @@ const styles = {
     width: 24,
     height: 24,
     position: 'absolute',
-    right: -24,
-    top: 0,
+    left: 2,
+    top: -26,
+    fontSize: 24,
   },
   button: {
     marginRight: 10,

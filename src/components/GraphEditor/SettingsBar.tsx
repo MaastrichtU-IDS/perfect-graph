@@ -99,16 +99,11 @@ const SettingsBarElement = (props: SettingsBarProps) => {
       }
       </Box>
       <IconButton
+        style={styles.icon}
         onClick={createOnActionCallback(EVENT.TOGGLE_FILTER_BAR)}
       >
         <Icon
           name="filter"
-          style={{
-            position: 'absolute',
-            right: -24,
-            top: 0,
-            fontSize: 24,
-          }}
         />
       </IconButton>
     </Paper>
@@ -116,3 +111,12 @@ const SettingsBarElement = (props: SettingsBarProps) => {
 }
 
 export const SettingsBar = wrapComponent<SettingsBarProps>(SettingsBarElement, {})
+
+const styles = {
+  icon: {
+    position: 'absolute',
+    right: -30,
+    top: 2,
+    fontSize: 24,
+  },
+}
