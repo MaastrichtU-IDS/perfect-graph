@@ -429,8 +429,17 @@ const LayoutOptions = (props: LayoutOptionsProps) => {
           vertical: 'top',
           horizontal: 'center',
         }}
+        PaperProps={{
+          sx: {
+            width: { sx: '10vw', md: '50vw' },
+          },
+        }}
       >
-        <Box>
+        <Box
+          sx={{
+            width: { sx: '10vw', md: '50vw' },
+          }}
+        >
           <Form
             schema={{
               title: 'Layout',
