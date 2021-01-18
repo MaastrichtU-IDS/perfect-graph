@@ -1,21 +1,20 @@
 import React from 'react'
-import { Pressable, TextStyle, ViewStyle } from 'react-native'
 import {
-  Grid,
-  Input,
-  Text,
-  useData,
+  ButtonBase, Grid, TextField, Typography, TypographyProps,
+} from '@material-ui/core'
+import {
   useForwardRef,
   wrapComponent,
-} from 'unitx-ui'
+} from 'colay-ui'
 
 export type Suggestion = {
   title: string;
   value: string;
 }
+type TextStyle = TypographyProps['style']
 
 export type TripleInputProps = {
-  style?: ViewStyle;
+  style?: Grid['style'];
   textStyle?: TextStyle;
   placeholder: string;
   editable?: boolean;
@@ -62,7 +61,7 @@ const TripleInputElement = (
     textStyle,
     onEnter,
   } = props
-  const [state, update] = useData({
+  const [state, setState] = React.useState({
     editable: props.editable,
     suggestions: [] as Suggestion[],
     isLoading: false,
@@ -80,8 +79,9 @@ const TripleInputElement = (
     {},
     () => ({
       changeMode: (editable: boolean) => {
-        update((draft) => {
-          draft.editable = editable
+        setState({
+          ...state,
+          editable,
         })
         setTimeout(() => inputRef.current.focus(), 10)
       },
@@ -90,52 +90,49 @@ const TripleInputElement = (
   )
   const onChangeText = React.useCallback(async (value) => {
     const suggestions = await getSuggestions?.({ value }) ?? []
-    update((draft) => {
-      draft.suggestions = suggestions
-      draft.isLoading = false
-      draft.selectedSuggestion = null
+    setState({
+      ...state,
+      suggestions,
+      isLoading: false,
+      selectedSuggestion: null,
     })
     onValueChange?.(value)
-  }, [update, getSuggestions])
+  }, [setState, getSuggestions])
   const onBlur = React.useCallback(() => {
     setTimeout(() => {
-      update((draft) => {
-        draft.editable = false
+      setState({
+        ...state,
+        editable: false,
       })
     }, 200)
-  }, [update])
+  }, [setState])
   return (
-    <Pressable
-      style={[
-        {
-          flex: 1,
-        },
-        style,
-      ]}
-      // @ts-ignore
+    <ButtonBase
+      style={{
+        flex: 1,
+        ...style,
+      }}
       onFocus={() => {
         !disabled && inputRef.current.changeMode(true)
       }}
     >
       <Grid>
-        <Input
+        <TextField
           ref={inputRef}
           value={value}
           onSubmitEditing={onEnter}
-          style={[
-            {
-              width: '100%',
-              lineHeight: LINE_HEIGHT,
-              height: LINE_HEIGHT,
-            },
-            textStyle,
-            state.editable ? null : { display: 'none' },
-          ]}
-          onChangeText={onChangeText}
+          style={{
+            width: '100%',
+            lineHeight: LINE_HEIGHT,
+            height: LINE_HEIGHT,
+            ...textStyle,
+            ...(state.editable ? {} : { display: 'none' }),
+          }}
+          onChange={onChangeText}
           onBlur={onBlur}
           placeholder={placeholder}
-        >
-          {/* {state.suggestions.map(
+        />
+        {/* {state.suggestions.map(
             (item, index) => (
               <AutocompleteItem
                 {...item}
@@ -155,25 +152,21 @@ const TripleInputElement = (
               />
             ),
           )} */}
-        </Input>
-        <Text
-          style={[
-            {
-              width: '100%',
-              lineHeight: LINE_HEIGHT,
-              height: LINE_HEIGHT,
-            },
-            textStyle,
-            state.editable ? { display: 'none' } : {},
-          ]}
-          // on
-          ellipsizeMode="tail"
-          numberOfLines={1}
+        <Typography
+          style={{
+            width: '100%',
+            lineHeight: LINE_HEIGHT,
+            height: LINE_HEIGHT,
+            ...textStyle,
+            ...(state.editable ? { display: 'none' } : {}),
+          }}
+          // ellipsizeMode="tail"
+          // numberOfLines={1}
         >
           {value === '' ? placeholder : value}
-        </Text>
+        </Typography>
       </Grid>
-    </Pressable>
+    </ButtonBase>
   )
 }
 

@@ -73,52 +73,7 @@ export const DATA_TYPE = {
   unknown: 'unknown',
 } as const
 
-// export const TYPE_ICONS = {
-//   [DATA_TYPE.number]: (props: any) => (
-//     <Icon
-//       name="numeric"
-//       {...props}
-//     />
-//   ),
-//   [DATA_TYPE.string]: (props: any) => (
-//     <Icon
-//       name="alphabetical"
-//       {...props}
-//     />
-//   ),
-//   [DATA_TYPE.id]: (props: any) => (
-//     <TouchableOpacity
-//       style={[
-//         {
-//           width: props.size,
-//           height: props.size,
-//           justifyContent: 'center',
-//           alignItems: 'center',
-//           margin: 3,
-//         },
-//         props.style,
-//       ]}
-//       {...props}
-//     >
-//       <Text
-//         category="caption"
-//         style={{
-//           fontSize: props.size - 5,
-//           fontWeight: 'bold',
-//           letterSpacing: 1,
-//         }}
-//       >
-//         iri
-//       </Text>
-//     </TouchableOpacity>
-//   ),
-//   [DATA_TYPE.unknown]: (props: any) => (
-//     <Icon
-//       name="alpha-x"
-//       {...props}
-//     />
-//   ),
-// } as const
+
 
 export const DATA_TYPE_BY_INDEX = [
   'string',

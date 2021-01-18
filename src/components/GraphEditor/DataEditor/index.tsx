@@ -1,11 +1,8 @@
 import React from 'react'
 import { DataItem } from '@type'
-import { ViewStyle } from 'react-native'
 import {
-  Divider,
-  FlatList,
-  ScrollView,
-} from 'unitx-ui'
+  Box, List, ListItem, Divider, BoxProps,
+} from '@material-ui/core'
 import * as R from 'colay/ramda'
 import { EVENT, ELEMENT_DATA_FIELDS } from '@utils/constants'
 import { NewTripleItem } from './NewTripleItem'
@@ -13,16 +10,14 @@ import {
   TripleItem, EventType,
 } from './TripleItem'
 
-// import DataSection from './DataItem'
-
 export type DataEditorProps = {
-  style?: ViewStyle;
+  style?: BoxProps['style'];
   data: DataItem[];
   onEvent: (param: {
     type: EventType;
     extraData: any;
     index?: number;
-    dataItem?: DataItem;
+    item?: DataItem;
   }) => void;
   localLabel?: string[]| null;
   globalLabel?: string[] | null;
@@ -38,39 +33,36 @@ const DataEditorElement = (props: DataEditorProps) => {
     isGlobalLabelFirst,
   } = props
   return (
-    <ScrollView
-      horizontal
+    <Box
       style={{ width: '100%' }}
-      contentContainerStyle={{ width: '100%' }}
     >
-      <FlatList
-        data={data}
-        style={{ width: '100%' }}
-        contentContainerStyle={{ width: '100%' }}
-        renderItem={({ item: dataItem, index }) => (
-          <>
-            <TripleItem
-              {...dataItem}
-              onEvent={(type, extraData) => onEvent({
-                extraData, index, dataItem, type,
-              })}
-              isLocalLabel={R.equals(localLabel, [ELEMENT_DATA_FIELDS.DATA, dataItem.name])}
-              isGlobalLabel={R.equals(globalLabel, [ELEMENT_DATA_FIELDS.DATA, dataItem.name])}
-              isGlobalLabelFirst={isGlobalLabelFirst}
-            />
-            <Divider />
-          </>
-        )}
-        ListFooterComponent={(
+      <List style={{ width: '100%', overflow: 'auto' }}>
+        {
+      data.map((item, index) => (
+        <ListItem key={`${index}`}>
+          <TripleItem
+            {...item}
+            onEvent={(type, extraData) => onEvent({
+              extraData, index, item, type,
+            })}
+            isLocalLabel={R.equals(localLabel, [ELEMENT_DATA_FIELDS.DATA, item.name])}
+            isGlobalLabel={R.equals(globalLabel, [ELEMENT_DATA_FIELDS.DATA, item.name])}
+            isGlobalLabelFirst={isGlobalLabelFirst}
+          />
+          <Divider />
+        </ListItem>
+      ))
+          }
+        <ListItem key={`${data.length}`}>
           <NewTripleItem
-            onAdd={(dataItem) => onEvent({
+            onAdd={(item) => onEvent({
               type: EVENT.ADD_DATA,
-              extraData: dataItem,
+              extraData: item,
             })}
           />
-        )}
-      />
-    </ScrollView>
+        </ListItem>
+      </List>
+    </Box>
 
   )
 }
