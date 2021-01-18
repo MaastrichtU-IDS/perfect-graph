@@ -51,7 +51,7 @@
     "colay": "0.0.20",
     "colay-dev": "0.0.8",
     "colay-docs": "0.0.59",
-    "colay-ui": "0.0.12",
+    "colay-ui": "0.0.13",
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "react-element-to-jsx-string": "14.3.2",

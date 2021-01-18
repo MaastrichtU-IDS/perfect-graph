@@ -492,33 +492,6 @@ const LayoutOptions = (props: LayoutOptionsProps) => {
       </View>
     </Popover>
   )
-  // return (
-  //   <Select
-  //     selectedIndex={new IndexPath(selectedLayoutIndex)}
-  //     onSelect={(index) => }
-  // value={selectedLayoutIndex < 0
-  //   ? 'Select Layout'
-  //   : LAYOUT_NAMES[selectedLayoutIndex]}
-  //   >
-  //     <Card>
-  //         <Text>{layout.animationDuration ?? 5000}</Text>
-  //         <Slider
-  //           value={layout.animationDuration}
-  //           minimumValue={0}
-  //           maximumValue={10000}
-  //           onSlidingComplete={(animationDuration) => createOnActionCallback(
-  //             EVENT.LAYOUT_ANIMATION_DURATION_CHANGED,
-  //             {
-  //               value: animationDuration,
-  //             },
-  //           )()}
-  //         />
-  //     </Card>
-  //     {LAYOUT_NAMES.map((name) => (
-  //       <SelectItem title={name} />
-  //     ))}
-  //   </Select>
-  // )
 }
 export default wrapComponent<ActionBarProps>(ActionBar, {})
 
