@@ -1,10 +1,12 @@
 import React from 'react'
 import {
-  Grid, Flex,
-  useData, Icon,
-  Collapsible, Layout,
+  Grid,
+  Icon,
+  Collapse,
+  IconButton,
+  Box,
   Divider,
-} from 'unitx-ui'
+} from '@material-ui/core'
 import * as R from 'colay/ramda'
 import { DataItem } from '@type'
 import { DATA_TYPE, EVENT } from '@utils/constants'
@@ -13,7 +15,7 @@ import { NewTripleItem } from './NewTripleItem'
 
 export type EventType = keyof typeof EVENT
 
-type TripleItemProps = {
+export type TripleItemProps = {
   isAdditional?: boolean;
   onEvent: (type: EventType, extraData: any) => void;
   isLocalLabel?: boolean;
@@ -45,26 +47,27 @@ export const TripleItem = (props: TripleItemProps) => {
     isGlobalLabelFirst,
   } = props
   const value = R.ensureArray(props.value)
-  const [state, update] = useData({
+  const [state, setState] = React.useState({
     extended: false,
     settingsOpened: true,
     newDataValue: '',
   })
   const isMulti = value.length > 1
   const onExtend = React.useCallback(() => {
-    update((draft) => {
-      draft.extended = !draft.extended
+    setState({
+      ...state,
+      extended: !state.extended,
     })
-  }, [update])
+  }, [setState])
   return (
     <Grid
-      col
-      style={{ size: 12 }}
+      container
+      xs={12}
     >
-      <Grid>
+      <Grid item>
         <Grid
-          col
-          style={{ size: 5.5 }}
+          item
+          xs={5}
         >
           <TripleInput
             placeholder="Enter Type"
@@ -74,8 +77,8 @@ export const TripleItem = (props: TripleItemProps) => {
           />
         </Grid>
         <Grid
-          col
-          style={{ size: 5.5 }}
+          item
+          xs={5}
         >
           {
             R.ensureArray(value).map((valueItem, valueIndex) => (
@@ -90,36 +93,48 @@ export const TripleItem = (props: TripleItemProps) => {
                   onValueChange={(value) => onEvent(EVENT.CHANGE_DATA_VALUE, { value, valueIndex })}
                   // type={type}
                 />
-                <Flex
-                  col
+                <Box
                   style={{ width: ICON_SIZE }}
                 >
                   {
                   isMulti && (
-                  <Icon
-                    name="close"
-                    size={ICON_SIZE}
-                    onPress={() => onEvent(EVENT.DELETE_DATA_VALUE, { valueIndex, valueItem })}
-                  />
+                  <IconButton
+                    onClick={() => onEvent(EVENT.DELETE_DATA_VALUE, { valueIndex, valueItem })}
+                  >
+                    <Icon
+                      style={{ fontSize: ICON_SIZE }}
+                    >
+                      close
+                    </Icon>
+                  </IconButton>
                   )
 }
                   {
                   isMulti && !isAdditional && (
                   <>
-                    <Icon
-                      name="chevron-up"
-                      size={ICON_SIZE}
-                      onPress={() => onEvent(EVENT.DATA_VALUE_UP, { valueIndex, valueItem })}
-                    />
-                    <Icon
-                      name="chevron-down"
-                      size={ICON_SIZE}
-                      onPress={() => onEvent(EVENT.DATA_VALUE_DOWN, { valueIndex, valueItem })}
-                    />
+                    <IconButton
+                      onClick={() => onEvent(EVENT.DATA_VALUE_UP, { valueIndex, valueItem })}
+                    >
+                      <Icon
+                        style={{ fontSize: ICON_SIZE }}
+                      >
+                        chevron-up
+                      </Icon>
+                    </IconButton>
+                    <IconButton
+                      onClick={() => onEvent(EVENT.DATA_VALUE_DOWN, { valueIndex, valueItem })}
+                    >
+                      <Icon
+                        style={{ fontSize: ICON_SIZE }}
+                      >
+                        chevron-down
+                      </Icon>
+                    </IconButton>
+
                   </>
                   )
 }
-                </Flex>
+                </Box>
               </Grid>
             ))
           }
@@ -133,13 +148,15 @@ export const TripleItem = (props: TripleItemProps) => {
               }}
               placeholder="Enter Value"
               value={state.newDataValue}
-              onValueChange={(value) => update((draft) => {
-                draft.newDataValue = value
+              onValueChange={(value) => setState({
+                ...state,
+                newDataValue: value,
               })}
               onEnter={() => {
                 onEvent(EVENT.ADD_DATA_VALUE, { value: state.newDataValue })
-                update((draft) => {
-                  draft.newDataValue = ''
+                setState({
+                  ...state,
+                  newDataValue: '',
                 })
               }}
             />
@@ -178,13 +195,13 @@ const AdditionalInfo = (props: AdditionalInfoProps) => {
     onEvent,
   } = props
   return (
-    <Collapsible
-      collapsed={!extended}
+    <Collapse
+      in={!extended}
       style={{ width: '95%', marginLeft: '5%' }}
     >
-      <Layout
+      <Box
         style={{ width: '100%' }}
-        level="2"
+        // level="2"
       >
         <Divider />
         {
@@ -227,8 +244,8 @@ const AdditionalInfo = (props: AdditionalInfoProps) => {
           style={{ marginBottom: 2 }}
           onAdd={(data) => onEvent(EVENT.ADD_DATA_ADDITIONAL, data)}
         />
-      </Layout>
-    </Collapsible>
+      </Box>
+    </Collapse>
   )
 }
 
@@ -253,16 +270,22 @@ const IconBox = (props: IconBoxProps) => {
     <>
       {
           !isAdditional && (
-          <Flex
-            col
+          <Box
             style={{ alignItems: 'center' }}
           >
-            <Icon
-              name={isLocalLabel ? 'tag-remove' : 'tag'}
-              size={ICON_SIZE}
-              onPress={() => onEvent(EVENT.MAKE_DATA_LABEL)}
-              onLongPress={() => onEvent(EVENT.MAKE_DATA_LABEL_FIRST)}
-            />
+            <IconButton
+              onClick={() => onEvent(EVENT.MAKE_DATA_LABEL)}
+              onDoubleClick={() => onEvent(EVENT.MAKE_DATA_LABEL_FIRST)}
+              // onLongPress={() => onEvent(EVENT.MAKE_DATA_LABEL_FIRST)}
+            >
+              <Icon
+                style={{
+                  fontSize: ICON_SIZE,
+                }}
+              >
+                {isLocalLabel ? 'tag-remove' : 'tag'}
+              </Icon>
+            </IconButton>
             {!isGlobalLabelFirst && (
             <Divider
               style={{
@@ -273,12 +296,16 @@ const IconBox = (props: IconBoxProps) => {
               }}
             />
             )}
-            <Icon
-              name={isGlobalLabel ? 'tag-remove' : 'tag-multiple'}
-              size={ICON_SIZE}
-              onPress={() => onEvent(EVENT.MAKE_GLOBAL_DATA_LABEL)}
-              onLongPress={() => onEvent(EVENT.MAKE_GLOBAL_DATA_LABEL_FIRST)}
-            />
+            <IconButton
+              onClick={() => onEvent(EVENT.MAKE_GLOBAL_DATA_LABEL)}
+              onDoubleClick={() => onEvent(EVENT.MAKE_GLOBAL_DATA_LABEL_FIRST)}
+            >
+              <Icon
+                style={{ fontSize: ICON_SIZE }}
+              >
+                {isGlobalLabel ? 'tag-remove' : 'tag-multiple'}
+              </Icon>
+            </IconButton>
             {isGlobalLabelFirst && (
             <Divider style={{ backgroundColor: 'black', width: ICON_SIZE - 2 }} />)}
             {/* <Icon
@@ -286,10 +313,10 @@ const IconBox = (props: IconBoxProps) => {
               size={ICON_SIZE}
               onPress={() => onEvent(EVENT.ADD_DATA_VALUE)}
             /> */}
-          </Flex>
+          </Box>
           )
         }
-      <Flex col>
+      <Box>
         {/* <Icon
           name="repeat"
           size={ICON_SIZE}
@@ -298,27 +325,43 @@ const IconBox = (props: IconBoxProps) => {
 
         {
           !isAdditional && (
-          <Icon
-            name={extended ? 'chevron-up-box' : 'chevron-down-box'}
-            size={ICON_SIZE}
-            onPress={onExtend}
-          />
+          <IconButton
+            onClick={onExtend}
+          >
+            <Icon
+              style={{ fontSize: ICON_SIZE }}
+
+            >
+              {extended ? 'chevron-up-box' : 'chevron-down-box'}
+            </Icon>
+          </IconButton>
           )
         }
         {extended && (
-        <Icon
-          name="delete"
-          size={ICON_SIZE}
-          onPress={() => onEvent(EVENT.DELETE_DATA)}
-        />
+        <IconButton
+          onClick={() => onEvent(EVENT.DELETE_DATA)}
+        >
+          <Icon
+            style={{
+              fontSize: ICON_SIZE,
+            }}
+
+          >
+            delete
+          </Icon>
+        </IconButton>
         )}
         {
           isAdditional && (
-            <Icon
-              name="plus-box-outline"
-              size={ICON_SIZE}
-              onPress={() => onEvent(EVENT.ADD_DATA_VALUE)}
-            />
+            <IconButton
+              onClick={() => onEvent(EVENT.ADD_DATA_VALUE)}
+            >
+              <Icon
+                style={{ fontSize: ICON_SIZE }}
+              >
+                plus-box-outline
+              </Icon>
+            </IconButton>
           )
         }
         {/* {
@@ -327,7 +370,7 @@ const IconBox = (props: IconBoxProps) => {
           onPress: () => onEvent(EVENT.CHANGE_TYPE),
         })
       } */}
-      </Flex>
+      </Box>
 
     </>
   )
