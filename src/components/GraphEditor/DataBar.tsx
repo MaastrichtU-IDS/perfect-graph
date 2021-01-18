@@ -2,12 +2,14 @@ import React from 'react'
 import { EVENT } from '@utils/constants'
 import { Event, OnEvent, ElementData } from '@type'
 import {
-  Icon,
   JSONViewer,
-  Text, useTheme,
-  View,
-} from 'unitx-ui'
-import useAnimation, { animated } from 'unitx-ui/hooks/useAnimation'
+  useAnimation,
+} from 'colay-ui'
+import {
+  useTheme, Icon,
+  IconButton, Typography,
+  Paper,
+} from '@material-ui/core'
 import { DataEditor, DataEditorProps } from './DataEditor'
 
 export type DataBarProps = {
@@ -19,8 +21,6 @@ export type DataBarProps = {
 
 const WIDTH_PROPORTION = 30
 
-const AnimatedSurface = animated(View)
-
 const DataBar = (props: DataBarProps) => {
   const {
     editable = true,
@@ -30,7 +30,7 @@ const DataBar = (props: DataBarProps) => {
     ...rest
   } = props
   const {
-    props: animatedProps,
+    style: animationStyle,
     ref: animationRef,
   } = useAnimation({
     from: {
@@ -39,14 +39,12 @@ const DataBar = (props: DataBarProps) => {
     to: {
       right: '0%',
     },
-    autoStart: false,
+    autoPlay: false,
   })
-  const theme = useTheme()
+  // const theme = useTheme()
   // const initialized = React.useRef(false)
   React.useEffect(() => {
-    animationRef.current?.reverse?.({
-      reversed: !opened,
-    })
+    animationRef.current?.play?.(opened)
   }, [animationRef, opened])
   const createOnActionCallback = React.useCallback(
     (
@@ -60,18 +58,16 @@ const DataBar = (props: DataBarProps) => {
   //   animationRef?.current?.start()
   // }, [])
   return (
-    <AnimatedSurface
+    <Paper
       style={{
         position: 'absolute',
         width: `${WIDTH_PROPORTION}%`,
         height: '100%',
         top: 0,
-        // @ts-ignore
-        backgroundColor: theme.colors.surface,
-        ...animatedProps,
+        ...animationStyle,
       }}
     >
-      {item && (<Text category="label">{` id: ${item?.id}`}</Text>)}
+      {item && (<Typography variant="caption">{` id: ${item?.id}`}</Typography>)}
       {
         editable && item?.data
           ? (
@@ -85,18 +81,21 @@ const DataBar = (props: DataBarProps) => {
             <JSONViewer data={item?.data} />
           )
       }
-      <Icon
-        style={{
-          position: 'absolute',
-          left: -24,
-          top: 0,
-        }}
-        name="information-outline"
-        size={24}
-        circle
-        onPress={createOnActionCallback(EVENT.TOGGLE_DATA_BAR)}
-      />
-    </AnimatedSurface>
+      <IconButton
+        onClick={createOnActionCallback(EVENT.TOGGLE_DATA_BAR)}
+      >
+        <Icon
+          style={{
+            position: 'absolute',
+            left: -24,
+            top: 0,
+            fontSize: 24,
+          }}
+        >
+          information-outline
+        </Icon>
+      </IconButton>
+    </Paper>
   )
 }
 

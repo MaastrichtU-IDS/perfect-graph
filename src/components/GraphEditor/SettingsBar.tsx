@@ -1,18 +1,19 @@
-// @ts-nocheck
 import React from 'react'
 import {
-  View,
   wrapComponent,
-  useTheme,
+  useAnimation,
+} from 'colay-ui'
+import {
   Icon,
-  ScrollView,
-} from 'unitx-ui'
+  Paper,
+  Box,
+  IconButton,
+} from '@material-ui/core'
 import { EVENT } from '@utils/constants'
 import { Event, OnEvent } from '@type'
-import Form, {
-  FormProps,
-} from 'unitx-ui/components/Form'
-import useAnimation, { animated } from 'unitx-ui/hooks/useAnimation'
+// import Form, {
+//   FormProps,
+// } from 'unitx-ui/components/Form'
 
 type SettingsForm = {
   schema: FormProps<any>['schema'];
@@ -29,7 +30,6 @@ export type SettingsBarProps = {
 }
 
 const WIDTH_PROPORTION = 30
-const AnimatedSurface = animated(View)
 const SettingsBar = (props: SettingsBarProps) => {
   const {
     opened = false,
@@ -40,7 +40,7 @@ const SettingsBar = (props: SettingsBarProps) => {
     // ...formProps
   } = props
   const {
-    props: animatedProps,
+    style: animationStyle,
     ref: animationRef,
   } = useAnimation({
     from: {
@@ -49,13 +49,11 @@ const SettingsBar = (props: SettingsBarProps) => {
     to: {
       left: '0%',
     },
-    autoStart: false,
+    autoPlay: false,
   })
   // const initialized = React.useRef(false)
   React.useEffect(() => {
-    animationRef.current.reverse({
-      reversed: !opened,
-    })
+    animationRef.current.play(opened)
   }, [animationRef, opened])
   const createOnActionCallback = React.useCallback(
     (
@@ -65,24 +63,24 @@ const SettingsBar = (props: SettingsBarProps) => {
     ) => () => onEvent?.({ type, extraData }),
     [onEvent],
   )
-  const theme = useTheme()
   // React.useEffect(() => {
   //   animationRef?.current?.start()
   // }, [])
   return (
-    <AnimatedSurface
+    <Paper
       style={{
         position: 'absolute',
         width: `${WIDTH_PROPORTION}%`,
         height: '100%',
         top: 0,
-        // @ts-ignore
-        backgroundColor: theme.colors.surface,
-        ...animatedProps,
+        ...animationStyle,
       }}
     >
-      <ScrollView>
-        {
+      <Box style={{
+        overflow: 'auto',
+      }}
+      >
+        {/* {
         forms.map((form) => (
           <Form
             // schema={schema}
@@ -96,20 +94,23 @@ const SettingsBar = (props: SettingsBarProps) => {
             )()}
           />
         ))
-      }
-      </ScrollView>
-      <Icon
-        style={{
-          position: 'absolute',
-          right: -24,
-          top: 0,
-        }}
-        name="filter"
-        size={24}
-        // circle
-        onPress={createOnActionCallback(EVENT.TOGGLE_FILTER_BAR)}
-      />
-    </AnimatedSurface>
+      } */}
+      </Box>
+      <IconButton
+        onClick={createOnActionCallback(EVENT.TOGGLE_FILTER_BAR)}
+      >
+        <Icon
+          style={{
+            position: 'absolute',
+            right: -24,
+            top: 0,
+            fontSize: 24,
+          }}
+        >
+          filter
+        </Icon>
+      </IconButton>
+    </Paper>
   )
 }
 

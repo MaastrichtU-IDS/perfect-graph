@@ -1,28 +1,28 @@
-// @ts-nocheck
 import {
-  EditorMode, Event,
-  GraphConfig, GraphEditorRef, OnEvent,
+  EditorMode,
+  Event,
+  GraphConfig,
+  GraphEditorRef,
+  OnEvent,
 } from '@type'
 import { readTextFile } from '@utils'
 import { EDITOR_MODE, EVENT, LAYOUT_NAMES } from '@utils/constants'
 import React from 'react'
-import { StyleSheet } from 'react-native'
 import {
   Button,
   Icon,
+  IconButton,
+  Select,
+  Menu,
   MenuItem,
-  OverflowMenu,
-  Popover,
-  SelectItem,
+  Box,
   useTheme,
-  View,
-  wrapComponent,
-} from 'unitx-ui'
-import Form from 'unitx-ui/components/Form'
+} from '@material-ui/core'
+import { useAnimation, wrapComponent } from 'colay-ui'
+// import Form from 'unitx-ui/components/Form'
 import * as R from 'colay/ramda'
-import { DocumentPicker } from 'unitx-ui/@/DocumentPicker'
-import Recorder from 'unitx-ui/components/Recorder'
-import useAnimation, { animated } from 'unitx-ui/hooks/useAnimation'
+// import { DocumentPicker } from 'unitx-ui/@/DocumentPicker'
+import Recorder from 'colay-ui/components/Recorder'
 
 export const ACTION = {
   EXPORT_DATA: 'EXPORT_DATA',
@@ -69,7 +69,7 @@ const RECORDING_STATUS_MAP = {
 }
 
 const HEIGHT = 40
-const AnimatedSurface = animated(View)
+// const AnimatedSurface = animated(Box)
 
 type CreateActionCallback = (
   type: Event,
@@ -81,7 +81,7 @@ const ActionBar = (props: ActionBarProps) => {
     onEvent,
     renderMoreAction,
     mode,
-    opened,
+    opened = false,
     recording = false,
     // recordingActions = false,
     graphEditorRef,
@@ -89,7 +89,7 @@ const ActionBar = (props: ActionBarProps) => {
     onAction,
   } = props
   const {
-    props: animatedProps,
+    style: animationStyle,
     ref: animationRef,
   } = useAnimation({
     from: {
@@ -98,14 +98,12 @@ const ActionBar = (props: ActionBarProps) => {
     to: {
       bottom: 0,
     },
-    autoStart: false,
+    autoPlay: false,
   })
   // const initialized = React.useRef(false)
   React.useEffect(() => {
-    animationRef.current.reverse({
-      reversed: !opened,
-    })
-  }, [animationRef, opened])
+    animationRef.current.play(opened)
+  }, [animationRef.current, opened])
   const createOnActionCallback = React.useCallback(
     (
       type: Event,
@@ -147,7 +145,7 @@ const ActionBar = (props: ActionBarProps) => {
   // }, [])
   const actions = R.mergeDeepRight(DEFAULT_ACTIONS, props.actions ?? {})
   return (
-    <AnimatedSurface
+    <Box
       style={{
         position: 'absolute',
         width: '100%',
@@ -156,10 +154,10 @@ const ActionBar = (props: ActionBarProps) => {
         flexDirection: 'row',
         // @ts-ignore
         backgroundColor: theme.colors.surface,
-        ...animatedProps,
+        ...animationStyle,
       }}
     >
-      <View
+      <Box
         style={{
           flexDirection: 'row',
           alignItems: 'center',
@@ -171,13 +169,11 @@ const ActionBar = (props: ActionBarProps) => {
           actions.add.visible && (
           <Button
             style={styles.button}
-            accessoryLeft={(props) => (
-              <Icon
-                {...props}
-                name="plus-circle"
-              />
-            )}
-            onPress={createOnActionCallback(EVENT.MODE_CHANGED, {
+            startIcon={<Icon
+              >
+                  plus-circle
+                </Icon>}
+            onClick={createOnActionCallback(EVENT.MODE_CHANGED, {
               value: [
                 EDITOR_MODE.ADD,
                 EDITOR_MODE.CONTINUES_ADD,
@@ -186,13 +182,13 @@ const ActionBar = (props: ActionBarProps) => {
                 ? EDITOR_MODE.DEFAULT
                 : EDITOR_MODE.ADD,
             })}
-            appearance={EDITOR_MODE.CONTINUES_ADD === mode ? 'filled' : 'outline'}
-            status={[
+            variant={EDITOR_MODE.CONTINUES_ADD === mode ? 'contained' : 'outlined'}
+            color={[
               EDITOR_MODE.ADD,
               EDITOR_MODE.CONTINUES_ADD,
               // @ts-ignore
-            ].includes(mode) ? 'warning' : 'primary'}
-            onLongPress={createOnActionCallback(
+            ].includes(mode) ? 'secondary' : 'primary'}
+            onDoubleClick={createOnActionCallback(
               EVENT.MODE_CHANGED,
               { value: EDITOR_MODE.CONTINUES_ADD },
             )}
@@ -205,21 +201,21 @@ const ActionBar = (props: ActionBarProps) => {
           actions.delete.visible && (
           <Button
             style={styles.button}
-            accessoryLeft={(leftProps) => (
+            startIcon={(
               <Icon
-                {...leftProps}
-                name="delete-circle"
-              />
+              >
+                delete-circle
+              </Icon>
             )}
-            status={[
+            color={[
               EDITOR_MODE.DELETE,
               EDITOR_MODE.CONTINUES_DELETE,
               // @ts-ignore
             ].includes(mode)
-              ? 'warning'
-              : 'danger'}
-            appearance={EDITOR_MODE.CONTINUES_DELETE === mode ? 'filled' : 'outline'}
-            onPress={createOnActionCallback(EVENT.MODE_CHANGED, {
+              ? 'primary'
+              : 'secondary'}
+            variant={EDITOR_MODE.CONTINUES_DELETE === mode ? 'contained' : 'outlined'}
+            onClick={createOnActionCallback(EVENT.MODE_CHANGED, {
               value: [
                 EDITOR_MODE.DELETE,
                 EDITOR_MODE.CONTINUES_DELETE,
@@ -228,7 +224,7 @@ const ActionBar = (props: ActionBarProps) => {
                 ? EDITOR_MODE.DEFAULT
                 : EDITOR_MODE.DELETE,
             })}
-            onLongPress={createOnActionCallback(
+            onDoubleClick={createOnActionCallback(
               EVENT.MODE_CHANGED,
               { value: EDITOR_MODE.CONTINUES_DELETE },
             )}
@@ -267,12 +263,16 @@ const ActionBar = (props: ActionBarProps) => {
               stopRecording()
             }
             return (
-              <Icon
-                name="record-rec"
-                color={status !== 'recording' ? 'black' : 'red'}
-                size={32}
-                onPress={createOnActionCallback(EVENT.TOGGLE_RECORD)}
-              />
+              <IconButton
+              onClick={createOnActionCallback(EVENT.TOGGLE_RECORD)}
+              >
+<Icon
+                color={status !== 'recording' ? 'primary' : 'error'}
+                
+              >
+                record-re
+              </Icon>
+              </IconButton>
             )
           }}
           onStop={(_, blob) => {
@@ -287,17 +287,21 @@ const ActionBar = (props: ActionBarProps) => {
           createOnActionCallback={createOnActionCallback}
           onAction={onAction}
         />
-      </View>
+      </Box>
+      <IconButton
+        onClick={createOnActionCallback(EVENT.TOGGLE_ACTION_BAR)}
+      >
       <Icon
         style={{
           position: 'absolute',
           left: 0,
           top: -(24),
+          fontSize: 24
         }}
-        name="file-document-edit-outline"
-        size={24}
-        onPress={createOnActionCallback(EVENT.TOGGLE_ACTION_BAR)}
-      />
+      >
+        file-document-edit-outline
+        </Icon>
+      </IconButton>
 
     </AnimatedSurface>
   )
@@ -315,40 +319,27 @@ const OPTIONS = {
 } as const
 const MoreOptions = (props: MoreOptionsProps) => {
   const {
-    renderMoreAction = () => <View />,
+    renderMoreAction = () => <Box />,
     createOnActionCallback,
     onAction,
   } = props
-  const [state, setState] = React.useState({
-    visible: false,
-  })
-  return (
-    <OverflowMenu
-      anchor={(anchorProps) => (
-        <Icon
-          {...anchorProps}
-          name="dots-vertical"
-          onPress={() => setState({ ...state, visible: !state.visible })}
-        />
-      )}
-      visible={state.visible}
-          // selectedIndex={selectedIndex}
-      onSelect={async (indexPath) => {
-        setState({
-          ...state,
-          visible: false,
-        })
-        const action = Object.values(OPTIONS)[indexPath.row]
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const handleClick = (event: Event) => {
+    setAnchorEl(event.currentTarget);
+  }
+  const handleMenuItemClick = (event: Event, index: number) => {
+    setAnchorEl(event.currentTarget);
+    const action = Object.values(OPTIONS)[index]
         switch (action) {
           case OPTIONS.Import: {
-            const result = await DocumentPicker.getDocumentAsync({ type: 'application/json' })
-            if (result.type === 'success') {
-              const fileText = await readTextFile(result.file!)
-              createOnActionCallback(
-                EVENT.IMPORT_DATA,
-                { value: JSON.parse(fileText) },
-              )()
-            }
+            // const result = await DocumentPicker.getDocumentAsync({ type: 'application/json' })
+            // if (result.type === 'success') {
+            //   const fileText = await readTextFile(result.file!)
+            //   createOnActionCallback(
+            //     EVENT.IMPORT_DATA,
+            //     { value: JSON.parse(fileText) },
+            //   )()
+            // }
             break
           }
           case OPTIONS.Export:
@@ -359,21 +350,39 @@ const MoreOptions = (props: MoreOptionsProps) => {
           default:
             break
         }
-      }}
-      onBackdropPress={() => {
-        setState({
-          ...state,
-          visible: false,
-        })
-      }}
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  return (
+    <>
+    <IconButton
+      onClick={handleClick}
+    >
+      <Icon>
+        dots-vertical
+      </Icon>
+    </IconButton>
+    <Menu
+      anchorEl={anchorEl}
+      open={Boolean(anchorEl)}
+      onClose={handleClose}
     >
       <>
-        {Object.values(OPTIONS).map((title) => (
-          <MenuItem title={title} />
+        {Object.values(OPTIONS).map((option, index) => (
+          <MenuItem
+            key={option}
+            // selected={index === selectedIndex}
+            onClick={(event) => handleMenuItemClick(event, index)}
+          >
+            {option}
+          </MenuItem>
         ))}
         {renderMoreAction()}
       </>
-    </OverflowMenu>
+    </Menu>
+    </>
   )
 }
 
@@ -407,95 +416,96 @@ const LayoutOptions = (props: LayoutOptionsProps) => {
   }, [setState, createOnActionCallback])
   const animationDuration = layout.animationDuration ?? 5000
   return (
-    <Popover
-      anchor={(anchorProps) => (
-        <View {...anchorProps}>
-          <SelectItem
-            title={layout.name ?? 'Select Layout'}
-            onPress={() => setState({ ...state, visible: !state.visible })}
-          />
-        </View>
-      )}
-      visible={state.visible}
-      onBackdropPress={() => setState({ ...state, visible: false })}
-    >
-      <View>
-        {/* <View>
-          <Text>{Math.floor(animationDuration)}</Text>
-          <Slider
-            value={animationDuration}
-            minimumValue={0}
-            maximumValue={10000}
-            onSlidingComplete={(animationDuration) => createOnActionCallback(
-              EVENT.LAYOUT_ANIMATION_DURATION_CHANGED,
-              {
-                value: animationDuration,
-              },
-            )()}
-          />
-          <Divider />
-        </View> */}
-        <Form
-          schema={{
-            title: 'Layout',
-            properties: {
-              name: {
-                type: 'string',
-                enum: LAYOUT_NAMES,
-              },
-              animationDuration: {
-                type: 'number',
-                minimum: 0,
-                maximum: 10000,
-              },
-              refresh: {
-                type: 'number',
-                minimum: 0,
-                maximum: 100,
-              },
-              maxIterations: {
-                type: 'number',
-                minimum: 0,
-                maximum: 1000,
-              },
-              maxSimulationTime: {
-                type: 'number',
-                minimum: 0,
-                maximum: 1000,
-              },
-            },
-          }}
-          extraData={[layout]}
-          formData={{
-            name: layout.name,
-            animationDuration: layout.animationDuration,
-            refresh: layout.refresh,
-            maxIterations: layout.maxIterations,
-            maxSimulationTime: layout.maxSimulationTime,
-          }}
-          onSubmit={(formData) => {
-            createOnActionCallback(
-              EVENT.LAYOUT_CHANGED,
-              {
-                value: formData,
-              },
-            )()
-          }}
-        />
-        {/* {LAYOUT_NAMES.map((name) => (
-          <SelectItem
-            title={name}
-            onPress={() => onItemSelect(name)}
-            selected={layout.name === name}
-          />
-        ))} */}
-      </View>
-    </Popover>
+    <Box />
+    // <Popover
+    //   anchor={(anchorProps) => (
+    //     <Box {...anchorProps}>
+    //       <SelectItem
+    //         title={layout.name ?? 'Select Layout'}
+    //         onPress={() => setState({ ...state, visible: !state.visible })}
+    //       />
+    //     </Box>
+    //   )}
+    //   visible={state.visible}
+    //   onBackdropPress={() => setState({ ...state, visible: false })}
+    // >
+    //   <Box>
+    //     {/* <Box>
+    //       <Text>{Math.floor(animationDuration)}</Text>
+    //       <Slider
+    //         value={animationDuration}
+    //         minimumValue={0}
+    //         maximumValue={10000}
+    //         onSlidingComplete={(animationDuration) => createOnActionCallback(
+    //           EVENT.LAYOUT_ANIMATION_DURATION_CHANGED,
+    //           {
+    //             value: animationDuration,
+    //           },
+    //         )()}
+    //       />
+    //       <Divider />
+    //     </Box> */}
+    //     <Form
+    //       schema={{
+    //         title: 'Layout',
+    //         properties: {
+    //           name: {
+    //             type: 'string',
+    //             enum: LAYOUT_NAMES,
+    //           },
+    //           animationDuration: {
+    //             type: 'number',
+    //             minimum: 0,
+    //             maximum: 10000,
+    //           },
+    //           refresh: {
+    //             type: 'number',
+    //             minimum: 0,
+    //             maximum: 100,
+    //           },
+    //           maxIterations: {
+    //             type: 'number',
+    //             minimum: 0,
+    //             maximum: 1000,
+    //           },
+    //           maxSimulationTime: {
+    //             type: 'number',
+    //             minimum: 0,
+    //             maximum: 1000,
+    //           },
+    //         },
+    //       }}
+    //       extraData={[layout]}
+    //       formData={{
+    //         name: layout.name,
+    //         animationDuration: layout.animationDuration,
+    //         refresh: layout.refresh,
+    //         maxIterations: layout.maxIterations,
+    //         maxSimulationTime: layout.maxSimulationTime,
+    //       }}
+    //       onSubmit={(formData) => {
+    //         createOnActionCallback(
+    //           EVENT.LAYOUT_CHANGED,
+    //           {
+    //             value: formData,
+    //           },
+    //         )()
+    //       }}
+    //     />
+    //     {/* {LAYOUT_NAMES.map((name) => (
+    //       <SelectItem
+    //         title={name}
+    //         onPress={() => onItemSelect(name)}
+    //         selected={layout.name === name}
+    //       />
+    //     ))} */}
+    //   </Box>
+    // </Popover>
   )
 }
 export default wrapComponent<ActionBarProps>(ActionBar, {})
 
-const styles = StyleSheet.create({
+const styles = {
   icon: {
     width: 24,
     height: 24,
@@ -506,4 +516,4 @@ const styles = StyleSheet.create({
   button: {
     marginRight: 10,
   },
-})
+}

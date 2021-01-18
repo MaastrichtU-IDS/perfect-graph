@@ -1,4 +1,5 @@
 import React from 'react'
+import { Icon } from '@material-ui/core'
 
 export type MouseIconProps = {
   name?: string|null;
@@ -10,7 +11,6 @@ export const MouseIcon = (props: MouseIconProps) => {
   const {
     name,
     cursor = false,
-    Icon,
   } = props
   const [state, setState] = React.useState({
     x: 0,
@@ -40,13 +40,14 @@ export const MouseIcon = (props: MouseIconProps) => {
     name && !cursor
       ? (
         <Icon
-          name={name}
           style={{
             position: 'absolute',
             left: `${state.x}px`,
             top: `${state.y}px`,
           }}
-        />
+        >
+          {name}
+        </Icon>
       )
       : null
   )
