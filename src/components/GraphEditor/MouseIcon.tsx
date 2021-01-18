@@ -4,7 +4,6 @@ import { Icon } from '@material-ui/core'
 export type MouseIconProps = {
   name?: string|null;
   cursor?: boolean;
-  Icon: React.FC<{ name: string; style: any }>
 }
 
 export const MouseIcon = (props: MouseIconProps) => {

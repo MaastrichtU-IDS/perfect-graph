@@ -15,12 +15,13 @@ import {
 import { getLabel, getSelectedItemByElement } from '@utils'
 import { EDITOR_MODE, EVENT } from '@utils/constants'
 import React from 'react'
-import { View, wrapComponent, useForwardRef } from 'unitx-ui'
+import { wrapComponent, useForwardRef } from 'colay-ui'
+import { Box } from '@material-ui/core'
 import { PropsWithRef } from 'colay-ui/type'
 import * as R from 'colay/ramda'
-import ActionBar, { ACTION, ActionBarProps } from './ActionBar'
-import DataBar, { DataBarProps } from './DataBar'
-import SettingsBar, { SettingsBarProps } from './SettingsBar'
+import { ActionBar, ACTION, ActionBarProps } from './ActionBar'
+import { DataBar, DataBarProps } from './DataBar'
+import { SettingsBar, SettingsBarProps } from './SettingsBar'
 import { MouseIcon } from './MouseIcon'
 
 type RenderElementAdditionalInfo = {
@@ -109,7 +110,7 @@ const GraphEditorElement = (
     })
   }, [selectedElement, selectedItem])
   return (
-    <View
+    <Box
       style={style}
     >
       <Graph
@@ -229,7 +230,7 @@ const GraphEditorElement = (
         name={MODE_ICON_MAP_BY_URL[mode]}
         cursor
       />
-    </View>
+    </Box>
   )
 }
 

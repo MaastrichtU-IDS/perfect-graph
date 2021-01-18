@@ -1,11 +1,9 @@
 import React from 'react'
-import { PropsWithRef } from 'colay-ui/type'
 import * as PIXI from 'pixi.js'
 import * as R from 'colay/ramda'
-import { wrapComponent } from 'colay-ui'
 import { Events } from '@utils'
 import { PIXIBasicStyle, PIXIShapeStyle } from '@type'
-import View from '../View'
+import { View } from '../View'
 
 export type PressableProps = {
   style?: PIXIBasicStyle & PIXIShapeStyle;

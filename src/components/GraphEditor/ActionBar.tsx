@@ -5,20 +5,21 @@ import {
   GraphEditorRef,
   OnEvent,
 } from '@type'
-import { readTextFile } from '@utils'
+// import { readTextFile } from '@utils'
 import { EDITOR_MODE, EVENT, LAYOUT_NAMES } from '@utils/constants'
 import React from 'react'
 import {
   Button,
   Icon,
   IconButton,
-  Select,
   Menu,
   MenuItem,
   Box,
   useTheme,
+  Popover,
 } from '@material-ui/core'
 import { useAnimation, wrapComponent } from 'colay-ui'
+import Form from '@rjsf/material-ui'
 // import Form from 'unitx-ui/components/Form'
 import * as R from 'colay/ramda'
 // import { DocumentPicker } from 'unitx-ui/@/DocumentPicker'
@@ -76,7 +77,7 @@ type CreateActionCallback = (
   extraData?: any,
 ) => () => void
 
-const ActionBar = (props: ActionBarProps) => {
+const ActionBarElement = (props: ActionBarProps) => {
   const {
     onEvent,
     renderMoreAction,
@@ -169,10 +170,11 @@ const ActionBar = (props: ActionBarProps) => {
           actions.add.visible && (
           <Button
             style={styles.button}
-            startIcon={<Icon
-              >
-                  plus-circle
-                </Icon>}
+            startIcon={(
+              <Icon>
+                plus-circle
+              </Icon>
+)}
             onClick={createOnActionCallback(EVENT.MODE_CHANGED, {
               value: [
                 EDITOR_MODE.ADD,
@@ -202,8 +204,7 @@ const ActionBar = (props: ActionBarProps) => {
           <Button
             style={styles.button}
             startIcon={(
-              <Icon
-              >
+              <Icon>
                 delete-circle
               </Icon>
             )}
@@ -264,14 +265,13 @@ const ActionBar = (props: ActionBarProps) => {
             }
             return (
               <IconButton
-              onClick={createOnActionCallback(EVENT.TOGGLE_RECORD)}
+                onClick={createOnActionCallback(EVENT.TOGGLE_RECORD)}
               >
-<Icon
-                color={status !== 'recording' ? 'primary' : 'error'}
-                
-              >
-                record-re
-              </Icon>
+                <Icon
+                  color={status !== 'recording' ? 'primary' : 'error'}
+                >
+                  record-re
+                </Icon>
               </IconButton>
             )
           }}
@@ -291,19 +291,19 @@ const ActionBar = (props: ActionBarProps) => {
       <IconButton
         onClick={createOnActionCallback(EVENT.TOGGLE_ACTION_BAR)}
       >
-      <Icon
-        style={{
-          position: 'absolute',
-          left: 0,
-          top: -(24),
-          fontSize: 24
-        }}
-      >
-        file-document-edit-outline
+        <Icon
+          style={{
+            position: 'absolute',
+            left: 0,
+            top: -(24),
+            fontSize: 24,
+          }}
+        >
+          file-document-edit-outline
         </Icon>
       </IconButton>
 
-    </AnimatedSurface>
+    </Box>
   )
 }
 type MoreOptionsProps = {
@@ -323,65 +323,65 @@ const MoreOptions = (props: MoreOptionsProps) => {
     createOnActionCallback,
     onAction,
   } = props
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = React.useState(null)
   const handleClick = (event: Event) => {
-    setAnchorEl(event.currentTarget);
+    setAnchorEl(event.currentTarget)
   }
   const handleMenuItemClick = (event: Event, index: number) => {
-    setAnchorEl(event.currentTarget);
+    setAnchorEl(event.currentTarget)
     const action = Object.values(OPTIONS)[index]
-        switch (action) {
-          case OPTIONS.Import: {
-            // const result = await DocumentPicker.getDocumentAsync({ type: 'application/json' })
-            // if (result.type === 'success') {
-            //   const fileText = await readTextFile(result.file!)
-            //   createOnActionCallback(
-            //     EVENT.IMPORT_DATA,
-            //     { value: JSON.parse(fileText) },
-            //   )()
-            // }
-            break
-          }
-          case OPTIONS.Export:
-            onAction({ type: ACTION.EXPORT_DATA })
-            // createOnActionCallback(EVENT.EXPORT_DATA)()
-            break
+    switch (action) {
+      case OPTIONS.Import: {
+        // const result = await DocumentPicker.getDocumentAsync({ type: 'application/json' })
+        // if (result.type === 'success') {
+        //   const fileText = await readTextFile(result.file!)
+        //   createOnActionCallback(
+        //     EVENT.IMPORT_DATA,
+        //     { value: JSON.parse(fileText) },
+        //   )()
+        // }
+        break
+      }
+      case OPTIONS.Export:
+        onAction({ type: ACTION.EXPORT_DATA })
+        // createOnActionCallback(EVENT.EXPORT_DATA)()
+        break
 
-          default:
-            break
-        }
-  };
+      default:
+        break
+    }
+  }
 
   const handleClose = () => {
-    setAnchorEl(null);
-  };
+    setAnchorEl(null)
+  }
   return (
     <>
-    <IconButton
-      onClick={handleClick}
-    >
-      <Icon>
-        dots-vertical
-      </Icon>
-    </IconButton>
-    <Menu
-      anchorEl={anchorEl}
-      open={Boolean(anchorEl)}
-      onClose={handleClose}
-    >
-      <>
-        {Object.values(OPTIONS).map((option, index) => (
-          <MenuItem
-            key={option}
+      <IconButton
+        onClick={handleClick}
+      >
+        <Icon>
+          dots-vertical
+        </Icon>
+      </IconButton>
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+      >
+        <>
+          {Object.values(OPTIONS).map((option, index) => (
+            <MenuItem
+              key={option}
             // selected={index === selectedIndex}
-            onClick={(event) => handleMenuItemClick(event, index)}
-          >
-            {option}
-          </MenuItem>
-        ))}
-        {renderMoreAction()}
-      </>
-    </Menu>
+              onClick={(event) => handleMenuItemClick(event, index)}
+            >
+              {option}
+            </MenuItem>
+          ))}
+          {renderMoreAction()}
+        </>
+      </Menu>
     </>
   )
 }
@@ -394,116 +394,107 @@ type LayoutOptionsProps = {
   createOnActionCallback: CreateActionCallback;
   layout?: LayoutOptionsValue;
 }
+
 const LayoutOptions = (props: LayoutOptionsProps) => {
   const {
     layout = {},
     createOnActionCallback,
   } = props
-  const [state, setState] = React.useState({
-    visible: false,
-  })
-  const onItemSelect = React.useCallback((layoutName: string) => {
-    setState({
-      ...state,
-      visible: false,
-    })
-    createOnActionCallback(
-      EVENT.LAYOUT_SELECTED,
-      {
-        value: layoutName,
-      },
-    )()
-  }, [setState, createOnActionCallback])
-  const animationDuration = layout.animationDuration ?? 5000
+  const [anchorEl, setAnchorEl] = React.useState(null)
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget)
+  }
+
+  const handleClose = () => {
+    setAnchorEl(null)
+  }
+
+  // const onItemSelect = React.useCallback((layoutName: string) => {
+  //   handleClose()
+  //   createOnActionCallback(
+  //     EVENT.LAYOUT_SELECTED,
+  //     {
+  //       value: layoutName,
+  //     },
+  //   )()
+  // }, [setAnchorEl, createOnActionCallback])
+  // const animationDuration = layout.animationDuration ?? 5000
   return (
-    <Box />
-    // <Popover
-    //   anchor={(anchorProps) => (
-    //     <Box {...anchorProps}>
-    //       <SelectItem
-    //         title={layout.name ?? 'Select Layout'}
-    //         onPress={() => setState({ ...state, visible: !state.visible })}
-    //       />
-    //     </Box>
-    //   )}
-    //   visible={state.visible}
-    //   onBackdropPress={() => setState({ ...state, visible: false })}
-    // >
-    //   <Box>
-    //     {/* <Box>
-    //       <Text>{Math.floor(animationDuration)}</Text>
-    //       <Slider
-    //         value={animationDuration}
-    //         minimumValue={0}
-    //         maximumValue={10000}
-    //         onSlidingComplete={(animationDuration) => createOnActionCallback(
-    //           EVENT.LAYOUT_ANIMATION_DURATION_CHANGED,
-    //           {
-    //             value: animationDuration,
-    //           },
-    //         )()}
-    //       />
-    //       <Divider />
-    //     </Box> */}
-    //     <Form
-    //       schema={{
-    //         title: 'Layout',
-    //         properties: {
-    //           name: {
-    //             type: 'string',
-    //             enum: LAYOUT_NAMES,
-    //           },
-    //           animationDuration: {
-    //             type: 'number',
-    //             minimum: 0,
-    //             maximum: 10000,
-    //           },
-    //           refresh: {
-    //             type: 'number',
-    //             minimum: 0,
-    //             maximum: 100,
-    //           },
-    //           maxIterations: {
-    //             type: 'number',
-    //             minimum: 0,
-    //             maximum: 1000,
-    //           },
-    //           maxSimulationTime: {
-    //             type: 'number',
-    //             minimum: 0,
-    //             maximum: 1000,
-    //           },
-    //         },
-    //       }}
-    //       extraData={[layout]}
-    //       formData={{
-    //         name: layout.name,
-    //         animationDuration: layout.animationDuration,
-    //         refresh: layout.refresh,
-    //         maxIterations: layout.maxIterations,
-    //         maxSimulationTime: layout.maxSimulationTime,
-    //       }}
-    //       onSubmit={(formData) => {
-    //         createOnActionCallback(
-    //           EVENT.LAYOUT_CHANGED,
-    //           {
-    //             value: formData,
-    //           },
-    //         )()
-    //       }}
-    //     />
-    //     {/* {LAYOUT_NAMES.map((name) => (
-    //       <SelectItem
-    //         title={name}
-    //         onPress={() => onItemSelect(name)}
-    //         selected={layout.name === name}
-    //       />
-    //     ))} */}
-    //   </Box>
-    // </Popover>
+    <Box>
+      <MenuItem
+        onClick={handleClick}
+      >
+        {layout.name ?? 'Select Layout'}
+      </MenuItem>
+      <Popover
+        // id={id}
+        open={Boolean(anchorEl)}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'center',
+        }}
+      >
+        <Box>
+          <Form
+            schema={{
+              title: 'Layout',
+              properties: {
+                name: {
+                  type: 'string',
+                  enum: LAYOUT_NAMES,
+                },
+                animationDuration: {
+                  type: 'number',
+                  minimum: 0,
+                  maximum: 10000,
+                },
+                refresh: {
+                  type: 'number',
+                  minimum: 0,
+                  maximum: 100,
+                },
+                maxIterations: {
+                  type: 'number',
+                  minimum: 0,
+                  maximum: 1000,
+                },
+                maxSimulationTime: {
+                  type: 'number',
+                  minimum: 0,
+                  maximum: 1000,
+                },
+              },
+            }}
+            extraData={[layout]}
+            formData={{
+              name: layout.name,
+              animationDuration: layout.animationDuration,
+              refresh: layout.refresh,
+              maxIterations: layout.maxIterations,
+              maxSimulationTime: layout.maxSimulationTime,
+            }}
+            onSubmit={(formData) => {
+              createOnActionCallback(
+                EVENT.LAYOUT_CHANGED,
+                {
+                  value: formData,
+                },
+              )()
+            }}
+          />
+        </Box>
+      </Popover>
+    </Box>
   )
 }
-export default wrapComponent<ActionBarProps>(ActionBar, {})
+export const ActionBar = wrapComponent<ActionBarProps>(ActionBarElement, {})
 
 const styles = {
   icon: {

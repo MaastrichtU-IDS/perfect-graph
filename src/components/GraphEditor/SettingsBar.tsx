@@ -11,6 +11,8 @@ import {
 } from '@material-ui/core'
 import { EVENT } from '@utils/constants'
 import { Event, OnEvent } from '@type'
+import Form from '@rjsf/material-ui'
+import { FormProps } from '@rjsf/core'
 // import Form, {
 //   FormProps,
 // } from 'unitx-ui/components/Form'
@@ -30,7 +32,7 @@ export type SettingsBarProps = {
 }
 
 const WIDTH_PROPORTION = 30
-const SettingsBar = (props: SettingsBarProps) => {
+const SettingsBarElement = (props: SettingsBarProps) => {
   const {
     opened = false,
     onEvent,
@@ -80,7 +82,7 @@ const SettingsBar = (props: SettingsBarProps) => {
         overflow: 'auto',
       }}
       >
-        {/* {
+        {
         forms.map((form) => (
           <Form
             // schema={schema}
@@ -94,7 +96,7 @@ const SettingsBar = (props: SettingsBarProps) => {
             )()}
           />
         ))
-      } */}
+      }
       </Box>
       <IconButton
         onClick={createOnActionCallback(EVENT.TOGGLE_FILTER_BAR)}
@@ -114,4 +116,4 @@ const SettingsBar = (props: SettingsBarProps) => {
   )
 }
 
-export default wrapComponent<SettingsBarProps>(SettingsBar, {})
+export const SettingsBar = wrapComponent<SettingsBarProps>(SettingsBarElement, {})

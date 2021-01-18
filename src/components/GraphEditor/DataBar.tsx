@@ -6,7 +6,7 @@ import {
   useAnimation,
 } from 'colay-ui'
 import {
-  useTheme, Icon,
+  Icon,
   IconButton, Typography,
   Paper,
 } from '@material-ui/core'
@@ -21,7 +21,7 @@ export type DataBarProps = {
 
 const WIDTH_PROPORTION = 30
 
-const DataBar = (props: DataBarProps) => {
+export const DataBar = (props: DataBarProps) => {
   const {
     editable = true,
     item,
@@ -57,6 +57,7 @@ const DataBar = (props: DataBarProps) => {
   // React.useEffect(() => {
   //   animationRef?.current?.start()
   // }, [])
+  console.log('DataBar:', animationStyle)
   return (
     <Paper
       style={{
@@ -98,5 +99,3 @@ const DataBar = (props: DataBarProps) => {
     </Paper>
   )
 }
-
-export default DataBar// wrapComponent<DataBarProps>(DataBar, {})
