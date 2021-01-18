@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from 'react'
 import {
   Element, EditorMode,
@@ -11,9 +10,6 @@ import {
 } from '@utils/constants'
 import GraphLayouts from '@core/layouts'
 import { getSelectedItemByElement } from '@utils'
-import {
-  useData,
-} from 'colay-ui'
 import { download } from 'colay-ui/utils'
 import * as R from 'colay/ramda'
 
@@ -53,14 +49,9 @@ export const useController = (
       useControllerData,
     ]) as UseControllerData, [useControllerData],
   )
-  const [state, update] = useData<ControllerState, void>(
-    // @ts-ignore
+  const [state, update] = React.useState<ControllerState>(
     controllerConfig,
-    {
-      // deps: [useControllerData],
-    },
   )
-
   const onEvent = React.useCallback((eventInfo: EventInfo) => {
     const {
       type,
@@ -72,8 +63,8 @@ export const useController = (
     } = eventInfo
     const isNode = element?.isNode()
     const targetPath = isNode ? 'nodes' : 'edges'
-    update((draft) => {
-      // console.log('event', eventInfo)
+    update((_state) => {
+      const draft = R.clone(_state)
       const isAllowedToProcess = controllerConfig.onEvent?.(eventInfo, draft)
       if (isAllowedToProcess === false) {
         return
@@ -271,8 +262,9 @@ export const useController = (
         default:
           break
       }
+      return draft
     })
-  }, [update])
+  }, [])
   return [
     // @ts-ignore
     {

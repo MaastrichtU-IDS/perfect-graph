@@ -4,11 +4,11 @@ import {
   useAnimation,
 } from 'colay-ui'
 import {
-  Icon,
   Paper,
   Box,
   IconButton,
 } from '@material-ui/core'
+import { Icon } from '@components/Icon'
 import { EVENT } from '@utils/constants'
 import { Event, OnEvent } from '@type'
 import Form from '@rjsf/material-ui'
@@ -102,15 +102,14 @@ const SettingsBarElement = (props: SettingsBarProps) => {
         onClick={createOnActionCallback(EVENT.TOGGLE_FILTER_BAR)}
       >
         <Icon
+          name="filter"
           style={{
             position: 'absolute',
             right: -24,
             top: 0,
             fontSize: 24,
           }}
-        >
-          filter
-        </Icon>
+        />
       </IconButton>
     </Paper>
   )

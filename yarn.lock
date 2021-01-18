@@ -1376,10 +1376,10 @@
     react-is "^16.8.0 || ^17.0.0"
     react-transition-group "^4.4.0"
 
-"@material-ui/icons@4.11.2":
-  version "4.11.2"
-  resolved "https://registry.yarnpkg.com/@material-ui/icons/-/icons-4.11.2.tgz#b3a7353266519cd743b6461ae9fdfcb1b25eb4c5"
-  integrity sha512-fQNsKX2TxBmqIGJCSi3tGTO/gZ+eJgWmMJkgDiOfyNaunNaxcklJQFaFogYcFl0qFuaEz1qaXYXboa/bUXVSOQ==
+"@material-ui/icons@5.0.0-alpha.23":
+  version "5.0.0-alpha.23"
+  resolved "https://registry.yarnpkg.com/@material-ui/icons/-/icons-5.0.0-alpha.23.tgz#b7d5141cfaa1df4a9697c60e50df2e5f2c6a0047"
+  integrity sha512-paML0ghK4qN+Z0oAd66lDfX1+Vt1LBPkMA9uSUEBmGga2yY8aGpo9tAVGM3UR7kTx0BEWT5e/4u2aDvwbdGZPQ==
   dependencies:
     "@babel/runtime" "^7.4.4"
 
@@ -4758,10 +4758,10 @@ colay-dev@0.0.8:
     prettier "2.2.1"
     tscpaths "0.0.9"
 
-colay-docs@0.0.59:
-  version "0.0.59"
-  resolved "https://registry.yarnpkg.com/colay-docs/-/colay-docs-0.0.59.tgz#a561a22126f532c7898c36e173de00eedfa70470"
-  integrity sha512-sgjMnpK89bUJM/dOBmU8u6qq0Dp4VN86DY+MJctE5keV8SpAaqR5heDlKTEyH1qDlPRvmMhY5sesGm29bKy9wA==
+colay-docs@0.0.60:
+  version "0.0.60"
+  resolved "https://registry.yarnpkg.com/colay-docs/-/colay-docs-0.0.60.tgz#89222b325b711c44773c27f8a0dd59687575241b"
+  integrity sha512-8tysFu67Ib9jL5F+InI3e2xM9HRqhJTywyW30qDtpc+Q3Z52HEC/yjFuyH+sh8H7mV02Wrv4P32dO7FKosKOXA==
   dependencies:
     "@storybook/addon-actions" "6.2.0-alpha.14"
     "@storybook/addon-essentials" "6.2.0-alpha.14"
@@ -4779,10 +4779,10 @@ colay-docs@0.0.59:
     sass-loader "10.1.1"
     style-loader "2.0.0"
 
-colay-ui@0.0.18:
-  version "0.0.18"
-  resolved "https://registry.yarnpkg.com/colay-ui/-/colay-ui-0.0.18.tgz#9e651ffe996264c23d5a21066f732e8554de6000"
-  integrity sha512-7fs1eaHHpMw4/i2NalPeO5yMJLAQRh6IiQNDf0btvObadkp7MGzJM4i1t6ahB6IieBA/7DfWADIbYLV1U/Uubw==
+colay-ui@0.0.19:
+  version "0.0.19"
+  resolved "https://registry.yarnpkg.com/colay-ui/-/colay-ui-0.0.19.tgz#78fb0d641c07e43346a9040b2b934034dd86d1f1"
+  integrity sha512-8Xbp37jzyvmO0i8kk0prpiazM7KpFpuP2LkxQSldsKiV+u6463CD7hbeigSjZ1uc+Q7EvGX8L83hCldmzudK0w==
   dependencies:
     react-error-boundary "3.1.0"
 

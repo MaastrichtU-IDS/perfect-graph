@@ -6,10 +6,10 @@ import {
   useAnimation,
 } from 'colay-ui'
 import {
-  Icon,
   IconButton, Typography,
   Paper,
 } from '@material-ui/core'
+import { Icon } from '@components/Icon'
 import { DataEditor, DataEditorProps } from './DataEditor'
 
 export type DataBarProps = {
@@ -57,7 +57,6 @@ export const DataBar = (props: DataBarProps) => {
   // React.useEffect(() => {
   //   animationRef?.current?.start()
   // }, [])
-  console.log('DataBar:', animationStyle)
   return (
     <Paper
       style={{
@@ -86,15 +85,14 @@ export const DataBar = (props: DataBarProps) => {
         onClick={createOnActionCallback(EVENT.TOGGLE_DATA_BAR)}
       >
         <Icon
+          name="info_outlined"
           style={{
             position: 'absolute',
             left: -24,
             top: 0,
             fontSize: 24,
           }}
-        >
-          information-outline
-        </Icon>
+        />
       </IconButton>
     </Paper>
   )

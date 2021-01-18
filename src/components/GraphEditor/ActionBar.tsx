@@ -10,7 +10,6 @@ import { EDITOR_MODE, EVENT, LAYOUT_NAMES } from '@utils/constants'
 import React from 'react'
 import {
   Button,
-  Icon,
   IconButton,
   Menu,
   MenuItem,
@@ -18,12 +17,15 @@ import {
   useTheme,
   Popover,
 } from '@material-ui/core'
+import {
+  Icon,
+} from '@components/Icon'
 import { useAnimation, wrapComponent } from 'colay-ui'
 import Form from '@rjsf/material-ui'
 // import Form from 'unitx-ui/components/Form'
 import * as R from 'colay/ramda'
 // import { DocumentPicker } from 'unitx-ui/@/DocumentPicker'
-import Recorder from 'colay-ui/components/Recorder'
+import { Recorder } from 'colay-ui/components/Recorder'
 
 export const ACTION = {
   EXPORT_DATA: 'EXPORT_DATA',
@@ -154,7 +156,7 @@ const ActionBarElement = (props: ActionBarProps) => {
         left: 0,
         flexDirection: 'row',
         // @ts-ignore
-        backgroundColor: theme.colors.surface,
+        backgroundColor: theme.palette.background.paper,
         ...animationStyle,
       }}
     >
@@ -171,9 +173,7 @@ const ActionBarElement = (props: ActionBarProps) => {
           <Button
             style={styles.button}
             startIcon={(
-              <Icon>
-                plus-circle
-              </Icon>
+              <Icon name="add_circle" />
 )}
             onClick={createOnActionCallback(EVENT.MODE_CHANGED, {
               value: [
@@ -204,9 +204,7 @@ const ActionBarElement = (props: ActionBarProps) => {
           <Button
             style={styles.button}
             startIcon={(
-              <Icon>
-                delete-circle
-              </Icon>
+              <Icon name="delete_rounded" />
             )}
             color={[
               EDITOR_MODE.DELETE,
@@ -268,10 +266,9 @@ const ActionBarElement = (props: ActionBarProps) => {
                 onClick={createOnActionCallback(EVENT.TOGGLE_RECORD)}
               >
                 <Icon
+                  name="record_voice_over_rounded"
                   color={status !== 'recording' ? 'primary' : 'error'}
-                >
-                  record-re
-                </Icon>
+                />
               </IconButton>
             )
           }}
@@ -292,15 +289,14 @@ const ActionBarElement = (props: ActionBarProps) => {
         onClick={createOnActionCallback(EVENT.TOGGLE_ACTION_BAR)}
       >
         <Icon
+          name="delete_rounded"
           style={{
             position: 'absolute',
             left: 0,
             top: -(24),
             fontSize: 24,
           }}
-        >
-          file-document-edit-outline
-        </Icon>
+        />
       </IconButton>
 
     </Box>
@@ -360,27 +356,23 @@ const MoreOptions = (props: MoreOptionsProps) => {
       <IconButton
         onClick={handleClick}
       >
-        <Icon>
-          dots-vertical
-        </Icon>
+        <Icon name="build_circle" />
       </IconButton>
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <>
-          {Object.values(OPTIONS).map((option, index) => (
-            <MenuItem
-              key={option}
+        {Object.values(OPTIONS).map((option, index) => (
+          <MenuItem
+            key={option}
             // selected={index === selectedIndex}
-              onClick={(event) => handleMenuItemClick(event, index)}
-            >
-              {option}
-            </MenuItem>
-          ))}
-          {renderMoreAction()}
-        </>
+            onClick={(event) => handleMenuItemClick(event, index)}
+          >
+            {option}
+          </MenuItem>
+        ))}
+        {renderMoreAction()}
       </Menu>
     </>
   )

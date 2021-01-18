@@ -1,12 +1,14 @@
 import React from 'react'
 import {
   Grid,
-  Icon,
   Collapse,
   IconButton,
   Box,
   Divider,
 } from '@material-ui/core'
+import {
+  Icon,
+} from '@components/Icon'
 import * as R from 'colay/ramda'
 import { DataItem } from '@type'
 import { DATA_TYPE, EVENT } from '@utils/constants'
@@ -102,10 +104,9 @@ export const TripleItem = (props: TripleItemProps) => {
                     onClick={() => onEvent(EVENT.DELETE_DATA_VALUE, { valueIndex, valueItem })}
                   >
                     <Icon
+                      name="close"
                       style={{ fontSize: ICON_SIZE }}
-                    >
-                      close
-                    </Icon>
+                    />
                   </IconButton>
                   )
 }
@@ -116,19 +117,17 @@ export const TripleItem = (props: TripleItemProps) => {
                       onClick={() => onEvent(EVENT.DATA_VALUE_UP, { valueIndex, valueItem })}
                     >
                       <Icon
+                        name="arrow_drop_up_rounded"
                         style={{ fontSize: ICON_SIZE }}
-                      >
-                        chevron-up
-                      </Icon>
+                      />
                     </IconButton>
                     <IconButton
                       onClick={() => onEvent(EVENT.DATA_VALUE_DOWN, { valueIndex, valueItem })}
                     >
                       <Icon
+                        name="arrow_drop_down_rounded"
                         style={{ fontSize: ICON_SIZE }}
-                      >
-                        chevron-down
-                      </Icon>
+                      />
                     </IconButton>
 
                   </>
@@ -279,12 +278,11 @@ const IconBox = (props: IconBoxProps) => {
               // onLongPress={() => onEvent(EVENT.MAKE_DATA_LABEL_FIRST)}
             >
               <Icon
+                name={isLocalLabel ? 'bookmark' : 'bookmark_border'}
                 style={{
                   fontSize: ICON_SIZE,
                 }}
-              >
-                {isLocalLabel ? 'tag-remove' : 'tag'}
-              </Icon>
+              />
             </IconButton>
             {!isGlobalLabelFirst && (
             <Divider
@@ -301,10 +299,9 @@ const IconBox = (props: IconBoxProps) => {
               onDoubleClick={() => onEvent(EVENT.MAKE_GLOBAL_DATA_LABEL_FIRST)}
             >
               <Icon
+                name={isLocalLabel ? 'bookmarks' : 'bookmark_border'}
                 style={{ fontSize: ICON_SIZE }}
-              >
-                {isGlobalLabel ? 'tag-remove' : 'tag-multiple'}
-              </Icon>
+              />
             </IconButton>
             {isGlobalLabelFirst && (
             <Divider style={{ backgroundColor: 'black', width: ICON_SIZE - 2 }} />)}
@@ -330,10 +327,8 @@ const IconBox = (props: IconBoxProps) => {
           >
             <Icon
               style={{ fontSize: ICON_SIZE }}
-
-            >
-              {extended ? 'chevron-up-box' : 'chevron-down-box'}
-            </Icon>
+              name={extended ? 'arrow_drop_up_rounded' : 'arrow_drop_down_rounded'}
+            />
           </IconButton>
           )
         }
@@ -342,13 +337,11 @@ const IconBox = (props: IconBoxProps) => {
           onClick={() => onEvent(EVENT.DELETE_DATA)}
         >
           <Icon
+            name="delete_rounded"
             style={{
               fontSize: ICON_SIZE,
             }}
-
-          >
-            delete
-          </Icon>
+          />
         </IconButton>
         )}
         {
@@ -357,10 +350,9 @@ const IconBox = (props: IconBoxProps) => {
               onClick={() => onEvent(EVENT.ADD_DATA_VALUE)}
             >
               <Icon
+                name="add_circle"
                 style={{ fontSize: ICON_SIZE }}
-              >
-                plus-box-outline
-              </Icon>
+              />
             </IconButton>
           )
         }

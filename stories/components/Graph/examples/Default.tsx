@@ -1,7 +1,7 @@
 import React from 'react'
 import {  Graph, Code } from '../../../index'
 
-const DefaultElement = () => (
+export const DefaultElement = () => (
   <Graph  
       style={{ width: '100%', height: 250 }}
       nodes={[

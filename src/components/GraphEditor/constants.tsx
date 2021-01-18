@@ -1,5 +1,6 @@
 import React from 'react'
-import { Icon, IconButton, Typography } from '@material-ui/core'
+import { IconButton, Typography } from '@material-ui/core'
+import { Icon } from '@components/Icon'
 import { DATA_TYPE } from '@utils/constants'
 
 export const TYPE_ICONS = {
@@ -7,14 +8,14 @@ export const TYPE_ICONS = {
     <IconButton
       {...props}
     >
-      <Icon>numeric</Icon>
+      <Icon name="repeat_one" />
     </IconButton>
   ),
   [DATA_TYPE.string]: (props: any) => (
     <IconButton
       {...props}
     >
-      <Icon>alphabetical</Icon>
+      <Icon name="sort_by_alpha" />
     </IconButton>
   ),
   [DATA_TYPE.id]: (props: any) => (
@@ -45,7 +46,7 @@ export const TYPE_ICONS = {
     <IconButton
       {...props}
     >
-      <Icon>alpha-x</Icon>
+      <Icon name="close" />
     </IconButton>
   ),
 } as const

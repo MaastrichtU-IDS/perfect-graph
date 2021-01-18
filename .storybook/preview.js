@@ -104,6 +104,7 @@ export const decorators = [
         <GithubEdit>
           {`${GITHUB_URL}/blob/master/${relativePath}`}
         </GithubEdit>
+        <div style={{ height: 20 }}/>
         <Story />
       </>
     )

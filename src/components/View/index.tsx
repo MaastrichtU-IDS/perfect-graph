@@ -39,7 +39,7 @@ const ViewPIXI = PixiComponent<ViewProps, PIXI.Graphics>('View', {
       style: {
         width = 0,
         height = 0,
-        backgroundColor = props.theme!.palette.background.default,
+        backgroundColor = props.theme!.palette.background.paper,
         borderRadius = 0,
         borderWidth = 0,
         borderColor = 'black',
