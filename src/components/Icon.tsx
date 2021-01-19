@@ -18,6 +18,7 @@ import {
   Minimize,
   Videocam,
   FiberManualRecord,
+  Settings,
 } from '@material-ui/icons'
 import { IconProps } from '@material-ui/core'
 
@@ -40,6 +41,7 @@ const ICONS = {
   minimize: Minimize,
   videocam: Videocam,
   fiber_manual_record: FiberManualRecord,
+  settings: Settings,
 } as const
 
 type IconName = keyof typeof ICONS

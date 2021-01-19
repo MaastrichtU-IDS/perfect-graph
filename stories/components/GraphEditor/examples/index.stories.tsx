@@ -5,3 +5,7 @@ export default {
 export {
   DefaultElement
 } from './Default'
+
+export {
+  WithEditElement
+} from './WithEdit'

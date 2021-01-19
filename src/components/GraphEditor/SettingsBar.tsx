@@ -103,7 +103,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
         onClick={createOnActionCallback(EVENT.TOGGLE_FILTER_BAR)}
       >
         <Icon
-          name="filter"
+          name="settings"
         />
       </IconButton>
     </Paper>
@@ -115,8 +115,8 @@ export const SettingsBar = wrapComponent<SettingsBarProps>(SettingsBarElement, {
 const styles = {
   icon: {
     position: 'absolute',
-    right: -30,
+    right: -36,
     top: 2,
     fontSize: 24,
   },
-}
+} as const

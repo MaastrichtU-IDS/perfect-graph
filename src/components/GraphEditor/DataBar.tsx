@@ -69,7 +69,14 @@ export const DataBar = (props: DataBarProps) => {
         ...animationStyle,
       }}
     >
-      {item && (<Typography variant="caption">{` id: ${item?.id}`}</Typography>)}
+      {item && (
+      <Typography
+        variant="h6"
+        sx={{ ml: 2 }}
+      >
+        {` id: ${item?.id}`}
+      </Typography>
+      )}
       {
         editable && item?.data
           ? (
@@ -86,6 +93,7 @@ export const DataBar = (props: DataBarProps) => {
                 <IconButton
                   size="small"
                   sx={{ height: 24 }}
+                  disabled={noChild}
                   onClick={() => onCollapse(!collapsed)}
                 >
                   <Icon

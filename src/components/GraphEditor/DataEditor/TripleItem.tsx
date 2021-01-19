@@ -64,7 +64,7 @@ export const TripleItem = (props: TripleItemProps) => {
   return (
     <Grid
       container
-      xs={12}
+      // xs={12}
     >
       <Grid item>
         <Grid
