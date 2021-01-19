@@ -87,8 +87,10 @@ export const TripleItem = (props: TripleItemProps) => {
           {
             R.ensureArray(value).map((valueItem, valueIndex) => (
               <Box
-                style={{
+                sx={{
                   marginBottom: 5,
+                  display: 'flex',
+                  flexDirection: 'row',
                 }}
               >
                 <TripleInput
@@ -104,6 +106,7 @@ export const TripleItem = (props: TripleItemProps) => {
                   isMulti && (
                   <IconButton
                     onClick={() => onEvent(EVENT.DELETE_DATA_VALUE, { valueIndex, valueItem })}
+                    sx={{ width: ICON_SIZE, height: ICON_SIZE, p: 0 }}
                   >
                     <Icon
                       name="close"
@@ -117,6 +120,7 @@ export const TripleItem = (props: TripleItemProps) => {
                   <>
                     <IconButton
                       onClick={() => onEvent(EVENT.DATA_VALUE_UP, { valueIndex, valueItem })}
+                      sx={{ width: ICON_SIZE, height: ICON_SIZE }}
                     >
                       <Icon
                         name="arrow_drop_up_rounded"
@@ -125,6 +129,7 @@ export const TripleItem = (props: TripleItemProps) => {
                     </IconButton>
                     <IconButton
                       onClick={() => onEvent(EVENT.DATA_VALUE_DOWN, { valueIndex, valueItem })}
+                      sx={{ width: ICON_SIZE, height: ICON_SIZE }}
                     >
                       <Icon
                         name="arrow_drop_down_rounded"

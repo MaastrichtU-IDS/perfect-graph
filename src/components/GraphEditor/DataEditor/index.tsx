@@ -1,7 +1,7 @@
 import React from 'react'
 import { DataItem } from '@type'
 import {
-  Box, List, ListItem, Divider, BoxProps,
+  Container, List, ListItem, Divider, BoxProps,
 } from '@material-ui/core'
 import * as R from 'colay/ramda'
 import { EVENT, ELEMENT_DATA_FIELDS } from '@utils/constants'
@@ -33,10 +33,10 @@ const DataEditorElement = (props: DataEditorProps) => {
     isGlobalLabelFirst,
   } = props
   return (
-    <Box
+    <Container
       style={{ width: '100%' }}
     >
-      <List style={{ width: '100%', overflow: 'auto' }}>
+      <List style={{ width: '100%' }}>
         {
       data.map((item, index) => (
         <ListItem key={`${index}`}>
@@ -62,7 +62,7 @@ const DataEditorElement = (props: DataEditorProps) => {
           />
         </ListItem>
       </List>
-    </Box>
+    </Container>
 
   )
 }

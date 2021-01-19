@@ -1,6 +1,9 @@
 import React from 'react'
 import {
-  ButtonBase, Grid, TextField, Typography, TypographyProps,
+  ButtonBase, Grid,
+  TextField, Typography,
+  TypographyProps,
+  ClickAwayListener,
 } from '@material-ui/core'
 import {
   useForwardRef,
@@ -60,9 +63,10 @@ const TripleInputElement = (
     value,
     textStyle,
     onEnter,
+    editable,
   } = props
   const [state, setState] = React.useState({
-    editable: props.editable,
+    editable,
     suggestions: [] as Suggestion[],
     isLoading: false,
     selectedSuggestion: null as Suggestion | null,
@@ -77,17 +81,14 @@ const TripleInputElement = (
   const inputRef = useForwardRef(
     ref,
     {},
-    () => ({
-      changeMode: (editable: boolean) => {
-        setState({
-          ...state,
-          editable,
-        })
-        setTimeout(() => inputRef.current.focus(), 10)
-      },
-      getSelectedSuggestion: () => state.selectedSuggestion,
-    }),
+    // () => ({}),
   )
+  const changeMode = (editable: boolean) => {
+    setState({
+      ...state,
+      editable,
+    })
+  }
   const onChangeText = React.useCallback(async (value) => {
     const suggestions = await getSuggestions?.({ value }) ?? []
     setState({
@@ -97,41 +98,49 @@ const TripleInputElement = (
       selectedSuggestion: null,
     })
     onValueChange?.(value)
-  }, [setState, getSuggestions])
+  }, [getSuggestions])
   const onBlur = React.useCallback(() => {
-    setTimeout(() => {
-      setState({
-        ...state,
-        editable: false,
-      })
-    }, 200)
-  }, [setState])
+    setState({
+      ...state,
+      editable: false,
+    })
+  }, [])
   return (
-    <ButtonBase
-      style={{
-        width: '100%',
-        ...style,
-      }}
-      onFocus={() => {
-        !disabled && inputRef.current.changeMode(true)
-      }}
-    >
-      <TextField
-        ref={inputRef}
-        value={value}
-        onSubmitEditing={onEnter}
-        style={{
+    <ClickAwayListener onClickAway={onBlur}>
+      <ButtonBase
+        sx={{
           width: '100%',
-          lineHeight: LINE_HEIGHT,
-          height: LINE_HEIGHT,
-          ...textStyle,
-          ...(state.editable ? {} : { display: 'none' }),
+          alignItems: 'flex-start',
+          display: 'flex',
+          ...style,
         }}
-        onChange={onChangeText}
-        onBlur={onBlur}
-        placeholder={placeholder}
-      />
-      {/* {state.suggestions.map(
+        disableTouchRipple
+        onFocus={() => {
+          !disabled && changeMode(true)
+        }}
+      >
+        {
+          state.editable && (
+            <TextField
+              ref={inputRef}
+              value={value}
+              autoFocus
+              variant="standard"
+              onSubmitEditing={onEnter}
+              style={{
+                width: '100%',
+                lineHeight: LINE_HEIGHT,
+                height: LINE_HEIGHT,
+                ...textStyle,
+                ...(state.editable ? {} : { display: 'none' }),
+              }}
+              onChange={onChangeText}
+              onBlur={onBlur}
+              placeholder={placeholder}
+            />
+          )
+        }
+        {/* {state.suggestions.map(
             (item, index) => (
               <AutocompleteItem
                 {...item}
@@ -151,18 +160,21 @@ const TripleInputElement = (
               />
             ),
           )} */}
-      <Typography
-        style={{
-          width: '100%',
-          lineHeight: LINE_HEIGHT,
-          height: LINE_HEIGHT,
-          ...textStyle,
-          ...(state.editable ? { display: 'none' } : {}),
-        }}
-      >
-        {value === '' ? placeholder : value}
-      </Typography>
-    </ButtonBase>
+        <Typography
+          sx={{
+            width: '100%',
+            textAlign: 'start',
+            // lineHeight: LINE_HEIGHT,
+            // height: LINE_HEIGHT,
+            ...textStyle,
+            ...(state.editable ? { display: 'none' } : {}),
+          }}
+        >
+          {value === '' ? placeholder : value}
+        </Typography>
+      </ButtonBase>
+    </ClickAwayListener>
+
   )
 }
 
