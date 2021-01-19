@@ -15,6 +15,9 @@ import {
   Bookmark,
   Bookmarks,
   BookmarkBorder,
+  Minimize,
+  Videocam,
+  FiberManualRecord,
 } from '@material-ui/icons'
 import { IconProps } from '@material-ui/core'
 
@@ -34,6 +37,9 @@ const ICONS = {
   bookmarks: Bookmarks,
   bookmark: Bookmark,
   bookmark_border: BookmarkBorder,
+  minimize: Minimize,
+  videocam: Videocam,
+  fiber_manual_record: FiberManualRecord,
 } as const
 
 type IconName = keyof typeof ICONS

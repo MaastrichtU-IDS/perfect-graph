@@ -1,7 +1,9 @@
 import React from 'react'
-import {   GraphEditor, Code } from '../../../index'
+import {   GraphEditor,  } from '../../../../src/components/GraphEditor'
+import {   Code,  } from '../../../index'
 import { useController } from '../../../../src/plugins/controller'
 import { EVENT } from '../../../../src/utils/constants'
+
 export const DefaultElement = () => {
   const [controllerProps] = useController({
     nodes: [

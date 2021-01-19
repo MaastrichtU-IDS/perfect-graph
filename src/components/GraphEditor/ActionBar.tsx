@@ -268,8 +268,8 @@ const ActionBarElement = (props: ActionBarProps) => {
                 onClick={createOnActionCallback(EVENT.TOGGLE_RECORD)}
               >
                 <Icon
-                  name="record_voice_over_rounded"
-                  color={status !== 'recording' ? 'primary' : 'error'}
+                  name="videocam"
+                  color={status !== 'recording' ? 'inherit' : 'error'}
                 />
               </IconButton>
             )

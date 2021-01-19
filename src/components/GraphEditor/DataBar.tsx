@@ -84,12 +84,17 @@ export const DataBar = (props: DataBarProps) => {
               data={item?.data}
               left={({ collapsed, onCollapse, noChild }) => (
                 <IconButton
+                  size="small"
+                  sx={{ height: 24 }}
                   onClick={() => onCollapse(!collapsed)}
                 >
                   <Icon
+                    style={{
+                      fontSize: noChild ? 12 : 24,
+                    }}
                     name={
                       noChild
-                        ? 'add_circle'
+                        ? 'fiber_manual_record'
                         : collapsed
                           ? 'arrow_drop_down_rounded'
                           : 'arrow_drop_up_rounded'
@@ -102,10 +107,25 @@ export const DataBar = (props: DataBarProps) => {
                   sx={{
                     display: 'flex',
                     flexDirection: 'row',
+                    justifyContent: 'space-between',
                   }}
                 >
-                  <Typography>{`${key}${value ? ': ' : ''}`}</Typography>
-                  {value ? <Typography>{value}</Typography> : null}
+                  <Typography
+                    variant="subtitle1"
+                    style={{ alignContent: 'center' }}
+                  >
+                    {`${key}${value ? ': ' : ''}`}
+                  </Typography>
+                  {value
+                    ? (
+                      <Typography
+                        variant="subtitle1"
+                        style={{ alignContent: 'center' }}
+                      >
+                        {value}
+                      </Typography>
+                    )
+                    : null}
                 </Box>
               )}
             />
