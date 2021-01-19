@@ -5,8 +5,8 @@ import { EVENT } from '../../../../src/utils/constants'
 export const DefaultElement = () => {
   const [controllerProps] = useController({
     nodes: [
-      { id: '1', position: { x: 10, y: 10 } },
-      { id: '2', position: { x: 300, y: 100 } },
+      { id: '1', position: { x: 10, y: 10 }, data: {name: 'ts'} },
+      { id: '2', position: { x: 300, y: 100 }, data: {usename: {name: 'ts2'}}},
     ],
     edges: [
           { id: '51', source: '1', target: '2' }

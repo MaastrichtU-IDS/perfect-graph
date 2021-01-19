@@ -20,7 +20,7 @@ import {
 import {
   Icon,
 } from '@components/Icon'
-import { useAnimation, wrapComponent } from 'colay-ui'
+import { useAnimation, wrapComponent, useDisclosure } from 'colay-ui'
 import Form from '@rjsf/material-ui'
 // import Form from 'unitx-ui/components/Form'
 import * as R from 'colay/ramda'
@@ -389,16 +389,21 @@ const LayoutOptions = (props: LayoutOptionsProps) => {
     layout = {},
     createOnActionCallback,
   } = props
-  const [anchorEl, setAnchorEl] = React.useState(null)
+  // const [anchorEl, setAnchorEl] = React.useState(null)
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget)
-  }
+  // const handleClick = (event) => {
+  //   setAnchorEl(event.currentTarget)
+  // }
 
-  const handleClose = () => {
-    setAnchorEl(null)
-  }
-
+  // const handleClose = () => {
+  //   setAnchorEl(null)
+  // }
+  const {
+    anchorEl,
+    isOpen,
+    onClose,
+    onOpen,
+  } = useDisclosure({})
   // const onItemSelect = React.useCallback((layoutName: string) => {
   //   handleClose()
   //   createOnActionCallback(
@@ -412,15 +417,15 @@ const LayoutOptions = (props: LayoutOptionsProps) => {
   return (
     <Box>
       <MenuItem
-        onClick={handleClick}
+        onClick={onOpen}
       >
         {layout.name ?? 'Select Layout'}
       </MenuItem>
       <Popover
         // id={id}
-        open={Boolean(anchorEl)}
+        open={isOpen}
         anchorEl={anchorEl}
-        onClose={handleClose}
+        onClose={onClose}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: 'center',

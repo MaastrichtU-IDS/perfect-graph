@@ -6,8 +6,10 @@ import {
   useAnimation,
 } from 'colay-ui'
 import {
-  IconButton, Typography,
+  IconButton,
+  Typography,
   Paper,
+  Box,
 } from '@material-ui/core'
 import { Icon } from '@components/Icon'
 import { DataEditor, DataEditorProps } from './DataEditor'
@@ -78,20 +80,48 @@ export const DataBar = (props: DataBarProps) => {
             />
           )
           : (
-            <JSONViewer data={item?.data} />
+            <JSONViewer
+              data={item?.data}
+              left={({ collapsed, onCollapse, noChild }) => (
+                <IconButton
+                  onClick={() => onCollapse(!collapsed)}
+                >
+                  <Icon
+                    name={
+                      noChild
+                        ? 'add_circle'
+                        : collapsed
+                          ? 'arrow_drop_down_rounded'
+                          : 'arrow_drop_up_rounded'
+}
+                  />
+                </IconButton>
+              )}
+              renderItem={({ item: { key, value } }) => (
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                  }}
+                >
+                  <Typography>{`${key}${value ? ': ' : ''}`}</Typography>
+                  {value ? <Typography>{value}</Typography> : null}
+                </Box>
+              )}
+            />
           )
       }
       <IconButton
+        style={{
+          position: 'absolute',
+          left: -34,
+          top: 0,
+          fontSize: 24,
+        }}
         onClick={createOnActionCallback(EVENT.TOGGLE_DATA_BAR)}
       >
         <Icon
           name="info_outlined"
-          style={{
-            position: 'absolute',
-            left: -24,
-            top: 0,
-            fontSize: 24,
-          }}
         />
       </IconButton>
     </Paper>
