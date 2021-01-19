@@ -66,7 +66,10 @@ export const TripleItem = (props: TripleItemProps) => {
       container
       // xs={12}
     >
-      <Grid item>
+      <Grid
+        container
+        // style={{ flexDirection: 'row', display: 'flex' }}
+      >
         <Grid
           item
           xs={5}
@@ -75,7 +78,6 @@ export const TripleItem = (props: TripleItemProps) => {
             placeholder="Enter Type"
             value={name}
             onValueChange={(value) => onEvent(EVENT.CHANGE_DATA_NAME, { value })}
-            // type={DATA_TYPE.string}
           />
         </Grid>
         <Grid
@@ -84,7 +86,7 @@ export const TripleItem = (props: TripleItemProps) => {
         >
           {
             R.ensureArray(value).map((valueItem, valueIndex) => (
-              <Grid
+              <Box
                 style={{
                   marginBottom: 5,
                 }}
@@ -134,10 +136,11 @@ export const TripleItem = (props: TripleItemProps) => {
                   )
 }
                 </Box>
-              </Grid>
+              </Box>
             ))
           }
           {
+            // Enter New Value
             state.extended && (
             <TripleInput
               textStyle={{

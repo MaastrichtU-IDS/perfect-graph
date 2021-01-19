@@ -109,30 +109,29 @@ const TripleInputElement = (
   return (
     <ButtonBase
       style={{
-        flex: 1,
+        width: '100%',
         ...style,
       }}
       onFocus={() => {
         !disabled && inputRef.current.changeMode(true)
       }}
     >
-      <Grid>
-        <TextField
-          ref={inputRef}
-          value={value}
-          onSubmitEditing={onEnter}
-          style={{
-            width: '100%',
-            lineHeight: LINE_HEIGHT,
-            height: LINE_HEIGHT,
-            ...textStyle,
-            ...(state.editable ? {} : { display: 'none' }),
-          }}
-          onChange={onChangeText}
-          onBlur={onBlur}
-          placeholder={placeholder}
-        />
-        {/* {state.suggestions.map(
+      <TextField
+        ref={inputRef}
+        value={value}
+        onSubmitEditing={onEnter}
+        style={{
+          width: '100%',
+          lineHeight: LINE_HEIGHT,
+          height: LINE_HEIGHT,
+          ...textStyle,
+          ...(state.editable ? {} : { display: 'none' }),
+        }}
+        onChange={onChangeText}
+        onBlur={onBlur}
+        placeholder={placeholder}
+      />
+      {/* {state.suggestions.map(
             (item, index) => (
               <AutocompleteItem
                 {...item}
@@ -152,20 +151,17 @@ const TripleInputElement = (
               />
             ),
           )} */}
-        <Typography
-          style={{
-            width: '100%',
-            lineHeight: LINE_HEIGHT,
-            height: LINE_HEIGHT,
-            ...textStyle,
-            ...(state.editable ? { display: 'none' } : {}),
-          }}
-          // ellipsizeMode="tail"
-          // numberOfLines={1}
-        >
-          {value === '' ? placeholder : value}
-        </Typography>
-      </Grid>
+      <Typography
+        style={{
+          width: '100%',
+          lineHeight: LINE_HEIGHT,
+          height: LINE_HEIGHT,
+          ...textStyle,
+          ...(state.editable ? { display: 'none' } : {}),
+        }}
+      >
+        {value === '' ? placeholder : value}
+      </Typography>
     </ButtonBase>
   )
 }
