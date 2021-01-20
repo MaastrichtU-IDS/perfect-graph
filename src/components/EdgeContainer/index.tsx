@@ -77,7 +77,7 @@ const EdgeContainerElement = (
       to: targetElementContext.boundingBox,
       from: sourceElementContext.boundingBox,
       directed: true,
-      distance: sortedIndex * 20,
+      distance: sortedIndex * 40,
       // margin: {
       //   x: sortedIndex * 4,
       //   y: sortedIndex * 4,

@@ -15,8 +15,6 @@ type BezierLinePoints = {
   start: Position;
   mid: Position;
   end: Position;
-  control1: Position;
-  control2: Position;
 }
 const controlPointsCreator = {
   bezier: (config: {
@@ -33,12 +31,8 @@ const controlPointsCreator = {
       count,
       unit,
     } = config
-    const unitABS = {
-      x: Math.abs(unit.x),
-      y: Math.abs(unit.y),
-    }
-    const upperNormVector = V.rotate(Math.PI / 2)(unitABS)
-    const upperVector = V.multiplyScalar(distance * 2)(upperNormVector)
+    const upperNormVector = V.rotate(Math.PI / 2)(unit)
+    const upperVector = V.multiplyScalar(Math.abs(distance))(upperNormVector)
     const lowerVector = V.multiplyScalar(-1)(upperVector)
     const chunkDistanceVector = R.pipe(
       V.subtract(from),
@@ -47,7 +41,7 @@ const controlPointsCreator = {
     const semiChunkDistanceVector = V.divideScalar(2)(chunkDistanceVector)
     return R.mapIndexed(
       (_, index: number) => {
-        const isUpper = index % 2
+        const isUpper = index % 2 !== 0
         const startVec = R.pipe(
           V.multiplyScalar(index),
           V.add(from),
@@ -57,18 +51,14 @@ const controlPointsCreator = {
           V.add(semiChunkDistanceVector),
           V.add(isUpper ? upperVector : lowerVector),
         )(startVec)
-        const control1 = R.pipe(
-          V.add(isUpper ? upperVector : lowerVector),
-        )(startVec)
-        const control2 = R.pipe(
-          V.add(isUpper ? upperVector : lowerVector),
-        )(endVec)
         return {
           start: startVec,
           mid: midVec,
           end: endVec,
-          control1,
-          control2,
+          upperVector,
+          midVec: R.pipe(
+            V.add(semiChunkDistanceVector),
+          )(startVec),
         }
       },
     )(R.range(0, count))
@@ -165,6 +155,7 @@ export const drawLine = (
         toBoundingBox.width / 2,
         toBoundingBox.height / 2,
       )(toPos)
+
       const radiusFrom = Math.hypot(fromBoundingBox.width, fromBoundingBox.height) / 2
       const radiusTo = Math.hypot(toBoundingBox.width, toBoundingBox.height) / 2
       const distanceVector = R.pipe(
@@ -202,10 +193,6 @@ export const drawLine = (
       )(toPos),
     }),
   )(directed)
-  // const midpoint = R.pipe(
-  //   V.divideScalar(2),
-  //   V.add(from),
-  // )(distanceVector)
   const unit = V.normalize(distanceVector)
   mutableInstance.clear()
   mutableInstance.lineStyle(width, fill, alpha)
@@ -286,6 +273,8 @@ export const drawLine = (
               mid,
               start,
               end,
+              upperVector,
+              midVec,
             }: BezierLinePoints) => {
               mutableInstance.moveTo(start.x, start.y)
               mutableInstance.bezierCurveTo(
