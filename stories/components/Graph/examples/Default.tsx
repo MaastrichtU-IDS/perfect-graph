@@ -3,44 +3,80 @@ import { Code } from '../../../index'
 import { Graph, } from '../../../../src/components/Graph'
 
 export const DefaultElement = () => (
-  <Graph  
-      style={{ width: '100%', height: 250 }}
+  <Graph
+      style={{ width: '100%', height: 600 }}
       nodes={[
         {
-          id: '1',
-          position: { x: 100, y: 100 },
+          id: 'Elaine',
+          position: { x: 400, y: 100 },
           data: { color: 'red' }
         },
         {
-          id: '2',
-          position: { x: 300, y: 100 },
+          id: 'Jerry',
+          position: { x: 400, y: 350 },
+          data: { color: 'blue' }
+        },
+        {
+          id: 'Kramer',
+          position: { x: 600, y: 500 },
+          data: { color: 'blue' }
+        },
+        {
+          id: 'George',
+          position: { x: 200, y: 500 },
           data: { color: 'blue' }
         },
       ]}
       edges={[
-        { id: '51', source: '1', target: '2' }
+        { source: 'George', target: 'Jerry' },
+        { target: 'George', source: 'Jerry' },
+        { target: 'Kramer', source: 'George' },
+        { target: 'Kramer', source: 'Jerry' },
+        { target: 'Jerry', source: 'Kramer' },
+        { target: 'Jerry', source: 'Elaine' },
+        { target: 'Elaine', source: 'Jerry' },
+        { target: 'Elaine', source: 'Kramer' },
+        { target: 'Kramer', source: 'Elaine' },
       ]}
       />
 )
 export const Default = () => {
   return (
     <Code>
-      {`<Graph  
+      {`<Graph
       style={{ width: '100%', height: 250 }}
       nodes={[
         {
-          id: '1',
-          position: { x: 100, y: 100 },
+          id: 'Elaine',
+          position: { x: 400, y: 100 },
           data: { color: 'red' }
         },
         {
-          id: '2',
-          position: { x: 300, y: 100 },
+          id: 'Jerry',
+          position: { x: 400, y: 200 },
+          data: { color: 'blue' }
+        },
+        {
+          id: 'Kramer',
+          position: { x: 600, y: 300 },
+          data: { color: 'blue' }
+        },
+        {
+          id: 'George',
+          position: { x: 200, y: 300 },
           data: { color: 'blue' }
         },
       ]}
       edges={[
-        { id: '51', source: '1', target: '2' }
+        { source: 'George', target: 'Jerry' },
+        { target: 'George', source: 'Jerry' },
+        { target: 'Kramer', source: 'George' },
+        { target: 'Kramer', source: 'Jerry' },
+        { target: 'Jerry', source: 'Kramer' },
+        { target: 'Jerry', source: 'Elaine' },
+        { target: 'Elaine', source: 'Jerry' },
+        { target: 'Elaine', source: 'Kramer' },
+        { target: 'Kramer', source: 'Elaine' },
       ]}
       />
     `}

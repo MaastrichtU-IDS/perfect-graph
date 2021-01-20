@@ -11,6 +11,7 @@ import {
   EdgeElement,
 } from '@type'
 import * as V from 'colay/vector'
+
 import { Graphics, drawLine as defaultDrawLine } from '../Graphics'
 import { Container, ContainerRef } from '../Container'
 
@@ -22,12 +23,6 @@ export type EdgeContainerProps = {
   config?: EdgeConfig;
 }
 
-const calculateMidpoint = (from: Position) => (to: Position) => R.pipe(
-  V.subtract(from),
-  V.divideScalar(2),
-  V.add(from),
-  // @ts-ignore
-)(to)
 
 export type EdgeContainerType = React.FC<EdgeContainerProps>
 
@@ -43,16 +38,36 @@ const EdgeContainerElement = (
   } = props
   const graphicsRef = React.useRef<PIXI.Graphics>(null)
   const containerRef = React.useRef<ContainerRef>(null)
+  const edgeID = item.id ?? R.uuid()
   const drawLineCallback = React.useCallback((element: EdgeElement) => {
     const targetElement = element.target()
     const sourceElement = element.source()
     const to = targetElement.position()
     const from = sourceElement.position()
-    const midpoint = calculateMidpoint(from)(to)
+    const midpoint = V.midpoint(from)(to)
     const sourceElementContext = getNodeContextByElement(sourceElement)
     const targetElementContext = getNodeContextByElement(targetElement)
     containerRef.current!.x = midpoint.x
     containerRef.current!.y = midpoint.y
+    // calculate sortedIndex
+    const betweenEdges = targetElement.edgesWith(sourceElement)
+    const betweenEdgesCount = betweenEdges.length
+    const betweenEdgesMedian = Math.ceil(betweenEdgesCount / 2)
+    let edgeIndex = 0
+    betweenEdges.forEach((edgeEl, i) => {
+      if (edgeEl.id() === edgeID) {
+        edgeIndex = i
+      }
+    })
+    let sortedIndex = 0
+    if (betweenEdgesCount > 1) {
+      sortedIndex = edgeIndex > betweenEdgesMedian
+        ? betweenEdgesMedian - edgeIndex
+        : edgeIndex - betweenEdgesMedian
+      if (betweenEdgesCount % 2 === 0 && sortedIndex >= 0) {
+        sortedIndex += 1
+      }
+    }
     return drawLine({
       element,
       item,
@@ -62,13 +77,18 @@ const EdgeContainerElement = (
       to: targetElementContext.boundingBox,
       from: sourceElementContext.boundingBox,
       directed: true,
+      distance: sortedIndex * 20,
+      // margin: {
+      //   x: sortedIndex * 4,
+      //   y: sortedIndex * 4,
+      // },
     })
   }, [containerRef, graphicsRef])
   const onPositionChange = React.useCallback(({ element }) => {
     drawLineCallback(element)
   }, [drawLineCallback])
   const { element } = useEdge({
-    id: item.id,
+    id: edgeID,
     source: item.source,
     target: item.target,
     graphID,
@@ -85,7 +105,7 @@ const EdgeContainerElement = (
   const targetElement = element.target()
   const to = element.target().position()
   const from = element.source().position()
-  const midpoint = calculateMidpoint(from)(to)
+  const midpoint = V.midpoint(from)(to)
   return (
     <>
       <Container

@@ -11,6 +11,13 @@ export type GraphicsProps = {
 
 }
 
+type BezierLinePoints = {
+  start: Position;
+  mid: Position;
+  end: Position;
+  control1: Position;
+  control2: Position;
+}
 const controlPointsCreator = {
   bezier: (config: {
     from: Position;
@@ -18,7 +25,7 @@ const controlPointsCreator = {
     unit: Position;
     distance: number;
     count: number;
-  }) => {
+  }): BezierLinePoints[] => {
     const {
       from,
       to,
@@ -26,8 +33,12 @@ const controlPointsCreator = {
       count,
       unit,
     } = config
-    const upperNormVector = V.rotate(-Math.PI / 2)(unit)
-    const upperVector = V.multiplyScalar(distance)(upperNormVector)
+    const unitABS = {
+      x: Math.abs(unit.x),
+      y: Math.abs(unit.y),
+    }
+    const upperNormVector = V.rotate(Math.PI / 2)(unitABS)
+    const upperVector = V.multiplyScalar(distance * 2)(upperNormVector)
     const lowerVector = V.multiplyScalar(-1)(upperVector)
     const chunkDistanceVector = R.pipe(
       V.subtract(from),
@@ -41,12 +52,24 @@ const controlPointsCreator = {
           V.multiplyScalar(index),
           V.add(from),
         )(chunkDistanceVector)
+        const endVec = V.add(startVec)(chunkDistanceVector)
         const midVec = R.pipe(
           V.add(semiChunkDistanceVector),
           V.add(isUpper ? upperVector : lowerVector),
         )(startVec)
-        const endVec = V.add(startVec)(chunkDistanceVector)
-        return [startVec, midVec, endVec]
+        const control1 = R.pipe(
+          V.add(isUpper ? upperVector : lowerVector),
+        )(startVec)
+        const control2 = R.pipe(
+          V.add(isUpper ? upperVector : lowerVector),
+        )(endVec)
+        return {
+          start: startVec,
+          mid: midVec,
+          end: endVec,
+          control1,
+          control2,
+        }
       },
     )(R.range(0, count))
   },
@@ -82,6 +105,7 @@ const drawArrowHead = ({
     new PIXI.Point(topControlPoint.x, topControlPoint.y),
   )
   mutableGraphics.endFill()
+  mutableGraphics.isSprite = true
 }
 export const drawLine = (
   config: {
@@ -96,6 +120,8 @@ export const drawLine = (
     arrowHead?: {
       radius?: number;
     };
+    distance?: number;
+    margin?: Position
   },
 ) => {
   const {
@@ -110,14 +136,19 @@ export const drawLine = (
     arrowHead = {
       radius: 2,
     },
+    distance,
+    margin = {
+      x: 0,
+      y: 0,
+    },
   } = config
   const fromPos = {
-    x: fromBoundingBox.x,
-    y: fromBoundingBox.y,
+    x: fromBoundingBox.x + margin.x,
+    y: fromBoundingBox.y + margin.y,
   }
   const toPos = {
-    x: toBoundingBox.x,
-    y: toBoundingBox.y,
+    x: toBoundingBox.x + margin.x,
+    y: toBoundingBox.y + margin.y,
   }
   const {
     to,
@@ -197,10 +228,15 @@ export const drawLine = (
           unit,
         })
         R.map(
-          ([start, mid, end]) => {
+          ({
+            start,
+            end,
+            control1,
+            control2,
+          }: BezierLinePoints) => {
             mutableInstance.moveTo(start.x, start.y)
             mutableInstance.bezierCurveTo(
-              start.x, start.y, mid.x, mid.y, end.x, end.y,
+              control1.x, control1.y, control2.x, control2.y, end.x, end.y,
             )
           },
         )(controlPoints)
@@ -217,7 +253,11 @@ export const drawLine = (
           unit,
         })
         R.map(
-          ([start, mid, end]) => {
+          ({
+            start,
+            mid,
+            end,
+          }: BezierLinePoints) => {
             mutableInstance.moveTo(start.x, start.y)
             mutableInstance.lineTo(
               mid.x, mid.y,
@@ -233,8 +273,30 @@ export const drawLine = (
     [
       R.T,
       () => {
-        mutableInstance.moveTo(from.x, from.y)
-        mutableInstance.lineTo(to.x, to.y)
+        if (distance) {
+          const controlPoints = controlPointsCreator.bezier({
+            from,
+            to,
+            count: 1,
+            distance,
+            unit,
+          })
+          R.map(
+            ({
+              mid,
+              start,
+              end,
+            }: BezierLinePoints) => {
+              mutableInstance.moveTo(start.x, start.y)
+              mutableInstance.bezierCurveTo(
+                start.x, start.y, mid.x, mid.y, end.x, end.y,
+              )
+            },
+          )(controlPoints)
+        } else {
+          mutableInstance.moveTo(from.x, from.y)
+          mutableInstance.lineTo(to.x, to.y)
+        }
       },
     ],
   ])(type)

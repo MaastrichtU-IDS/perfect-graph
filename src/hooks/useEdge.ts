@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useRef } from 'react'
 import {
   EdgeContext, ElementConfig, EdgeElement,
 } from '@type'
+import * as R from 'colay/ramda'
 import { mutableGraphMap } from './useGraph'
 import { useElement } from './useElement'
 
@@ -24,13 +25,14 @@ type Result<T> = {
 
 export default <T>(props: Props<T>): Result<T> => {
   const {
-    id,
+    id, // : givenID,
     source,
     target,
     onPositionChange,
     graphID,
     config,
   } = props
+  // const id = React.useMemo(() => givenID ?? R.uuid(), [givenID])
   const { cy } = mutableGraphMap[graphID]
   const [, setState] = useStateWithCallback({}, () => {
   })
@@ -56,11 +58,11 @@ export default <T>(props: Props<T>): Result<T> => {
         source,
         target,
         onPositionChange: () => {
-        onPositionChange?.({
+          onPositionChange?.({
           // @ts-ignore
-          element: contextRef.current.element,
-          context: contextRef.current,
-        })
+            element: contextRef.current.element,
+            context: contextRef.current,
+          })
         },
       },
       group: 'edges',
@@ -77,7 +79,7 @@ export default <T>(props: Props<T>): Result<T> => {
     () => {
       element.data(
         'onPositionChange', () => {
-        onPositionChange?.({ element, context: contextRef.current })
+          onPositionChange?.({ element, context: contextRef.current })
         },
       )
     },
