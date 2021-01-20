@@ -68,7 +68,7 @@ export const DefaultTheme = {
     },
     divider: 'rgba(0, 0, 0, 0.12)',
     background: {
-      paper: '#fff',
+      paper: 'rgb(153, 153, 153)',
       default: '#fafafa',
     },
     action: {

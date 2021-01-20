@@ -4,7 +4,8 @@ import { BoundingBox } from '@type'
 import * as PIXI from 'pixi.js'
 import * as R from 'colay/ramda'
 import * as V from 'colay/vector'
-import { THEME } from '@utils/constants'
+import * as C from 'colay/color'
+import { DefaultTheme } from '@core/theme'
 
 export type GraphicsProps = {
 
@@ -82,7 +83,6 @@ const drawArrowHead = ({
   )
   mutableGraphics.endFill()
 }
-
 export const drawLine = (
   config: {
     from: BoundingBox;
@@ -101,11 +101,11 @@ export const drawLine = (
   const {
     from: fromBoundingBox,
     to: toBoundingBox,
-    fill = THEME.fillColor,
+    fill = C.rgbNumber(DefaultTheme.palette.background.paper),
     directed,
     type, //= 'bezier',
     graphics: mutableInstance,
-    width = 4,
+    width = 6,
     alpha = 1,
     arrowHead = {
       radius: 2,

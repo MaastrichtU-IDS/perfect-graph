@@ -17,7 +17,7 @@ import {
 } from '@type'
 import { PropsWithRef } from 'colay-ui/type'
 import '@utils/addFlexLayout'
-import { useTheme, ThemeProvider } from '@core/theme'
+import { useTheme, ThemeProvider, DefaultTheme } from '@core/theme'
 import { Viewport, ViewportProps } from '../Viewport'
 import { NodeContainer } from '../NodeContainer'
 import { EdgeContainer } from '../EdgeContainer'
@@ -37,16 +37,28 @@ export type GraphProps = {
   selectedElements?: Element[];
 }
 
+// const DEFAULT_COLOR = 'rgb(153, 153, 153)'
 export const DefaultRenderNode: RenderNode = ({ item }) => (
   <View style={{
-    width: 100,
-    height: 100,
+    width: 50,
+    height: 50,
     justifyContent: 'center',
     alignItems: 'center',
     display: 'flex',
+    backgroundColor: DefaultTheme.palette.background.paper,
+    borderRadius: 50,
   }}
   >
-    <Text>{item.id}</Text>
+    <Text
+      style={{
+        position: 'absolute',
+        top: -40,
+        color: 'black',
+      }}
+    >
+      {item.id}
+
+    </Text>
   </View>
 )
 
@@ -139,7 +151,7 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
         options={{
           width,
           height,
-          resolution: 1,
+          resolution: window.devicePixelRatio || 1,
           antialias: true,
           autoDensity: true,
           backgroundColor,

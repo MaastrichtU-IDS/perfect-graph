@@ -4,7 +4,8 @@ import Layouts from '@core/layouts'
 
 export const THEME = {
   backgroundColor: '#3287a8',
-  fillColor: 0x2c3e50,
+  fillColor: 'rgb(153, 153, 153)'
+  ,
 }
 export const ELEMENT_TYPE = {
   EDGE: 'EDGE',
@@ -72,8 +73,6 @@ export const DATA_TYPE = {
   id: 'id',
   unknown: 'unknown',
 } as const
-
-
 
 export const DATA_TYPE_BY_INDEX = [
   'string',

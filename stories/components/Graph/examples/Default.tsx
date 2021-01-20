@@ -46,11 +46,6 @@ export const Default = () => {
       edges={[
         { id: '51', source: '1', target: '2' }
       ]}
-      renderNode={({ item: { data } }) => (
-        <Graph.View
-          style={{ width: 100, height: 100, backgroundColor: data.color }}
-        />
-      )}
       />
     `}
     </Code>

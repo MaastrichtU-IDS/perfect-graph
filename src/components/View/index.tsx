@@ -48,7 +48,12 @@ const ViewPIXI = PixiComponent<ViewProps, PIXI.Graphics>('View', {
     instance.clear()
     instance.beginFill(C.rgbNumber(backgroundColor), C.getAlpha(backgroundColor))
     instance.lineStyle(borderWidth, C.rgbNumber(borderColor))
-    instance.drawRoundedRect(0, 0, width, height, borderRadius)
+    const radius = width / 2
+    if ((width === height) && (borderRadius >= radius)) {
+      instance.drawCircle(radius, radius, radius)
+    } else {
+      instance.drawRoundedRect(0, 0, width, height, borderRadius)
+    }
     instance.endFill()
     applyDefaultProps(instance, oldProps, props)
   },
