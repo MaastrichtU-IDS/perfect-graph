@@ -384,14 +384,15 @@ export const readTextFile = async (blob: Blob, encoding?: string) => new Promise
 
 export const calculateDisplayObjectBounds = (object: PIXI.Container) => {
   const box = object.getLocalBounds()
-  // console.log(box, object.getBounds(), object.children[0])
-  box.width = 50
-  box.height = 50
+  box.width = 45
+  box.height = 45
   return {
-    x: object.x + (box.x - object.pivot.x) * object.scale.x,
-    y: object.y + (box.y - object.pivot.y) * object.scale.y,
+    // x: object.x + (box.x - object.pivot.x) * object.scale.x,
+    // y: object.y + (box.y - object.pivot.y) * object.scale.y,
     width: box.width * object.scale.x,
     height: box.height * object.scale.y,
+    x: object.x * object.scale.x,
+    y: object.y * object.scale.y,
   }
 }
 

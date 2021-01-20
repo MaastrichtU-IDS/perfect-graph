@@ -61,7 +61,6 @@ export const convertToJSONLD = async (text: string): Promise<Record<string, any>
       return itemResult
     },
   )(jsonLDList)
-  console.log('result', result, resultList, JSON.stringify(resultList))
   return resultList
 }
 

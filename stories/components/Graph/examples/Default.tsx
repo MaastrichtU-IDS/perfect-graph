@@ -8,23 +8,18 @@ export const DefaultElement = () => (
       nodes={[
         {
           id: '1',
-          position: { x: 10, y: 10 },
+          position: { x: 100, y: 100 },
           data: { color: 'red' }
         },
         {
           id: '2',
-          position: { x: 300, y: 10 },
+          position: { x: 300, y: 100 },
           data: { color: 'blue' }
         },
       ]}
       edges={[
         { id: '51', source: '1', target: '2' }
       ]}
-      renderNode={({ item: { data } }) => (
-        <Graph.View
-          style={{ width: 100, height: 100, backgroundColor: data.color }}
-        />
-      )}
       />
 )
 export const Default = () => {
@@ -35,12 +30,12 @@ export const Default = () => {
       nodes={[
         {
           id: '1',
-          position: { x: 10, y: 10 },
+          position: { x: 100, y: 100 },
           data: { color: 'red' }
         },
         {
           id: '2',
-          position: { x: 300, y: 10 },
+          position: { x: 300, y: 100 },
           data: { color: 'blue' }
         },
       ]}

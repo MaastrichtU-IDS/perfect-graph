@@ -43,7 +43,7 @@ const EdgeContainerElement = (
   } = props
   const graphicsRef = React.useRef<PIXI.Graphics>(null)
   const containerRef = React.useRef<ContainerRef>(null)
-  const drawLineCallback = (element: EdgeElement) => {
+  const drawLineCallback = React.useCallback((element: EdgeElement) => {
     const targetElement = element.target()
     const sourceElement = element.source()
     const to = targetElement.position()
@@ -63,28 +63,10 @@ const EdgeContainerElement = (
       from: sourceElementContext.boundingBox,
       directed: true,
     })
-  }
+  }, [containerRef, graphicsRef])
   const onPositionChange = React.useCallback(({ element }) => {
     drawLineCallback(element)
-    // R.ifElse(
-    //   R.isNotNil,
-    //   () => drawLine?.({
-    // element,
-    // item,
-    // sourceElement,
-    // targetElement,
-    // graphics: graphicsRef.current,
-    // to: targetElementContext.boundingBox,
-    // from: sourceElementContext.boundingBox,
-    //   }),
-    //   () => defaultDrawLine({
-    //     to: targetElementContext.boundingBox,
-    //     from: sourceElementContext.boundingBox,
-    //     graphics: graphicsRef.current,
-    //     directed: true,
-    //   }),
-    // )(drawLine)
-  }, [drawLine])
+  }, [drawLineCallback])
   const { element } = useEdge({
     id: item.id,
     source: item.source,
@@ -94,9 +76,10 @@ const EdgeContainerElement = (
   })
   React.useEffect(
     () => {
+      // setTimeout(() => drawLineCallback(element), 2050)
       drawLineCallback(element)
     },
-    [drawLine],
+    [drawLineCallback],
   )
   const sourceElement = element.source()
   const targetElement = element.target()

@@ -65,7 +65,6 @@ const TextPIXI = PixiComponent<TextPIXIProps, PIXI.Text>('PIXIText', {
     return R.ifElse(
       R.isTrue,
       () => {
-        console.log('ios:', isSprite, window.devicePixelRatio)
         mutableInstance.updateText(false)
         return new PIXI.Sprite(mutableInstance.texture)
       },
