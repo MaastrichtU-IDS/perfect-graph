@@ -1,5 +1,6 @@
 import React from 'react'
-import { Code, Graph, Decorators } from '../../../index'
+import { Code, Decorators } from '../../../index'
+import { Graph, } from '../../../../src/components'
 
 const DefaultElement = () => (
   <Decorators.StageDecorator>

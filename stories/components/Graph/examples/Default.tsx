@@ -1,5 +1,6 @@
 import React from 'react'
-import {  Graph, Code } from '../../../index'
+import { Code } from '../../../index'
+import { Graph, } from '../../../../src/components/Graph'
 
 export const DefaultElement = () => (
   <Graph  

@@ -1,10 +1,10 @@
 import { Stage } from '@inlet/react-pixi'
-import '@utils/addFlexLayout'
 import React from 'react'
 import { useMeasure, Div } from 'colay-ui'
 // @ts-ignore
 import { Story as StoryType } from '@storybook/react/types-6-0'
 import * as C from 'colay/color'
+import '../src/core/config'
 
 export const StageDecorator = (props) => {
   const [ref, {width, height,}] = useMeasure()

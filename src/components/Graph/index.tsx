@@ -16,7 +16,7 @@ import {
   GraphConfig, Element, DrawLine, GraphRef, ViewportRef,
 } from '@type'
 import { PropsWithRef } from 'colay-ui/type'
-import '@utils/addFlexLayout'
+import '@core/config'
 import { useTheme, ThemeProvider, DefaultTheme } from '@core/theme'
 import { Viewport, ViewportProps } from '../Viewport'
 import { NodeContainer } from '../NodeContainer'
@@ -55,6 +55,7 @@ export const DefaultRenderNode: RenderNode = ({ item }) => (
         top: -40,
         color: 'black',
       }}
+      isSprite
     >
       {item.id}
 
@@ -151,8 +152,8 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
         options={{
           width,
           height,
-          resolution: window.devicePixelRatio || 1,
-          antialias: true,
+          resolution: window.devicePixelRatio || 1, // 64, // window.devicePixelRatio || 1,
+          antialias: false,
           autoDensity: true,
           backgroundColor,
         }}

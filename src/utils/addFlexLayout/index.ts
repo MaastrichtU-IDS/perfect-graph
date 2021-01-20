@@ -1,10 +1,6 @@
 import * as PIXI from 'pixi.js'
 import { initializeYogaLayout, yogaSetRenderer } from './flex-layout'
 
-PIXI.settings.ROUND_PIXELS = true
-PIXI.settings.PRECISION_FRAGMENT = 'highp'
-PIXI.settings.RESOLUTION = window.devicePixelRatio
-
 initializeYogaLayout()
 yogaSetRenderer(PIXI.autoDetectRenderer())
 
