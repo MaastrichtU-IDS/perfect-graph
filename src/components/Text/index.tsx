@@ -22,7 +22,7 @@ type TextPIXIProps = {
 // dropShadowDistance
 const PositionStyleKeys = ['left', 'top', 'width', 'height']
 const processTextProps = (props: TextPIXIProps) => {
-  const { style = {}, color } = props
+  const { style = {} } = props
   return {
     ...props,
     style: R.pick(PositionStyleKeys)(style),
@@ -52,7 +52,7 @@ const processTextProps = (props: TextPIXIProps) => {
           R.identity,
         ],
       ]),
-    )(R.omit([PositionStyleKeys])({ ...style, color })),
+    )(R.omit([PositionStyleKeys])({ ...style })),
   }
 }
 const TextPIXI = PixiComponent<TextPIXIProps, PIXI.Text>('PIXIText', {
@@ -61,7 +61,6 @@ const TextPIXI = PixiComponent<TextPIXIProps, PIXI.Text>('PIXIText', {
       text = '', textStyle = {}, isSprite,
     } = processTextProps(props)
     const mutableInstance = new PIXI.Text(text, textStyle)
-    // mutableInstance.resolution = 64
     return R.ifElse(
       R.isTrue,
       () => {
