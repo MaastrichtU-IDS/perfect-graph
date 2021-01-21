@@ -28,13 +28,13 @@ export const DefaultElement = () => (
         },
       ]}
       edges={[
+        { target: 'Jerry', source: 'Elaine' },
+        { target: 'Elaine', source: 'Jerry' },
         { source: 'George', target: 'Jerry' },
         { target: 'George', source: 'Jerry' },
         { target: 'Kramer', source: 'George' },
         { target: 'Kramer', source: 'Jerry' },
         { target: 'Jerry', source: 'Kramer' },
-        { target: 'Jerry', source: 'Elaine' },
-        { target: 'Elaine', source: 'Jerry' },
         { target: 'Elaine', source: 'Kramer' },
         { target: 'Kramer', source: 'Elaine' },
       ]}

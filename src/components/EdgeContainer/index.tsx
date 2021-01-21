@@ -23,7 +23,6 @@ export type EdgeContainerProps = {
   config?: EdgeConfig;
 }
 
-
 export type EdgeContainerType = React.FC<EdgeContainerProps>
 
 const EdgeContainerElement = (
@@ -78,10 +77,10 @@ const EdgeContainerElement = (
       from: sourceElementContext.boundingBox,
       directed: true,
       distance: sortedIndex * 40,
-      // margin: {
-      //   x: sortedIndex * 4,
-      //   y: sortedIndex * 4,
-      // },
+      margin: {
+        x: sortedIndex * 4,
+        y: sortedIndex * 4,
+      },
     })
   }, [containerRef, graphicsRef])
   const onPositionChange = React.useCallback(({ element }) => {
@@ -139,3 +138,4 @@ export const EdgeContainer = wrapComponent<EdgeContainerProps>(
     isForwardRef: true,
   },
 )
+
