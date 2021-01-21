@@ -40,7 +40,7 @@ export {
   ProfileTemplate,
 } from './templates/Profile'
 
-export { GraphProps } from './Graph'
+export type { GraphProps } from './Graph'
 
 export {
   drawLine,

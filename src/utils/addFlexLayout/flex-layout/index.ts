@@ -5,7 +5,8 @@ import { applyDisplayObjectPolyfill } from './displayObjectPolyfill'
 import { yogaAnimationManager } from './YogaAnimationManager'
 import { YogaLayout } from './YogaLayout'
 
-export { YogaLayout, IYogaAnimationConfig } from './YogaLayout'
+export { YogaLayout } from './YogaLayout'
+export type { IYogaAnimationConfig } from './YogaLayout'
 export { YogaLayoutConfig } from './YogaLayoutConfig'
 export * from './YogaContants'
 
