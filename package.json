@@ -1,6 +1,6 @@
 {
   "name": "perfect-graph",
-  "version": "0.0.61",
+  "version": "0.0.62",
   "description": "",
   "main": "node_modules/expo/AppEntry.js",
   "types": "dist/index.d.ts",
@@ -19,6 +19,7 @@
     "build": "rm -rf dist && yarn build:js && yarn build:types",
     "build:js": "babel src -d dist --config-file ./babel.config.js --extensions \".js,.jsx,.ts,.tsx\" --copy-files",
     "fire": "yarn build && yarn version --patch && cp ./package.json ./dist && cd dist && npm publish",
+    "fire:beta": "yarn build:js && yarn version --patch && cp ./package.json ./dist && cd dist && npm publish --tag beta",
     "auth": "cd dist && npm login --always-auth && cd ..",
     "test": "jest",
     "chromatic": "chromatic --project-token 1un5jqj6bcs"
