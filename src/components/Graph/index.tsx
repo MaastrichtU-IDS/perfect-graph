@@ -153,7 +153,7 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
           width,
           height,
           resolution: window.devicePixelRatio || 1, // 64, // window.devicePixelRatio || 1,
-          antialias: false,
+          antialias: true,
           autoDensity: true,
           backgroundColor,
         }}
