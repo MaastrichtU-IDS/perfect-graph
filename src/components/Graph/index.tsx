@@ -53,7 +53,7 @@ export const DefaultRenderNode: RenderNode = ({ item }) => (
         position: 'absolute',
         top: 0, // -40
         color: '#fff', // 'black'
-        fontSize: 15
+        fontSize: 15,
       }}
       isSprite
     >
