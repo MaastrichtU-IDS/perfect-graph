@@ -60,133 +60,61 @@ export const TripleItem = (props: TripleItemProps) => {
       ...state,
       extended: !state.extended,
     })
-  }, [setState])
+  }, [])
   return (
-    <Grid
-      container
-      // xs={12}
-    >
-      <Grid
-        container
-        // style={{ flexDirection: 'row', display: 'flex' }}
+    <>
+      <Box
+        sx={{
+          width: '100%',
+          height: 300,
+          display: 'grid',
+          gridTemplateRows: 'repeat(3, 1fr)',
+          gridTemplateAreas: `"type type value value icons"
+          `,
+        }}
       >
-        <Grid
-          item
-          xs={5}
+        <Box
+          sx={{ gridArea: 'type' }}
         >
           <TripleInput
             placeholder="Enter Type"
             value={name}
             onValueChange={(value) => onEvent(EVENT.CHANGE_DATA_NAME, { value })}
           />
-        </Grid>
-        <Grid
-          item
-          xs={5}
+        </Box>
+        <Box
+          sx={{ gridArea: 'value' }}
         >
-          {
-            R.ensureArray(value).map((valueItem, valueIndex) => (
-              <Box
-                sx={{
-                  marginBottom: 5,
-                  display: 'flex',
-                  flexDirection: 'row',
-                }}
-              >
-                <TripleInput
-                  placeholder="Enter Value"
-                  value={valueItem}
-                  onValueChange={(value) => onEvent(EVENT.CHANGE_DATA_VALUE, { value, valueIndex })}
-                  // type={type}
-                />
-                <Box
-                  style={{ width: ICON_SIZE }}
-                >
-                  {
-                  isMulti && (
-                  <IconButton
-                    onClick={() => onEvent(EVENT.DELETE_DATA_VALUE, { valueIndex, valueItem })}
-                    sx={{ width: ICON_SIZE, height: ICON_SIZE, p: 0 }}
-                  >
-                    <Icon
-                      name="close"
-                      style={{ fontSize: ICON_SIZE }}
-                    />
-                  </IconButton>
-                  )
-}
-                  {
-                  isMulti && !isAdditional && (
-                  <>
-                    <IconButton
-                      onClick={() => onEvent(EVENT.DATA_VALUE_UP, { valueIndex, valueItem })}
-                      sx={{ width: ICON_SIZE, height: ICON_SIZE }}
-                    >
-                      <Icon
-                        name="arrow_drop_up_rounded"
-                        style={{ fontSize: ICON_SIZE }}
-                      />
-                    </IconButton>
-                    <IconButton
-                      onClick={() => onEvent(EVENT.DATA_VALUE_DOWN, { valueIndex, valueItem })}
-                      sx={{ width: ICON_SIZE, height: ICON_SIZE }}
-                    >
-                      <Icon
-                        name="arrow_drop_down_rounded"
-                        style={{ fontSize: ICON_SIZE }}
-                      />
-                    </IconButton>
-
-                  </>
-                  )
-}
-                </Box>
-              </Box>
-            ))
-          }
-          {
-            // Enter New Value
-            state.extended && (
-            <TripleInput
-              textStyle={{
-                borderBottomWidth: 1,
-                marginBottom: 5,
-                fontStyle: 'italic',
-              }}
-              placeholder="Enter Value"
-              value={state.newDataValue}
-              onValueChange={(value) => setState({
-                ...state,
-                newDataValue: value,
-              })}
-              onEnter={() => {
-                onEvent(EVENT.ADD_DATA_VALUE, { value: state.newDataValue })
-                setState({
-                  ...state,
-                  newDataValue: '',
-                })
-              }}
-            />
-            )
-          }
-        </Grid>
-        <IconBox
-          isAdditional={isAdditional}
-          extended={state.extended}
-          onExtend={onExtend}
-          onEvent={onEvent}
-          type={type}
-          isLocalLabel={isLocalLabel}
-          isGlobalLabel={isGlobalLabel}
-          isGlobalLabelFirst={isGlobalLabelFirst}
-        />
-      </Grid>
+          <ValueBox
+            isMulti={isMulti}
+            isAdditional={isAdditional}
+            state={state}
+            setState={setState}
+            onEvent={onEvent}
+            value={value}
+          />
+        </Box>
+        <Box
+          sx={{ gridArea: 'icons' }}
+        >
+          <IconBox
+            isAdditional={isAdditional}
+            extended={state.extended}
+            onEvent={onEvent}
+            onExtend={onExtend}
+            type={type}
+            isLocalLabel={isLocalLabel}
+            isGlobalLabel={isGlobalLabel}
+            isGlobalLabelFirst={isGlobalLabelFirst}
+          />
+        </Box>
+      </Box>
       <AdditionalInfo
         extended={state.extended}
         additional={additional}
         onEvent={onEvent}
       />
-    </Grid>
+    </>
   )
 }
 
@@ -255,6 +183,109 @@ const AdditionalInfo = (props: AdditionalInfoProps) => {
     </Collapse>
   )
 }
+type ValueBoxProps = {
+  extended: boolean;
+} & Pick<TripleItemProps, 'value' | 'onEvent' | 'isMulti' | 'isAdditional'>
+const ValueBox = (props: ValueBoxProps) => {
+  const {
+    isMulti,
+    onEvent,
+    value,
+    isAdditional,
+    extended,
+    state,
+    setState,
+  } = props
+  return (
+    <>
+      {
+              R.ensureArray(value).map((valueItem, valueIndex) => (
+                <Box
+                  sx={{
+                    marginBottom: 5,
+                    display: 'flex',
+                    flexDirection: 'row',
+                  }}
+                >
+                  <TripleInput
+                    placeholder="Enter Value"
+                    value={valueItem}
+                    onValueChange={(value) => onEvent(EVENT.CHANGE_DATA_VALUE, { value, valueIndex })}
+                    // type={type}
+                  />
+                  <Box
+                    style={{ width: ICON_SIZE }}
+                  >
+                    {
+                    isMulti && (
+                    <IconButton
+                      onClick={() => onEvent(EVENT.DELETE_DATA_VALUE, { valueIndex, valueItem })}
+                      sx={{ width: ICON_SIZE, height: ICON_SIZE, p: 0 }}
+                    >
+                      <Icon
+                        name="close"
+                        style={{ fontSize: ICON_SIZE }}
+                      />
+                    </IconButton>
+                    )
+  }
+                    {
+                    isMulti && !isAdditional && (
+                    <>
+                      <IconButton
+                        onClick={() => onEvent(EVENT.DATA_VALUE_UP, { valueIndex, valueItem })}
+                        sx={{ width: ICON_SIZE, height: ICON_SIZE }}
+                      >
+                        <Icon
+                          name="arrow_drop_up_rounded"
+                          style={{ fontSize: ICON_SIZE }}
+                        />
+                      </IconButton>
+                      <IconButton
+                        onClick={() => onEvent(EVENT.DATA_VALUE_DOWN, { valueIndex, valueItem })}
+                        sx={{ width: ICON_SIZE, height: ICON_SIZE }}
+                      >
+                        <Icon
+                          name="arrow_drop_down_rounded"
+                          style={{ fontSize: ICON_SIZE }}
+                        />
+                      </IconButton>
+
+                    </>
+                    )
+  }
+                  </Box>
+                </Box>
+              ))
+            }
+      {
+            // Enter New Value
+            extended && (
+            <TripleInput
+              textStyle={{
+                borderBottomWidth: 1,
+                marginBottom: 5,
+                fontStyle: 'italic',
+              }}
+              placeholder="Enter Value"
+              value={state.newDataValue}
+              onValueChange={(value) => setState({
+                ...state,
+                newDataValue: value,
+              })}
+              onEnter={() => {
+                onEvent(EVENT.ADD_DATA_VALUE, { value: state.newDataValue })
+                setState({
+                  ...state,
+                  newDataValue: '',
+                })
+              }}
+            />
+            )
+          }
+    </>
+  )
+}
 
 type IconBoxProps = {
   isAdditional: boolean;
@@ -313,21 +344,10 @@ const IconBox = (props: IconBoxProps) => {
             </IconButton>
             {isGlobalLabelFirst && (
             <Divider style={{ backgroundColor: 'black', width: ICON_SIZE - 2 }} />)}
-            {/* <Icon
-              name="plus-box"
-              size={ICON_SIZE}
-              onPress={() => onEvent(EVENT.ADD_DATA_VALUE)}
-            /> */}
           </Box>
           )
         }
       <Box>
-        {/* <Icon
-          name="repeat"
-          size={ICON_SIZE}
-          onPress={() => onEvent(EVENT.CLEAR)}
-        /> */}
-
         {
           !isAdditional && (
           <IconButton
@@ -364,14 +384,7 @@ const IconBox = (props: IconBoxProps) => {
             </IconButton>
           )
         }
-        {/* {
-        TYPE_ICONS[type]({
-          size: ICON_SIZE,
-          onPress: () => onEvent(EVENT.CHANGE_TYPE),
-        })
-      } */}
       </Box>
-
     </>
   )
 }

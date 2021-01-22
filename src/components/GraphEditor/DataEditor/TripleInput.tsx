@@ -174,7 +174,6 @@ const TripleInputElement = (
         </Typography>
       </ButtonBase>
     </ClickAwayListener>
-
   )
 }
 

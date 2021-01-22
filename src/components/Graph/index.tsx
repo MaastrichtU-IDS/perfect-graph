@@ -37,32 +37,6 @@ export type GraphProps = {
   selectedElements?: Element[];
 }
 
-export const DefaultRenderNode: RenderNode = ({ item }) => (
-  <View style={{
-    width: 50,
-    height: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    display: 'flex',
-    backgroundColor: 'blue', // DefaultTheme.palette.background.paper,
-    borderRadius: 30, // 50
-  }}
-  >
-    <Text
-      style={{
-        position: 'absolute',
-        top: 0, // -40
-        color: '#fff', // 'black'
-        fontSize: 15,
-      }}
-      isSprite
-    >
-      {item.id}
-
-    </Text>
-  </View>
-)
-
 // export const DefaultRenderNode: RenderNode = ({ item }) => (
 //   <View style={{
 //     width: 50,
@@ -70,15 +44,16 @@ export const DefaultRenderNode: RenderNode = ({ item }) => (
 //     justifyContent: 'center',
 //     alignItems: 'center',
 //     display: 'flex',
-//     backgroundColor: DefaultTheme.palette.background.paper,
-//     borderRadius: 50,
+//     backgroundColor: 'blue', // DefaultTheme.palette.background.paper,
+//     borderRadius: 30, // 50
 //   }}
 //   >
 //     <Text
 //       style={{
 //         position: 'absolute',
-//         top: -40,
-//         color: 'black',
+//         top: 0, // -40
+//         color: '#fff', // 'black'
+//         fontSize: 15,
 //       }}
 //       isSprite
 //     >
@@ -87,6 +62,31 @@ export const DefaultRenderNode: RenderNode = ({ item }) => (
 //     </Text>
 //   </View>
 // )
+
+export const DefaultRenderNode: RenderNode = ({ item }) => (
+  <View style={{
+    width: 50,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    display: 'flex',
+    backgroundColor: DefaultTheme.palette.background.paper,
+    borderRadius: 50,
+  }}
+  >
+    <Text
+      style={{
+        position: 'absolute',
+        top: -40,
+        color: 'black',
+      }}
+      isSprite
+    >
+      {item.id}
+
+    </Text>
+  </View>
+)
 
 // @ts-ignore
 export const DefaultRenderEdge: RenderEdge = () => (
