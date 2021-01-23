@@ -60,6 +60,9 @@ export default (props: Props): Result => {
     }, // destroy
     [cy, id],
   )
+  React.useEffect(() => {
+    element.position(position)
+  }, [position])
   useElement({
     contextRef,
     cy,

@@ -5,3 +5,6 @@ export default {
 export {
   DefaultElement
 } from './Default'
+export {
+  Animation
+} from './Animation'
