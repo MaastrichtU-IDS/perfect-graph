@@ -53,6 +53,8 @@ export const TEXT_STYLE_MAP = {
   } as TextStyle,
 } as const
 
+export const TRIPLE_INPUT_HEIGHT = 50
+
 export type TripleInputType = React.FC<TripleInputProps>
 
 const TripleInputElement = (
@@ -105,6 +107,7 @@ const TripleInputElement = (
       editable: false,
     })
   }, [])
+
   return (
     <ClickAwayListener onClickAway={onBlur}>
       <ButtonBase
@@ -112,6 +115,7 @@ const TripleInputElement = (
           width: '100%',
           alignItems: 'flex-start',
           display: 'flex',
+          height: TRIPLE_INPUT_HEIGHT,
           ...style,
         }}
         disableTouchRipple
