@@ -28,11 +28,12 @@ export const DataForm = (props: DataEditorProps) => {
       sx={{
         overflow: 'scroll',
         height: '100%',
+        pb: 12,
       }}
     >
       <Form
-        formData={data}
-        onChange={(e) => onEvent({
+        formData={data ?? []}
+        onSubmit={(e) => onEvent({
           type: EVENT.UPDATE_DATA,
           extraData: {
             value: e.formData,

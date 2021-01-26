@@ -11,6 +11,7 @@ export const getProject = /* GraphQL */ `
           id
           projectID
           data
+          position
           createdAt
           updatedAt
         }
@@ -72,6 +73,7 @@ export const getNode = /* GraphQL */ `
         updatedAt
       }
       data
+      position
       createdAt
       updatedAt
     }
@@ -93,6 +95,7 @@ export const listNodes = /* GraphQL */ `
           updatedAt
         }
         data
+        position
         createdAt
         updatedAt
       }

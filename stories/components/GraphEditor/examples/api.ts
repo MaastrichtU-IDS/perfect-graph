@@ -1,13 +1,14 @@
 import Amplify, { API, }  from "aws-amplify";
+import  { Position }  from "colay/type";
 import awsExports from "../../../../src/aws-exports";
 // import { createElement, deleteElement, updateElement } from '../../../../graphql/mutations'
 // import { listProjects } from '../../../../graphql/queries'
 Amplify.configure(awsExports);
 
-const LIST_PROJECTS = `query MyQuery {
+const LIST_PROJECTS = `query ListProjects {
   listProjects(limit: 1) {
-    id
     items {
+      id
       edges {
         items {
           id
@@ -20,19 +21,38 @@ const LIST_PROJECTS = `query MyQuery {
         items {
           id
           data
+          position
         }
       }
     }
   }
 }`
 
-const CREATE_NODE = `mutation CreateNode($data: AWSJSON!, $projectID: ID!) {
-  createNode(input: {projectID: $projectID, data: $data}) {
+const CREATE_NODE = `mutation CreateNode(
+  $projectID: ID!,
+  $data: AWSJSON!,
+  $position: AWSJSON!,
+  ) {
+  createNode(input: {
+    projectID: $projectID,
+    data: $data,
+    position: $position
+  }) {
     id
+    data
+    position
   }
 }`
 const UPDATE_NODE = `mutation UpdateNode($data: AWSJSON!, $id: ID!) {
   updateNode(input: {id: $id, data: $data}) {
+    id
+    data
+    position
+  }
+}`
+
+const DELETE_NODE = `mutation DeleteNode($id: ID = "") {
+  deleteNode(input: {id: $id}) {
     id
   }
 }`
@@ -50,43 +70,99 @@ const CREATE_EDGE = `mutation CreateEdge(
     target: $target,
   }) {
     id
+    data
+    source
+    target
   }
 }`
 
 const UPDATE_EDGE = `mutation UpdateEdge($data: AWSJSON!, $id: ID!) {
   updateEdge(input: {id: $id, data: $data}) {
     id
+    data
+    source
+    target
+  }
+}`
+const ON_CREATE_NODE = `subscription OnCreateNode {
+  onCreateNode {
+    data
+    id
+    position
+  }
+}`
+const ON_CREATE_EDGE = `subscription OnCreateEdge {
+  onCreateEdge {
+    data
+    id
+  }
+}`
+const ON_UPDATE_NODE = `subscription OnUpdateNode {
+  onUpdateNode {
+    id
+    data
+    position
+  }
+}`
+const ON_UPDATE_EDGE = `subscription OnUpdateEdge {
+  onUpdateEdge {
+    id
+    data
+    source
+    trget
+  }
+}`
+const ON_DELETE_NODE = `subscription OnDeleteNode {
+  onDeleteNode {
+    id
+  }
+}`
+const ON_DELETE_EDGE = `subscription OnDeleteEdge {
+  onDeleteEdge {
+    id
   }
 }`
 
-const PROJECT_ID = 'daa9975c-6bdc-4ab3-9a01-2d1dca1f2290'
+const convertJSONStringFields = (item) => {
+  console.log('AAA', item, JSON.parse(item.data))
+  return {
+    ...item,
+    ...(item.position ? { position: JSON.parse(item.position)} : {}),
+    data: JSON.parse(item.data)
+  }
+}
 
-async function listProjects() {
+export async function listProjects() {
   try {
     const listProjectResult = await API.graphql({
       query: LIST_PROJECTS,
-      authMode: 'API_KEY'
+      authMode: 'API_KEY',
     })
-    const projectResult = listProjectResult.data.listProjects.items[0]
-    const project = {
-      ...projectResult,
-      nodes: projectResult.nodes.items,
-      edges: projectResult.edges.items,
-    }
-    console.log('p',project)
+    const projectResults = listProjectResult.data.listProjects.items
+    console.log('pppp', projectResults)
+    return projectResults.map(project => ({
+      ...project,
+      nodes: project.nodes.items.map(convertJSONStringFields),
+      edges: project.edges.items.map(convertJSONStringFields),
+    }))
   } catch (err) { console.log('error listing project', err) }
 }
 
 type CreateNodeVariables = {
   projectID: string;
   data: any;
+  position: Position;
 }
-async function createNode(variables: CreateNodeVariables) {
+export async function createNode(variables: CreateNodeVariables) {
   try {
     const createNodeResult = await API.graphql({
       query: CREATE_NODE,
       authMode: 'API_KEY',
-      variables
+      variables: {
+        ...variables,
+        data: JSON.stringify(variables.data),
+        position: JSON.stringify(variables.position),
+      }
     })
   } catch (err) {
     console.log('error creating node:', err)
@@ -97,10 +173,27 @@ type UpdateNodeVariables = {
   id: string;
   data: any;
 }
-async function updateNode(variables: UpdateNodeVariables) {
+export async function updateNode(variables: UpdateNodeVariables) {
   try {
     const updateNodeResult = await API.graphql({
       query: UPDATE_NODE,
+      authMode: 'API_KEY',
+      variables: {
+        ...variables,
+        data: JSON.stringify(variables.data)
+      }
+    })
+  } catch (err) {
+    console.log('error creating node:', err)
+  }
+}
+type DeleteNodeVariables = {
+  id: string;
+}
+export async function deleteNode(variables: DeleteNodeVariables) {
+  try {
+    const updateNodeResult = await API.graphql({
+      query: DELETE_NODE,
       authMode: 'API_KEY',
       variables
     })
@@ -115,12 +208,15 @@ type CreateEdgeVariables = {
   source: string;
   target: string;
 }
-async function createEdge(variables: CreateEdgeVariables) {
+export async function createEdge(variables: CreateEdgeVariables) {
   try {
     const createEdgeResult = await API.graphql({
       query: CREATE_EDGE,
       authMode: 'API_KEY',
-      variables
+      variables: {
+        ...variables,
+        data: JSON.stringify(variables.data)
+      }
     })
   } catch (err) {
     console.log('error creating edge:', err)
@@ -131,15 +227,102 @@ type UpdateEdgeVariables = {
   id: string;
   data: any;
 }
-async function updateEdge(variables: UpdateEdgeVariables) {
+export async function updateEdge(variables: UpdateEdgeVariables) {
   try {
     const updateEdgeResult = await API.graphql({
       query: UPDATE_EDGE,
       authMode: 'API_KEY',
-      variables
+      variables: {
+        ...variables,
+        data: JSON.stringify(variables.data)
+      }
     })
   } catch (err) {
     console.log('error creating node:', err)
   }
 }
+
+
+export function onCreateNode(callback: (node: any) => void) {
+  try {
+     return API.graphql({
+      query: ON_CREATE_NODE,
+      authMode: 'API_KEY',
+    }).subscribe((nodeData) => {
+      const nodeRaw = nodeData.value.data.onCreateNode
+      callback(convertJSONStringFields(nodeRaw))
+    })
+  } catch (err) {
+    console.log('error creating node:', err)
+  }
+}
+export function onUpdateNode(callback: (node: any) => void) {
+  try {
+     return API.graphql({
+      query: ON_UPDATE_NODE,
+      authMode: 'API_KEY',
+    }).subscribe((nodeData) => {
+      console.log('onUpdateNodex', nodeData)
+      const nodeRaw = nodeData.value.data.onUpdateNode
+      callback(convertJSONStringFields(nodeRaw))
+    })
+  } catch (err) {
+    console.log('error creating node:', err)
+  }
+}
+
+export function onDeleteNode(callback: (id: string) => void) {
+  try {
+    return API.graphql({
+      query: ON_DELETE_NODE,
+      authMode: 'API_KEY',
+    }).subscribe((nodeData) => {
+      const nodeRaw = nodeData.value.data.onDeleteNode
+      callback(nodeRaw.id)
+    })
+  } catch (err) {
+    console.log('error creating node:', err)
+  }
+}
+
+export function onCreateEdge(callback: (node: any) => void) {
+  try {
+     return API.graphql({
+      query: ON_CREATE_EDGE,
+      authMode: 'API_KEY',
+    }).subscribe((edgeData) => {
+      const edgeRaw = edgeData.value.data.onCreateEdge
+      callback(convertJSONStringFields(edgeRaw))
+    })
+  } catch (err) {
+    console.log('error creating node:', err)
+  }
+}
+export function onUpdateEdge(callback: (edge: any) => void) {
+  try {
+    return API.graphql({
+      query: ON_UPDATE_EDGE,
+      authMode: 'API_KEY',
+    }).subscribe((edgeData) => {
+      const edgeRaw = edgeData.value.data.onUpdateEdge
+      callback(convertJSONStringFields(edgeRaw))
+    })
+  } catch (err) {
+    console.log('error creating node:', err)
+  }
+}
+export function onDeleteEdge(callback: (id: string) => void) {
+  try {
+    return API.graphql({
+      query: ON_DELETE_EDGE,
+      authMode: 'API_KEY',
+    }).subscribe((edgeData) => {
+      const edgeRaw = edgeData.value.data.onDeleteEdge
+      callback(edgeRaw.id)
+    })
+  } catch (err) {
+    console.log('error creating node:', err)
+  }
+}
+
 // listProjects()

@@ -11,6 +11,7 @@ export const onCreateProject = /* GraphQL */ `
           id
           projectID
           data
+          position
           createdAt
           updatedAt
         }
@@ -42,6 +43,7 @@ export const onUpdateProject = /* GraphQL */ `
           id
           projectID
           data
+          position
           createdAt
           updatedAt
         }
@@ -73,6 +75,7 @@ export const onDeleteProject = /* GraphQL */ `
           id
           projectID
           data
+          position
           createdAt
           updatedAt
         }
@@ -112,6 +115,7 @@ export const onCreateNode = /* GraphQL */ `
         updatedAt
       }
       data
+      position
       createdAt
       updatedAt
     }
@@ -134,6 +138,7 @@ export const onUpdateNode = /* GraphQL */ `
         updatedAt
       }
       data
+      position
       createdAt
       updatedAt
     }
@@ -156,6 +161,7 @@ export const onDeleteNode = /* GraphQL */ `
         updatedAt
       }
       data
+      position
       createdAt
       updatedAt
     }

@@ -47,7 +47,7 @@ export const useController = (
     () => R.mergeDeepAll([
       DEFAULT_CONTROLLER_CONFIG,
       useControllerData,
-    ]) as UseControllerData, [useControllerData],
+    ]) as UseControllerData, [], // useControllerData
   )
   const [state, update] = React.useState<ControllerState>(
     controllerConfig,
@@ -67,7 +67,7 @@ export const useController = (
       const draft = R.clone(_state)
       const isAllowedToProcess = controllerConfig.onEvent?.(eventInfo, draft)
       if (isAllowedToProcess === false) {
-        return
+        return draft
       }
       const {
         item,
@@ -275,7 +275,15 @@ export const useController = (
       ...state,
       onEvent,
     } as Pick<GraphEditorProps, 'nodes' | 'edges' | 'onEvent' | 'graphConfig'>,
-    {},
+    {
+      update: (callback: (draft: ControllerState) => ControllerState) => {
+        update((currState) => {
+          const draft = R.clone(currState)
+          return callback(draft)
+        })
+      },
+      onEvent,
+    },
   ]
 }
 
