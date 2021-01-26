@@ -1,12 +1,12 @@
 {
-  "projectName": "perfectGraph",
+  "projectName": "perfectgraph",
   "version": "3.0",
   "frontend": "javascript",
   "javascript": {
-    "framework": "react-native",
+    "framework": "react",
     "config": {
-      "SourceDir": "/",
-      "DistributionDir": "/",
+      "SourceDir": "src",
+      "DistributionDir": "build",
       "BuildCommand": "npm run-script build",
       "StartCommand": "npm run-script start"
     }

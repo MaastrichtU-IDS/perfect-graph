@@ -21,7 +21,7 @@ export type DataBarProps = {
   onEvent?: OnEvent;
 } & Omit<DataEditorProps, 'data'>
 
-const WIDTH_PROPORTION = 30
+const WIDTH_PROPORTION = 40
 
 export const DataBar = (props: DataBarProps) => {
   const {

@@ -1,7 +1,6 @@
 {
-  "hosting": {},
   "auth": {
-    "perfectgraph58f32522": {
+    "perfectgraphdce98bb9": {
       "service": "Cognito",
       "providerPlugin": "awscloudformation",
       "dependsOn": [],
@@ -15,20 +14,13 @@
       "output": {
         "authConfig": {
           "defaultAuthentication": {
-            "authenticationType": "AMAZON_COGNITO_USER_POOLS",
-            "userPoolConfig": {
-              "userPoolId": "authperfectgraph58f32522"
+            "authenticationType": "API_KEY",
+            "apiKeyConfig": {
+              "apiKeyExpirationDays": 7,
+              "description": "perfectgraph"
             }
           },
-          "additionalAuthenticationProviders": [
-            {
-              "authenticationType": "API_KEY",
-              "apiKeyConfig": {
-                "apiKeyExpirationDays": 7,
-                "description": "apiKey"
-              }
-            }
-          ]
+          "additionalAuthenticationProviders": []
         }
       }
     }

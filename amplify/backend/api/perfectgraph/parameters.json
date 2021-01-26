@@ -1,11 +1,5 @@
 {
-    "AppSyncApiName": "perfectgraph",
-    "DynamoDBBillingMode": "PAY_PER_REQUEST",
-    "DynamoDBEnableServerSideEncryption": false,
-    "AuthCognitoUserPoolId": {
-        "Fn::GetAtt": [
-            "authperfectgraph58f32522",
-            "Outputs.UserPoolId"
-        ]
-    }
+  "AppSyncApiName": "perfectgraph",
+  "DynamoDBBillingMode": "PAY_PER_REQUEST",
+  "DynamoDBEnableServerSideEncryption": false
 }

@@ -1,8 +1,8 @@
 {
-    "identityPoolName": "perfectgraph58f32522_identitypool_58f32522",
+    "identityPoolName": "perfectgraphdce98bb9_identitypool_dce98bb9",
     "allowUnauthenticatedIdentities": false,
-    "resourceNameTruncated": "perfec58f32522",
-    "userPoolName": "perfectgraph58f32522_userpool_58f32522",
+    "resourceNameTruncated": "perfecdce98bb9",
+    "userPoolName": "perfectgraphdce98bb9_userpool_dce98bb9",
     "autoVerifiedAttributes": [
         "email"
     ],
@@ -28,10 +28,10 @@
     "userpoolClientReadAttributes": [
         "email"
     ],
-    "userpoolClientLambdaRole": "perfec58f32522_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "perfecdce98bb9_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "58f32522",
-    "resourceName": "perfectgraph58f32522",
+    "sharedId": "dce98bb9",
+    "resourceName": "perfectgraphdce98bb9",
     "authSelections": "identityPoolAndUserPool",
     "authRoleArn": {
         "Fn::GetAtt": [
@@ -45,15 +45,9 @@
             "Arn"
         ]
     },
-    "useDefault": "defaultSocial",
-    "hostedUI": true,
-    "hostedUIDomainName": "perfectgraph58f32522-58f32522",
-    "authProvidersUserPool": [
-        "Google"
-    ],
-    "hostedUIProviderMeta": "[{\"ProviderName\":\"Google\",\"authorize_scopes\":\"openid email profile\",\"AttributeMapping\":{\"email\":\"email\",\"username\":\"sub\"}}]",
-    "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\",\"aws.cognito.signin.user.admin\"],\"CallbackURLs\":[\"http://localhost:19006/\"],\"LogoutURLs\":[\"http://localhost:19006/\"]}",
+    "useDefault": "default",
     "userPoolGroupList": [],
     "serviceName": "Cognito",
+    "usernameCaseSensitive": false,
     "dependsOn": []
 }

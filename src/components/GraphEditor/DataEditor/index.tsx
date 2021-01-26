@@ -9,6 +9,7 @@ import { NewTripleItem } from './NewTripleItem'
 import {
   TripleItem, EventType,
 } from './TripleItem'
+import { DataForm } from './DataForm'
 
 export type DataEditorProps = {
   style?: BoxProps['style'];
@@ -66,7 +67,7 @@ const DataEditorElement = (props: DataEditorProps) => {
 
   )
 }
-export const DataEditor = DataEditorElement
+export const DataEditor = DataForm // DataEditorElement
 // wrapComponent<DataEditorProps>(
 //   DataEditorElement,
 //   {},

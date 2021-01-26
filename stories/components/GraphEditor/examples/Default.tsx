@@ -3,6 +3,7 @@ import {   GraphEditor,  } from '../../../../src/components/GraphEditor'
 import {   Code,  } from '../../../index'
 import { useController } from '../../../../src/plugins/controller'
 import { EVENT } from '../../../../src/utils/constants'
+import './api'
 
 export const DefaultElement = () => {
   const [controllerProps] = useController({

@@ -76,6 +76,10 @@ export const useController = (
       const targetDataList = item?.data!// getSelectedItemByElement(element, draft).data
 
       switch (type) {
+        case EVENT.UPDATE_DATA:
+          item.data = extraData.value
+          console.log('a', item.data)
+          break
         case EVENT.ADD_DATA:
           targetDataList.push({
             ...extraData,

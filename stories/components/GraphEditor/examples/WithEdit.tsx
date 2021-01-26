@@ -1,19 +1,23 @@
 import React from 'react'
-import {   GraphEditor,  } from '../../../../src/components/GraphEditor'
-import {   Code,  } from '../../../index'
+import { GraphEditor, } from '../../../../src/components/GraphEditor'
+import { Code, } from '../../../index'
 import { useController } from '../../../../src/plugins/controller'
 import { EVENT } from '../../../../src/utils/constants'
 
 const COUNT  = 10
 
+// "[{ \"name\": \"foaf:name\", \"value\": [\"ts\",\"saba\"], \"additional\": []}]"
 export const WithEditElement = () => {
-  const [controllerProps] = useController({
+  const [state, setState] = React.useState({
     nodes: new Array(COUNT).fill(0).map((_, index) => (
       { id: `${index}`, position: { x: index * 100, y: index * 100 },  data: [{ name: 'foaf:name', value: ['ts','saba'], additional: []}]}
     )),
     edges: new Array(COUNT - 1).fill(0).map((_,index) => (
       { id: `edge:${index}`, source: `${index}`,  target: `${index+1}`,  data: [{ name: 'foaf:name', value: ['ts','saba'], additional: []}]}
     )),
+  })
+  const [controllerProps] = useController({
+    ...state,
     // graphConfig: {
     //   layout: Graph.Layouts.euler,
     //   zoom: 0.2
@@ -27,11 +31,7 @@ export const WithEditElement = () => {
       opened: true,
     },
     actionBar: {
-      // opened: true,
-      actions: {
-        add: { visible: false },
-        delete: { visible: false },
-      }
+      opened: true,
     },
     onEvent: ({
       type,
@@ -47,6 +47,11 @@ export const WithEditElement = () => {
           // } else {
           //   configRef.current.visualization = extraData.value
           // }
+          break
+        }
+        case EVENT.UPDATE_DATA: {
+          console.log(element.id(), extraData)
+          return true
           break
         }
       

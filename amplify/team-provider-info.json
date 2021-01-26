@@ -1,46 +1,20 @@
 {
   "dev": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-perfectgraph-dev-111847-authRole",
-      "UnauthRoleArn": "arn:aws:iam::665988736951:role/amplify-perfectgraph-dev-111847-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::665988736951:role/amplify-perfectgraph-dev-111847-authRole",
+      "AuthRoleName": "amplify-perfectgraph-dev-144655-authRole",
+      "UnauthRoleArn": "arn:aws:iam::665988736951:role/amplify-perfectgraph-dev-144655-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::665988736951:role/amplify-perfectgraph-dev-144655-authRole",
       "Region": "us-east-1",
-      "DeploymentBucketName": "amplify-perfectgraph-dev-111847-deployment",
-      "UnauthRoleName": "amplify-perfectgraph-dev-111847-unauthRole",
-      "StackName": "amplify-perfectgraph-dev-111847",
-      "StackId": "arn:aws:cloudformation:us-east-1:665988736951:stack/amplify-perfectgraph-dev-111847/763d04c0-24d0-11eb-8cfd-0a8534d05dcd",
-      "AmplifyAppId": "d235lr1q7om7lm"
+      "DeploymentBucketName": "amplify-perfectgraph-dev-144655-deployment",
+      "UnauthRoleName": "amplify-perfectgraph-dev-144655-unauthRole",
+      "StackName": "amplify-perfectgraph-dev-144655",
+      "StackId": "arn:aws:cloudformation:us-east-1:665988736951:stack/amplify-perfectgraph-dev-144655/f62f4930-5fdc-11eb-a4a0-0ad959ac0b5f",
+      "AmplifyAppId": "d5zx7zon0aanj"
     },
     "categories": {
       "auth": {
-        "perfectgraph58f32522": {}
+        "perfectgraphdce98bb9": {}
       }
-    }
-  },
-  "prod": {
-    "awscloudformation": {
-      "AuthRoleName": "amplify-perfectgraph-prod-115253-authRole",
-      "UnauthRoleArn": "arn:aws:iam::665988736951:role/amplify-perfectgraph-prod-115253-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::665988736951:role/amplify-perfectgraph-prod-115253-authRole",
-      "Region": "us-east-1",
-      "DeploymentBucketName": "amplify-perfectgraph-prod-115253-deployment",
-      "UnauthRoleName": "amplify-perfectgraph-prod-115253-unauthRole",
-      "StackName": "amplify-perfectgraph-prod-115253",
-      "StackId": "arn:aws:cloudformation:us-east-1:665988736951:stack/amplify-perfectgraph-prod-115253/38ae19a0-24d5-11eb-8845-0afa5528cb21",
-      "AmplifyAppId": "d235lr1q7om7lm"
-    }
-  },
-  "test": {
-    "awscloudformation": {
-      "AuthRoleName": "amplify-perfectgraph-test-115504-authRole",
-      "UnauthRoleArn": "arn:aws:iam::665988736951:role/amplify-perfectgraph-test-115504-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::665988736951:role/amplify-perfectgraph-test-115504-authRole",
-      "Region": "us-east-1",
-      "DeploymentBucketName": "amplify-perfectgraph-test-115504-deployment",
-      "UnauthRoleName": "amplify-perfectgraph-test-115504-unauthRole",
-      "StackName": "amplify-perfectgraph-test-115504",
-      "StackId": "arn:aws:cloudformation:us-east-1:665988736951:stack/amplify-perfectgraph-test-115504/86b624d0-24d5-11eb-986b-126bf0867249",
-      "AmplifyAppId": "d235lr1q7om7lm"
     }
   }
 }
