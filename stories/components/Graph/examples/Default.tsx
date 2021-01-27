@@ -38,6 +38,14 @@ export const DefaultElement = () => (
         { target: 'Elaine', source: 'Kramer' },
         { target: 'Kramer', source: 'Elaine' },
       ]}
+      config={{
+        edges: {
+          renderEvents: ['selectNode', 'unselectNode', 'select', 'unselect']
+        },
+        nodes: {
+          renderEvents: ['selectEdge', 'unselectEdge','select', 'unselect']
+        }
+      }}
       />
 )
 export const Default = () => {

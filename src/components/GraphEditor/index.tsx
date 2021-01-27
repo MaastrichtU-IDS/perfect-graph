@@ -9,7 +9,6 @@ import {
   EditorMode,
   RenderEdge,
   RenderNode,
-  Element,
   GraphEditorRef,
 } from '@type'
 import { getLabel, getSelectedItemByElement } from '@utils'
@@ -35,7 +34,7 @@ export type GraphEditorProps = {
   settingsBar?: SettingsBarProps;
   dataBar?: Pick<DataBarProps, 'editable'| 'opened'>;
   actionBar?: Pick<ActionBarProps, 'renderMoreAction' | 'opened' | 'recording'>;
-  selectedElement?: Element | null;
+  selectedElementId?: string | null;
   mode?: EditorMode;
   renderEdge?: RenderEdge<RenderElementAdditionalInfo>;
   renderNode?: RenderNode<RenderElementAdditionalInfo>;
@@ -67,7 +66,7 @@ export type GraphEditorType = React.FC<GraphEditorProps>
 
 const GraphEditorElement = (
   props: GraphEditorProps,
-  ref: React.ForwardedRef<GraphEditorType>,
+  ref: React.ForwardedRef<GraphEditorRef>,
 ) => {
   const {
     onEvent = DEFAULT_HANDLER,
@@ -80,13 +79,16 @@ const GraphEditorElement = (
     dataBar = {},
     nodes,
     edges,
-    selectedElement,
+    selectedElementId,
     label,
     mode = EDITOR_MODE.DEFAULT,
     ...rest
   } = props
   const graphEditorRef = useForwardRef(ref)
-
+  const selectedElement = React.useMemo(
+    () => selectedElementId && graphEditorRef.current.cy.$id(selectedElementId),
+    [selectedElementId],
+  )
   const selectedItem = selectedElement && getSelectedItemByElement(
     selectedElement, { nodes, edges },
   ).item

@@ -5,6 +5,7 @@ import { Position, Enumerable } from 'colay/type'
 import {
   ELEMENT_TYPE, EVENT, DATA_TYPE, EDITOR_MODE,
   PIXI_EVENT_NAMES,
+  CYTOSCAPE_EVENT,
 } from '@utils/constants'
 import { Viewport } from 'pixi-viewport'
 import { ViewportProps } from '@components/Viewport'
@@ -83,11 +84,16 @@ export type RenderEdge<Additional extends Record<string, any> = {}> = (c: {
   targetElement: NodeElement;
   from: Position;
   to: Position;
+  sortedIndex: number;
+  index: number;
+  count: number;
+  cy: Core;
 } & Additional) => React.ReactElement
 
 export type RenderNode<Additional extends Record<string, any> = {}> = (c: {
   item: NodeData;
   element: NodeElement;
+  cy: Core;
 } & Additional) => React.ReactElement
 
 export type ElementType = keyof typeof ELEMENT_TYPE
@@ -122,13 +128,13 @@ export type {
   Theme,
 } from '../core/theme'
 
-export type CytoscapeEvent = 'select' | 'unselect' | 'position'
+export type CytoscapeEvent = keyof typeof CYTOSCAPE_EVENT
 
 export type ElementConfig = {
   renderEvents?: CytoscapeEvent[];
 }
 export type NodeConfig = {
-  position: Position;
+  position?: Position;
 } & ElementConfig
 
 export type EdgeConfig = {
@@ -151,12 +157,17 @@ export type GraphConfig = {
   clusters?: ClusterConfig;
   zoom?: ViewportProps['zoom'];
   transform?: ViewportProps['transform'];
-  renderEvents?: CytoscapeEvent[];
   nodes?: {
-    [id: string]: NodeConfig;
+    renderEvents?: CytoscapeEvent[];
+    ids?: {
+      [id: string]: NodeConfig;
+    }
   };
   edges?: {
-    [id: string]: EdgeConfig;
+    renderEvents?: CytoscapeEvent[];
+    ids?: {
+      [id: string]: EdgeConfig;
+    }
   };
   backgroundColor?: string;
 }

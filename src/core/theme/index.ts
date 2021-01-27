@@ -189,6 +189,7 @@ export const useTheme = () => {
   return value
 }
 
+export type Theme = typeof DefaultTheme
 // {
 //   "breakpoints": {
 //     "keys": [

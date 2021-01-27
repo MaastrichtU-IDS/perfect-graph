@@ -1,10 +1,9 @@
 import { useStateWithCallback } from 'colay-ui'
-import { EdgeSingular } from 'cytoscape'
+import { EdgeSingular, Core } from 'cytoscape'
 import React, { useEffect, useMemo, useRef } from 'react'
 import {
   EdgeContext, ElementConfig, EdgeElement,
 } from '@type'
-import * as R from 'colay/ramda'
 import { mutableGraphMap } from './useGraph'
 import { useElement } from './useElement'
 
@@ -21,6 +20,7 @@ export type Props<T> = {
 type Result<T> = {
   element: EdgeSingular;
   context: EdgeContext;
+  cy: Core;
 }
 
 export default <T>(props: Props<T>): Result<T> => {
@@ -99,5 +99,6 @@ export default <T>(props: Props<T>): Result<T> => {
   return {
     element,
     context: contextRef.current,
+    cy,
   }
 }

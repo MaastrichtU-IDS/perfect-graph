@@ -1,4 +1,3 @@
-import { PixiComponent } from '@inlet/react-pixi'
 import { Position } from 'colay-ui/type'
 import { BoundingBox } from '@type'
 import * as PIXI from 'pixi.js'
@@ -293,11 +292,13 @@ export const drawLine = (
   mutableInstance.zIndex = -100
 }
 
-export const Graphics = PixiComponent<GraphicsProps, PIXI.Graphics>('PIXIGraphics', {
-  create: () => {
-    const mutableInstance = new PIXI.Graphics()
-    return mutableInstance
-  },
-  applyProps: (mutableInstance, __, _props) => {
-  },
-})
+// export const Graphics = PixiComponent<GraphicsProps, PIXI.Graphics>('PIXIGraphics', {
+//   create: () => {
+//     const mutableInstance = new PIXI.Graphics()
+//     return mutableInstance
+//   },
+//   // applyProps: (mutableInstance, __, _props) => {
+//   // },
+// })
+
+export { Graphics } from '@inlet/react-pixi'

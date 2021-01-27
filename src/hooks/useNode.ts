@@ -1,6 +1,6 @@
 import React from 'react'
 import { useStateWithCallback } from 'colay-ui'
-import { NodeSingular } from 'cytoscape'
+import { NodeSingular, Core } from 'cytoscape'
 import { Position } from 'colay/type'
 import { NodeContext, NodeConfig, ClusterInfo } from '@type'
 import { mutableGraphMap } from './useGraph'
@@ -18,6 +18,7 @@ type Result = {
   element: NodeSingular;
   context: NodeContext;
   cluster?: ClusterInfo;
+  cy: Core;
 }
 const DEFAULT_BOUNDING_BOX = {
   x: 0,
@@ -73,5 +74,6 @@ export default (props: Props): Result => {
     element,
     context: contextRef.current,
     cluster: clustersByID[id],
+    cy,
   }
 }

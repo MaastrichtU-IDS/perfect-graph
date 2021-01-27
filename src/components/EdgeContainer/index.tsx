@@ -1,7 +1,8 @@
 import React from 'react'
 import { wrapComponent } from 'colay-ui'
 import * as R from 'colay/ramda'
-import { Position } from 'colay/type'
+import * as C from 'colay/color'
+import { useTheme } from '@core/theme'
 import { useEdge } from '@hooks'
 import { getNodeContextByElement } from '@utils'
 import {
@@ -25,6 +26,34 @@ export type EdgeContainerProps = {
 
 export type EdgeContainerType = React.FC<EdgeContainerProps>
 
+const calculateEdgeGroupInfo = (edge: EdgeElement) => {
+  const edgeID = edge.id()
+  const targetElement = edge.target()
+  const sourceElement = edge.source()
+  const betweenEdges = targetElement.edgesWith(sourceElement)
+  const betweenEdgesCount = betweenEdges.length
+  const betweenEdgesMedian = Math.ceil(betweenEdgesCount / 2)
+  let edgeIndex = 0
+  betweenEdges.forEach((edgeEl, i) => {
+    if (edgeEl.id() === edgeID) {
+      edgeIndex = i
+    }
+  })
+  let sortedIndex = 0
+  if (betweenEdgesCount > 1) {
+    sortedIndex = edgeIndex > betweenEdgesMedian
+      ? betweenEdgesMedian - edgeIndex
+      : edgeIndex - betweenEdgesMedian
+    if (betweenEdgesCount % 2 === 0 && sortedIndex >= 0) {
+      sortedIndex += 1
+    }
+  }
+  return {
+    sortedIndex,
+    index: edgeIndex,
+    count: betweenEdgesCount,
+  }
+}
 const EdgeContainerElement = (
   props: EdgeContainerProps,
   __: React.ForwardedRef<EdgeContainerType>,
@@ -34,10 +63,13 @@ const EdgeContainerElement = (
     graphID,
     children,
     drawLine = defaultDrawLine,
+    config,
   } = props
+  const theme = useTheme()
   const graphicsRef = React.useRef<PIXI.Graphics>(null)
   const containerRef = React.useRef<ContainerRef>(null)
   const edgeID = item.id ?? R.uuid()
+  item.id = edgeID
   const drawLineCallback = React.useCallback((element: EdgeElement) => {
     const targetElement = element.target()
     const sourceElement = element.source()
@@ -49,29 +81,21 @@ const EdgeContainerElement = (
     containerRef.current!.x = midpoint.x
     containerRef.current!.y = midpoint.y
     // calculate sortedIndex
-    const betweenEdges = targetElement.edgesWith(sourceElement)
-    const betweenEdgesCount = betweenEdges.length
-    const betweenEdgesMedian = Math.ceil(betweenEdgesCount / 2)
-    let edgeIndex = 0
-    betweenEdges.forEach((edgeEl, i) => {
-      if (edgeEl.id() === edgeID) {
-        edgeIndex = i
-      }
-    })
-    let sortedIndex = 0
-    if (betweenEdgesCount > 1) {
-      sortedIndex = edgeIndex > betweenEdgesMedian
-        ? betweenEdgesMedian - edgeIndex
-        : edgeIndex - betweenEdgesMedian
-      if (betweenEdgesCount % 2 === 0 && sortedIndex >= 0) {
-        sortedIndex += 1
-      }
-    }
+    const {
+      sortedIndex,
+    } = calculateEdgeGroupInfo(element)
     return drawLine({
       element,
       item,
       sourceElement,
       targetElement,
+      fill: C.rgbNumber(
+        element.selected()
+          ? theme.palette.primary.main
+          : (element.source().selected() || element.target().selected())
+            ? theme.palette.secondary.main
+            : theme.palette.background.paper,
+      ),
       graphics: graphicsRef.current!,
       to: targetElementContext.boundingBox,
       from: sourceElementContext.boundingBox,
@@ -86,25 +110,39 @@ const EdgeContainerElement = (
   const onPositionChange = React.useCallback(({ element }) => {
     drawLineCallback(element)
   }, [drawLineCallback])
-  const { element } = useEdge({
+  const { element, cy } = useEdge({
     id: edgeID,
     source: item.source,
     target: item.target,
     graphID,
     onPositionChange,
+    config,
   })
   React.useEffect(
     () => {
       // setTimeout(() => drawLineCallback(element), 2050)
       drawLineCallback(element)
     },
-    [drawLineCallback],
   )
+  // React.useEffect(() => {
+  //   graphicsRef.current!.interactive = true
+  //   graphicsRef.current!.buttonMode = true
+  //   const onTap = () => {
+  //     console.log('onTapEdge')
+  //   }
+  //   graphicsRef.current?.on('click', onTap)
+  //   graphicsRef.current?.on('pointertap', onTap)
+  //   graphicsRef.current?.on('tap', onTap)
+  //   return () => {
+  //     graphicsRef.current?.off('pointertap', onTap)
+  //   }
+  // }, [])
   const sourceElement = element.source()
   const targetElement = element.target()
   const to = element.target().position()
   const from = element.source().position()
   const midpoint = V.midpoint(from)(to)
+  const edgeGroupInfo = calculateEdgeGroupInfo(element)
   return (
     <>
       <Container
@@ -122,6 +160,8 @@ const EdgeContainerElement = (
             targetElement,
             to,
             from,
+            cy,
+            ...edgeGroupInfo
           })
         }
       </Container>
@@ -138,4 +178,3 @@ export const EdgeContainer = wrapComponent<EdgeContainerProps>(
     isForwardRef: true,
   },
 )
-

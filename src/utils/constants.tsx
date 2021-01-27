@@ -93,3 +93,13 @@ export const PIXI_EVENT_NAMES = {
   onPressStart: 'mousedown',
   onRightPress: 'rightclick',
 }
+
+export const CYTOSCAPE_EVENT = {
+  select: 'select',
+  unselect: 'unselect',
+  position: 'position',
+  selectEdge: 'selectEdge',
+  unselectEdge: 'unselectEdge',
+  selectNode: 'selectNode',
+  unselectNode: 'unselectNode',
+} as const

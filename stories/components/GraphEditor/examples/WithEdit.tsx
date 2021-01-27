@@ -153,7 +153,7 @@ export const WithEditElement = () => {
   }, [])
   return (
     <GraphEditor
-       style={{ width: '100%', height: 250 }}
+       style={{ width: '100%', height: 700 }}
        configExtractor={({ item }) => ({ data: { data: item }})}
        {...controllerProps}
      />

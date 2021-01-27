@@ -25,7 +25,7 @@ const NodeContainerElement = (
     config = {} as NodeConfig,
   } = props
   const containerRef = React.useRef(null)
-  const { element, context } = useNode({
+  const { element, context, cy } = useNode({
     id: item.id,
     graphID,
     config,
@@ -67,12 +67,12 @@ const NodeContainerElement = (
       // }}
       // onPress={(e) => console.log('press')}
     >
-      {children({ item, element })}
+      {children({ item, element, cy })}
     </Container>
   )
 }
 
-export const NodeContainer =  wrapComponent<NodeContainerProps>(
+export const NodeContainer = wrapComponent<NodeContainerProps>(
   NodeContainerElement,
   {
     isForwardRef: true,

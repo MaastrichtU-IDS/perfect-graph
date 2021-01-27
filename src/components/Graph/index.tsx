@@ -13,7 +13,7 @@ import * as C from 'colay/color'
 import { useGraph } from '@hooks'
 import {
   NodeData, EdgeData, RenderEdge, RenderNode,
-  GraphConfig, Element, DrawLine, GraphRef, ViewportRef,
+  GraphConfig, DrawLine, GraphRef, ViewportRef,
 } from '@type'
 import { PropsWithRef } from 'colay-ui/type'
 import '@core/config'
@@ -21,7 +21,7 @@ import { useTheme, ThemeProvider, DefaultTheme } from '@core/theme'
 import { Viewport, ViewportProps } from '../Viewport'
 import { NodeContainer } from '../NodeContainer'
 import { EdgeContainer } from '../EdgeContainer'
-import { View } from '../View'
+import { Pressable } from '../Pressable'
 import { Text } from '../Text'
 
 export type GraphProps = {
@@ -34,63 +34,84 @@ export type GraphProps = {
   onPress?: ViewportProps['onPress'];
   drawLine?: DrawLine;
   config?: GraphConfig;
-  selectedElements?: Element[];
 }
 
-// export const DefaultRenderNode: RenderNode = ({ item }) => (
-//   <View style={{
-//     width: 50,
-//     height: 50,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     display: 'flex',
-//     backgroundColor: 'blue', // DefaultTheme.palette.background.paper,
-//     borderRadius: 30, // 50
-//   }}
-//   >
-//     <Text
-//       style={{
-//         position: 'absolute',
-//         top: 0, // -40
-//         color: '#fff', // 'black'
-//         fontSize: 15,
-//       }}
-//       isSprite
-//     >
-//       {item.id}
+export const DefaultRenderNode: RenderNode = ({ item, element, cy }) => {
+  const hasSelectedEdge = element.connectedEdges(':selected').length > 0
+  return (
+    <Pressable
+      style={{
+        width: 50,
+        height: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
+        display: 'flex',
+        backgroundColor: hasSelectedEdge
+          ? DefaultTheme.palette.secondary.main
+          : (element.selected()
+            ? DefaultTheme.palette.primary.main
+            : DefaultTheme.palette.background.paper),
+        borderRadius: 50,
+      }}
+      onPress={() => {
+        cy.$(':selected').unselect()
+        element.select()
+      }}
+    >
+      <Text
+        style={{
+          position: 'absolute',
+          top: -40,
+          color: 'black',
+        }}
+        isSprite
+      >
+        {item.id.substring(0, 5)}
 
-//     </Text>
-//   </View>
-// )
+      </Text>
+    </Pressable>
+  )
+}
 
-export const DefaultRenderNode: RenderNode = ({ item }) => (
-  <View style={{
-    width: 50,
-    height: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-    display: 'flex',
-    backgroundColor: DefaultTheme.palette.background.paper,
-    borderRadius: 50,
-  }}
+// @ts-ignore
+export const DefaultRenderEdge: RenderEdge = ({
+  cy,
+  item,
+  element,
+  sortedIndex,
+}) => (
+  <Pressable
+    style={{
+      // width: 20,
+      // height: 20,
+      position: 'absolute',
+      left: sortedIndex * 40,
+      justifyContent: 'center',
+      alignItems: 'center',
+      display: 'flex',
+      // backgroundColor: element.selected()
+      //   ? DefaultTheme.palette.primary.main
+      //   : DefaultTheme.palette.background.paper,
+      // borderRadius: 50,
+    }}
+    onPress={() => {
+      console.log('Edge: selected')
+      cy.$(':selected').unselect()
+      element.select()
+    }}
   >
     <Text
       style={{
-        position: 'absolute',
-        top: -40,
+        // position: 'absolute',
+        // top: -40,
         color: 'black',
+        fontSize: 20,
       }}
       isSprite
     >
-      {item.id}
-
+      {item.id.substring(0, 5)}
     </Text>
-  </View>
-)
-
-// @ts-ignore
-export const DefaultRenderEdge: RenderEdge = () => (
-  null
+  </Pressable>
 )
 // <View style={{ width: 100, height: 100, backgroundColor: 'blue' }} />
 
@@ -165,6 +186,14 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
   React.useEffect(() => {
     stageRef.current!.app.renderer.backgroundColor = backgroundColor
   }, [backgroundColor])
+  const {
+    ids: nodeConfigIds,
+    ...globalNodeConfig
+  } = config.nodes ?? {}
+  const {
+    ids: edgeConfigIds,
+    ...globalEdgeConfig
+  } = config.edges ?? {}
   return (
     <Div
       ref={containerRef}
@@ -204,7 +233,10 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
                 <NodeContainer
                   graphID={graphID}
                   item={item}
-                  config={config.nodes?.[item.id]}
+                  config={{
+                    ...(globalNodeConfig ?? {}),
+                    ...(nodeConfigIds?.[item.id] ?? {}),
+                  }}
                 >
                   {renderNode}
                 </NodeContainer>
@@ -220,7 +252,10 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
                   graphID={graphID}
                   item={item}
                   drawLine={drawLine}
-                  config={config.edges?.[item.id]}
+                  config={{
+                    ...(globalEdgeConfig ?? {}),
+                    ...(edgeConfigIds?.[item.id] ?? {}),
+                  }}
                 >
                   {renderEdge}
                 </EdgeContainer>

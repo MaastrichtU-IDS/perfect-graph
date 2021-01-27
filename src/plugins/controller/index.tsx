@@ -187,7 +187,7 @@ export const useController = (
             break
           }
           element.select()
-          draft.selectedElement = element
+          draft.selectedElementId = item.id
           break
         }
         case EVENT.CHANGE_DATA_NAME_ADDITIONAL: {

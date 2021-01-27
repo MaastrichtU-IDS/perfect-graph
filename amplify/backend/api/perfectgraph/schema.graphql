@@ -7,9 +7,9 @@ type Project @model {
 type Node @model @key(name: "byProject", fields: ["projectID"]) {
   id: ID!
   projectID: ID!
-  project: Project @connection(fields: ["projectID"])
-  data: AWSJSON
-  position: AWSJSON
+  project: Project! @connection(fields: ["projectID"])
+  data: AWSJSON!
+  position: AWSJSON!
 }
 
 type Edge @model @key(name: "byProject", fields: ["projectID"]) {
@@ -17,6 +17,6 @@ type Edge @model @key(name: "byProject", fields: ["projectID"]) {
   projectID: ID!
   source: String!
   target: String!
-  project: Project @connection(fields: ["projectID"])
-  data: AWSJSON
+  project: Project! @connection(fields: ["projectID"])
+  data: AWSJSON!
 }
