@@ -1,4 +1,4 @@
-import Amplify, { API, Auth}  from "aws-amplify";
+import Amplify, { API }  from "aws-amplify";
 import  { Position }  from "colay/type";
 import awsExports from "../../../../src/aws-exports";
 
