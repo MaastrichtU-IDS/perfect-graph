@@ -20,7 +20,7 @@ type ControllerState = {
   label: GraphLabelData;
 } & Pick<
 GraphEditorProps,
-'nodes' | 'edges' | 'mode' | 'selectedElement'
+'nodes' | 'edges' | 'mode' | 'selectedElementId'
 | 'actionBar' | 'dataBar' | 'settingsBar'
 | 'graphConfig'
 >
@@ -52,6 +52,7 @@ export const useController = (
   const [state, update] = React.useState<ControllerState>(
     controllerConfig,
   )
+  const targetNodeRef = React.useRef(null)
   const onEvent = React.useCallback((eventInfo: EventInfo) => {
     const {
       type,
@@ -59,6 +60,7 @@ export const useController = (
       extraData = {},
       index = 0,
       dataItem = {} as DataItem,
+      graphEditor,
       // graphEditor,
     } = eventInfo
     const isNode = element?.isNode()
@@ -78,7 +80,6 @@ export const useController = (
       switch (type) {
         case EVENT.UPDATE_DATA:
           item.data = extraData.value
-          console.log('a', item.data)
           break
         case EVENT.ADD_DATA:
           targetDataList.push({
@@ -125,11 +126,56 @@ export const useController = (
             if (draft.mode === EDITOR_MODE.ADD) {
               draft.mode = EDITOR_MODE.DEFAULT
             }
+          } else {
+            draft.selectedElementId = null
+            graphEditor.cy.$(':selected').unselect()
           }
+          break
+        }
+        case EVENT.ELEMENT_SELECTED: {
+          if (
+            // @ts-ignore
+            [EDITOR_MODE.DELETE, EDITOR_MODE.CONTINUES_DELETE].includes(draft.mode)
+
+          ) {
+            draft[targetPath].splice(itemIndex, 1)
+            if (isNode) {
+              draft.edges = draft.edges.filter(
+                (edgeItem) => edgeItem.source !== item.id && edgeItem.target !== item.id,
+              )
+            }
+            if (draft.mode === EDITOR_MODE.DELETE) {
+              draft.mode = EDITOR_MODE.DEFAULT
+            }
+          } else if (
+            [EDITOR_MODE.ADD, EDITOR_MODE.CONTINUES_ADD].includes(draft.mode)
+          ) {
+            if (isNode) {
+              if (targetNodeRef.current) {
+                draft.edges.push({
+                  id: R.uuid(),
+                  source: targetNodeRef.current.id(),
+                  target: element.id(),
+                  data: {},
+                })
+                targetNodeRef.current = null
+              } else {
+                targetNodeRef.current = element
+              }
+            }
+            if (!targetNodeRef.current && draft.mode === EDITOR_MODE.ADD) {
+              draft.mode = EDITOR_MODE.DEFAULT
+            }
+          } else {
+            element.select()
+            draft.selectedElementId = item.id
+          }
+
           break
         }
         case EVENT.MODE_CHANGED: {
           draft.mode = extraData.value
+          targetNodeRef.current = null
           break
         }
         case EVENT.CHANGE_DATA_NAME:
@@ -170,26 +216,7 @@ export const useController = (
         case EVENT.DELETE_DATA:
           targetDataList.splice(index, 1)
           break
-        case EVENT.ELEMENT_SELECTED: {
-          if (
-            // @ts-ignore
-            [EDITOR_MODE.DELETE, EDITOR_MODE.CONTINUES_DELETE].includes(draft.mode)
-          ) {
-            draft[targetPath].splice(itemIndex, 1)
-            if (isNode) {
-              draft.edges = draft.edges.filter(
-                (edgeItem) => edgeItem.source !== item.id && edgeItem.target !== item.id,
-              )
-            }
-            if (draft.mode === EDITOR_MODE.DELETE) {
-              draft.mode = EDITOR_MODE.DEFAULT
-            }
-            break
-          }
-          element.select()
-          draft.selectedElementId = item.id
-          break
-        }
+        
         case EVENT.CHANGE_DATA_NAME_ADDITIONAL: {
           const additionalItem = targetDataList[index]!.additional![extraData.index]!
           additionalItem.name = extraData.value
@@ -306,7 +333,7 @@ const DEFAULT_CONTROLLER_CONFIG = {
     opened: false,
   },
   mode: EDITOR_MODE.DEFAULT as EditorMode,
-  selectedElement: null as Element | null,
+  selectedElementId: null as string | null,
   graphConfig: {},
 }
 

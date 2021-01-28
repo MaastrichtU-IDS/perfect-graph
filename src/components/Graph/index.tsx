@@ -1,6 +1,6 @@
+import React from 'react'
 import { Stage } from '@inlet/react-pixi'
 import * as R from 'colay/ramda'
-import React from 'react'
 import {
   wrapComponent,
   useForwardRef,
@@ -18,6 +18,7 @@ import {
 import { PropsWithRef } from 'colay-ui/type'
 import '@core/config'
 import { useTheme, ThemeProvider, DefaultTheme } from '@core/theme'
+import { CYTOSCAPE_EVENT } from '@utils/constants'
 import { Viewport, ViewportProps } from '../Viewport'
 import { NodeContainer } from '../NodeContainer'
 import { EdgeContainer } from '../EdgeContainer'
@@ -34,6 +35,24 @@ export type GraphProps = {
   onPress?: ViewportProps['onPress'];
   drawLine?: DrawLine;
   config?: GraphConfig;
+}
+
+const DEFAULT_NODE_CONFIG = {
+  renderEvents: [
+    CYTOSCAPE_EVENT.select,
+    CYTOSCAPE_EVENT.unselect,
+    CYTOSCAPE_EVENT.selectEdge,
+    CYTOSCAPE_EVENT.unselectEdge,
+  ],
+}
+
+const DEFAULT_EDGE_CONFIG = {
+  renderEvents: [
+    CYTOSCAPE_EVENT.select,
+    CYTOSCAPE_EVENT.unselect,
+    CYTOSCAPE_EVENT.selectNode,
+    CYTOSCAPE_EVENT.unselectNode,
+  ],
 }
 
 export const DefaultRenderNode: RenderNode = ({ item, element, cy }) => {
@@ -95,7 +114,6 @@ export const DefaultRenderEdge: RenderEdge = ({
       // borderRadius: 50,
     }}
     onPress={() => {
-      console.log('Edge: selected')
       cy.$(':selected').unselect()
       element.select()
     }}
@@ -189,11 +207,17 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
   const {
     ids: nodeConfigIds,
     ...globalNodeConfig
-  } = config.nodes ?? {}
+  } = {
+    ...DEFAULT_NODE_CONFIG,
+    ...(config.nodes ?? {}),
+  }
   const {
     ids: edgeConfigIds,
     ...globalEdgeConfig
-  } = config.edges ?? {}
+  } = {
+    ...DEFAULT_EDGE_CONFIG,
+    ...(config.edges ?? {}),
+  }
   return (
     <Div
       ref={containerRef}

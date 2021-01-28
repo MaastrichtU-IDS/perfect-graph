@@ -142,11 +142,15 @@ const GraphEditorElement = (
         }}
         renderNode={({ item, element, ...rest }) => (
           <Graph.Pressable
-            onPress={() => onEventCallback({
-              type: EVENT.ELEMENT_SELECTED,
-              item,
-              element,
-            })}
+            onPress={() => {
+              graphEditorRef.current.cy.$(':selected').unselect()
+              element.select()
+              onEventCallback({
+                type: EVENT.ELEMENT_SELECTED,
+                item,
+                element,
+              })
+            }}
           >
             {(renderNode ?? DefaultRenderNode)({
               item,
@@ -164,11 +168,15 @@ const GraphEditorElement = (
         )}
         renderEdge={({ item, element, ...rest }) => (
           <Graph.Pressable
-            onPress={() => onEventCallback({
-              type: EVENT.ELEMENT_SELECTED,
-              item,
-              element,
-            })}
+            onPress={() => {
+              graphEditorRef.current.cy.$(':selected').unselect()
+              element.select()
+              onEventCallback({
+                type: EVENT.ELEMENT_SELECTED,
+                item,
+                element,
+              })
+            }}
           >
 
             {
@@ -182,6 +190,7 @@ const GraphEditorElement = (
                   : (label?.edges?.[item.id] ?? label?.global.edges),
                 item,
               ),
+              element,
               ...rest,
             })
 }

@@ -68,7 +68,7 @@ const EdgeContainerElement = (
   const theme = useTheme()
   const graphicsRef = React.useRef<PIXI.Graphics>(null)
   const containerRef = React.useRef<ContainerRef>(null)
-  const edgeID = item.id ?? R.uuid()
+  const edgeID = React.useMemo(() => item.id ?? R.uuid(), [])
   item.id = edgeID
   const drawLineCallback = React.useCallback((element: EdgeElement) => {
     const targetElement = element.target()
@@ -161,7 +161,7 @@ const EdgeContainerElement = (
             to,
             from,
             cy,
-            ...edgeGroupInfo
+            ...edgeGroupInfo,
           })
         }
       </Container>

@@ -19,7 +19,7 @@ const INITIAL_DATA = {
 }
 // "[{ \"name\": \"foaf:name\", \"value\": [\"ts\",\"saba\"], \"additional\": []}]"
 export const WithEditElement = () => {
-  
+  const targetNodeRef = React.useRef(null)
   const [controllerProps, controller] = useController({
     nodes: [],
     edges: [],
@@ -42,7 +42,8 @@ export const WithEditElement = () => {
       type,
       extraData,
       element,
-      item
+      item,
+      graphEditor
     }, draft) => {
       switch (type) {
         case EVENT.SETTINGS_FORM_CHANGED:{
@@ -61,20 +62,48 @@ export const WithEditElement = () => {
           return false
         }
         case EVENT.ELEMENT_SELECTED: {
+          console.log('elementSelected')
           if (
             // @ts-ignore
             [EDITOR_MODE.DELETE, EDITOR_MODE.CONTINUES_DELETE].includes(draft.mode)
           ) {
-            API.deleteNode({
-              id: item.id
-            })
+            
+            if (element.isNode()) {
+              API.deleteNode({
+                id: item.id
+              })
+            } else {
+              API.deleteEdge({
+                id: item.id
+              })
+            }
             if (draft.mode === EDITOR_MODE.DELETE) {
               draft.mode = EDITOR_MODE.DEFAULT
             }
             break
+          } else if (
+            [EDITOR_MODE.ADD, EDITOR_MODE.CONTINUES_ADD].includes(draft.mode)
+          ) {
+            if (element.isNode()) {
+              if (targetNodeRef.current) {
+                API.createEdge({
+                  data: {},
+                  projectID: PROJECT_ID,
+                  source: targetNodeRef.current.id(),
+                  target: element.id()
+                })
+                targetNodeRef.current = null
+              } else {
+                targetNodeRef.current = element
+              }
+            }
+            if (!targetNodeRef.current && draft.mode === EDITOR_MODE.ADD) {
+              draft.mode = EDITOR_MODE.DEFAULT
+            }
+          } else {
+            element.select()
+            draft.selectedElementId = item.id
           }
-          element.select()
-          draft.selectedElement = element
           return false
         }
         case EVENT.PRESS_BACKGROUND: {
@@ -91,8 +120,15 @@ export const WithEditElement = () => {
             if (draft.mode === EDITOR_MODE.ADD) {
               draft.mode = EDITOR_MODE.DEFAULT
             }
+          } else {
+            graphEditor.cy.$(':selected').unselect()
+            draft.selectedElementId = null
           }
           return false
+          break
+        }
+        case EVENT.MODE_CHANGED: {
+          targetNodeRef.current = null
           break
         }
         default:
@@ -128,6 +164,26 @@ export const WithEditElement = () => {
         draft.edges = draft.edges.filter(
           (edgeItem) => edgeItem.source !== id && edgeItem.target !== id,
         )
+        return draft
+      })
+    })
+  })
+  useSubscription(() => {
+    return API.onUpdateEdge((edge) => {
+      controller.update((draft)=> {
+        draft.edges = R.update(
+          draft.edges.findIndex((val) => val.id === edge.id),
+           edge,
+           draft.edges
+           )
+           return draft
+      })
+    })
+  })
+  useSubscription(() => {
+    return API.onCreateEdge((edge) => {
+      controller.update((draft)=> {
+        draft.edges.push(edge)
         return draft
       })
     })
