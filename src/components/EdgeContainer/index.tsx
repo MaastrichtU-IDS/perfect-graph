@@ -84,12 +84,7 @@ const EdgeContainerElement = (
     const {
       sortedIndex,
     } = calculateEdgeGroupInfo(element)
-    const sourceID = sourceElement.id()
-    const targetID = targetElement.id()
-    const sign = sourceID > targetID ? -1 : 1
-    console.log(element.source().id(), sortedIndex)
     return drawLine({
-      element,
       item,
       sourceElement,
       targetElement,
@@ -106,8 +101,8 @@ const EdgeContainerElement = (
       directed: true,
       distance: sortedIndex * 40,
       margin: {
-        x: sign * sortedIndex * 4,
-        y: sign * sortedIndex * 4,
+        x: sortedIndex * 4,
+        y: sortedIndex * 4,
       },
     })
   }, [containerRef, graphicsRef])

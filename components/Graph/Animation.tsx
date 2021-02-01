@@ -14,7 +14,7 @@ export default function Animation() {
   //       return draft
   //     })
   //   }, 10)
-  // }, [])
+  // }, []) 
   return (
     <Graph
         style={{ width: '100%', height: 600 }}
