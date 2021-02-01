@@ -21,7 +21,7 @@ import { useTheme, ThemeProvider, DefaultTheme } from '@core/theme'
 import { CYTOSCAPE_EVENT } from '@utils/constants'
 import { Viewport, ViewportProps } from '../Viewport'
 import { NodeContainer } from '../NodeContainer'
-import { EdgeContainer } from '../EdgeContainer'
+import { EdgeContainer, calculateEdgeGroupInfo, calculateVectorInfo } from '../EdgeContainer'
 import { Pressable } from '../Pressable'
 import { Text } from '../Text'
 
@@ -97,18 +97,18 @@ export const DefaultRenderEdge: RenderEdge = ({
   cy,
   item,
   element,
-  sortedIndex,
 }) => (
   <Pressable
     style={{
       // width: 20,
       // height: 20,
       position: 'absolute',
-      left: sortedIndex * 40,
+
       justifyContent: 'center',
       alignItems: 'center',
       display: 'flex',
-      // backgroundColor: element.selected()
+      // backgroundColor: DefaultTheme.palette.background.paper,
+      // element.selected()
       //   ? DefaultTheme.palette.primary.main
       //   : DefaultTheme.palette.background.paper,
       // borderRadius: 50,
@@ -122,6 +122,7 @@ export const DefaultRenderEdge: RenderEdge = ({
       style={{
         // position: 'absolute',
         // top: -40,
+        // backgroundColor: DefaultTheme.palette.background.paper,
         color: 'black',
         fontSize: 12,
       }}

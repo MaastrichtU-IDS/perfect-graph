@@ -19,19 +19,20 @@ const controlPointsCreator = {
   bezier: (config: {
     from: Position;
     to: Position;
-    unit: Position;
+    unitVector: Position;
     distance: number;
     count: number;
+    normVector: Position;
   }): BezierLinePoints[] => {
     const {
       from,
       to,
       distance,
       count,
-      unit,
+      unitVector,
+      normVector,
     } = config
-    const upperNormVector = V.rotate(Math.PI / 2)(unit)
-    const upperVector = V.multiplyScalar(Math.abs(distance))(upperNormVector)
+    const upperVector = V.multiplyScalar(Math.abs(distance))(normVector)
     const lowerVector = V.multiplyScalar(-1)(upperVector)
     const chunkDistanceVector = R.pipe(
       V.subtract(from),
@@ -67,17 +68,17 @@ const drawArrowHead = ({
   graphics: mutableGraphics,
   to,
   radius = 10,
-  unit,
+  unitVector,
   fill,
 }: {
   graphics: PIXI.Graphics;
-  unit: Position;
+  unitVector: Position;
   to: Position;
   radius?: number;
   fill: number;
 }) => {
   const bottomCenter = to
-  const unitDistanceVec = V.multiplyScalar(radius)(unit)
+  const unitDistanceVec = V.multiplyScalar(radius)(unitVector)
   const perpendicularUnitDistanceVec = V.rotate(-Math.PI / 2)(unitDistanceVec)
   const leftControlPoint = R.pipe(
     V.multiplyScalar(-1),
@@ -110,7 +111,10 @@ export const drawLine = (
       radius?: number;
     };
     distance?: number;
-    margin?: Position
+    margin?: Position;
+    unitVector: Position;
+    distanceVector: Position;
+    normVector: Position;
   },
 ) => {
   const {
@@ -130,74 +134,54 @@ export const drawLine = (
       x: 0,
       y: 0,
     },
+    unitVector,
+    distanceVector,
+    normVector,
   } = config
   const fromPos = {
-    x: fromBoundingBox.x + margin.x,
-    y: fromBoundingBox.y + margin.y,
+    x: fromBoundingBox.x + normVector.x * margin.x,
+    y: fromBoundingBox.y + normVector.y * margin.y,
   }
   const toPos = {
-    x: toBoundingBox.x + margin.x,
-    y: toBoundingBox.y + margin.y,
+    x: toBoundingBox.x + normVector.x * margin.x,
+    y: toBoundingBox.y + normVector.y * margin.y,
   }
-  const {
-    to,
-    from,
-    distanceVector,
-  } = R.ifElse(
-    R.isTrue,
-    () => {
-      const centerOfFrom = V.add(
-        fromBoundingBox.width / 2,
-        fromBoundingBox.height / 2,
-      )(fromPos)
-      const centerOfTo = V.add(
-        toBoundingBox.width / 2,
-        toBoundingBox.height / 2,
-      )(toPos)
+  const centerOfFrom = V.add(
+    fromBoundingBox.width / 2,
+    fromBoundingBox.height / 2,
+  )(fromPos)
+  const centerOfTo = V.add(
+    toBoundingBox.width / 2,
+    toBoundingBox.height / 2,
+  )(toPos)
 
-      const radiusFrom = Math.hypot(fromBoundingBox.width, fromBoundingBox.height) / 2
-      const radiusTo = Math.hypot(toBoundingBox.width, toBoundingBox.height) / 2
-      const distanceVector = R.pipe(
-        V.subtract(centerOfFrom),
-      )(centerOfTo)
-      const radiusDistanceVectorFrom = R.pipe(
-        V.subtract(centerOfFrom),
-        V.normalize,
-        V.multiplyScalar(radiusFrom),
-      )(centerOfTo)
-      const radiusDistanceVectorTo = R.pipe(
-        V.subtract(centerOfTo),
-        V.normalize,
-        V.multiplyScalar(radiusTo),
-      )(centerOfFrom)
-      return {
-        from: R.pipe(
-          V.add(radiusDistanceVectorFrom),
-        )(centerOfFrom),
-        to: R.pipe(
-          V.add(radiusDistanceVectorTo),
-        )(centerOfTo),
-        // radiusFrom,
-        // radiusTo,
-        distanceVector,
-      }
-    },
-    R.always({
-      to: toPos,
-      from: fromPos,
-      // radiusTo: 50,
-      // radiusFrom: 50,
-      distanceVector: R.pipe(
-        V.subtract(fromPos),
-      )(toPos),
-    }),
-  )(directed)
-  const unit = V.normalize(distanceVector)
+  const radiusFrom = Math.hypot(fromBoundingBox.width, fromBoundingBox.height) / 2
+  const radiusTo = Math.hypot(toBoundingBox.width, toBoundingBox.height) / 2
+  // const centerDistanceVector = R.pipe(
+  //   V.subtract(centerOfFrom),
+  // )(centerOfTo)
+  const radiusDistanceVectorFrom = R.pipe(
+    V.subtract(centerOfFrom),
+    V.normalize,
+    V.multiplyScalar(radiusFrom),
+  )(centerOfTo)
+  const radiusDistanceVectorTo = R.pipe(
+    V.subtract(centerOfTo),
+    V.normalize,
+    V.multiplyScalar(radiusTo),
+  )(centerOfFrom)
+  const from = R.pipe(
+    V.add(radiusDistanceVectorFrom),
+  )(centerOfFrom)
+  const to = R.pipe(
+    V.add(radiusDistanceVectorTo),
+  )(centerOfTo)
   mutableInstance.clear()
   mutableInstance.lineStyle(width, fill, alpha)
+
   drawArrowHead({
     graphics: mutableInstance,
-    unit,
+    unitVector,
     to,
     fill,
     ...arrowHead,
@@ -211,7 +195,8 @@ export const drawLine = (
           to,
           count: 2,
           distance: 100,
-          unit,
+          unitVector,
+          normVector,
         })
         R.map(
           ({
@@ -236,7 +221,8 @@ export const drawLine = (
           to,
           count: 4,
           distance: 100,
-          unit,
+          unitVector,
+          normVector,
         })
         R.map(
           ({
@@ -265,7 +251,8 @@ export const drawLine = (
             to,
             count: 1,
             distance,
-            unit,
+            unitVector,
+            normVector,
           })
           R.map(
             ({
@@ -302,3 +289,57 @@ export const drawLine = (
 // })
 
 export { Graphics } from '@inlet/react-pixi'
+
+// const {
+//   to,
+//   from,
+//   distanceVector,
+// } = R.ifElse(
+//   R.isTrue,
+//   () => {
+//     const centerOfFrom = V.add(
+//       fromBoundingBox.width / 2,
+//       fromBoundingBox.height / 2,
+//     )(fromPos)
+//     const centerOfTo = V.add(
+//       toBoundingBox.width / 2,
+//       toBoundingBox.height / 2,
+//     )(toPos)
+
+//     const radiusFrom = Math.hypot(fromBoundingBox.width, fromBoundingBox.height) / 2
+//     const radiusTo = Math.hypot(toBoundingBox.width, toBoundingBox.height) / 2
+//     const distanceVector = R.pipe(
+//       V.subtract(centerOfFrom),
+//     )(centerOfTo)
+//     const radiusDistanceVectorFrom = R.pipe(
+//       V.subtract(centerOfFrom),
+//       V.normalize,
+//       V.multiplyScalar(radiusFrom),
+//     )(centerOfTo)
+//     const radiusDistanceVectorTo = R.pipe(
+//       V.subtract(centerOfTo),
+//       V.normalize,
+//       V.multiplyScalar(radiusTo),
+//     )(centerOfFrom)
+//     return {
+//       from: R.pipe(
+//         V.add(radiusDistanceVectorFrom),
+//       )(centerOfFrom),
+//       to: R.pipe(
+//         V.add(radiusDistanceVectorTo),
+//       )(centerOfTo),
+//       // radiusFrom,
+//       // radiusTo,
+//       distanceVector,
+//     }
+//   },
+//   R.always({
+//     to: toPos,
+//     from: fromPos,
+//     // radiusTo: 50,
+//     // radiusFrom: 50,
+//     distanceVector: R.pipe(
+//       V.subtract(fromPos),
+//     )(toPos),
+//   }),
+// )(directed)

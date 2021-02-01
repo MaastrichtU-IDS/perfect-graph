@@ -10,6 +10,7 @@ import {
   EdgeConfig,
   DrawLine,
   EdgeElement,
+  NodeElement,
 } from '@type'
 import * as V from 'colay/vector'
 
@@ -26,7 +27,7 @@ export type EdgeContainerProps = {
 
 export type EdgeContainerType = React.FC<EdgeContainerProps>
 
-const calculateEdgeGroupInfo = (edge: EdgeElement) => {
+export const calculateEdgeGroupInfo = (edge: EdgeElement) => {
   const edgeID = edge.id()
   const targetElement = edge.target()
   const sourceElement = edge.source()
@@ -54,6 +55,24 @@ const calculateEdgeGroupInfo = (edge: EdgeElement) => {
     count: betweenEdgesCount,
   }
 }
+export const calculateVectorInfo = (source: NodeElement, to: NodeElement) => {
+  const fromPosition = source.position()
+  const toPosition = to.position()
+  const distanceVector = R.pipe(
+    V.subtract(fromPosition),
+  )(toPosition)
+  const unitVector = V.normalize(distanceVector)
+  const normVector = V.rotate(Math.PI / 2)(unitVector)
+  const midpointPosition = V.midpoint(fromPosition)(toPosition)
+  return {
+    fromPosition,
+    toPosition,
+    distanceVector,
+    unitVector,
+    normVector,
+    midpointPosition,
+  }
+}
 const EdgeContainerElement = (
   props: EdgeContainerProps,
   __: React.ForwardedRef<EdgeContainerType>,
@@ -73,17 +92,23 @@ const EdgeContainerElement = (
   const drawLineCallback = React.useCallback((element: EdgeElement) => {
     const targetElement = element.target()
     const sourceElement = element.source()
-    const to = targetElement.position()
-    const from = sourceElement.position()
-    const midpoint = V.midpoint(from)(to)
-    const sourceElementContext = getNodeContextByElement(sourceElement)
-    const targetElementContext = getNodeContextByElement(targetElement)
-    containerRef.current!.x = midpoint.x
-    containerRef.current!.y = midpoint.y
-    // calculate sortedIndex
+    const {
+      distanceVector,
+      // fromPosition,
+      // toPosition,
+      midpointPosition,
+      normVector,
+      unitVector,
+    } = calculateVectorInfo(sourceElement, targetElement)
     const {
       sortedIndex,
     } = calculateEdgeGroupInfo(element)
+    containerRef.current!.x = midpointPosition.x - Math.abs(sortedIndex) * normVector.x * 40
+    containerRef.current!.y = midpointPosition.y - Math.abs(sortedIndex) * normVector.y * 40
+    const sourceElementContext = getNodeContextByElement(sourceElement)
+    const targetElementContext = getNodeContextByElement(targetElement)
+    // calculate sortedIndex
+    
     return drawLine({
       item,
       sourceElement,
@@ -101,9 +126,12 @@ const EdgeContainerElement = (
       directed: true,
       distance: sortedIndex * 40,
       margin: {
-        x: sortedIndex * 4,
-        y: sortedIndex * 4,
+        x: -Math.abs(sortedIndex) * 4,
+        y: -Math.abs(sortedIndex) * 4,
       },
+      distanceVector,
+      unitVector,
+      normVector,
     })
   }, [containerRef, graphicsRef])
   const onPositionChange = React.useCallback(({ element }) => {
@@ -119,48 +147,35 @@ const EdgeContainerElement = (
   })
   React.useEffect(
     () => {
-      // setTimeout(() => drawLineCallback(element), 2050)
       drawLineCallback(element)
     },
   )
-  // React.useEffect(() => {
-  //   graphicsRef.current!.interactive = true
-  //   graphicsRef.current!.buttonMode = true
-  //   const onTap = () => {
-  //     console.log('onTapEdge')
-  //   }
-  //   graphicsRef.current?.on('click', onTap)
-  //   graphicsRef.current?.on('pointertap', onTap)
-  //   graphicsRef.current?.on('tap', onTap)
-  //   return () => {
-  //     graphicsRef.current?.off('pointertap', onTap)
-  //   }
-  // }, [])
-  const sourceElement = element.source()
-  const targetElement = element.target()
-  const to = element.target().position()
-  const from = element.source().position()
-  const midpoint = V.midpoint(from)(to)
-  const edgeGroupInfo = calculateEdgeGroupInfo(element)
+  const {
+    sortedIndex,
+  } = calculateEdgeGroupInfo(element)
+  const {
+    normVector,
+    midpointPosition,
+    toPosition,
+    fromPosition,
+  } = calculateVectorInfo(element.source(), element.target())
   return (
     <>
       <Container
         ref={containerRef}
         style={{
-          left: midpoint.x,
-          top: midpoint.y,
+          left: midpointPosition.x - Math.abs(sortedIndex) * normVector.x * 40,
+          top: midpointPosition.y - Math.abs(sortedIndex) * normVector.y * 40,
         }}
       >
         {
           children({
             item,
             element,
-            sourceElement,
-            targetElement,
-            to,
-            from,
+            to: toPosition,
+            from: fromPosition,
             cy,
-            ...edgeGroupInfo,
+            // ...edgeGroupInfo,
           })
         }
       </Container>
