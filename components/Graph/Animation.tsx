@@ -1,9 +1,8 @@
 import React from 'react'
-import { Code } from '../../../index'
 import * as R from 'colay/ramda'
-import { Graph, } from '../../../../src/components/Graph'
+import { Graph, } from '../../src/components/Graph'
 
-export const Animation = () => {
+export default function Animation() {
   const [nodes, setNodes] = React.useState({
     Elaine: {position: { x: 400, y: 100 }}
   })
@@ -56,48 +55,5 @@ export const Animation = () => {
           // { target: 'Kramer', source: 'Elaine' },
         ]}
         />
-  )
-}
-export const Default = () => {
-  return (
-    <Code>
-      {`<Graph
-      style={{ width: '100%', height: 250 }}
-      nodes={[
-        {
-          id: 'Elaine',
-          position: { x: 400, y: 100 },
-          data: { color: 'red' }
-        },
-        {
-          id: 'Jerry',
-          position: { x: 400, y: 200 },
-          data: { color: 'blue' }
-        },
-        {
-          id: 'Kramer',
-          position: { x: 600, y: 300 },
-          data: { color: 'blue' }
-        },
-        {
-          id: 'George',
-          position: { x: 200, y: 300 },
-          data: { color: 'blue' }
-        },
-      ]}
-      edges={[
-        { source: 'George', target: 'Jerry' },
-        { target: 'George', source: 'Jerry' },
-        { target: 'Kramer', source: 'George' },
-        { target: 'Kramer', source: 'Jerry' },
-        { target: 'Jerry', source: 'Kramer' },
-        { target: 'Jerry', source: 'Elaine' },
-        { target: 'Elaine', source: 'Jerry' },
-        { target: 'Elaine', source: 'Kramer' },
-        { target: 'Kramer', source: 'Elaine' },
-      ]}
-      />
-    `}
-    </Code>
   )
 }

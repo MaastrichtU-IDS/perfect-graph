@@ -123,7 +123,7 @@ export const DefaultRenderEdge: RenderEdge = ({
         // position: 'absolute',
         // top: -40,
         color: 'black',
-        fontSize: 20,
+        fontSize: 12,
       }}
       isSprite
     >
