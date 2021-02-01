@@ -46,6 +46,7 @@ export default function Animation() {
         edges={[
           { target: 'Jerry', source: 'Elaine' },
           { target: 'Elaine', source: 'Jerry' },
+          { target: 'Jerry', source: 'Elaine' },
           // { source: 'George', target: 'Jerry' },
           // { target: 'George', source: 'Jerry' },
           // { target: 'Kramer', source: 'George' },

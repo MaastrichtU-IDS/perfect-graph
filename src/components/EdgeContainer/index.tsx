@@ -26,6 +26,8 @@ export type EdgeContainerProps = {
 }
 
 export type EdgeContainerType = React.FC<EdgeContainerProps>
+const DEFAULT_DISTANCE = 40
+const DEFAULT_MARGIN = 10
 
 export const calculateEdgeGroupInfo = (edge: EdgeElement) => {
   const edgeID = edge.id()
@@ -33,7 +35,7 @@ export const calculateEdgeGroupInfo = (edge: EdgeElement) => {
   const sourceElement = edge.source()
   const betweenEdges = targetElement.edgesWith(sourceElement)
   const betweenEdgesCount = betweenEdges.length
-  const betweenEdgesMedian = Math.ceil(betweenEdgesCount / 2)
+  const betweenEdgesMedian = Math.floor(betweenEdgesCount / 2)
   let edgeIndex = 0
   betweenEdges.forEach((edgeEl, i) => {
     if (edgeEl.id() === edgeID) {
@@ -42,9 +44,10 @@ export const calculateEdgeGroupInfo = (edge: EdgeElement) => {
   })
   let sortedIndex = 0
   if (betweenEdgesCount > 1) {
-    sortedIndex = edgeIndex > betweenEdgesMedian
-      ? betweenEdgesMedian - edgeIndex
-      : edgeIndex - betweenEdgesMedian
+    sortedIndex = betweenEdgesMedian - edgeIndex
+    // edgeIndex > betweenEdgesMedian
+    //   ? betweenEdgesMedian - edgeIndex
+    //   : edgeIndex - betweenEdgesMedian
     if (betweenEdgesCount % 2 === 0 && sortedIndex >= 0) {
       sortedIndex += 1
     }
@@ -55,14 +58,14 @@ export const calculateEdgeGroupInfo = (edge: EdgeElement) => {
     count: betweenEdgesCount,
   }
 }
-export const calculateVectorInfo = (source: NodeElement, to: NodeElement) => {
+export const calculateVectorInfo = (source: NodeElement, to: NodeElement, { sortedIndex }) => {
   const fromPosition = source.position()
   const toPosition = to.position()
   const distanceVector = R.pipe(
     V.subtract(fromPosition),
   )(toPosition)
   const unitVector = V.normalize(distanceVector)
-  const normVector = V.rotate(Math.PI / 2)(unitVector)
+  const normVector = V.multiplyScalar(sortedIndex > 0 ? 1 : -1)(V.rotate(Math.PI / 2)(unitVector))
   const midpointPosition = V.midpoint(fromPosition)(toPosition)
   return {
     fromPosition,
@@ -93,22 +96,22 @@ const EdgeContainerElement = (
     const targetElement = element.target()
     const sourceElement = element.source()
     const {
+      sortedIndex,
+    } = calculateEdgeGroupInfo(element)
+    const {
       distanceVector,
       // fromPosition,
       // toPosition,
       midpointPosition,
       normVector,
       unitVector,
-    } = calculateVectorInfo(sourceElement, targetElement)
-    const {
-      sortedIndex,
-    } = calculateEdgeGroupInfo(element)
-    containerRef.current!.x = midpointPosition.x - Math.abs(sortedIndex) * normVector.x * 40
-    containerRef.current!.y = midpointPosition.y - Math.abs(sortedIndex) * normVector.y * 40
+    } = calculateVectorInfo(sourceElement, targetElement, { sortedIndex })
+
+    containerRef.current!.x = midpointPosition.x - Math.abs(sortedIndex) * normVector.x * DEFAULT_DISTANCE
+    containerRef.current!.y = midpointPosition.y - Math.abs(sortedIndex) * normVector.y * DEFAULT_DISTANCE
     const sourceElementContext = getNodeContextByElement(sourceElement)
     const targetElementContext = getNodeContextByElement(targetElement)
     // calculate sortedIndex
-    
     return drawLine({
       item,
       sourceElement,
@@ -124,10 +127,10 @@ const EdgeContainerElement = (
       to: targetElementContext.boundingBox,
       from: sourceElementContext.boundingBox,
       directed: true,
-      distance: sortedIndex * 40,
+      distance: sortedIndex * DEFAULT_DISTANCE,
       margin: {
-        x: -Math.abs(sortedIndex) * 4,
-        y: -Math.abs(sortedIndex) * 4,
+        x: -Math.abs(sortedIndex) * DEFAULT_MARGIN,
+        y: -Math.abs(sortedIndex) * DEFAULT_MARGIN,
       },
       distanceVector,
       unitVector,
@@ -158,14 +161,14 @@ const EdgeContainerElement = (
     midpointPosition,
     toPosition,
     fromPosition,
-  } = calculateVectorInfo(element.source(), element.target())
+  } = calculateVectorInfo(element.source(), element.target(), { sortedIndex })
   return (
     <>
       <Container
         ref={containerRef}
         style={{
-          left: midpointPosition.x - Math.abs(sortedIndex) * normVector.x * 40,
-          top: midpointPosition.y - Math.abs(sortedIndex) * normVector.y * 40,
+          left: midpointPosition.x - Math.abs(sortedIndex) * normVector.x * DEFAULT_DISTANCE,
+          top: midpointPosition.y - Math.abs(sortedIndex) * normVector.y * DEFAULT_DISTANCE,
         }}
       >
         {

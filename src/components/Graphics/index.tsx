@@ -135,25 +135,29 @@ export const drawLine = (
       y: 0,
     },
     unitVector,
-    distanceVector,
+    // distanceVector,
     normVector,
   } = config
-  const fromPos = {
-    x: fromBoundingBox.x + normVector.x * margin.x,
-    y: fromBoundingBox.y + normVector.y * margin.y,
+  const marginVector = {
+    x: normVector.x * margin.x,
+    y: normVector.y * margin.y,
   }
-  const toPos = {
-    x: toBoundingBox.x + normVector.x * margin.x,
-    y: toBoundingBox.y + normVector.y * margin.y,
-  }
+  // const fromPos = {
+  //   x: fromBoundingBox.x + normVector.x * margin.x,
+  //   y: fromBoundingBox.y + normVector.y * margin.y,
+  // }
+  // const toPos = {
+  //   x: toBoundingBox.x + normVector.x * margin.x,
+  //   y: toBoundingBox.y + normVector.y * margin.y,
+  // }
   const centerOfFrom = V.add(
     fromBoundingBox.width / 2,
     fromBoundingBox.height / 2,
-  )(fromPos)
+  )(fromBoundingBox)
   const centerOfTo = V.add(
     toBoundingBox.width / 2,
     toBoundingBox.height / 2,
-  )(toPos)
+  )(toBoundingBox)
 
   const radiusFrom = Math.hypot(fromBoundingBox.width, fromBoundingBox.height) / 2
   const radiusTo = Math.hypot(toBoundingBox.width, toBoundingBox.height) / 2
@@ -172,9 +176,11 @@ export const drawLine = (
   )(centerOfFrom)
   const from = R.pipe(
     V.add(radiusDistanceVectorFrom),
+    V.add(marginVector),
   )(centerOfFrom)
   const to = R.pipe(
     V.add(radiusDistanceVectorTo),
+    V.add(marginVector),
   )(centerOfTo)
   mutableInstance.clear()
   mutableInstance.lineStyle(width, fill, alpha)
@@ -259,8 +265,6 @@ export const drawLine = (
               mid,
               start,
               end,
-              upperVector,
-              midVec,
             }: BezierLinePoints) => {
               mutableInstance.moveTo(start.x, start.y)
               mutableInstance.bezierCurveTo(
