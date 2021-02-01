@@ -26,7 +26,7 @@ export type EdgeContainerProps = {
 }
 
 export type EdgeContainerType = React.FC<EdgeContainerProps>
-const DEFAULT_DISTANCE = 40
+const DEFAULT_DISTANCE = 36
 const DEFAULT_MARGIN = 10
 
 export const calculateEdgeGroupInfo = (edge: EdgeElement) => {
@@ -44,10 +44,7 @@ export const calculateEdgeGroupInfo = (edge: EdgeElement) => {
   })
   let sortedIndex = 0
   if (betweenEdgesCount > 1) {
-    sortedIndex = betweenEdgesMedian - edgeIndex
-    // edgeIndex > betweenEdgesMedian
-    //   ? betweenEdgesMedian - edgeIndex
-    //   : edgeIndex - betweenEdgesMedian
+    sortedIndex = R.range(-betweenEdgesMedian, betweenEdgesMedian + 1)[edgeIndex]
     if (betweenEdgesCount % 2 === 0 && sortedIndex >= 0) {
       sortedIndex += 1
     }
@@ -58,15 +55,26 @@ export const calculateEdgeGroupInfo = (edge: EdgeElement) => {
     count: betweenEdgesCount,
   }
 }
-export const calculateVectorInfo = (source: NodeElement, to: NodeElement, { sortedIndex }) => {
+export const calculateVectorInfo = (
+  source: NodeElement,
+  to: NodeElement,
+) => {
   const fromPosition = source.position()
   const toPosition = to.position()
   const distanceVector = R.pipe(
     V.subtract(fromPosition),
   )(toPosition)
   const unitVector = V.normalize(distanceVector)
-  const normVector = V.multiplyScalar(sortedIndex > 0 ? 1 : -1)(V.rotate(Math.PI / 2)(unitVector))
+  const normVector = V.rotate(Math.PI / 2)(unitVector)// V.multiplyScalar(sortedIndex > 0 ? 1 : -1)(V.rotate(Math.PI / 2)(unitVector))
   const midpointPosition = V.midpoint(fromPosition)(toPosition)
+  // const undirectedFromPosition = source.id() > to.id() ? fromPosition : toPosition
+  // const undirectedToPosition = source.id() > to.id() ? toPosition : fromPosition
+  // const undirectedDistanceVector = R.pipe(
+  //   V.subtract(undirectedFromPosition),
+  // )(undirectedToPosition)
+  // const undirectedUnitVector = V.normalize(distanceVector)
+  // const undirectedNormVector = V.rotate(Math.PI / 2)(unitVector)
+  const sign = source.id() > to.id() ? 1 : -1
   return {
     fromPosition,
     toPosition,
@@ -74,6 +82,10 @@ export const calculateVectorInfo = (source: NodeElement, to: NodeElement, { sort
     unitVector,
     normVector,
     midpointPosition,
+    undirectedUnitVector: V.multiplyScalar(sign)(unitVector),
+    undirectedNormVector: V.multiplyScalar(sign)(normVector),
+    // undirectedUnitVector,
+    // undirectedNormVector,
   }
 }
 const EdgeContainerElement = (
@@ -105,10 +117,12 @@ const EdgeContainerElement = (
       midpointPosition,
       normVector,
       unitVector,
-    } = calculateVectorInfo(sourceElement, targetElement, { sortedIndex })
+      undirectedUnitVector,
+      undirectedNormVector,
+    } = calculateVectorInfo(sourceElement, targetElement)
 
-    containerRef.current!.x = midpointPosition.x - Math.abs(sortedIndex) * normVector.x * DEFAULT_DISTANCE
-    containerRef.current!.y = midpointPosition.y - Math.abs(sortedIndex) * normVector.y * DEFAULT_DISTANCE
+    containerRef.current!.x = midpointPosition.x + sortedIndex * undirectedNormVector.x * DEFAULT_DISTANCE
+    containerRef.current!.y = midpointPosition.y + sortedIndex * undirectedNormVector.y * DEFAULT_DISTANCE
     const sourceElementContext = getNodeContextByElement(sourceElement)
     const targetElementContext = getNodeContextByElement(targetElement)
     // calculate sortedIndex
@@ -129,12 +143,14 @@ const EdgeContainerElement = (
       directed: true,
       distance: sortedIndex * DEFAULT_DISTANCE,
       margin: {
-        x: -Math.abs(sortedIndex) * DEFAULT_MARGIN,
-        y: -Math.abs(sortedIndex) * DEFAULT_MARGIN,
+        x: sortedIndex * DEFAULT_MARGIN,
+        y: sortedIndex * DEFAULT_MARGIN,
       },
       distanceVector,
       unitVector,
       normVector,
+      undirectedUnitVector,
+      undirectedNormVector,
     })
   }, [containerRef, graphicsRef])
   const onPositionChange = React.useCallback(({ element }) => {
@@ -161,14 +177,15 @@ const EdgeContainerElement = (
     midpointPosition,
     toPosition,
     fromPosition,
-  } = calculateVectorInfo(element.source(), element.target(), { sortedIndex })
+    undirectedNormVector,
+  } = calculateVectorInfo(element.source(), element.target())
   return (
     <>
       <Container
         ref={containerRef}
         style={{
-          left: midpointPosition.x - Math.abs(sortedIndex) * normVector.x * DEFAULT_DISTANCE,
-          top: midpointPosition.y - Math.abs(sortedIndex) * normVector.y * DEFAULT_DISTANCE,
+          left: midpointPosition.x + sortedIndex * undirectedNormVector.x * DEFAULT_DISTANCE,
+          top: midpointPosition.y + sortedIndex * undirectedNormVector.y * DEFAULT_DISTANCE,
         }}
       >
         {

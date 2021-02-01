@@ -1,5 +1,5 @@
 import { Position } from 'colay-ui/type'
-import { BoundingBox } from '@type'
+import { BoundingBox, NodeElement } from '@type'
 import * as PIXI from 'pixi.js'
 import * as R from 'colay/ramda'
 import * as V from 'colay/vector'
@@ -32,7 +32,7 @@ const controlPointsCreator = {
       unitVector,
       normVector,
     } = config
-    const upperVector = V.multiplyScalar(Math.abs(distance))(normVector)
+    const upperVector = V.multiplyScalar(distance)(normVector)
     const lowerVector = V.multiplyScalar(-1)(upperVector)
     const chunkDistanceVector = R.pipe(
       V.subtract(from),
@@ -41,7 +41,7 @@ const controlPointsCreator = {
     const semiChunkDistanceVector = V.divideScalar(2)(chunkDistanceVector)
     return R.mapIndexed(
       (_, index: number) => {
-        const isUpper = index % 2 !== 0
+        const isUpper = index % 2 === 0
         const startVec = R.pipe(
           V.multiplyScalar(index),
           V.add(from),
@@ -99,6 +99,8 @@ const drawArrowHead = ({
 }
 export const drawLine = (
   config: {
+    sourceElement: NodeElement;
+    targetElement: NodeElement;
     from: BoundingBox;
     to: BoundingBox;
     fill?: number;
@@ -115,6 +117,8 @@ export const drawLine = (
     unitVector: Position;
     distanceVector: Position;
     normVector: Position;
+    undirectedUnitVector:Position;
+    undirectedNormVector:Position;
   },
 ) => {
   const {
@@ -135,21 +139,17 @@ export const drawLine = (
       y: 0,
     },
     unitVector,
-    // distanceVector,
     normVector,
+    undirectedUnitVector,
+    undirectedNormVector,
+    // distanceVector,
   } = config
   const marginVector = {
-    x: normVector.x * margin.x,
-    y: normVector.y * margin.y,
+    x: undirectedNormVector.x * margin.x,
+    y: undirectedNormVector.y * margin.y,
   }
-  // const fromPos = {
-  //   x: fromBoundingBox.x + normVector.x * margin.x,
-  //   y: fromBoundingBox.y + normVector.y * margin.y,
-  // }
-  // const toPos = {
-  //   x: toBoundingBox.x + normVector.x * margin.x,
-  //   y: toBoundingBox.y + normVector.y * margin.y,
-  // }
+  const radiusFrom = Math.hypot(fromBoundingBox.width, fromBoundingBox.height) / 2
+  const radiusTo = Math.hypot(toBoundingBox.width, toBoundingBox.height) / 2
   const centerOfFrom = V.add(
     fromBoundingBox.width / 2,
     fromBoundingBox.height / 2,
@@ -158,40 +158,27 @@ export const drawLine = (
     toBoundingBox.width / 2,
     toBoundingBox.height / 2,
   )(toBoundingBox)
-
-  const radiusFrom = Math.hypot(fromBoundingBox.width, fromBoundingBox.height) / 2
-  const radiusTo = Math.hypot(toBoundingBox.width, toBoundingBox.height) / 2
-  // const centerDistanceVector = R.pipe(
-  //   V.subtract(centerOfFrom),
-  // )(centerOfTo)
-  const radiusDistanceVectorFrom = R.pipe(
-    V.subtract(centerOfFrom),
-    V.normalize,
-    V.multiplyScalar(radiusFrom),
-  )(centerOfTo)
-  const radiusDistanceVectorTo = R.pipe(
-    V.subtract(centerOfTo),
-    V.normalize,
-    V.multiplyScalar(radiusTo),
-  )(centerOfFrom)
   const from = R.pipe(
-    V.add(radiusDistanceVectorFrom),
+    V.add(V.multiplyScalar(radiusFrom)(unitVector)),
     V.add(marginVector),
   )(centerOfFrom)
   const to = R.pipe(
-    V.add(radiusDistanceVectorTo),
+    V.subtract(V.multiplyScalar(radiusTo)(unitVector)),
     V.add(marginVector),
   )(centerOfTo)
   mutableInstance.clear()
   mutableInstance.lineStyle(width, fill, alpha)
 
-  drawArrowHead({
-    graphics: mutableInstance,
-    unitVector,
-    to,
-    fill,
-    ...arrowHead,
-  })
+  if (directed) {
+    drawArrowHead({
+      graphics: mutableInstance,
+      unitVector,
+      to,
+      fill,
+      ...arrowHead,
+    })
+  }
+
   R.cond([
     [
       R.equals('bezier'),
@@ -201,8 +188,8 @@ export const drawLine = (
           to,
           count: 2,
           distance: 100,
-          unitVector,
-          normVector,
+          unitVector: undirectedUnitVector,
+          normVector: undirectedNormVector,
         })
         R.map(
           ({
@@ -227,8 +214,8 @@ export const drawLine = (
           to,
           count: 4,
           distance: 100,
-          unitVector,
-          normVector,
+          unitVector: undirectedUnitVector,
+          normVector: undirectedNormVector,
         })
         R.map(
           ({
@@ -257,8 +244,8 @@ export const drawLine = (
             to,
             count: 1,
             distance,
-            unitVector,
-            normVector,
+            unitVector: undirectedUnitVector,
+            normVector: undirectedNormVector,
           })
           R.map(
             ({
@@ -293,57 +280,3 @@ export const drawLine = (
 // })
 
 export { Graphics } from '@inlet/react-pixi'
-
-// const {
-//   to,
-//   from,
-//   distanceVector,
-// } = R.ifElse(
-//   R.isTrue,
-//   () => {
-//     const centerOfFrom = V.add(
-//       fromBoundingBox.width / 2,
-//       fromBoundingBox.height / 2,
-//     )(fromPos)
-//     const centerOfTo = V.add(
-//       toBoundingBox.width / 2,
-//       toBoundingBox.height / 2,
-//     )(toPos)
-
-//     const radiusFrom = Math.hypot(fromBoundingBox.width, fromBoundingBox.height) / 2
-//     const radiusTo = Math.hypot(toBoundingBox.width, toBoundingBox.height) / 2
-//     const distanceVector = R.pipe(
-//       V.subtract(centerOfFrom),
-//     )(centerOfTo)
-//     const radiusDistanceVectorFrom = R.pipe(
-//       V.subtract(centerOfFrom),
-//       V.normalize,
-//       V.multiplyScalar(radiusFrom),
-//     )(centerOfTo)
-//     const radiusDistanceVectorTo = R.pipe(
-//       V.subtract(centerOfTo),
-//       V.normalize,
-//       V.multiplyScalar(radiusTo),
-//     )(centerOfFrom)
-//     return {
-//       from: R.pipe(
-//         V.add(radiusDistanceVectorFrom),
-//       )(centerOfFrom),
-//       to: R.pipe(
-//         V.add(radiusDistanceVectorTo),
-//       )(centerOfTo),
-//       // radiusFrom,
-//       // radiusTo,
-//       distanceVector,
-//     }
-//   },
-//   R.always({
-//     to: toPos,
-//     from: fromPos,
-//     // radiusTo: 50,
-//     // radiusFrom: 50,
-//     distanceVector: R.pipe(
-//       V.subtract(fromPos),
-//     )(toPos),
-//   }),
-// )(directed)
