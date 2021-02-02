@@ -166,7 +166,7 @@ const AppContainer = ({
         renderNode={({ item, element, cy }) => {
           const size = calculateNodeSize(item.data, configRef.current.visualization.nodeSize)
           const color = calculateColor(item.data, configRef.current.visualization.nodeColor)
-          // const hasSelectedEdge = element.connectedEdges(':selected').length > 0
+          const hasSelectedEdge = element.connectedEdges(':selected').length > 0
           return (
             <Graph.Pressable
               style={{
@@ -175,7 +175,11 @@ const AppContainer = ({
                 justifyContent: 'center',
                 alignItems: 'center',
                 display: 'flex',
-                backgroundColor: color,
+                backgroundColor: hasSelectedEdge
+                ? theme.palette.secondary.main
+                : (element.selected()
+                  ? theme.palette.primary.main
+                  : color),
                 // hasSelectedEdge
                 //   ? theme.palette.secondary.main
                 //   : (element.selected()

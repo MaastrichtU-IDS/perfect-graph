@@ -276,10 +276,10 @@ export const useController = (
         case EVENT.LAYOUT_CHANGED: {
           let layout
           if (extraData.value.name) {
-            layout = {
+            layout = R.pickBy((val) => R.isNotNil(val))({
               ...GraphLayouts[extraData.value.name],
               ...extraData.value,
-            }
+            })
           }
           draft.graphConfig.layout = layout
           break
