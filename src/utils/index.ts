@@ -382,20 +382,34 @@ export const readTextFile = async (blob: Blob, encoding?: string) => new Promise
   },
 )
 
-export const calculateDisplayObjectBounds = (object: PIXI.Container) => {
-  const box = object.getLocalBounds()
-  box.width = 45
-  box.height = 45
-  return {
-    // x: object.x + (box.x - object.pivot.x) * object.scale.x,
-    // y: object.y + (box.y - object.pivot.y) * object.scale.y,
-    width: box.width * object.scale.x,
-    height: box.height * object.scale.y,
-    x: object.x * object.scale.x,
-    y: object.y * object.scale.y,
+export const calculateObjectBoundsWithoutChildren = (container: PIXI.Container) => {
+  const object = container.getChildAt(0)
+  const children = object.removeChildren()
+  const box = {
+    x: container.x * container.scale.x,
+    y: container.y * container.scale.y,
+    width: object.width * object.scale.x,
+    height: object.height * object.scale.y,
   }
+  console.log(box)
+  children.forEach((child) => {
+    object.addChild(child)
+  })
+  return box
 }
 
+// export const calculateDisplayObjectBounds = (object: PIXI.Container) => {
+//   const box = object.getLocalBounds()
+//   box.width = 45
+//   box.height = 45
+//   return {
+//     // x: object.x + (box.x - object.pivot.x) * object.scale.x,
+//     // y: object.y + (box.y - object.pivot.y) * object.scale.y,
+//     width: box.width * object.scale.x,
+//     height: box.height * object.scale.y,
+//     x: object.x * object.scale.x,
+//     y: object.y * object.scale.y,}
+//   }
 export const getNodeContextByElement = (element: Element): NodeContext => element.data(
   ELEMENT_DATA_FIELDS.CONTEXT,
 )

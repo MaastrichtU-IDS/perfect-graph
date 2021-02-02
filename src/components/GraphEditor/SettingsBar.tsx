@@ -89,10 +89,10 @@ const SettingsBarElement = (props: SettingsBarProps) => {
             // {...formProps}
             {...form}
             onSubmit={(
-              formValue,
+              e,
             ) => createOnActionCallback(
               EVENT.SETTINGS_FORM_CHANGED,
-              { form, value: formValue },
+              { form, value: e.formData },
             )()}
           />
         ))

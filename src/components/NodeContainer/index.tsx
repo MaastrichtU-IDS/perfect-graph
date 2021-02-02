@@ -2,7 +2,7 @@ import React from 'react'
 import { wrapComponent } from 'colay-ui'
 import { useNode } from '@hooks'
 import { RenderNode, NodeConfig } from '@type'
-import { calculateDisplayObjectBounds } from '@utils'
+import { calculateObjectBoundsWithoutChildren } from '@utils'
 import { Container } from '../Container'
 
 export type NodeContainerProps = {
@@ -49,7 +49,9 @@ const NodeContainerElement = (
   )
   React.useEffect(() => {
     // @ts-ignore
-    context.boundingBox = calculateDisplayObjectBounds(containerRef.current)
+    context.boundingBox = calculateObjectBoundsWithoutChildren(
+      containerRef.current,
+    )
   })
   return (
     <Container

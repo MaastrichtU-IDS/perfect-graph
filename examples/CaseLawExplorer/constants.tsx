@@ -1,6 +1,5 @@
 import React from 'react'
-import RangeSlider from 'unitx-ui/components/RangeSlider'
-import {Button} from 'unitx-ui'
+import {Button, Slider } from '@material-ui/core'
 
 export const getFilterSchema  = (props: {onPopupPress: () => void}) => {
   const {
@@ -19,7 +18,7 @@ export const getFilterSchema  = (props: {onPopupPress: () => void}) => {
       additionalProperties: false,
       properties: {
         title: {
-          type: 'string',
+          type: 'boolean',
         },
         year: {
           type: 'array',
@@ -30,7 +29,7 @@ export const getFilterSchema  = (props: {onPopupPress: () => void}) => {
           maximum: 2015,
         },
         live: {
-          title: 'live',
+          title: 'boolean',
           type: 'boolean',
         },
         popup: {
@@ -43,20 +42,32 @@ export const getFilterSchema  = (props: {onPopupPress: () => void}) => {
       'year': {
         'ui:field': ({ formData, schema, onChange}) => {
           return (
-            <RangeSlider
-              style={{ width: '90%', height: 40 }}
+            <Slider
+              value={formData ?? [schema.minimum, schema.maximum ]}
+              onChange={(e) => {
+                console.log(formData,e.target.value)
+                onChange(e.target.value)
+              }}
+              valueLabelDisplay="auto"
+              aria-labelledby="range-slider"
               min={schema.minimum}
               max={schema.maximum}
-              value={formData}
-              onValueChange={onChange}
+              // getAriaValueText={(text)=> text}
             />
+            // <RangeSlider
+            //   style={{ width: '90%', height: 40 }}
+              // min={schema.minimum}
+              // max={schema.maximum}
+            //   value={formData}
+            //   onValueChange={onChange}
+            // />
           )
         },
       },
       'popup': {
         'ui:field': ({ formData, schema, onChange}) => {
           return (
-            <Button onPress={onPopupPress}>Open</Button>
+            <Button onClick={onPopupPress}>Open</Button>
           )
         },
       },

@@ -67,13 +67,6 @@ export const calculateVectorInfo = (
   const unitVector = V.normalize(distanceVector)
   const normVector = V.rotate(Math.PI / 2)(unitVector)// V.multiplyScalar(sortedIndex > 0 ? 1 : -1)(V.rotate(Math.PI / 2)(unitVector))
   const midpointPosition = V.midpoint(fromPosition)(toPosition)
-  // const undirectedFromPosition = source.id() > to.id() ? fromPosition : toPosition
-  // const undirectedToPosition = source.id() > to.id() ? toPosition : fromPosition
-  // const undirectedDistanceVector = R.pipe(
-  //   V.subtract(undirectedFromPosition),
-  // )(undirectedToPosition)
-  // const undirectedUnitVector = V.normalize(distanceVector)
-  // const undirectedNormVector = V.rotate(Math.PI / 2)(unitVector)
   const sign = source.id() > to.id() ? 1 : -1
   return {
     fromPosition,
@@ -84,8 +77,6 @@ export const calculateVectorInfo = (
     midpointPosition,
     undirectedUnitVector: V.multiplyScalar(sign)(unitVector),
     undirectedNormVector: V.multiplyScalar(sign)(normVector),
-    // undirectedUnitVector,
-    // undirectedNormVector,
   }
 }
 const EdgeContainerElement = (
@@ -120,7 +111,6 @@ const EdgeContainerElement = (
       undirectedUnitVector,
       undirectedNormVector,
     } = calculateVectorInfo(sourceElement, targetElement)
-
     containerRef.current!.x = midpointPosition.x + sortedIndex * undirectedNormVector.x * DEFAULT_DISTANCE
     containerRef.current!.y = midpointPosition.y + sortedIndex * undirectedNormVector.y * DEFAULT_DISTANCE
     const sourceElementContext = getNodeContextByElement(sourceElement)
