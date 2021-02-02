@@ -3,6 +3,7 @@ import { wrapComponent } from 'colay-ui'
 import { useNode } from '@hooks'
 import { RenderNode, NodeConfig } from '@type'
 import { calculateObjectBoundsWithoutChildren } from '@utils'
+import { useTheme } from '@core/theme'
 import { Container } from '../Container'
 
 export type NodeContainerProps = {
@@ -53,6 +54,7 @@ const NodeContainerElement = (
       containerRef.current,
     )
   })
+  const theme = useTheme()
   return (
     <Container
       ref={containerRef}
@@ -63,13 +65,14 @@ const NodeContainerElement = (
       draggable
       onDrag={onDrag}
       // onRightPress={(event) => {
-      //   console.log('rightPress')
       //   event.data.originalEvent.preventDefault()
       //   event.data.originalEvent.stopPropagation()
       // }}
       // onPress={(e) => console.log('press')}
     >
-      {children({ item, element, cy })}
+      {children({
+        item, element, cy, theme,
+      })}
     </Container>
   )
 }

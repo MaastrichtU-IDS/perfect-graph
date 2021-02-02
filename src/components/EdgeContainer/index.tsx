@@ -193,6 +193,7 @@ const EdgeContainerElement = (
             to: toPosition,
             from: fromPosition,
             cy,
+            theme,
             // ...edgeGroupInfo,
           })
         }

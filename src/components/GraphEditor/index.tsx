@@ -18,7 +18,7 @@ import { wrapComponent, useForwardRef } from 'colay-ui'
 import { Box } from '@material-ui/core'
 import { PropsWithRef } from 'colay-ui/type'
 import * as R from 'colay/ramda'
-import { ActionBar, ACTION, ActionBarProps } from './ActionBar'
+import { ActionBar, ActionBarProps } from './ActionBar'
 import { DataBar, DataBarProps } from './DataBar'
 import { SettingsBar, SettingsBarProps } from './SettingsBar'
 import { MouseIcon } from './MouseIcon'
@@ -221,9 +221,9 @@ const GraphEditorElement = (
           graphEditorRef={graphEditorRef}
           mode={mode}
           graphConfig={graphConfig}
-          onAction={({ type }) => {
+          onAction={({ type, value }) => {
             switch (type) {
-              case ACTION.EXPORT_DATA:
+              case EVENT.EXPORT_DATA:
                 onEventCallback({
                   type: EVENT.EXPORT_DATA,
                   extraData: {
@@ -233,6 +233,10 @@ const GraphEditorElement = (
                 break
 
               default:
+                onEventCallback({
+                  type,
+                  extraData: value,
+                })
                 break
             }
           }}

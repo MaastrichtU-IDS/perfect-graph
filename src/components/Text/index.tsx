@@ -58,8 +58,17 @@ const processTextProps = (props: TextPIXIProps) => {
 const TextPIXI = PixiComponent<TextPIXIProps, PIXI.Text>('PIXIText', {
   create: (props) => {
     const {
+      style = {},
+    } = props
+    const {
       text = '', textStyle = {}, isSprite,
-    } = processTextProps(props)
+    } = processTextProps({
+      ...props,
+      style: {
+        color: props.theme.palette.text.primary,
+        ...style,
+      },
+    })
     const mutableInstance = new PIXI.Text(text, textStyle)
     return R.ifElse(
       R.isTrue,
@@ -75,22 +84,32 @@ const TextPIXI = PixiComponent<TextPIXIProps, PIXI.Text>('PIXIText', {
     oldProps,
     props,
   ) => {
+    const {
+      style = {},
+    } = props
     const { text: _, textStyle: __, ...oldPropsRest } = processTextProps(oldProps)
     const {
       text = '', textStyle = {}, isSprite, ...propsRest
-    } = processTextProps(props)
+    } = processTextProps({
+      ...props,
+      style: {
+        color: props.theme.palette.text.primary,
+        ...style,
+      },
+    })
     applyDefaultProps(
       mutableInstance,
       oldPropsRest,
       propsRest,
     )
-    R.unless(
-      R.isTrue,
-      () => {
-        mutableInstance.text = text
-        mutableInstance.style = textStyle
-      },
-    )(isSprite)
+    if (isSprite) {
+      const newInstance = new PIXI.Text(text, textStyle)
+      newInstance.updateText(false)
+      mutableInstance.texture = newInstance.texture
+    } else {
+      mutableInstance.text = text
+      mutableInstance.style = textStyle
+    }
   },
 })
 

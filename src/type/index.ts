@@ -2,6 +2,7 @@ import React from 'react'
 import { LayoutChangeEvent } from 'react-native'
 import { EdgeSingular, NodeSingular, Core } from 'cytoscape'
 import { Position, Enumerable } from 'colay/type'
+import { Theme } from '@core/theme'
 import {
   ELEMENT_TYPE, EVENT, DATA_TYPE, EDITOR_MODE,
   PIXI_EVENT_NAMES,
@@ -170,6 +171,7 @@ export type GraphConfig = {
     }
   };
   backgroundColor?: string;
+  theme?: Theme;
 }
 
 export type DisplayObjectWithYoga = PIXI.DisplayObject & {

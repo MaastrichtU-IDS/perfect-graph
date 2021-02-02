@@ -1,6 +1,10 @@
 import React from 'react'
 import * as R from 'colay/ramda'
-// import { Button, } from '@material-ui/core'
+import { 
+  useTheme as useMuiTheme,
+   ThemeProvider as MuiThemeProvider,
+   createMuiTheme
+} from '@material-ui/core'
 import { Div, } from 'colay-ui'
 import { 
   DarkTheme,
@@ -17,19 +21,29 @@ import { getFilterSchema, VIEW_CONFIG_SCHEMA  } from './constants'
 import { EVENT } from '../../src/utils/constants'
 import {useController} from '../../src/plugins/controller'
 // import { Data } from '../../components/Graph/Default'
+const MUIDarkTheme = createMuiTheme({
+  palette: {
+    mode: 'dark',
+  },
+});
+const MUILightTheme = createMuiTheme({
+  palette: {
+    mode: 'light',
+  },
+});
 const filterEdges = (nodes: {id: string}[]) => (edges: {source:string;target:string}[]) => {
   const nodeMap = R.groupBy(R.prop('id'))(nodes)
   return R.filter(
     (edge) => nodeMap[edge.source] && nodeMap[edge.target]
   )(edges)
 }
-
+const CHUNK_COUNT = 2
 const prepareData = (data) =>  {
   const {
     nodes,
     edges
   } = data
-  const preNodes = R.splitEvery(Math.ceil(nodes.length/2))(nodes)[0]
+  const preNodes = R.splitEvery(Math.ceil(nodes.length/CHUNK_COUNT))(nodes)[0]
   const preEdges = filterEdges(preNodes)(edges)
   return {
     nodes: preNodes,
@@ -100,7 +114,7 @@ const perc2color = (
 }
 
 const AppContainer = ({
-  changeTheme,
+  changeMUITheme,
   ...rest
 }) => {
   const configRef = React.useRef({
@@ -109,9 +123,15 @@ const AppContainer = ({
       nodeColor: null
     },
   })
+  // const muiTheme = useMuiTheme()
+  // console.log(muiTheme.palette)
   const FILTER_SCHEMA = React.useMemo(() => getFilterSchema({
     onPopupPress: () => console.log('popup')
   }), [])
+  const THEMES = {
+    Dark: DarkTheme,
+    Default: DefaultTheme
+  }
   const [controllerProps] = useController({
     ...data,
     graphConfig: {
@@ -119,13 +139,14 @@ const AppContainer = ({
       zoom: 0.2
     },
     settingsBar: {
-      opened: true,
+      opened: false,
       forms: [FILTER_SCHEMA, VIEW_CONFIG_SCHEMA]
     },
     dataBar: {
       editable: false,
     },
     actionBar: {
+      opened: true,
       actions: {
         add: { visible: false },
         delete: { visible: false },
@@ -135,8 +156,7 @@ const AppContainer = ({
       type,
       extraData,
       element,
-      draft
-    }) => {
+    },draft) => {
       switch (type) {
         case EVENT.SETTINGS_FORM_CHANGED:{
           if (extraData.form.schema.title === FILTER_SCHEMA.schema.title) {
@@ -148,6 +168,13 @@ const AppContainer = ({
           break
         }
       
+        case EVENT.CHANGE_THEME:{
+          draft.graphConfig.theme = THEMES[extraData]
+          changeMUITheme(extraData)
+          return false
+          break
+        }
+      
         default:
           break;
       }
@@ -155,7 +182,6 @@ const AppContainer = ({
     }
   },)
   const graphRef = React.useRef(null)
-  const theme = useTheme()
   return (
       <Div style={{ display: 'flex', flexDirection: 'column',width: '100%', height: '100%'}}>
       <GraphEditor
@@ -163,9 +189,12 @@ const AppContainer = ({
         {...controllerProps}
         extraData={[configRef.current.visualization]}
         style={{ width: '100%', height: 780, }}
-        renderNode={({ item, element, cy }) => {
+        renderNode={({ item, element, cy, theme }) => {
           const size = calculateNodeSize(item.data, configRef.current.visualization.nodeSize)
-          const color = calculateColor(item.data, configRef.current.visualization.nodeColor)
+          const color = configRef.current.visualization.nodeColor ? calculateColor(
+            item.data,
+            configRef.current.visualization.nodeColor
+          ) : theme.palette.background.paper
           const hasSelectedEdge = element.connectedEdges(':selected').length > 0
           return (
             <Graph.Pressable
@@ -197,15 +226,45 @@ const AppContainer = ({
                   position: 'absolute',
                   top: -40,
                   left: 20,
-                  color: 'black',
                 }}
                 isSprite
               >
-                {item.id.substring(0, 5)}
+                {R.takeLast(6, item.id)}
               </Graph.Text>
             </Graph.Pressable>
           )
         }}
+        renderEdge={({
+          cy,
+          item,
+          element,
+          theme
+        }) => (
+          <Graph.Pressable
+            style={{
+              position: 'absolute',
+              justifyContent: 'center',
+              alignItems: 'center',
+              display: 'flex',
+            }}
+            onPress={() => {
+              cy.$(':selected').unselect()
+              element.select()
+            }}
+          >
+            <Graph.Text
+              style={{
+                // position: 'absolute',
+                // top: -40,
+                // backgroundColor: DefaultTheme.palette.background.paper,
+                fontSize: 12,
+              }}
+              isSprite
+            >
+              {R.takeLast(6, item.id)}
+            </Graph.Text>
+          </Graph.Pressable>
+        )}
         // renderNode={({ item: { id, data } }) => {
           // const size = calculateNodeSize(data, configRef.current.visualization.nodeSize)
           // const color = calculateColor(data, configRef.current.visualization.nodeColor)
@@ -259,17 +318,18 @@ export const mergeDeepAll = (list: Record<string, any>[]) => R.reduce(
 
 
 
-export default (props: Props) => {
-  const [isDefault, setIsDefault] = React.useState(true)
-const changeTheme = () => {
-  setIsDefault(!isDefault)
+const MUI_THEMES = {
+  Dark: MUIDarkTheme,
+  Light: MUILightTheme,
 }
-
+export default (props: Props) => {
+  const [theme, setTheme] = React.useState(MUI_THEMES.Light)
   return (
-    <ThemeProvider 
-      value={isDefault  ? DefaultTheme : DarkTheme}
-    >
-      <AppContainer  changeTheme={changeTheme} {...props}/>
-    </ThemeProvider>
+    <MuiThemeProvider theme={theme}>
+      <AppContainer
+        changeMUITheme={(name)=> setTheme(MUI_THEMES[name])}
+        {...props}
+      />
+    </MuiThemeProvider>
   )
 }

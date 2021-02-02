@@ -16,6 +16,9 @@ import {
   Box,
   useTheme,
   Popover,
+  FormControl,
+  InputLabel,
+  Select,
 } from '@material-ui/core'
 import {
   Icon,
@@ -27,9 +30,9 @@ import * as R from 'colay/ramda'
 // import { DocumentPicker } from 'unitx-ui/@/DocumentPicker'
 import { Recorder } from 'colay-ui/components/Recorder'
 
-export const ACTION = {
-  EXPORT_DATA: 'EXPORT_DATA',
-}
+// export const ACTION = {
+//   EXPORT_DATA: 'EXPORT_DATA',
+// }
 type ActionOption = {
   visible?: boolean;
 }
@@ -336,7 +339,7 @@ const MoreOptions = (props: MoreOptionsProps) => {
         break
       }
       case OPTIONS.Export:
-        onAction({ type: ACTION.EXPORT_DATA })
+        onAction({ type: EVENT.EXPORT_DATA })
         // createOnActionCallback(EVENT.EXPORT_DATA)()
         break
 
@@ -347,6 +350,9 @@ const MoreOptions = (props: MoreOptionsProps) => {
 
   const handleClose = () => {
     setAnchorEl(null)
+  }
+  const handleThemeChange = (e: Event) => {
+    onAction({ type: EVENT.CHANGE_THEME, value: e.target.value })
   }
   return (
     <>
@@ -359,16 +365,31 @@ const MoreOptions = (props: MoreOptionsProps) => {
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={handleClose}
+        style={{ width: 400 }}
       >
         {Object.values(OPTIONS).map((option, index) => (
           <MenuItem
             key={option}
+
             // selected={index === selectedIndex}
             onClick={(event) => handleMenuItemClick(event, index)}
           >
             {option}
           </MenuItem>
         ))}
+        <FormControl fullWidth>
+          <InputLabel id="demo-simple-select-label">Default</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            // value={age}
+            onChange={handleThemeChange}
+          >
+            <MenuItem value="Default">Default</MenuItem>
+            <MenuItem value="Dark">Dark</MenuItem>
+            {/* <MenuItem value={30}>Thirty</MenuItem> */}
+          </Select>
+        </FormControl>
         {renderMoreAction()}
       </Menu>
     </>

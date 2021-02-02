@@ -8,6 +8,7 @@ import {
   Div,
   DivProps,
   DataRender,
+  useWhyDidUpdate,
 } from 'colay-ui'
 import * as C from 'colay/color'
 import { useGraph } from '@hooks'
@@ -17,11 +18,11 @@ import {
 } from '@type'
 import { PropsWithRef } from 'colay-ui/type'
 import '@core/config'
-import { useTheme, ThemeProvider, DefaultTheme } from '@core/theme'
+import { ThemeProvider, DefaultTheme } from '@core/theme'
 import { CYTOSCAPE_EVENT } from '@utils/constants'
 import { Viewport, ViewportProps } from '../Viewport'
 import { NodeContainer } from '../NodeContainer'
-import { EdgeContainer, calculateEdgeGroupInfo, calculateVectorInfo } from '../EdgeContainer'
+import { EdgeContainer } from '../EdgeContainer'
 import { Pressable } from '../Pressable'
 import { Text } from '../Text'
 
@@ -55,7 +56,9 @@ const DEFAULT_EDGE_CONFIG = {
   ],
 }
 
-export const DefaultRenderNode: RenderNode = ({ item, element, cy }) => {
+export const DefaultRenderNode: RenderNode = ({
+  item, element, cy, theme,
+}) => {
   const hasSelectedEdge = element.connectedEdges(':selected').length > 0
   return (
     <Pressable
@@ -66,10 +69,10 @@ export const DefaultRenderNode: RenderNode = ({ item, element, cy }) => {
         alignItems: 'center',
         display: 'flex',
         backgroundColor: hasSelectedEdge
-          ? DefaultTheme.palette.secondary.main
+          ? theme.palette.secondary.main
           : (element.selected()
-            ? DefaultTheme.palette.primary.main
-            : DefaultTheme.palette.background.paper),
+            ? theme.palette.primary.main
+            : theme.palette.background.paper),
         borderRadius: 50,
       }}
       onPress={() => {
@@ -132,10 +135,12 @@ export const DefaultRenderEdge: RenderEdge = ({
     </Text>
   </Pressable>
 )
-// <View style={{ width: 100, height: 100, backgroundColor: 'blue' }} />
 
 export type GraphType = React.FC<GraphProps>
 
+const DEFAULT_CONFIG = {
+  theme: DefaultTheme,
+}
 const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => {
   const {
     style,
@@ -146,8 +151,13 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
     renderEdge = DefaultRenderEdge,
     drawLine,
     extraData,
-    config = {} as Partial<GraphConfig>,
+    config: _config = {} as Partial<GraphConfig>,
   } = props
+  const config = React.useMemo(() => ({
+    ...DEFAULT_CONFIG,
+    ..._config,
+  }), [_config])
+  const { theme } = config
   const graphID = React.useMemo<string>(R.uuid, [])
   const stageRef = React.useRef<{ app: PIXI.Application }>(null)
   const viewportRef = React.useRef<ViewportRef>(null)
@@ -166,14 +176,19 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
     graphRef.current.app = stageRef.current?.app!
     graphRef.current.viewport = viewportRef.current!
   }, [stageRef.current])
-
+  const oldLayout = React.useRef(null)
   React.useEffect(() => {
     R.when(
       () => stageRef.current && config.layout,
       () => {
-        if (width === 0 || height === 0) {
+        if (
+          width === 0
+          || height === 0
+          || R.equalsExclude(R.is(Function))(oldLayout.current, config.layout)
+        ) {
           return
         }
+        oldLayout.current = config.layout
         setTimeout(() => {
           // @ts-ignore
           const { hitArea } = viewportRef.current
@@ -203,7 +218,6 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
       true,
     )
   }, [stageRef.current, config.layout, width, height])
-  const theme = useTheme()
   const backgroundColor = React.useMemo(
     () => C.rgbNumber(theme.palette.background.default),
     [theme.palette.background.default],
@@ -225,8 +239,11 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
     ...DEFAULT_EDGE_CONFIG,
     ...(config.edges ?? {}),
   }
+  // useWhyDidUpdate('heyy', {
+  //   stageRef: stageRef.current, layout: config.layout, width, height,
+  // })
   return (
-    <div
+    <Div
       ref={containerRef}
       style={style}
     >
@@ -244,8 +261,7 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
         }}
       >
         <ThemeProvider
-        // @ts-ignore
-          theme={theme}
+          value={theme}
         >
           <Viewport
           // @ts-ignore
@@ -295,7 +311,7 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
           </Viewport>
         </ThemeProvider>
       </Stage>
-    </div>
+    </Div>
   )
 }
 
