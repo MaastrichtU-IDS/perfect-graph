@@ -32,28 +32,28 @@ export default function Animation() {
             position: { x: 400, y: 350 },
             data: { color: 'blue' }
           },
-          // {
-          //   id: 'Kramer',
-          //   position: { x: 600, y: 500 },
-          //   data: { color: 'blue' }
-          // },
-          // {
-          //   id: 'George',
-          //   position: { x: 200, y: 500 },
-          //   data: { color: 'blue' }
-          // },
+          {
+            id: 'Kramer',
+            position: { x: 600, y: 500 },
+            data: { color: 'blue' }
+          },
+          {
+            id: 'George',
+            position: { x: 200, y: 500 },
+            data: { color: 'blue' }
+          },
         ]}
         edges={[
           { target: 'Jerry', source: 'Elaine' },
           { target: 'Elaine', source: 'Jerry' },
           { target: 'Jerry', source: 'Elaine' },
-          // { source: 'George', target: 'Jerry' },
-          // { target: 'George', source: 'Jerry' },
-          // { target: 'Kramer', source: 'George' },
-          // { target: 'Kramer', source: 'Jerry' },
-          // { target: 'Jerry', source: 'Kramer' },
-          // { target: 'Elaine', source: 'Kramer' },
-          // { target: 'Kramer', source: 'Elaine' },
+          { source: 'George', target: 'Jerry' },
+          { target: 'George', source: 'Jerry' },
+          { target: 'Kramer', source: 'George' },
+          { target: 'Kramer', source: 'Jerry' },
+          { target: 'Jerry', source: 'Kramer' },
+          { target: 'Elaine', source: 'Kramer' },
+          { target: 'Kramer', source: 'Elaine' },
         ]}
         />
   )
