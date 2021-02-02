@@ -19,6 +19,8 @@ import {
   Videocam,
   FiberManualRecord,
   Settings,
+  BuildCircleOutlined,
+  MoreVert
 } from '@material-ui/icons'
 import { IconProps } from '@material-ui/core'
 
@@ -26,6 +28,8 @@ const ICONS = {
   add_circle: AddCircle,
   delete_rounded: DeleteRounded,
   record_voice_over_rounded: RecordVoiceOverRounded,
+  build_circle_outlined: BuildCircleOutlined,
+  more_vert: MoreVert,
   edit: Edit,
   build_circle: BuildCircle,
   repeat_one: RepeatOne,

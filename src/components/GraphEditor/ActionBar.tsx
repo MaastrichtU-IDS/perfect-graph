@@ -292,7 +292,7 @@ const ActionBarElement = (props: ActionBarProps) => {
         style={styles.icon}
       >
         <Icon
-          name="delete_rounded"
+          name="build_circle_outlined"
         />
       </IconButton>
 
@@ -353,7 +353,7 @@ const MoreOptions = (props: MoreOptionsProps) => {
       <IconButton
         onClick={handleClick}
       >
-        <Icon name="build_circle" />
+        <Icon name="more_vert" />
       </IconButton>
       <Menu
         anchorEl={anchorEl}
@@ -404,6 +404,16 @@ const LayoutOptions = (props: LayoutOptionsProps) => {
     onClose,
     onOpen,
   } = useDisclosure({})
+  const onSubmitCallback = React.useCallback((e) => {
+    createOnActionCallback(
+      EVENT.LAYOUT_CHANGED,
+      {
+        form: e,
+        value: e.formData,
+      },
+    )()
+    onClose()
+  }, [createOnActionCallback])
   // const onItemSelect = React.useCallback((layoutName: string) => {
   //   handleClose()
   //   createOnActionCallback(
@@ -483,15 +493,7 @@ const LayoutOptions = (props: LayoutOptionsProps) => {
               maxIterations: layout.maxIterations,
               maxSimulationTime: layout.maxSimulationTime,
             }}
-            onSubmit={(e) => {
-              createOnActionCallback(
-                EVENT.LAYOUT_CHANGED,
-                {
-                  form: e,
-                  value: e.formData,
-                },
-              )()
-            }}
+            onSubmit={onSubmitCallback}
           />
         </Box>
       </Popover>

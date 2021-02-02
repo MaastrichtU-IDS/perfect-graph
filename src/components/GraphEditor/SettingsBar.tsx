@@ -79,7 +79,10 @@ const SettingsBarElement = (props: SettingsBarProps) => {
       }}
     >
       <Box style={{
-        overflow: 'auto',
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        paddingRight: 10,
+        paddingLeft: 10,
       }}
       >
         {
