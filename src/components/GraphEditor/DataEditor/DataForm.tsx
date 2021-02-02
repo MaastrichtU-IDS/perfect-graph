@@ -1,6 +1,6 @@
 import React from 'react'
 import Form from '@rjsf/semantic-ui'
-// import Form from '@rjsf/material-ui'
+// import Form from '@rjsf/semantic-ui'
 import { Box } from '@material-ui/core'
 import { EVENT } from '@utils/constants'
 

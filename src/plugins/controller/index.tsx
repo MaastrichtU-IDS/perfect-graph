@@ -216,7 +216,7 @@ export const useController = (
         case EVENT.DELETE_DATA:
           targetDataList.splice(index, 1)
           break
-        
+
         case EVENT.CHANGE_DATA_NAME_ADDITIONAL: {
           const additionalItem = targetDataList[index]!.additional![extraData.index]!
           additionalItem.name = extraData.value

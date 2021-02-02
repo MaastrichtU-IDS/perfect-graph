@@ -125,7 +125,8 @@ const ReactViewportComp = PixiComponent('Viewport', {
         transform?.pivotY,
       ),
     )(transform)
-    return mutableViewport.on('click', mutableViewport.clickEvent)
+    mutableViewport.on('click', mutableViewport.clickEvent)
+    // return 
   },
   didMount: () => {
   },

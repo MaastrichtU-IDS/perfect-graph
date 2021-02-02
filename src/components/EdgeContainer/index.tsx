@@ -5,6 +5,7 @@ import * as C from 'colay/color'
 import { useTheme } from '@core/theme'
 import { useEdge } from '@hooks'
 import { getNodeContextByElement } from '@utils'
+import { EDGE_CONTAINER_Z_INDEX } from '@utils/constants'
 import {
   RenderEdge,
   EdgeConfig,
@@ -159,6 +160,12 @@ const EdgeContainerElement = (
       drawLineCallback(element)
     },
   )
+  React.useEffect(
+    () => {
+      containerRef.current!.zIndex = EDGE_CONTAINER_Z_INDEX
+    },
+    [],
+  )
   const {
     sortedIndex,
   } = calculateEdgeGroupInfo(element)
@@ -176,6 +183,7 @@ const EdgeContainerElement = (
         style={{
           left: midpointPosition.x + sortedIndex * undirectedNormVector.x * DEFAULT_DISTANCE,
           top: midpointPosition.y + sortedIndex * undirectedNormVector.y * DEFAULT_DISTANCE,
+          zIndex: EDGE_CONTAINER_Z_INDEX,
         }}
       >
         {

@@ -385,13 +385,22 @@ export const readTextFile = async (blob: Blob, encoding?: string) => new Promise
 export const calculateObjectBoundsWithoutChildren = (container: PIXI.Container) => {
   const object = container.getChildAt(0)
   const children = object.removeChildren()
+  if (object.width === 0) {
+    children.forEach((child) => {
+      object.addChild(child)
+    })
+    return {
+      ...calculateObjectBoundsWithoutChildren(object),
+      x: container.x * container.scale.x,
+      y: container.y * container.scale.y,
+    }
+  }
   const box = {
     x: container.x * container.scale.x,
     y: container.y * container.scale.y,
     width: object.width * object.scale.x,
     height: object.height * object.scale.y,
   }
-  console.log(box)
   children.forEach((child) => {
     object.addChild(child)
   })

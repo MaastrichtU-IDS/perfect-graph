@@ -162,41 +162,47 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
     { width, height },
   ] = useMeasure()
   const graphLayoutRef = React.useRef<cytoscape.Layouts>(null)
-  React.useEffect(() => {
+  React.useMemo(() => {
     graphRef.current.app = stageRef.current?.app!
     graphRef.current.viewport = viewportRef.current!
-  }, [containerRef.current])
+  }, [stageRef.current])
+
   React.useEffect(() => {
     R.when(
-      () => containerRef.current && config.layout,
+      () => stageRef.current && config.layout,
       () => {
-        // @ts-ignore
-        const { hitArea } = viewportRef.current
-        const boundingBox = {
-          x1: hitArea.x,
-          y1: hitArea.y,
-          w: hitArea.width,
-          h: hitArea.height,
+        if (width === 0 || height === 0) {
+          return
         }
-        graphLayoutRef.current?.stop()
-        // @ts-ignore
-        graphLayoutRef.current = cy.createLayout({
-          ...config.layout,
-          boundingBox,
-        })
-        graphLayoutRef.current.on('layoutstop', () => {
+        setTimeout(() => {
           // @ts-ignore
-          graphLayoutRef.current = null
-          // Fix the edge lines
-          cy.edges().forEach((edge) => {
-            edge.data().onPositionChange()
+          const { hitArea } = viewportRef.current
+          const boundingBox = {
+            x1: hitArea.x,
+            y1: hitArea.y,
+            w: hitArea.width,
+            h: hitArea.height,
+          }
+          graphLayoutRef.current?.stop()
+          // @ts-ignore
+          graphLayoutRef.current = cy.createLayout({
+            ...config.layout,
+            boundingBox,
           })
-        })
-        graphLayoutRef.current.start()
+          graphLayoutRef.current.on('layoutstop', () => {
+          // @ts-ignore
+            graphLayoutRef.current = null
+            // Fix the edge lines
+            cy.edges().forEach((edge) => {
+              edge.data().onPositionChange()
+            })
+          })
+          graphLayoutRef.current.start()
+        }, 100)
       },
       true,
     )
-  }, [containerRef.current, config.layout])
+  }, [stageRef.current, config.layout, width, height])
   const theme = useTheme()
   const backgroundColor = React.useMemo(
     () => C.rgbNumber(theme.palette.background.default),
@@ -220,7 +226,7 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
     ...(config.edges ?? {}),
   }
   return (
-    <Div
+    <div
       ref={containerRef}
       style={style}
     >
@@ -289,7 +295,7 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
           </Viewport>
         </ThemeProvider>
       </Stage>
-    </Div>
+    </div>
   )
 }
 

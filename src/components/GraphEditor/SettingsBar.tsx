@@ -83,8 +83,9 @@ const SettingsBarElement = (props: SettingsBarProps) => {
       }}
       >
         {
-        forms.map((form) => (
+        forms.map((form, index) => (
           <Form
+            key={form.schema.title ?? `${index}`}
             // schema={schema}
             // {...formProps}
             {...form}

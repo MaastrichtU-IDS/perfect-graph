@@ -179,7 +179,6 @@ const GraphEditorElement = (
               })
             }}
           >
-
             {
                // @ts-ignore
             (renderEdge ?? DefaultRenderEdge)({

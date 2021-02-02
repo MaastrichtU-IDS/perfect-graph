@@ -137,7 +137,6 @@ const AppContainer = ({
       element,
       draft
     }) => {
-      console.log(type, extraData)
       switch (type) {
         case EVENT.SETTINGS_FORM_CHANGED:{
           if (extraData.form.schema.title === FILTER_SCHEMA.schema.title) {
@@ -152,7 +151,7 @@ const AppContainer = ({
         default:
           break;
       }
-      return false
+      return null
     }
   },)
   const graphRef = React.useRef(null)

@@ -5,6 +5,7 @@ import * as R from 'colay/ramda'
 import * as V from 'colay/vector'
 import * as C from 'colay/color'
 import { DefaultTheme } from '@core/theme'
+import { EDGE_LINE_Z_INDEX } from '@utils/constants'
 
 export type GraphicsProps = {
 
@@ -267,7 +268,7 @@ export const drawLine = (
     ],
   ])(type)
   mutableInstance.endFill()
-  mutableInstance.zIndex = -100
+  mutableInstance.zIndex = EDGE_LINE_Z_INDEX
 }
 
 // export const Graphics = PixiComponent<GraphicsProps, PIXI.Graphics>('PIXIGraphics', {

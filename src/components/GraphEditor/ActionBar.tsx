@@ -483,11 +483,12 @@ const LayoutOptions = (props: LayoutOptionsProps) => {
               maxIterations: layout.maxIterations,
               maxSimulationTime: layout.maxSimulationTime,
             }}
-            onSubmit={(formData) => {
+            onSubmit={(e) => {
               createOnActionCallback(
                 EVENT.LAYOUT_CHANGED,
                 {
-                  value: formData,
+                  form: e,
+                  value: e.formData,
                 },
               )()
             }}
