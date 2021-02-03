@@ -62,7 +62,7 @@ export const calculateStatistics = (props: Props) => {
   } = cy.$().pageRank({
   })
   return cy.nodes().map((node) => {
-    console.log({
+    return {
       id: node.id(),
       degree: degreeCentralityCalc(node),
       indegree: indegreeCentralityCalc(node),
@@ -70,6 +70,6 @@ export const calculateStatistics = (props: Props) => {
       closeness: closenessCentralityCalc(node),
       betweenness: betweennessCentralityCalc(node),
       pageRank: pageRankCalc(node),
-    })
+    }
   })
 }
