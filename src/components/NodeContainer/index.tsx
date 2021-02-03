@@ -10,7 +10,7 @@ export type NodeContainerProps = {
   children: RenderNode;
   item: any;
   graphID: string;
-  graphRef: React.Ref<GraphRef>;
+  graphRef: React.RefObject<GraphRef>;
   config?: NodeConfig;
 
 }

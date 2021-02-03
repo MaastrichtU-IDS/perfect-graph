@@ -23,6 +23,7 @@ import { getFilterSchema, VIEW_CONFIG_SCHEMA  } from './constants'
 import { EVENT } from '../../src/utils/constants'
 import {useController} from '../../src/plugins/controller'
 import {calculateStatistics} from './utils/networkStatistics'
+import {RenderNode} from './RenderNode'
 // import { Data } from '../../components/Graph/Default'
 const MUIDarkTheme = createMuiTheme({
   palette: {
@@ -194,68 +195,57 @@ const AppContainer = ({
         {...controllerProps}
         extraData={[configRef.current.visualization]}
         style={{ width: '100%', height: 820, }}
-        renderNode={({ item, element, cy, theme, graphRef: _graphRef }) => {
-          const size = calculateNodeSize(item.data, configRef.current.visualization.nodeSize)
-          const color = configRef.current.visualization.nodeColor ? calculateColor(
-            item.data,
-            configRef.current.visualization.nodeColor
-          ) : theme.palette.background.paper
-          const hasSelectedEdge = element.connectedEdges(':selected').length > 0
-          const graphRef: React.Ref<GraphRef> = _graphRef
-          return (
-            <UseEffect
-              value={{ fontSize: 16}}
-              effect={(setValue)=> {
-                console.log(graphRef)
-                // graphRef.current.viewport.on('zoomed', (data)=>{
-                //   console.log(data.viewport.scale)
-                // })
-                return () => {}
-              }}
-            >
-              {
-                (effectValue) => (
-                  <Graph.Pressable
-              style={{
-                width: size,
-                height: size,
-                justifyContent: 'center',
-                alignItems: 'center',
-                display: 'flex',
-                backgroundColor: hasSelectedEdge
-                ? theme.palette.secondary.main
-                : (element.selected()
-                  ? theme.palette.primary.main
-                  : color),
-                // hasSelectedEdge
-                //   ? theme.palette.secondary.main
-                //   : (element.selected()
-                //     ? theme.palette.primary.main
-                //     : theme.palette.background.paper),
-                borderRadius: size,
-              }}
-              onPress={() => {
-                cy.$(':selected').unselect()
-                element.select()
-              }}
-            >
-              <Graph.Text
-                style={{
-                  position: 'absolute',
-                  top: -size/1.5,
-                  left: 20,
-                  fontSize: 16//effectValue.fontSize
-                }}
-                isSprite
-              >
-                {R.takeLast(6, item.id)}
-              </Graph.Text>
-            </Graph.Pressable>
-                )
-              }
-            </UseEffect>
-          )
-        }}
+        renderNode={(props) => (
+          <RenderNode 
+          {...props}
+          {...configRef.current}
+          />
+        )}
+        // renderNode={({ item, element, cy, theme }) => {
+        //   const size = calculateNodeSize(item.data, configRef.current.visualization.nodeSize)
+        //   const color = configRef.current.visualization.nodeColor ? calculateColor(
+        //     item.data,
+        //     configRef.current.visualization.nodeColor
+        //   ) : theme.palette.background.paper
+        //   const hasSelectedEdge = element.connectedEdges(':selected').length > 0
+        //   return (
+        //           <Graph.Pressable
+        //       style={{
+        //         width: size,
+        //         height: size,
+        //         justifyContent: 'center',
+        //         alignItems: 'center',
+        //         display: 'flex',
+        //         backgroundColor: hasSelectedEdge
+        //         ? theme.palette.secondary.main
+        //         : (element.selected()
+        //           ? theme.palette.primary.main
+        //           : color),
+        //         // hasSelectedEdge
+        //         //   ? theme.palette.secondary.main
+        //         //   : (element.selected()
+        //         //     ? theme.palette.primary.main
+        //         //     : theme.palette.background.paper),
+        //         borderRadius: size,
+        //       }}
+        //       onPress={() => {
+        //         cy.$(':selected').unselect()
+        //         element.select()
+        //       }}
+        //     >
+        //       <Graph.Text
+        //         style={{
+        //           position: 'absolute',
+        //           top: -size/1.5,
+        //           left: 20,
+        //         }}
+        //         isSprite
+        //       >
+        //         {R.takeLast(6, item.id)}
+        //       </Graph.Text>
+        //     </Graph.Pressable>
+        //   )
+        // }}
         renderEdge={({
           cy,
           item,

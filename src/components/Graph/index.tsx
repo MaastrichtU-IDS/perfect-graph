@@ -175,7 +175,7 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
   React.useMemo(() => {
     graphRef.current.app = stageRef.current?.app!
     graphRef.current.viewport = viewportRef.current!
-  }, [stageRef.current])
+  }, [stageRef.current, viewportRef.current])
   React.useEffect(() => {
     R.when(
       () => stageRef.current && config.layout && initialized,

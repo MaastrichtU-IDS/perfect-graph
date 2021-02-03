@@ -1,6 +1,8 @@
 import React from 'react'
 import * as PIXI from 'pixi.js'
 import * as R from 'colay/ramda'
+import { wrapComponent } from 'colay-ui'
+import { PropsWithRef } from 'colay-ui/type'
 import { PixiComponent } from '@inlet/react-pixi'
 import { useTheme } from '@core/theme'
 import * as C from 'colay/color'
@@ -69,18 +71,17 @@ const TextPIXI = PixiComponent<TextPIXIProps, PIXI.Text>('PIXIText', {
         ...style,
       },
     })
-    const mutableInstance = new PIXI.Text(text, textStyle)
-    return R.ifElse(
-      R.isTrue,
-      () => {
-        mutableInstance.updateText(false)
-        return new PIXI.Sprite(mutableInstance.texture)
-      },
-      R.always(mutableInstance),
-    )(isSprite)
+    const pixiText = new PIXI.Text(text, textStyle)
+    if (isSprite) {
+      pixiText.updateText(false)
+      const spriteText = new PIXI.Sprite(pixiText.texture)
+      // spriteText.text = pixiText
+      return spriteText
+    }
+    return pixiText
   },
   applyProps: (
-    mutableInstance: PIXI.Text,
+    instance: PIXI.Text,
     oldProps,
     props,
   ) => {
@@ -98,17 +99,17 @@ const TextPIXI = PixiComponent<TextPIXIProps, PIXI.Text>('PIXIText', {
       },
     })
     applyDefaultProps(
-      mutableInstance,
+      instance,
       oldPropsRest,
       propsRest,
     )
     if (isSprite) {
-      const newInstance = new PIXI.Text(text, textStyle)
-      newInstance.updateText(false)
-      mutableInstance.texture = newInstance.texture
+      const pixiText = new PIXI.Text(text, textStyle)
+      pixiText.updateText(false)
+      instance.texture = pixiText.texture
     } else {
-      mutableInstance.text = text
-      mutableInstance.style = textStyle
+      instance.text = text
+      instance.style = textStyle
     }
   },
 })
@@ -119,17 +120,25 @@ export type TextProps = {
   isSprite?: boolean;
 }
 
-export const Text = (props: TextProps) => {
+const TextElement = (
+  props: TextProps,
+  forwardedRef: React.ForwardedRef<PIXI.Text>,
+) => {
   const { children, ...rest } = props
   const theme = useTheme()
   return (
     <TextPIXI
+      ref={forwardedRef}
       text={children}
       theme={theme}
       {...rest}
     />
   )
 }
+
+export const Text = wrapComponent<
+PropsWithRef<PIXI.Text, TextProps>
+>(TextElement, { isForwardRef: true })
 
 /**
  * ## Usage

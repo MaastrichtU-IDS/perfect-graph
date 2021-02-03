@@ -80,7 +80,7 @@ export type GraphData = {
 
 type RenderElementParams = {
   cy: Core;
-  graphRef: React.Ref<GraphRef>;
+  graphRef: React.RefObject<GraphRef>;
   theme: Theme;
 }
 export type RenderEdge<Additional extends Record<string, any> = {}> = (c: {

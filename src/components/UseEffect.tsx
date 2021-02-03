@@ -1,7 +1,10 @@
 import React from 'react'
 
 export type UseEffectProps<T> = {
-  effect: (setValue: (value: T) => void) => () => any;
+  effect: (params: {
+    setValue: (value: T) => void
+    updateValue: (value: Partial<T>) => void
+  }) => () => any;
   deps?: any[];
   value: T
   children: (value: T) => React.ReactElement
@@ -9,14 +12,23 @@ export type UseEffectProps<T> = {
 
 export const UseEffect = <T extends any>(props: UseEffectProps<T>) => {
   const {
-    value,
+    value: _value,
     effect,
     deps = [],
     children,
   } = props
-  const [state, setState] = React.useState(value)
-  React.useEffect(() => effect(setState) ?? (() => {}), deps)
+  const [value, setValue] = React.useState(_value)
+  const updateValue = React.useCallback((partialValue) => {
+    setValue({
+      ...value,
+      ...partialValue,
+    })
+  }, [value])
+  React.useEffect(
+    () => effect({ setValue, updateValue }) ?? (() => {}),
+    deps,
+  )
   return (
-    children(state)
+    children(value)
   )
 }

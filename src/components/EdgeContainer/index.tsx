@@ -25,7 +25,7 @@ export type EdgeContainerProps = {
   graphID: string;
   drawLine?: DrawLine;
   config?: EdgeConfig;
-  graphRef: React.Ref<GraphRef>;
+  graphRef: React.RefObject<GraphRef>;
 }
 
 export type EdgeContainerType = React.FC<EdgeContainerProps>
