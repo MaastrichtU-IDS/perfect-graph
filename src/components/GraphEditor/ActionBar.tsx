@@ -319,12 +319,14 @@ const MoreOptions = (props: MoreOptionsProps) => {
     createOnActionCallback,
     onAction,
   } = props
-  const [anchorEl, setAnchorEl] = React.useState(null)
-  const handleClick = (event: Event) => {
-    setAnchorEl(event.currentTarget)
-  }
+  const {
+    anchorEl,
+    isOpen,
+    onClose,
+    onOpen,
+  } = useDisclosure({})
   const handleMenuItemClick = (event: Event, index: number) => {
-    setAnchorEl(event.currentTarget)
+    onClose()
     const action = Object.values(OPTIONS)[index]
     switch (action) {
       case OPTIONS.Import: {
@@ -348,29 +350,26 @@ const MoreOptions = (props: MoreOptionsProps) => {
     }
   }
 
-  const handleClose = () => {
-    setAnchorEl(null)
-  }
   const handleThemeChange = (e: Event) => {
     onAction({ type: EVENT.CHANGE_THEME, value: e.target.value })
+    onClose()
   }
   return (
     <>
       <IconButton
-        onClick={handleClick}
+        onClick={onOpen}
       >
         <Icon name="more_vert" />
       </IconButton>
       <Menu
         anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
+        open={isOpen}
+        onClose={onClose}
         style={{ width: 400 }}
       >
         {Object.values(OPTIONS).map((option, index) => (
           <MenuItem
             key={option}
-
             // selected={index === selectedIndex}
             onClick={(event) => handleMenuItemClick(event, index)}
           >
@@ -447,11 +446,15 @@ const LayoutOptions = (props: LayoutOptionsProps) => {
   // const animationDuration = layout.animationDuration ?? 5000
   return (
     <Box>
-      <MenuItem
+      <Button
         onClick={onOpen}
+        sx={{
+          color: (theme) => theme.palette.text.secondary,
+        }}
+        // variant="text"
       >
         {layout.name ?? 'Select Layout'}
-      </MenuItem>
+      </Button>
       <Popover
         // id={id}
         open={isOpen}
