@@ -37,7 +37,7 @@ const filterEdges = (nodes: {id: string}[]) => (edges: {source:string;target:str
     (edge) => nodeMap[edge.source] && nodeMap[edge.target]
   )(edges)
 }
-const CHUNK_COUNT = 20
+const CHUNK_COUNT = 3
 const prepareData = (data) =>  {
   const {
     nodes,
@@ -146,7 +146,7 @@ const AppContainer = ({
       editable: false,
     },
     actionBar: {
-      opened: true,
+      opened: false,
       actions: {
         add: { visible: false },
         delete: { visible: false },
@@ -189,7 +189,7 @@ const AppContainer = ({
         ref={graphRef}
         {...controllerProps}
         extraData={[configRef.current.visualization]}
-        style={{ width: '100%', height: 780, }}
+        style={{ width: '100%', height: 820, }}
         renderNode={({ item, element, cy, theme }) => {
           const size = calculateNodeSize(item.data, configRef.current.visualization.nodeSize)
           const color = configRef.current.visualization.nodeColor ? calculateColor(
