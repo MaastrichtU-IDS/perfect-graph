@@ -1,7 +1,7 @@
 import React from 'react'
 import { wrapComponent } from 'colay-ui'
 import { useNode } from '@hooks'
-import { RenderNode, NodeConfig } from '@type'
+import { RenderNode, NodeConfig, GraphRef } from '@type'
 import { calculateObjectBoundsWithoutChildren } from '@utils'
 import { useTheme } from '@core/theme'
 import { Container } from '../Container'
@@ -10,7 +10,9 @@ export type NodeContainerProps = {
   children: RenderNode;
   item: any;
   graphID: string;
+  graphRef: React.Ref<GraphRef>;
   config?: NodeConfig;
+
 }
 
 export type NodeContainerType = React.ForwardedRef<NodeContainerProps>
@@ -24,6 +26,7 @@ const NodeContainerElement = (
     graphID,
     children,
     config = {} as NodeConfig,
+    graphRef,
   } = props
   const containerRef = React.useRef(null)
   const { element, context, cy } = useNode({
@@ -71,7 +74,11 @@ const NodeContainerElement = (
       // onPress={(e) => console.log('press')}
     >
       {children({
-        item, element, cy, theme,
+        item,
+        element,
+        cy,
+        theme,
+        graphRef,
       })}
     </Container>
   )

@@ -12,6 +12,7 @@ import {
   DrawLine,
   EdgeElement,
   NodeElement,
+  GraphRef,
 } from '@type'
 import * as V from 'colay/vector'
 
@@ -24,6 +25,7 @@ export type EdgeContainerProps = {
   graphID: string;
   drawLine?: DrawLine;
   config?: EdgeConfig;
+  graphRef: React.Ref<GraphRef>;
 }
 
 export type EdgeContainerType = React.FC<EdgeContainerProps>
@@ -90,6 +92,7 @@ const EdgeContainerElement = (
     children,
     drawLine = defaultDrawLine,
     config,
+    graphRef,
   } = props
   const theme = useTheme()
   const graphicsRef = React.useRef<PIXI.Graphics>(null)
@@ -197,6 +200,7 @@ const EdgeContainerElement = (
             from: fromPosition,
             cy,
             theme,
+            graphRef,
             // ...edgeGroupInfo,
           })
         }

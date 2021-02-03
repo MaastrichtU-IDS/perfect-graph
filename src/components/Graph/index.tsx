@@ -271,6 +271,7 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
                 <NodeContainer
                   graphID={graphID}
                   item={item}
+                  graphRef={graphRef}
                   config={{
                     ...(globalNodeConfig ?? {}),
                     ...(nodeConfigIds?.[item.id] ?? {}),
@@ -289,6 +290,7 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
                 <EdgeContainer
                   graphID={graphID}
                   item={item}
+                  graphRef={graphRef}
                   drawLine={drawLine}
                   config={{
                     ...(globalEdgeConfig ?? {}),

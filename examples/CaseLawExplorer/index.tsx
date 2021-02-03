@@ -12,8 +12,10 @@ import {
   ThemeProvider,
   useTheme
 } from '../../src/core/theme'
+import { GraphRef } from '../../src/type'
 import  { GraphEditorProps,GraphEditor } from '../../src/components/GraphEditor'
 import { Graph } from '../../src/components'
+import { UseEffect } from '../../src/components/UseEffect'
 import {drawLine} from '../../src/components/Graphics'
 import defaultData from './data'
 import * as C from 'colay/color'
@@ -184,23 +186,36 @@ const AppContainer = ({
       return null
     }
   },)
-  const graphRef = React.useRef(null)
+  const graphEditorRef = React.useRef(null)
   return (
       <Div style={{ display: 'flex', flexDirection: 'column',width: '100%', height: '100%'}}>
       <GraphEditor
-        ref={graphRef}
+        ref={graphEditorRef}
         {...controllerProps}
         extraData={[configRef.current.visualization]}
         style={{ width: '100%', height: 820, }}
-        renderNode={({ item, element, cy, theme }) => {
+        renderNode={({ item, element, cy, theme, graphRef: _graphRef }) => {
           const size = calculateNodeSize(item.data, configRef.current.visualization.nodeSize)
           const color = configRef.current.visualization.nodeColor ? calculateColor(
             item.data,
             configRef.current.visualization.nodeColor
           ) : theme.palette.background.paper
           const hasSelectedEdge = element.connectedEdges(':selected').length > 0
+          const graphRef: React.Ref<GraphRef> = _graphRef
           return (
-            <Graph.Pressable
+            <UseEffect
+              value={{ fontSize: 16}}
+              effect={(setValue)=> {
+                console.log(graphRef)
+                // graphRef.current.viewport.on('zoomed', (data)=>{
+                //   console.log(data.viewport.scale)
+                // })
+                return () => {}
+              }}
+            >
+              {
+                (effectValue) => (
+                  <Graph.Pressable
               style={{
                 width: size,
                 height: size,
@@ -229,12 +244,16 @@ const AppContainer = ({
                   position: 'absolute',
                   top: -size/1.5,
                   left: 20,
+                  fontSize: 16//effectValue.fontSize
                 }}
                 isSprite
               >
                 {R.takeLast(6, item.id)}
               </Graph.Text>
             </Graph.Pressable>
+                )
+              }
+            </UseEffect>
           )
         }}
         renderEdge={({

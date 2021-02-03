@@ -78,6 +78,11 @@ export type GraphData = {
   edges: EdgeData[];
 }
 
+type RenderElementParams = {
+  cy: Core;
+  graphRef: React.Ref<GraphRef>;
+  theme: Theme;
+}
 export type RenderEdge<Additional extends Record<string, any> = {}> = (c: {
   item: EdgeData;
   element: EdgeElement;
@@ -88,14 +93,12 @@ export type RenderEdge<Additional extends Record<string, any> = {}> = (c: {
   sortedIndex: number;
   index: number;
   count: number;
-  cy: Core;
-} & Additional) => React.ReactElement
+} & RenderElementParams & Additional) => React.ReactElement
 
 export type RenderNode<Additional extends Record<string, any> = {}> = (c: {
   item: NodeData;
   element: NodeElement;
-  cy: Core;
-} & Additional) => React.ReactElement
+} & RenderElementParams & Additional) => React.ReactElement
 
 export type ElementType = keyof typeof ELEMENT_TYPE
 
