@@ -11,7 +11,6 @@ import {
 import GraphLayouts from '@core/layouts'
 import { getSelectedItemByElement } from '@utils'
 import { download } from 'colay-ui/utils'
-import { useImmer } from 'colay-ui/hooks/useImmer'
 import * as R from 'colay/ramda'
 
 type ControllerOptions = {
@@ -50,10 +49,9 @@ export const useController = (
       useControllerData,
     ]) as UseControllerData, [], // useControllerData
   )
-  const [state, update] = useImmer(controllerConfig)
-  // const [state, update] = React.useState<ControllerState>(
-  //   controllerConfig,
-  // )
+  const [state, update] = React.useState<ControllerState>(
+    controllerConfig,
+  )
   const targetNodeRef = React.useRef(null)
   const onEvent = React.useCallback((eventInfo: EventInfo) => {
     const {
@@ -67,10 +65,11 @@ export const useController = (
     } = eventInfo
     const isNode = element?.isNode()
     const targetPath = isNode ? 'nodes' : 'edges'
-    update((draft) => {
+    update((_state) => {
+      const draft = R.clone(_state)
       const isAllowedToProcess = controllerConfig.onEvent?.(eventInfo, draft)
       if (isAllowedToProcess === false) {
-        return
+        return draft
       }
       const {
         item,
@@ -171,6 +170,7 @@ export const useController = (
             element.select()
             draft.selectedElementId = item.id
           }
+          
 
           break
         }
@@ -294,6 +294,7 @@ export const useController = (
         default:
           break
       }
+      return draft
     })
   }, [])
   return [
@@ -303,7 +304,12 @@ export const useController = (
       onEvent,
     } as Pick<GraphEditorProps, 'nodes' | 'edges' | 'onEvent' | 'graphConfig'>,
     {
-      update,
+      update: (callback: (draft: ControllerState) => ControllerState) => {
+        update((currState) => {
+          const draft = R.clone(currState)
+          return callback(draft)
+        })
+      },
       onEvent,
     },
   ]

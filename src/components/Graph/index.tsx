@@ -176,7 +176,6 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
     graphRef.current.app = stageRef.current?.app!
     graphRef.current.viewport = viewportRef.current!
   }, [stageRef.current])
-  const oldLayout = React.useRef(null)
   React.useEffect(() => {
     R.when(
       () => stageRef.current && config.layout,
@@ -184,11 +183,9 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
         if (
           width === 0
           || height === 0
-          || R.equalsExclude(R.is(Function))(oldLayout.current, config.layout)
         ) {
           return
         }
-        oldLayout.current = config.layout
         setTimeout(() => {
           // @ts-ignore
           const { hitArea } = viewportRef.current
