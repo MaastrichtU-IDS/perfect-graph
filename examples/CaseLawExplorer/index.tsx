@@ -20,6 +20,7 @@ import * as C from 'colay/color'
 import { getFilterSchema, VIEW_CONFIG_SCHEMA  } from './constants'
 import { EVENT } from '../../src/utils/constants'
 import {useController} from '../../src/plugins/controller'
+import {calculateStatistics} from './utils/networkStatistics'
 // import { Data } from '../../components/Graph/Default'
 const MUIDarkTheme = createMuiTheme({
   palette: {
@@ -53,6 +54,7 @@ const prepareData = (data) =>  {
 const data = prepareData(defaultData)
 type Props = Partial<GraphEditorProps>
 
+// calculateStatistics(data)
 const NODE_SIZE = {
   width: 80,
   height: 80,
