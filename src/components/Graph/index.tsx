@@ -169,7 +169,7 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
   const graphRef = useForwardRef<GraphRef>(ref, { cy })
   const [
     containerRef,
-    { width, height },
+    { width, height, initialized },
   ] = useMeasure()
   const graphLayoutRef = React.useRef<cytoscape.Layouts>(null)
   React.useMemo(() => {
@@ -178,14 +178,8 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
   }, [stageRef.current])
   React.useEffect(() => {
     R.when(
-      () => stageRef.current && config.layout,
+      () => stageRef.current && config.layout && initialized,
       () => {
-        if (
-          width === 0
-          || height === 0
-        ) {
-          return
-        }
         setTimeout(() => {
           // @ts-ignore
           const { hitArea } = viewportRef.current
@@ -214,7 +208,7 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
       },
       true,
     )
-  }, [stageRef.current, config.layout, width, height])
+  }, [stageRef.current, config.layout, initialized])
   const backgroundColor = React.useMemo(
     () => C.rgbNumber(theme.palette.background.default),
     [theme.palette.background.default],
