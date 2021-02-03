@@ -96,7 +96,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
               e,
             ) => createOnActionCallback(
               EVENT.SETTINGS_FORM_CHANGED,
-              { form, value: e.formData },
+              { form, value: e.formData, index },
             )()}
           />
         ))

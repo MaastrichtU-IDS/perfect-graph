@@ -63,7 +63,7 @@ export default (props: Props): Result => {
   )
   React.useEffect(() => {
     element.position(position)
-  }, [position])
+  }, [position.x, position.y])
   useElement({
     contextRef,
     cy,

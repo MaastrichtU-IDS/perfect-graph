@@ -14,7 +14,7 @@ export type NodeContainerProps = {
 }
 
 export type NodeContainerType = React.ForwardedRef<NodeContainerProps>
-
+const DEFAULT_POSITION = { x: 0, y: 0 }
 const NodeContainerElement = (
   props: NodeContainerProps,
   __: React.ForwardedRef<NodeContainerType>,
@@ -30,7 +30,7 @@ const NodeContainerElement = (
     id: item.id,
     graphID,
     config,
-    position: config.position ?? item.position ?? { x: 0, y: 0 },
+    position: config.position ?? item.position ?? DEFAULT_POSITION,
     onPositionChange: ({ element }) => {
       const { x, y } = element.position()
       // @ts-ignore

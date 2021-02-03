@@ -170,6 +170,7 @@ export const useController = (
             element.select()
             draft.selectedElementId = item.id
           }
+          
 
           break
         }

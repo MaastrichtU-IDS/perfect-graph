@@ -37,7 +37,7 @@ const filterEdges = (nodes: {id: string}[]) => (edges: {source:string;target:str
     (edge) => nodeMap[edge.source] && nodeMap[edge.target]
   )(edges)
 }
-const CHUNK_COUNT = 2
+const CHUNK_COUNT = 20
 const prepareData = (data) =>  {
   const {
     nodes,
@@ -59,7 +59,7 @@ const NODE_SIZE = {
 }
 
 const NODE_SIZE_RANGE_MAP = {
-  size: [60, 100],
+  size: [60, 250],
   community: [0, 10],
   in_degree: [0, 10],
   out_degree: [0, 10],
@@ -159,6 +159,7 @@ const AppContainer = ({
     },draft) => {
       switch (type) {
         case EVENT.SETTINGS_FORM_CHANGED:{
+          draft.settingsBar.forms[extraData.index].formData = extraData.value
           if (extraData.form.schema.title === FILTER_SCHEMA.schema.title) {
 
           } else {
@@ -224,7 +225,7 @@ const AppContainer = ({
               <Graph.Text
                 style={{
                   position: 'absolute',
-                  top: -40,
+                  top: -size/1.5,
                   left: 20,
                 }}
                 isSprite
