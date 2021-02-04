@@ -7,6 +7,7 @@ import { NativeEventMap } from 'colay-ui/type'
 import {
   Element, NodeData, EdgeData, ElementData,
   DisplayObjectWithYoga, NodeContext, EdgeContext,
+  Cluster,
 } from '@type'
 import { ELEMENT_DATA_FIELDS, PIXI_EVENT_NAMES } from '@utils/constants'
 
@@ -407,6 +408,13 @@ export const calculateObjectBoundsWithoutChildren = (container: PIXI.Container) 
   return box
 }
 
+export const getClusterVisibility = (id: string, clusters: Cluster[] = []) => {
+  let visible = false
+  clusters.forEach((cluster) => {
+    visible = visible && cluster.expand
+  })
+  return visible
+}
 // export const calculateDisplayObjectBounds = (object: PIXI.Container) => {
 //   const box = object.getLocalBounds()
 //   box.width = 45

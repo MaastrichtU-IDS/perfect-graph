@@ -103,6 +103,7 @@ export const CYTOSCAPE_EVENT = {
   unselectEdge: 'unselectEdge',
   selectNode: 'selectNode',
   unselectNode: 'unselectNode',
+  data: 'data',
 } as const
 export const EDGE_LINE_Z_INDEX = -100
 export const EDGE_CONTAINER_Z_INDEX = -99

@@ -4,7 +4,10 @@ import { EdgeSingular, NodeSingular, Core } from 'cytoscape'
 import { Position, Enumerable } from 'colay/type'
 import { Theme } from '@core/theme'
 import {
-  ELEMENT_TYPE, EVENT, DATA_TYPE, EDITOR_MODE,
+  ELEMENT_TYPE,
+  EVENT,
+  DATA_TYPE,
+  EDITOR_MODE,
   PIXI_EVENT_NAMES,
   CYTOSCAPE_EVENT,
 } from '@utils/constants'
@@ -19,6 +22,7 @@ export type Style = {[k: string]: any}
 export type OnLayout = (event: LayoutChangeEvent) => void
 export type ElementContext = {
   render: (callback?: () => void) => void;
+  settings: ElementSettings;
 }
 
 export type BoundingBox = {
@@ -27,7 +31,9 @@ export type BoundingBox = {
   width: number;
   height: number;
 }
-
+export type ElementSettings = {
+  visible: boolean
+}
 export type NodeContext = ElementContext & {
   boundingBox: BoundingBox;
   element: NodeElement;

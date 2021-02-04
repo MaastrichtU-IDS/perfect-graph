@@ -2,7 +2,10 @@ import React from 'react'
 import { useStateWithCallback } from 'colay-ui'
 import { NodeSingular, Core } from 'cytoscape'
 import { Position } from 'colay/type'
-import { NodeContext, NodeConfig, Cluster } from '@type'
+import {
+  NodeContext, NodeConfig, Cluster, ElementSettings,
+} from '@type'
+import { getClusterVisibility } from '@utils'
 import { mutableGraphMap } from './useGraph'
 import { useElement } from './useElement'
 
@@ -39,16 +42,22 @@ export default (props: Props): Result => {
     isCluster = false,
   } = props
   const { cy, clustersByNodeId, clustersByChildClusterId } = mutableGraphMap[graphID]
-  const clustersById = isCluster
+  const clusters = isCluster
     ? clustersByChildClusterId[id]
     : clustersByNodeId[id]
   const [, setState] = useStateWithCallback({}, () => {})
   const contextRef = React.useRef<NodeContext>({
     render: (callback: () => {}) => setState({}, callback),
     boundingBox: DEFAULT_BOUNDING_BOX,
+    settings: {
+      visible: getClusterVisibility(id, clusters),
+    },
   } as NodeContext)
   const element = React.useMemo(() => cy!.add({
-    data: { id, context: contextRef.current }, // ...(parentID ? { parent: parentID } : {}),
+    data: {
+      id,
+      context: contextRef.current,
+    }, // ...(parentID ? { parent: parentID } : {}),
     position: { ...position },
     group: 'nodes',
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -70,6 +79,20 @@ export default (props: Props): Result => {
   React.useEffect(() => {
     element.position(position)
   }, [position.x, position.y])
+
+  // Update Visibility
+  React.useMemo(() => {
+    const visible = getClusterVisibility(element.id(), clusters)
+    if (visible !== contextRef.current.settings.visible) {
+      contextRef.current.settings = {
+        ...contextRef.current.settings,
+        visible,
+      }
+      element.data({
+        context: contextRef.current,
+      })
+    }
+  }, [element, clusters])
   useElement({
     contextRef,
     cy,
@@ -79,7 +102,7 @@ export default (props: Props): Result => {
   return {
     element,
     context: contextRef.current,
-    clusters: clustersById,
+    clusters,
     cy,
   }
 }
