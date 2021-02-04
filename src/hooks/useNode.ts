@@ -2,7 +2,7 @@ import React from 'react'
 import { useStateWithCallback } from 'colay-ui'
 import { NodeSingular, Core } from 'cytoscape'
 import { Position } from 'colay/type'
-import { NodeContext, NodeConfig, ClusterInfo } from '@type'
+import { NodeContext, NodeConfig, Cluster } from '@type'
 import { mutableGraphMap } from './useGraph'
 import { useElement } from './useElement'
 
@@ -10,6 +10,7 @@ export type Props = {
   id: string;
   graphID: string;
   position: Position;
+  isCluster?: boolean;
   onPositionChange?: (c: {element: NodeSingular; context: NodeContext }) => void|any;
   config?: NodeConfig;
 }
@@ -17,9 +18,10 @@ export type Props = {
 type Result = {
   element: NodeSingular;
   context: NodeContext;
-  cluster?: ClusterInfo;
+  clusters?: Cluster[];
   cy: Core;
 }
+
 const DEFAULT_BOUNDING_BOX = {
   x: 0,
   y: 0,
@@ -34,8 +36,12 @@ export default (props: Props): Result => {
     onPositionChange,
     graphID,
     config,
+    isCluster = false,
   } = props
-  const { cy, clustersByID } = mutableGraphMap[graphID]
+  const { cy, clustersByNodeId, clustersByChildClusterId } = mutableGraphMap[graphID]
+  const clustersById = isCluster
+    ? clustersByChildClusterId[id]
+    : clustersByNodeId[id]
   const [, setState] = useStateWithCallback({}, () => {})
   const contextRef = React.useRef<NodeContext>({
     render: (callback: () => {}) => setState({}, callback),
@@ -73,7 +79,7 @@ export default (props: Props): Result => {
   return {
     element,
     context: contextRef.current,
-    cluster: clustersByID[id],
+    clusters: clustersById,
     cy,
   }
 }

@@ -1,18 +1,16 @@
-import React from 'react'
 import cytoscape, { Core } from 'cytoscape'
-import { Cluster, ClustersByNodeId, ClustersByChildClusterId } from '@type'
+import { useEffect, useMemo, useRef } from 'react'
+import { ClusterConfig, ClusterInfoByID } from '@type'
 
 export const mutableGraphMap: Record<string, {
   cy: Core;
-  clustersByNodeId: ClustersByNodeId;
-  clustersByChildClusterId: ClustersByChildClusterId;
+  clustersByID: ClusterInfoByID;
 }> = {}
-
 export type Props = {
   id: string;
   onLoad?: (cy: Core) => void;
   create?: true;
-  clusters?: Cluster[];
+  clusters?: ClusterConfig;
 }
 
 // const createCanvas = () => {
@@ -26,13 +24,13 @@ export default (props: Props) => {
   const {
     onLoad,
     id,
-    clusters = [],
+    clusters = {},
   } = props
-  const isExistRef = React.useRef(false)
-  const graph = React.useMemo(() => {
+  const isExistRef = useRef(false)
+  const cy = useMemo(() => {
     if (mutableGraphMap[id]) {
       isExistRef.current = true
-      return mutableGraphMap[id]
+      return mutableGraphMap[id].cy
     }
     const cyInstance = cytoscape({ // // create
       elements: [],
@@ -63,37 +61,24 @@ export default (props: Props) => {
       // ],
 
     })
-    mutableGraphMap[id] = {
-      cy: cyInstance,
-      clustersByNodeId: {},
-      clustersByChildClusterId: {},
-    }
-    return mutableGraphMap[id]
+    mutableGraphMap[id] = { cy: cyInstance, clustersByID: {} }
+    return cyInstance
   }, [id])
-  const {
-    cy,
-  } = graph
-  React.useMemo(() => {
-    const clustersByNodeId: ClustersByNodeId = {}
-    clusters.forEach((cluster) => {
+  const clustersByID = useMemo(() => {
+    const clustersByID: ClusterInfoByID = {}
+    Object.keys(clusters).forEach((clusterName) => {
+      const cluster = clusters[clusterName]
       cluster.ids.forEach((nodeID) => {
-        const clusterById = clustersByNodeId[nodeID] ?? []
-        clusterById.push(cluster)
-        clustersByNodeId[nodeID] = clusterById
+        clustersByID[nodeID] = {
+          clusterName,
+          expand: cluster.expand,
+        }
       })
     })
-    const clustersByChildClusterId: ClustersByChildClusterId = {}
-    clusters.forEach((cluster) => {
-      cluster.childClusterIds.forEach((clusterId) => {
-        const clusterById = clustersByChildClusterId[clusterId] ?? []
-        clusterById.push(cluster)
-        clustersByChildClusterId[clusterId] = clusterById
-      })
-    })
-    graph.clustersByNodeId = clustersByNodeId
-    graph.clustersByChildClusterId = clustersByChildClusterId
-  }, [graph, clusters])
-  React.useEffect(() => {
+    mutableGraphMap[id].clustersByID = clustersByID
+    return clustersByID
+  }, [clusters])
+  useEffect(() => {
     if (isExistRef.current) return
     setTimeout(() => {
       onLoad!(cy)
@@ -102,5 +87,8 @@ export default (props: Props) => {
   }, // destroy
   // eslint-disable-next-line react-hooks/exhaustive-deps
   [cy])
-  return graph
+  return {
+    cy,
+    clustersByID,
+  }
 }
