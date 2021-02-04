@@ -147,7 +147,6 @@ const AppContainer = ({
         {
           id:  'cluster-1',
           name:  'cluster-1',
-          expand: true,
           ids: [NODE_ID],
           childClusterIds: []
         }
@@ -197,14 +196,20 @@ const AppContainer = ({
       return null
     }
   },)
-  React.useEffect(() => {
-    setTimeout(() => {
-      controller.update((draft) => {
-        draft.graphConfig.clusters[0].expand = false
-        console.log('updated')
-      })
-    }, 6000)
-  }, [])
+  // React.useEffect(() => {
+  //   setTimeout(() => {
+  //     controller.update((draft) => {
+  //       draft.graphConfig.clusters[0].visible = false
+  //     })
+  //   }, 7000)
+  // }, [])
+  // React.useEffect(() => {
+  //   setTimeout(() => {
+  //     controller.update((draft) => {
+  //       draft.graphConfig.clusters[0].visible = true
+  //     })
+  //   }, 9000)
+  // }, [])
   const graphEditorRef = React.useRef(null)
   return (
       <Div style={{ display: 'flex', flexDirection: 'column',width: '100%', height: '100%'}}>
@@ -213,22 +218,12 @@ const AppContainer = ({
         {...controllerProps}
         extraData={[configRef.current.visualization]}
         style={{ width: '100%', height: 820, }}
-        renderNode={(props) => {
-          const {
-            item,
-            element
-          } = props
-          const visible = element.data().context.settings.visible
-          // if (element.id() === NODE_ID) {
-          //   console.log(element.data().context.settings)
-          // }
-          return visible ? (
-            <RenderNode 
+        renderNode={(props) => (
+          <RenderNode 
             {...props}
             {...configRef.current}
-            />
-          ): null
-        }}
+          />
+        )}
         // renderNode={({ item, element, cy, theme }) => {
         //   const size = calculateNodeSize(item.data, configRef.current.visualization.nodeSize)
         //   const color = configRef.current.visualization.nodeColor ? calculateColor(
@@ -281,35 +276,32 @@ const AppContainer = ({
             element,
             theme
           } = props
-          const visible = element.data().context.settings.visible
-          return visible ? (
-            (
-              <Graph.Pressable
+          return (
+            <Graph.Pressable
+              style={{
+                position: 'absolute',
+                justifyContent: 'center',
+                alignItems: 'center',
+                display: 'flex',
+              }}
+              onPress={() => {
+                cy.$(':selected').unselect()
+                element.select()
+              }}
+            >
+              <Graph.Text
                 style={{
-                  position: 'absolute',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  display: 'flex',
+                  // position: 'absolute',
+                  // top: -40,
+                  // backgroundColor: DefaultTheme.palette.background.paper,
+                  fontSize: 12,
                 }}
-                onPress={() => {
-                  cy.$(':selected').unselect()
-                  element.select()
-                }}
+                isSprite
               >
-                <Graph.Text
-                  style={{
-                    // position: 'absolute',
-                    // top: -40,
-                    // backgroundColor: DefaultTheme.palette.background.paper,
-                    fontSize: 12,
-                  }}
-                  isSprite
-                >
-                  {R.takeLast(6, item.id)}
-                </Graph.Text>
-              </Graph.Pressable>
-            )
-          ): null
+                {R.takeLast(6, item.id)}
+              </Graph.Text>
+            </Graph.Pressable>
+          )
         }}
         // renderNode={({ item: { id, data } }) => {
           // const size = calculateNodeSize(data, configRef.current.visualization.nodeSize)

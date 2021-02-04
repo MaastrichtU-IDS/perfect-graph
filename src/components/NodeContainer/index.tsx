@@ -58,6 +58,7 @@ const NodeContainerElement = (
     )
   })
   const theme = useTheme()
+  const { visible } = element.data().context.settings
   return (
     <Container
       ref={containerRef}
@@ -65,6 +66,7 @@ const NodeContainerElement = (
         left: x,
         top: y,
       }}
+      visible={visible}
       draggable
       onDrag={onDrag}
       // onRightPress={(event) => {

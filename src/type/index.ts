@@ -155,7 +155,7 @@ export type Cluster = {
   name: string;
   ids: string[];
   childClusterIds: string[]
-  expand: boolean;
+  visible?: boolean;
 }
 
 export type ClustersByNodeId = Record<string, Cluster[]>

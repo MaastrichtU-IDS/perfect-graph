@@ -182,10 +182,12 @@ const EdgeContainerElement = (
     fromPosition,
     undirectedNormVector,
   } = calculateVectorInfo(element.source(), element.target())
+  const { visible } = element.data().context.settings
   return (
     <>
       <Container
         ref={containerRef}
+        visible={visible}
         style={{
           left: midpointPosition.x + sortedIndex * undirectedNormVector.x * DEFAULT_DISTANCE,
           top: midpointPosition.y + sortedIndex * undirectedNormVector.y * DEFAULT_DISTANCE,
@@ -207,6 +209,7 @@ const EdgeContainerElement = (
       </Container>
       <Graphics
         ref={graphicsRef}
+        visible={visible}
       />
     </>
   )

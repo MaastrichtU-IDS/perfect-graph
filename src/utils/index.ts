@@ -420,7 +420,7 @@ export const calculateObjectBoundsWithoutChildren = (container: PIXI.Container) 
 export const getClusterVisibility = (id: string, clusters: Cluster[] = []) => {
   let visible = true
   clusters.forEach((cluster) => {
-    visible = visible && cluster.expand
+    visible = visible && (cluster.visible ?? true)
   })
   return visible
 }
