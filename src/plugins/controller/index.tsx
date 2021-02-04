@@ -35,15 +35,15 @@ GraphEditorProps,
   onEvent?: (info: EventInfo, draft: ControllerState) => boolean;
 }
 
-export type UseControllerResult = [
-  UseControllerData,
-  {},
-]
+// export type UseControllerResult = [
+//   UseControllerData,
+//   {},
+// ]
 
 export const useController = (
   useControllerData: UseControllerData,
   options: ControllerOptions = {},
-): UseControllerResult => {
+) => {
   const controllerConfig: UseControllerData = React.useMemo<UseControllerData>(
     () => R.mergeDeepAll([
       DEFAULT_CONTROLLER_CONFIG,

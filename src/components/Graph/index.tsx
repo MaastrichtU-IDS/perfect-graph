@@ -165,6 +165,7 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
     id: graphID,
     onLoad: () => {
     },
+    clusters: config.clusters,
   })
   const graphRef = useForwardRef<GraphRef>(ref, { cy })
   const [

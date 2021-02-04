@@ -384,6 +384,17 @@ export const readTextFile = async (blob: Blob, encoding?: string) => new Promise
 )
 
 export const calculateObjectBoundsWithoutChildren = (container: PIXI.Container) => {
+  const position = {
+    x: container.x * container.scale.x,
+    y: container.y * container.scale.y,
+  }
+  if (container.children.length === 0) {
+    return {
+      ...position,
+      width: 0,
+      height: 0,
+    }
+  }
   const object = container.getChildAt(0)
   const children = object.removeChildren()
   if (object.width === 0) {
@@ -392,13 +403,11 @@ export const calculateObjectBoundsWithoutChildren = (container: PIXI.Container) 
     })
     return {
       ...calculateObjectBoundsWithoutChildren(object),
-      x: container.x * container.scale.x,
-      y: container.y * container.scale.y,
+      ...position,
     }
   }
   const box = {
-    x: container.x * container.scale.x,
-    y: container.y * container.scale.y,
+    ...position,
     width: object.width * object.scale.x,
     height: object.height * object.scale.y,
   }
@@ -409,7 +418,7 @@ export const calculateObjectBoundsWithoutChildren = (container: PIXI.Container) 
 }
 
 export const getClusterVisibility = (id: string, clusters: Cluster[] = []) => {
-  let visible = false
+  let visible = true
   clusters.forEach((cluster) => {
     visible = visible && cluster.expand
   })

@@ -96,14 +96,25 @@ export default <T>(props: Props<T>): Result<T> => {
   // EventListeners
   React.useEffect(
     () => {
-      element.on(CYTOSCAPE_EVENT.data, (e) => {
-        console.log(e)
-        // e.originalEvent.
-        // contextRef.current?.render?.()
-      })
+      const nodeDataUpdated = (e) => {
+        const sourceData = element.source().data()
+        const targetData = element.target().data()
+        const newVisible = sourceData.context.settings.visible
+        && targetData.context.settings.visible
+        if (newVisible !== contextRef.current.settings.visible) {
+          contextRef.current.settings.visible = newVisible
+          element.data({
+            settings: contextRef.current,
+          })
+          contextRef.current.render()
+        }
+      }
+      element.source().on(CYTOSCAPE_EVENT.data, nodeDataUpdated)
+      element.target().on(CYTOSCAPE_EVENT.data, nodeDataUpdated)
       // element.source().emit(CYTOSCAPE_EVENT.data)
       return () => {
-        element.off(CYTOSCAPE_EVENT.data)
+        element.source().off(CYTOSCAPE_EVENT.data, `#${element.id()}`, nodeDataUpdated)
+        element.source().off(CYTOSCAPE_EVENT.data, `#${element.id()}`, nodeDataUpdated)
       }
     },
     [element],

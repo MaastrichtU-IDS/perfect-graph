@@ -64,13 +64,15 @@ export default (props: Props): Result => {
   }) as NodeSingular, [cy, id])
   React.useEffect(
     () => {
-      element.on('position', () => {
+      const positionChanged = () => {
         element.connectedEdges().forEach((mutableEdge) => {
           mutableEdge.data().onPositionChange()
         })
         onPositionChange?.({ element, context: contextRef.current })
-      })
+      }
+      element.on('position', positionChanged)
       return () => {
+        element.off('position', `#${element.id()}`, positionChanged)
         cy!.remove(element!)
       }
     }, // destroy
@@ -91,6 +93,7 @@ export default (props: Props): Result => {
       element.data({
         context: contextRef.current,
       })
+      contextRef.current.render()
     }
   }, [element, clusters])
   useElement({

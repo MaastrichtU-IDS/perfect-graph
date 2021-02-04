@@ -137,11 +137,21 @@ const AppContainer = ({
     Dark: DarkTheme,
     Default: DefaultTheme
   }
-  const [controllerProps] = useController({
+  const NODE_ID = 'http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2014:3519'
+  const [controllerProps, controller] = useController({
     ...data,
     graphConfig: {
       layout: Graph.Layouts.grid,
-      zoom: 0.2
+      zoom: 0.2,
+      clusters: [
+        {
+          id:  'cluster-1',
+          name:  'cluster-1',
+          expand: true,
+          ids: [NODE_ID],
+          childClusterIds: []
+        }
+      ]
     },
     settingsBar: {
       opened: false,
@@ -187,6 +197,14 @@ const AppContainer = ({
       return null
     }
   },)
+  React.useEffect(() => {
+    setTimeout(() => {
+      controller.update((draft) => {
+        draft.graphConfig.clusters[0].expand = false
+        console.log('updated')
+      })
+    }, 6000)
+  }, [])
   const graphEditorRef = React.useRef(null)
   return (
       <Div style={{ display: 'flex', flexDirection: 'column',width: '100%', height: '100%'}}>
@@ -195,12 +213,22 @@ const AppContainer = ({
         {...controllerProps}
         extraData={[configRef.current.visualization]}
         style={{ width: '100%', height: 820, }}
-        renderNode={(props) => (
-          <RenderNode 
-          {...props}
-          {...configRef.current}
-          />
-        )}
+        renderNode={(props) => {
+          const {
+            item,
+            element
+          } = props
+          const visible = element.data().context.settings.visible
+          // if (element.id() === NODE_ID) {
+          //   console.log(element.data().context.settings)
+          // }
+          return visible ? (
+            <RenderNode 
+            {...props}
+            {...configRef.current}
+            />
+          ): null
+        }}
         // renderNode={({ item, element, cy, theme }) => {
         //   const size = calculateNodeSize(item.data, configRef.current.visualization.nodeSize)
         //   const color = configRef.current.visualization.nodeColor ? calculateColor(
@@ -246,37 +274,43 @@ const AppContainer = ({
         //     </Graph.Pressable>
         //   )
         // }}
-        renderEdge={({
-          cy,
-          item,
-          element,
-          theme
-        }) => (
-          <Graph.Pressable
-            style={{
-              position: 'absolute',
-              justifyContent: 'center',
-              alignItems: 'center',
-              display: 'flex',
-            }}
-            onPress={() => {
-              cy.$(':selected').unselect()
-              element.select()
-            }}
-          >
-            <Graph.Text
-              style={{
-                // position: 'absolute',
-                // top: -40,
-                // backgroundColor: DefaultTheme.palette.background.paper,
-                fontSize: 12,
-              }}
-              isSprite
-            >
-              {R.takeLast(6, item.id)}
-            </Graph.Text>
-          </Graph.Pressable>
-        )}
+        renderEdge={(props) => {
+          const {
+            cy,
+            item,
+            element,
+            theme
+          } = props
+          const visible = element.data().context.settings.visible
+          return visible ? (
+            (
+              <Graph.Pressable
+                style={{
+                  position: 'absolute',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  display: 'flex',
+                }}
+                onPress={() => {
+                  cy.$(':selected').unselect()
+                  element.select()
+                }}
+              >
+                <Graph.Text
+                  style={{
+                    // position: 'absolute',
+                    // top: -40,
+                    // backgroundColor: DefaultTheme.palette.background.paper,
+                    fontSize: 12,
+                  }}
+                  isSprite
+                >
+                  {R.takeLast(6, item.id)}
+                </Graph.Text>
+              </Graph.Pressable>
+            )
+          ): null
+        }}
         // renderNode={({ item: { id, data } }) => {
           // const size = calculateNodeSize(data, configRef.current.visualization.nodeSize)
           // const color = calculateColor(data, configRef.current.visualization.nodeColor)
