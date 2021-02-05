@@ -22,7 +22,7 @@ import { ActionBar, ActionBarProps } from './ActionBar'
 import { DataBar, DataBarProps } from './DataBar'
 import { SettingsBar, SettingsBarProps } from './SettingsBar'
 import { MouseIcon } from './MouseIcon'
-import 'semantic-ui-css/semantic.min.css'
+// import 'semantic-ui-css/semantic.min.css'
 
 type RenderElementAdditionalInfo = {
   label: string;
