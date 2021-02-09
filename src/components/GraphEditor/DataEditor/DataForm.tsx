@@ -47,28 +47,53 @@ export const DataForm = (props: DataEditorProps) => {
             type: 'object',
             properties: {
               name: {
+                title: 'Name',
                 type: 'string',
               },
               value: {
+                title: 'Value List',
                 type: 'array',
                 items: {
-                  type: 'string',
-                },
-              },
-              additional: {
-                type: 'object',
-                properties: {
-                  name: {
-                    type: 'string',
-                  },
-                  value: {
-                    type: 'array',
-                    items: {
+                  type: 'object',
+                  properties: {
+                    value: {
+                      title: 'Item',
                       type: 'string',
+                    },
+                    additional: {
+                      title: 'Item Additional List',
+                      type: 'array',
+                      items: {
+                        type: 'object',
+                        properties: {
+                          name: {
+                            title: 'Additional Name',
+                            type: 'string',
+                          },
+                          value: {
+                            title: 'Additional Value',
+                            type: 'string',
+                          },
+                        },
+                      },
                     },
                   },
                 },
               },
+              // additional: {
+              //   type: 'object',
+              //   properties: {
+              //     name: {
+              //       type: 'string',
+              //     },
+              //     value: {
+              //       type: 'array',
+              //       items: {
+              //         type: 'string',
+              //       },
+              //     },
+              //   },
+              // },
             },
           },
         }}

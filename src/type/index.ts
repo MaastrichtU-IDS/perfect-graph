@@ -181,6 +181,7 @@ export type GraphConfig = {
   };
   backgroundColor?: string;
   theme?: Theme;
+  graphId?: string
 }
 
 export type DisplayObjectWithYoga = PIXI.DisplayObject & {

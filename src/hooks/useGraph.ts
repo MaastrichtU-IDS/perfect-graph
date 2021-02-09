@@ -96,9 +96,14 @@ export default (props: Props) => {
   React.useEffect(() => {
     if (isExistRef.current) return
     setTimeout(() => {
-      onLoad!(cy)
+      onLoad?.(cy)
     }, 500)
-    return () => { !isExistRef.current && cy.destroy() }
+    return () => {
+      if (!isExistRef.current) {
+        delete mutableGraphMap[id]
+        cy.destroy()
+      }
+    }
   }, // destroy
   // eslint-disable-next-line react-hooks/exhaustive-deps
   [cy])

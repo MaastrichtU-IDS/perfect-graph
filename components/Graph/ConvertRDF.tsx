@@ -13,7 +13,8 @@ export default function Animation() {
     graphConfig: {
     },
     dataBar: {
-      editable: false,
+      editable: true,
+      opened: true
     },
   })
   React.useEffect(() => {
@@ -26,9 +27,15 @@ export default function Animation() {
           layout: {...Graph.Layouts.grid, animationDuration: 1000,}
         }
       })
+      setTimeout(( )=>{
+        controller.update((draft) => {
+          draft.selectedElementId =  'http://example.org/#green-goblin'
+        })
+      }, 1500)
     }
     call()
   },[])
+  console.log(controllerProps.nodes)
   return (
     <GraphEditor
         style={{ width: '100%', height: 600 }}

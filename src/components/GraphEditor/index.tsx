@@ -1,3 +1,4 @@
+import React from 'react'
 import {
   DefaultRenderEdge,
   DefaultRenderNode, Graph, GraphProps,
@@ -12,8 +13,8 @@ import {
   GraphEditorRef,
 } from '@type'
 import { getLabel, getSelectedItemByElement } from '@utils'
+// import { useGraph } from '@hooks'
 import { EDITOR_MODE, EVENT } from '@utils/constants'
-import React from 'react'
 import { wrapComponent, useForwardRef } from 'colay-ui'
 import { Box } from '@material-ui/core'
 import { PropsWithRef } from 'colay-ui/type'
@@ -84,10 +85,17 @@ const GraphEditorElement = (
     mode = EDITOR_MODE.DEFAULT,
     ...rest
   } = props
+  const graphId = React.useMemo<string>(
+    () => graphConfig?.graphId ?? R.uuid(),
+    [graphConfig?.graphId],
+  )
+  // const { cy } = useGraph({
+  //   id: graphId,
+  // })
   const graphEditorRef = useForwardRef(ref)
   const selectedElement = React.useMemo(
-    () => selectedElementId && graphEditorRef.current.cy.$id(selectedElementId),
-    [selectedElementId],
+    () => selectedElementId && graphEditorRef.current.cy && graphEditorRef.current.cy.$id(selectedElementId),
+    [nodes, edges, selectedElementId],
   )
   const selectedItem = selectedElement && getSelectedItemByElement(
     selectedElement, { nodes, edges },
@@ -122,7 +130,10 @@ const GraphEditorElement = (
           label,
           extraData: rest.extraData,
         }}
-        config={graphConfig}
+        config={{
+          ...graphConfig,
+          graphId,
+        }}
         onPress={({ position }) => {
           onEventCallback({
             type: EVENT.PRESS_BACKGROUND,

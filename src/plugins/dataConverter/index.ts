@@ -192,11 +192,23 @@ export const convertJSONLDToGraphData = (
             target: fieldValue['@id'],
             data: [{
               name: 'name',
-              value: [fieldKey],
+              value: [{
+                value: fieldKey,
+                additional: [],
+              }],
             }],
           }
         } else {
-          noDataItem.value.push(fieldValue)
+          const isPlainObject = R.isPlainObject((fieldValue))
+          noDataItem.value.push({
+            value: isPlainObject ? fieldValue['@value'] : fieldValue,
+            additional: isPlainObject
+              ? Object.keys(R.omit(['@value'])(fieldValue)).map((valueFieldKey) => ({
+                value: fieldValue[valueFieldKey],
+                name: valueFieldKey,
+              }))
+              : [],
+          })
         }
       })
       node.data.push(noDataItem)

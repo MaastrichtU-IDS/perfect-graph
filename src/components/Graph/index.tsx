@@ -170,7 +170,7 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
     ..._config,
   }), [_config])
   const { theme } = config
-  const graphID = React.useMemo<string>(R.uuid, [])
+  const graphID = React.useMemo<string>(() => config.graphId ?? R.uuid(), [config.graphId])
   const stageRef = React.useRef<{ app: PIXI.Application }>(null)
   const viewportRef = React.useRef<ViewportRef>(null)
   const { cy } = useGraph({
