@@ -2,6 +2,7 @@ import React from 'react'
 import { AppProps } from 'next/app'
 import Head from 'next/head'
 import 'semantic-ui-css/semantic.min.css'
+import '../src/plugins/dataConverter'
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
