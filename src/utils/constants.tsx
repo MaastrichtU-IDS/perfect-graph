@@ -95,6 +95,37 @@ export const PIXI_EVENT_NAMES = {
   onRightPress: 'rightclick',
 }
 
+// export const eventHandlers = [
+//   'click',
+//   'mousedown',
+//   'mousemove',
+//   'mouseout',
+//   'mouseover',
+//   'mouseup',
+//   'mouseupoutside',
+//   'tap',
+//   'touchstart',
+//   'touchmove',
+//   'touchend',
+//   'touchendoutside',
+//   'pointercancel',
+//   'pointerout',
+//   'pointerover',
+//   'pointertap',
+//   'pointerdown',
+//   'pointerup',
+//   'pointerupoutside',
+//   'pointermove',
+//   'rightclick',
+//   'rightdown',
+//   'rightup',
+//   'rightupoutside',
+//   'touchcancel',
+//   'touchendoutside',
+//   'touchmove',
+//   'touchstart',
+// ]
+
 export const CYTOSCAPE_EVENT = {
   select: 'select',
   unselect: 'unselect',

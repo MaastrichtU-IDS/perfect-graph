@@ -8,7 +8,6 @@ import {
   Div,
   DivProps,
   DataRender,
-  useWhyDidUpdate,
 } from 'colay-ui'
 import * as C from 'colay/color'
 import { useGraph } from '@hooks'
@@ -25,6 +24,7 @@ import { NodeContainer } from '../NodeContainer'
 import { EdgeContainer } from '../EdgeContainer'
 import { Pressable } from '../Pressable'
 import { Text } from '../Text'
+import { View } from '../View'
 
 export type GraphProps = {
   extraData?: any;
@@ -61,7 +61,7 @@ export const DefaultRenderNode: RenderNode = ({
 }) => {
   const hasSelectedEdge = element.connectedEdges(':selected').length > 0
   return (
-    <Pressable
+    <View
       style={{
         width: 50,
         height: 50,
@@ -75,10 +75,23 @@ export const DefaultRenderNode: RenderNode = ({
             : theme.palette.background.paper),
         borderRadius: 50,
       }}
-      onPress={() => {
+      interactive
+      click={() => {
         cy.$(':selected').unselect()
         element.select()
       }}
+      // rightclick={(e) => {
+        // alert('Heyy')
+      // }}
+      // onRightPress={(e) => {
+      //   console.log('onRightPress', e)
+      // }}
+      // mouseover={(e) => {
+      //   console.log('onHoverStart', e)
+      // }}
+      // onPressEnd={(e) => {
+      //   console.log('onPressEnd', e)
+      // }}
     >
       <Text
         style={{
@@ -89,9 +102,8 @@ export const DefaultRenderNode: RenderNode = ({
         isSprite
       >
         {item.id.substring(0, 5)}
-
       </Text>
-    </Pressable>
+    </View>
   )
 }
 
@@ -176,6 +188,11 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
   React.useMemo(() => {
     graphRef.current.app = stageRef.current?.app!
     graphRef.current.viewport = viewportRef.current!
+    if (graphRef.current.app) {
+      graphRef.current.app.view.addEventListener('contextmenu', (e) => {
+        e.preventDefault()
+      })
+    }
   }, [stageRef.current, viewportRef.current])
   React.useEffect(() => {
     R.when(
