@@ -332,6 +332,7 @@ export default {
     ...animationOptions,
   },
   cola: {
+    name: 'cola',
     animate: true, // whether to show the layout as it's running
     refresh: 1, // number of ticks per frame; higher is faster but more jerky
     maxSimulationTime: 4000, // max length in ms to run the layout
@@ -368,6 +369,7 @@ export default {
     ...animationOptions,
   },
   avsdf: {
+    name: 'avsdf',
     ready() {
     },
     // Called on `layoutstop`
@@ -390,6 +392,7 @@ export default {
     ...animationOptions,
   },
   dagre: {
+    name: 'dagre',
     nodeSep: undefined, // the separation between adjacent nodes in the same rank
     edgeSep: undefined, // the separation between adjacent edges in the same rank
     rankSep: undefined, // the separation between each rank in the layout
@@ -414,6 +417,7 @@ export default {
     ...animationOptions,
   },
   spread: {
+    name: 'spread',
     animate: true, // Whether to show the layout as it's running
     ready: undefined, // Callback on layoutready
     stop: undefined, // Callback on layoutstop

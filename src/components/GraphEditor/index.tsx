@@ -22,7 +22,6 @@ import { ActionBar, ActionBarProps } from './ActionBar'
 import { DataBar, DataBarProps } from './DataBar'
 import { SettingsBar, SettingsBarProps } from './SettingsBar'
 import { MouseIcon } from './MouseIcon'
-// import 'semantic-ui-css/semantic.min.css'
 
 type RenderElementAdditionalInfo = {
   label: string;
@@ -95,23 +94,12 @@ const GraphEditorElement = (
   ).item
   const selectedElementIsNode = selectedElement && selectedElement.isNode()
   const targetPath = selectedElementIsNode ? 'nodes' : 'edges'
-  const selectedElementRef = React.useRef({
-    selectedElement,
-    selectedItem,
-  })
-  selectedElementRef.current = {
-    selectedElement,
-    selectedItem,
-  }
   const onEventCallback = React.useCallback((eventInfo) => {
-    const { selectedElement, selectedItem } = selectedElementRef.current
     onEvent({
-      element: selectedElement!,
-      item: selectedItem!,
       ...eventInfo,
       graphEditor: graphEditorRef.current,
     })
-  }, [selectedElement, selectedItem])
+  }, [onEvent, graphEditorRef.current])
   return (
     <Box
       style={{

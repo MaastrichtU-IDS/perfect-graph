@@ -1,7 +1,7 @@
 import { Parser, Quad } from 'n3'
 import * as jsonld from 'jsonld'
 import * as R from 'colay/ramda'
-import { NodeData, EdgeData } from '../../type'
+import { data } from './example'
 
 type ToNquadResult = {
   quadList: Quad[];
@@ -56,11 +56,12 @@ export const convertToJSONLD = async (text: string): Promise<Record<string, any>
   const result = await toNquad(text)
   const jsonLDList = await jsonld.fromRDF(result.quadList)
   const resultList: Record<string, any>[] = await R.mapAsync(
-    async (jsonLDItem) => {
-      // @ts-ignore
-      const itemResult = await jsonld.compact(jsonLDItem, {})// result.prefixes)
-      return itemResult
-    },
+    async (jsonLDItem) =>
+      // // @ts-ignore
+      // const itemResult = await jsonld.compact(jsonLDItem, {})// result.prefixes)
+      // return itemResult
+      jsonLDItem
+    ,
   )(jsonLDList)
   return resultList
 }
@@ -104,70 +105,119 @@ export const convertToJSONLD = async (text: string): Promise<Record<string, any>
 //   }
 // ]
 
-const processField = (
-  item: any,
-  fieldKey: string,
-  fieldValue: any,
-) => {
-  const isList = R.is(Array, fieldValue)
-  const nodes = []
-  const edges = []
-  if (isList) {
-    const fieldDataList = fieldValue.map(
-      (valueItem) => processField(item, fieldKey, valueItem),
-    )
-    return R.reduce(R.mergeWith(R.concat), { nodes, edges }, fieldDataList)
-  }
+// const processField = (
+//   item: any,
+//   fieldKey: string,
+//   fieldValue: any,
+// ) => {
+//   const isList = R.is(Array, fieldValue)
+//   const nodes = []
+//   const edges = []
+//   if (isList) {
+//     const fieldDataList = fieldValue.map(
+//       (valueItem) => processField(item, fieldKey, valueItem),
+//     )
+//     return R.reduce(R.mergeWith(R.concat), { nodes, edges }, fieldDataList)
+//   }
 
-  const itemId = item['@id']
-  const isEdge = !!fieldValue['@id']
-  // const elementDataList = []
-  if (isEdge) {
-    edges.push({
-      id: itemId,
-      source: itemId,
-      target: fieldValue['@id'],
+//   const itemId = item['@id']
+//   const isEdge = !!fieldValue['@id']
+//   if (isEdge) {
+//     edges.push({
+//       id: itemId,
+//       source: itemId,
+//       target: fieldValue['@id'],
+//       data: [],
+//     })
+//   } else {
+//     nodes.push({
+//       id: itemId,
+//       data: [{
+//         name: fieldKey,
+//         value: [fieldValue],
+//       }],
+//     })
+//   }
+//   return {
+//     nodes,
+//     edges,
+//   }
+// }
+// const mergeGraphDataList = (data) => R.reduce(
+//   R.mergeDeepWith(R.concat), { nodes: {}, edges: {} }, data,
+// )
+// const processNode = (
+//   item: any,
+// ) => {
+//   const nodes = []
+//   const edges = []
+// }
+// const processEdge = (
+//   item: any,
+//   relationName: string,
+// ) => {
+//   const nodes = []
+//   const edges = []
+// }
+export const convertJSONLDToGraphData = (
+  jsonLDList: Record<string, any>[],
+  graph: {
+    nodes: {},
+    edges: {},
+  } = {},
+) => {
+  const {
+    nodes = {},
+    edges = {},
+  } = graph
+  jsonLDList.forEach((item) => {
+    const nodeId = item['@id']
+    const node = {
+      id: nodeId,
       data: [],
-    })
-  } else {
-    nodes.push({
-      id: itemId,
-      data: [{
+      ...(nodes[nodeId] ?? {}),
+    }
+    Object.keys(R.omit(['@id'], item)).forEach((fieldKey) => {
+      const noDataItem = {
         name: fieldKey,
-        value: [fieldValue],
-      }],
+        value: [],
+      }
+      item[fieldKey].forEach((fieldValue) => {
+        const edgeId = fieldValue['@id']
+        const isEdge = !!edgeId
+        if (isEdge) {
+          edges[edgeId] = {
+            id: R.uuid(),
+            source: nodeId,
+            target: fieldValue['@id'],
+            data: [{
+              name: 'name',
+              value: [fieldKey],
+            }],
+          }
+        } else {
+          noDataItem.value.push(fieldValue)
+        }
+      })
+      node.data.push(noDataItem)
     })
-  }
+    nodes[nodeId] = node
+  })
+  const nodeList = Object.values(nodes)
   return {
-    nodes,
-    edges,
+    nodes: nodeList,
+    edges: filterEdges(nodeList)(Object.values(edges)),
   }
 }
-const mergeGraphDataList = (data) => R.reduce(
-  R.mergeDeepWith(R.concat), { nodes: {}, edges: {} }, data,
-)
-export const convertToGraphData = (data: Record<string, any>[]) => {
-  console.log('a', data)
-  // @ts-ignore
-  const allGraphDataList = data.map((item) => {
-    const itemId = item['@id']
-    const elementDataList = []
-    const graphDataList = Object.keys(item).map((fieldKey) => {
-      const fieldValue = item[fieldKey]
-      const { nodes, edges } = processField(item, fieldKey, fieldValue)
-      return {
-        nodes: R.groupBy(R.prop('id'), nodes),
-        edges: R.groupBy(R.prop('id'), edges),
-      }
-    })
-    // R.reduce(R.mergeWith(R.concat), { nodes, edges }, fieldDataList)
-    return mergeGraphDataList(graphDataList)
-  })
-  const { nodes, edges } = mergeGraphDataList(allGraphDataList)
-  return {
-    nodes: R.values(nodes),
-    edges: R.values(edges),
-  }
+
+// @ts-ignore
+export const filterEdges = (nodes: {id: string}[]) => (
+  edges: {source:string;target:string}[],
+) => {
+  const nodeMap = R.groupBy(R.prop('id'))(nodes)
+  return R.filter(
+    (edge) => nodeMap[edge.source] && nodeMap[edge.target],
+  )(edges)
 }
 
 // export const convertToGraphData = (resultList: Record<string, any>[]) => {
@@ -179,10 +229,13 @@ export const convertToGraphData = (data: Record<string, any>[]) => {
 // }
 // convertToJSONLD(example3)
 
-const main = async () => {
+// export const convertRDFToGraphData = async () => {
+//   // const jsonLD = await convertToJSONLD(example3)
+//   const graphData = convertJSONLDToGraphData(await jsonld.expand(data))
+//   return graphData
+// }
+export const convertRDFToGraphData = async () => {
   const jsonLD = await convertToJSONLD(example3)
-  const graphData = convertToGraphData(jsonLD)
-  console.log(graphData)
+  const graphData = convertJSONLDToGraphData(jsonLD)
+  return graphData
 }
-
-main()

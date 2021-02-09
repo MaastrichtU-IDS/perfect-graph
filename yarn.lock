@@ -6359,10 +6359,10 @@ colay-ui@0.0.36:
   dependencies:
     react-error-boundary "3.1.0"
 
-colay@0.0.27:
-  version "0.0.27"
-  resolved "https://registry.yarnpkg.com/colay/-/colay-0.0.27.tgz#d7bf99b0dadbd0814f82016bfc07233cb3ca4d9a"
-  integrity sha512-KqxDC7Gk5JlFja8QDfI6w0iPI3JhZ/nWIuMQi8yQRii4Spd10Jd6qR6wBBDKl7r9Bo2a12EJ8V2aI8eXc/yzNQ==
+colay@0.0.31:
+  version "0.0.31"
+  resolved "https://registry.yarnpkg.com/colay/-/colay-0.0.31.tgz#a182a8639cb0b89879238436a11566ba30d657eb"
+  integrity sha512-1QB95zbWdHRB2UISeBzmMI82NA1v4eXkUH6v33hKvD4egp4myIanyMTVsV2BERMEgR+sQZJv3WeZgMbbza98hQ==
   dependencies:
     "@types/async" "3.2.5"
     "@types/ramda" "0.27.34"
@@ -10240,7 +10240,20 @@ jsonld-context-parser@2.1.1:
     http-link-header "^1.0.2"
     relative-to-absolute-iri "^1.0.5"
 
-jsonld@3.2.0, jsonld@^3.2.0:
+jsonld@3.3.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/jsonld/-/jsonld-3.3.0.tgz#1b03fe1458f9ffc2918fc30e90320343c988d07b"
+  integrity sha512-0y/rctORxwlezPw/vHp+vbR2qTqHSwt9weZK3RjtDYSzmbGjtQlJZuHduCBfIoXggXPvlnI/2EjYcoyzDD/WRw==
+  dependencies:
+    canonicalize "^1.0.1"
+    lru-cache "^5.1.1"
+    object.fromentries "^2.0.2"
+    rdf-canonize "^2.0.1"
+    request "^2.88.0"
+    semver "^6.3.0"
+    xmldom "0.1.19"
+
+jsonld@^3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/jsonld/-/jsonld-3.2.0.tgz#be31b2ee9d5ed490d1e912263e31ca327f5a157f"
   integrity sha512-re7FofG1iklGDlAthC4u5AMMt4l3qRNQbSI0nZTJu9vJG2R0QO6/yIhh8ZIh/M9Gg+EjXsULgQV/HEsltoVZBg==
@@ -12697,6 +12710,14 @@ rdf-canonize@^1.0.2:
     node-forge "^0.10.0"
     semver "^6.3.0"
 
+rdf-canonize@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/rdf-canonize/-/rdf-canonize-2.0.1.tgz#12c9b8b41570cd669d9b152c9e679063478ba194"
+  integrity sha512-/GVELjrfW8G/wS4QfDZ5Kq68cS1belVNJqZlcwiErerexeBUsgOINCROnP7UumWIBNdeCwTVLE9NVXMnRYK0lA==
+  dependencies:
+    semver "^6.3.0"
+    setimmediate "^1.0.5"
+
 rdf-data-factory@^1.0.1:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/rdf-data-factory/-/rdf-data-factory-1.0.4.tgz#4e22fc462620fbca650eb2d26c4a13a103edd777"
@@ -13689,7 +13710,7 @@ set-value@^2.0.0, set-value@^2.0.1:
     is-plain-object "^2.0.3"
     split-string "^3.0.1"
 
-setimmediate@^1.0.4:
+setimmediate@^1.0.4, setimmediate@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/setimmediate/-/setimmediate-1.0.5.tgz#290cbb232e306942d7d7ea9b83732ab7856f8285"
   integrity sha1-KQy7Iy4waULX1+qbg3Mqt4VvgoU=

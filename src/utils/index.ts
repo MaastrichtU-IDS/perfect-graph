@@ -176,50 +176,6 @@ export const applyEvents = (
     })
 }
 
-// const processProps = (props: Record<string, any>) => {
-//   const {
-//     style: defaultStyle = {},
-//     ...rest
-//   } = props
-//   const style = StyleSheet.flatten(defaultStyle)
-//   const processedProps = R.pipe(
-//     () => R.ifElse(
-//       R.isNotNil,
-//       () => ({
-//         ...(style.left ? { x: style.left } : {}),
-//         ...(style.top ? { y: style.top } : {}),
-//         ...(style.width ? { width: style.width } : {}),
-//         ...(style.height ? { height: style.height } : {}),
-//       }),
-//       R.always({}),
-//     )(style),
-//   )('')
-//   return {
-//     ...R.pipe(
-//       R.toPairs,
-//       R.map(
-//         ([key, value]) => ([
-//           R.ifElse(
-//             R.has(key),
-//             R.prop(key),
-//             R.always(key),
-//           )(PIXI_EVENT_NAMES),
-//           value,
-//         ]),
-//       ),
-//       R.fromPairs,
-//     )(rest),
-//     ...processedProps,
-//   }
-// }
-
-// export const applyDefaultProps: typeof nativeApplyDefaultProps = (
-//   instance, oldProps, newProps,
-// ) => nativeApplyDefaultProps(
-//   instance,
-//   processProps(oldProps),
-//   processProps(newProps),
-// )
 
 const processProps = (props: Record<string, any>) => {
   const newProps = { ...props }
@@ -442,3 +398,13 @@ export const getNodeContextByElement = (element: Element): NodeContext => elemen
 export const getEdgeContextByElement = (element: Element): EdgeContext => element.data(
   ELEMENT_DATA_FIELDS.CONTEXT,
 )
+
+// @ts-ignore
+export const filterEdges = (nodes: {id: string}[]) => (
+  edges: {source:string;target:string}[],
+) => {
+  const nodeMap = R.groupBy(R.prop('id'))(nodes)
+  return R.filter(
+    (edge) => nodeMap[edge.source] && nodeMap[edge.target],
+  )(edges)
+}

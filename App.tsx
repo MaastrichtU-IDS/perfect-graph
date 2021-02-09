@@ -77,7 +77,6 @@ const AppContainer = () => {
   // })
 
   // useWhyDidUpdate('Heyy', controllerProps)
-  console.log(controllerProps)
   return (
       <App />
     // <ApplicationProvider>

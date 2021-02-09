@@ -137,7 +137,6 @@ export const useController = (
           if (
             // @ts-ignore
             [EDITOR_MODE.DELETE, EDITOR_MODE.CONTINUES_DELETE].includes(draft.mode)
-
           ) {
             draft[targetPath].splice(itemIndex, 1)
             if (isNode) {
@@ -148,7 +147,9 @@ export const useController = (
             if (draft.mode === EDITOR_MODE.DELETE) {
               draft.mode = EDITOR_MODE.DEFAULT
             }
-          } else if (
+            return
+          }
+          if (
             [EDITOR_MODE.ADD, EDITOR_MODE.CONTINUES_ADD].includes(draft.mode)
           ) {
             if (isNode) {
@@ -167,10 +168,10 @@ export const useController = (
             if (!targetNodeRef.current && draft.mode === EDITOR_MODE.ADD) {
               draft.mode = EDITOR_MODE.DEFAULT
             }
-          } else {
-            element.select()
-            draft.selectedElementId = item.id
+            return
           }
+          element.select()
+          draft.selectedElementId = item.id
 
           break
         }

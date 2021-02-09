@@ -44,16 +44,16 @@ export default function Animation() {
           },
         ]}
         edges={[
-          { target: 'Jerry', source: 'Elaine' },
-          { target: 'Elaine', source: 'Jerry' },
-          { target: 'Jerry', source: 'Elaine' },
-          { source: 'George', target: 'Jerry' },
-          { target: 'George', source: 'Jerry' },
-          { target: 'Kramer', source: 'George' },
-          { target: 'Kramer', source: 'Jerry' },
-          { target: 'Jerry', source: 'Kramer' },
-          { target: 'Elaine', source: 'Kramer' },
-          { target: 'Kramer', source: 'Elaine' },
+          { id:'JerryElaine', target: 'Jerry', source: 'Elaine' },
+          { id:'ElaineJerry', target: 'Elaine', source: 'Jerry' },
+          { id:'JerryElaine', target: 'Jerry', source: 'Elaine' },
+          { id:'GeorgeJerry', source: 'George', target: 'Jerry' },
+          { id:'GeorgeJerry', target: 'George', source: 'Jerry' },
+          { id:'KramerGeorge', target: 'Kramer', source: 'George' },
+          { id:'KramerJerry', target: 'Kramer', source: 'Jerry' },
+          { id:'JerryKramer', target: 'Jerry', source: 'Kramer' },
+          { id:'ElaineKramer', target: 'Elaine', source: 'Kramer' },
+          { id:'KramerElaine', target: 'Kramer', source: 'Elaine' },
         ]}
         />
   )

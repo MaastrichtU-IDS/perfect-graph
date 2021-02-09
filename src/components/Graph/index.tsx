@@ -101,7 +101,7 @@ export const DefaultRenderNode: RenderNode = ({
         }}
         isSprite
       >
-        {item.id.substring(0, 5)}
+        {R.last(item.id.split('/'))?.substring(0, 10)}
       </Text>
     </View>
   )
@@ -143,7 +143,7 @@ export const DefaultRenderEdge: RenderEdge = ({
       }}
       isSprite
     >
-      {item.id.substring(0, 5)}
+      {R.last(item.id.split('/'))?.substring(0, 10)}
     </Text>
   </Pressable>
 )

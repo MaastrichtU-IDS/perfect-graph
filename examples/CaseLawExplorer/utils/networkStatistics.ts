@@ -31,7 +31,6 @@ export const calculateStatistics = (props: Props) => {
     ),
     headless: true
   })
-  console.log('count',cy.nodes().length, cy.edges().length)
   const {
     indegree: indegreeCentralityCalc,
     outdegree: outdegreeCentralityCalc

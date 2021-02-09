@@ -32,7 +32,6 @@ export const DefaultElement = () => {
       extraData,
       element
     }) => {
-      console.log('event:', type)
       switch (type) {
         
         case EVENT.SETTINGS_FORM_CHANGED:{

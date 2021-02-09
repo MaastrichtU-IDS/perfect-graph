@@ -62,7 +62,6 @@ export const WithEditElement = () => {
           return false
         }
         case EVENT.ELEMENT_SELECTED: {
-          console.log('elementSelected')
           if (
             // @ts-ignore
             [EDITOR_MODE.DELETE, EDITOR_MODE.CONTINUES_DELETE].includes(draft.mode)
