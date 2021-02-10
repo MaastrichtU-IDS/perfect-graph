@@ -60,7 +60,8 @@ export const RenderNode = ({
       onPress={() => {
         cy.$(':selected').unselect()
         element.select()
-        const TARGET_SIZE = 700
+        const TARGET_SIZE = 800
+        const MARGIN_SIZE = 180
         const {
            viewport
         } = graphRef.current
@@ -70,25 +71,26 @@ export const RenderNode = ({
           w: viewport.hitArea.width,
           h: viewport.hitArea.height,
         }
-        const zoom = (currentBoundingBox.w / TARGET_SIZE ) * graphRef.current.viewport.scale.x
+        // const zoom = ((currentBoundingBox.w / TARGET_SIZE ) * graphRef.current.viewport.scale.x) - 0.1
         const position = element.position()
-        
-
         element.neighborhood().layout({
           ...Graph.Layouts.circle,
           boundingBox: {
-            x1: position.x,
-            y1: position.y,
-            h: TARGET_SIZE-100,
-            w: TARGET_SIZE-100,
+            x1: position.x+MARGIN_SIZE - TARGET_SIZE/2,
+            y1: position.y+MARGIN_SIZE - TARGET_SIZE/2,
+            h: TARGET_SIZE-MARGIN_SIZE,
+            w: TARGET_SIZE-MARGIN_SIZE,
             // x1: element.position().x,
             // y1: element.position().y,
           }
         }).start()
-        graphRef.current.viewport.snapZoom({
-          center: position, 
+        viewport.snapZoom({
+          center: {
+            x: position.x,
+            y: position.y,
+          }, 
           width: TARGET_SIZE,
-          height: TARGET_SIZE,
+          // height: TARGET_SIZE * viewport.scale.x,
           time: Graph.Layouts.grid.animationDuration + 500,
           removeOnComplete: true,
           removeOnInterrupt: true
