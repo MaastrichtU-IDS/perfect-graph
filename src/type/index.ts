@@ -221,6 +221,7 @@ export type EventInfo = {
   dataItem?: DataItem;
   index?: number;
   graphEditor: GraphEditorRef;
+  event?: PIXI.InteractionEvent;
 }
 
 export type OnEvent = (eventInfo: EventInfo) => void

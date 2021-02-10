@@ -5,6 +5,7 @@ import {
   DataItem, EventInfo,
 } from '@type'
 import { GraphEditorProps } from '@components/GraphEditor'
+import { Graph } from '@components'
 import {
   EVENT, ELEMENT_DATA_FIELDS, EDITOR_MODE,
 } from '@utils/constants'
@@ -63,6 +64,7 @@ export const useController = (
       index = 0,
       dataItem = {} as DataItem,
       graphEditor,
+      event,
       // graphEditor,
     } = eventInfo
     const isNode = element?.isNode()
@@ -172,6 +174,36 @@ export const useController = (
           }
           element.select()
           draft.selectedElementId = item.id
+          if (event && event.data.originalEvent.metaKey) {
+            draft.dataBar!.opened = true
+            const {
+              viewport,
+            } = graphEditor
+            const TARGET_SIZE = 2000 // viewport.hitArea.width / 2// 800
+            const MARGIN_SIZE = 180
+            const position = element.position()
+            const center = {
+              x: position.x + TARGET_SIZE / 4,
+              y: position.y,
+            }
+            element.neighborhood().layout({
+              ...Graph.Layouts.circle,
+              boundingBox: {
+                x1: center.x - TARGET_SIZE / 2,
+                y1: center.y - TARGET_SIZE / 3,
+                w: TARGET_SIZE / 2,
+                h: TARGET_SIZE / 2,
+              },
+            }).start()
+            viewport.snapZoom({
+              center,
+              width: TARGET_SIZE,
+              forceStart: true,
+              time: Graph.Layouts.grid.animationDuration + 500,
+              removeOnComplete: true,
+              removeOnInterrupt: true,
+            })
+          }
 
           break
         }

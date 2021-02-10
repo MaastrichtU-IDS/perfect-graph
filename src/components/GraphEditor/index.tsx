@@ -142,13 +142,14 @@ const GraphEditorElement = (
         }}
         renderNode={({ item, element, ...rest }) => (
           <Graph.Pressable
-            onPress={() => {
+            onPress={(event) => {
               graphEditorRef.current.cy.$(':selected').unselect()
               element.select()
               onEventCallback({
                 type: EVENT.ELEMENT_SELECTED,
                 item,
                 element,
+                event,
               })
             }}
           >
