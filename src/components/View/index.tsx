@@ -5,13 +5,14 @@ import { wrapComponent } from 'colay-ui'
 import { useTheme } from '@core/theme'
 import * as PIXI from 'pixi.js'
 import * as C from 'colay/color'
-import * as R from 'colay/ramda'
 import {
   applyDefaultProps, preprocessProps,
 } from '@utils'
-import { PIXIBasicStyle, PIXIShapeStyle, Theme } from '@type'
+import {
+  PIXIBasicStyle, PIXIShapeStyle, Theme, PIXIBasicProps,
+} from '@type'
 
-export type ViewProps = {
+export type ViewProps = PIXIBasicProps & {
   style?: PIXIBasicStyle & PIXIShapeStyle;
   onDrag?: (pos: Position) => void;
   children?: React.ReactNode;

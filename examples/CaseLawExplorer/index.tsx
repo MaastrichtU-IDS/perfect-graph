@@ -144,8 +144,7 @@ const AppContainer = ({
   }
   const NODE_ID = 'http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2014:3519'
   const [controllerProps, controller] = useController({
-    // ...data,
-
+    ...data,
     graphConfig: {
       layout: Graph.Layouts.grid,
       zoom: 0.2,
@@ -154,7 +153,9 @@ const AppContainer = ({
           id:  'cluster-1',
           name:  'cluster-1',
           ids: [NODE_ID],
-          childClusterIds: []
+          childClusterIds: [],
+          // layout: 
+          // theme:
         }
       ]
     },
@@ -203,21 +204,21 @@ const AppContainer = ({
       return null
     }
   },)
-  React.useEffect(() => {
-    const call = async () =>{
-      const results = await listCases()
-      console.log(results)
-      const nodes = results.map(({id, ...data}) => ({
-        id: `${data.doctype}:${id}`,
-        data
-      }))
-      controller.update((draft) => {
-        draft.nodes = nodes
-        draft.edges = []
-      })
-    }
-    call()
-  }, [])
+  // React.useEffect(() => {
+  //   const call = async () =>{
+  //     const results = await listCases()
+  //     console.log(results)
+  //     const nodes = results.map(({id, ...data}) => ({
+  //       id: `${data.doctype}:${id}`,
+  //       data
+  //     }))
+  //     controller.update((draft) => {
+  //       draft.nodes = nodes
+  //       draft.edges = []
+  //     })
+  //   }
+  //   call()
+  // }, [])
   // React.useEffect(() => {
   //   setTimeout(() => {
   //     controller.update((draft) => {
@@ -299,14 +300,15 @@ const AppContainer = ({
             theme
           } = props
           return (
-            <Graph.Pressable
+            <Graph.View
+              interactive
               style={{
                 position: 'absolute',
                 justifyContent: 'center',
                 alignItems: 'center',
                 display: 'flex',
               }}
-              onPress={() => {
+              click={() => {
                 cy.$(':selected').unselect()
                 element.select()
               }}
@@ -322,7 +324,7 @@ const AppContainer = ({
               >
                 {R.takeLast(6, item.id)}
               </Graph.Text>
-            </Graph.Pressable>
+            </Graph.View>
           )
         }}
         // renderNode={({ item: { id, data } }) => {

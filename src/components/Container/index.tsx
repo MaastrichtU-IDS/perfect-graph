@@ -12,17 +12,18 @@ import {
   PIXIFlexStyle,
   PIXIBasicStyle,
   PIXIDisplayObjectProps,
+  PIXIBasicProps
 } from '@type'
 import { Position, PropsWithRef } from 'colay-ui/type'
 import { Enumerable } from 'colay/type'
 
-export type ContainerProps = PIXIDisplayObjectProps
+export type ContainerProps = PIXIBasicProps & PIXIDisplayObjectProps
 & Omit<React.ComponentProps<typeof PIXIReactContainer>, 'children'> &{
   style: PIXIFlexStyle & PIXIBasicStyle;
   children: Enumerable<React.ReactNode>;
   draggable?: boolean;
   onDrag?: (param: Position) => void;
-}    
+}
 
 type ContainerPropsWithRef = PropsWithRef<
 PIXI.Container,

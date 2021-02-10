@@ -17,6 +17,7 @@ import * as PIXI from 'pixi.js'
 import { YogaConstants } from '@utils/addFlexLayout/flex-layout/YogaContants'
 import { YogaLayout } from '@utils/addFlexLayout/flex-layout/YogaLayout'
 import GraphLayouts from '@core/layouts'
+import type * as PIXIType from './pixi'
 
 export type Style = {[k: string]: any}
 export type OnLayout = (event: LayoutChangeEvent) => void
@@ -125,6 +126,13 @@ export type PIXIBasicStyle = {
   width?: number;
   height?: number;
 } & PIXIFlexStyle
+
+export type PIXIBasicProps = {
+  interactive?: boolean;
+  buttonMode?: boolean;
+} & {
+  [k in PIXIType.InteractionEventTypes]: (e: PIXI.InteractionEvent) => void
+}
 
 export type PIXIShapeStyle = {
   backgroundColor?: string;
