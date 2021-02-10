@@ -28,7 +28,7 @@ export const RenderNode = ({
     if (graphRef.current.viewport) {
       graphRef.current.viewport.on('zoomed',() => {
         const xScale = 1/graphRef.current.viewport.scale.x
-        const yScale = 1/graphRef.current.viewport.scale.x
+        const yScale = 1/graphRef.current.viewport.scale.y
         if (xScale > 1 && xScale < 5){
           textRef.current.scale.x = xScale
         textRef.current.scale.y = yScale
@@ -60,6 +60,39 @@ export const RenderNode = ({
       onPress={() => {
         cy.$(':selected').unselect()
         element.select()
+        const TARGET_SIZE = 700
+        const {
+           viewport
+        } = graphRef.current
+        const currentBoundingBox = {
+          x1: viewport.hitArea.x,
+          y1: viewport.hitArea.y,
+          w: viewport.hitArea.width,
+          h: viewport.hitArea.height,
+        }
+        const zoom = (currentBoundingBox.w / TARGET_SIZE ) * graphRef.current.viewport.scale.x
+        const position = element.position()
+        
+
+        element.neighborhood().layout({
+          ...Graph.Layouts.circle,
+          boundingBox: {
+            x1: position.x,
+            y1: position.y,
+            h: TARGET_SIZE-100,
+            w: TARGET_SIZE-100,
+            // x1: element.position().x,
+            // y1: element.position().y,
+          }
+        }).start()
+        graphRef.current.viewport.snapZoom({
+          center: position, 
+          width: TARGET_SIZE,
+          height: TARGET_SIZE,
+          time: Graph.Layouts.grid.animationDuration + 500,
+          removeOnComplete: true,
+          removeOnInterrupt: true
+        })
       }}
     >
       <Graph.Text

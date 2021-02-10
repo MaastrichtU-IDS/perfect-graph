@@ -10,7 +10,7 @@ export const animationOptions = {
   animationEasing: 'linear',
 
   // // The duration of the animation for animate:'end'
-  animationDuration: 5000,
+  animationDuration: 1000,
 
   // // A function that determines whether the node should be animated
   // // All nodes animated by default on animate enabled

@@ -177,6 +177,7 @@ const AppContainer = ({
       type,
       extraData,
       element,
+      graphRef
     },draft) => {
       switch (type) {
         case EVENT.SETTINGS_FORM_CHANGED:{
@@ -197,6 +198,41 @@ const AppContainer = ({
           return false
           break
         }
+        // case EVENT.ELEMENT_SELECTED: {
+        //   console.log('ELEMENT_SELECTED', element.isNode(), graphRef)
+        //   if (element.isNode()) {
+        //     // const TARGET_SIZE = 700
+        //     // const {
+        //     //   viewport
+        //     // } = graphRef.current
+        //     // const currentBoundingBox = {
+        //     //   x1: viewport.hitArea.x,
+        //     //   y1: viewport.hitArea.y,
+        //     //   w: viewport.hitArea.width,
+        //     //   h: viewport.hitArea.height,
+        //     // }
+        //     // const zoom = (currentBoundingBox.w / TARGET_SIZE ) * graphRef.current.viewport.scale.x
+        //     // const position = element.position()
+        //     // graphRef.current.viewport.snapZoom({
+        //     //   center: position, 
+        //     //   width: TARGET_SIZE,
+        //     //   height: TARGET_SIZE,
+        //     //   time: Graph.Layouts.grid.animationDuration
+        //     // })
+        //     // element.connectedEdges().connectedNodes().layout({
+        //     //   ...Graph.Layouts.random,
+        //     //   boundingBox: {
+        //     //     ...currentBoundingBox,
+        //     //     h: TARGET_SIZE,
+        //     //     w: TARGET_SIZE,
+        //     //     // x1: element.position().x,
+        //     //     // y1: element.position().y,
+        //     //   }
+        //     // }).start()
+        //   }
+        //   // return false
+        //   break
+        // }
       
         default:
           break;
