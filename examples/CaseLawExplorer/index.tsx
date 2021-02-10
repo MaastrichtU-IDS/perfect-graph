@@ -1,3 +1,5 @@
+/* eslint-disable */
+// @ts-nocheck
 import React from 'react'
 import * as R from 'colay/ramda'
 import { 
@@ -24,7 +26,9 @@ import { EVENT } from '../../src/utils/constants'
 import {useController} from '../../src/plugins/controller'
 import {calculateStatistics} from './utils/networkStatistics'
 import {RenderNode} from './RenderNode'
+import {listCases} from './API'
 // import { Data } from '../../components/Graph/Default'
+
 const MUIDarkTheme = createMuiTheme({
   palette: {
     mode: 'dark',
@@ -57,7 +61,7 @@ const prepareData = (data) =>  {
 const data = prepareData(defaultData)
 type Props = Partial<GraphEditorProps>
 
-// calculateStatistics(data)
+// console.log('statistics', calculateStatistics(data))
 const NODE_SIZE = {
   width: 80,
   height: 80,
@@ -128,6 +132,7 @@ const AppContainer = ({
       nodeColor: null
     },
   })
+  // const [state, setState]
   // const muiTheme = useMuiTheme()
   // console.log(muiTheme.palette)
   const FILTER_SCHEMA = React.useMemo(() => getFilterSchema({
@@ -139,7 +144,8 @@ const AppContainer = ({
   }
   const NODE_ID = 'http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2014:3519'
   const [controllerProps, controller] = useController({
-    ...data,
+    // ...data,
+
     graphConfig: {
       layout: Graph.Layouts.grid,
       zoom: 0.2,
@@ -173,6 +179,7 @@ const AppContainer = ({
     },draft) => {
       switch (type) {
         case EVENT.SETTINGS_FORM_CHANGED:{
+          console.log(type, extraData)
           draft.settingsBar.forms[extraData.index].formData = extraData.value
           if (extraData.form.schema.title === FILTER_SCHEMA.schema.title) {
 
@@ -196,6 +203,21 @@ const AppContainer = ({
       return null
     }
   },)
+  React.useEffect(() => {
+    const call = async () =>{
+      const results = await listCases()
+      console.log(results)
+      const nodes = results.map(({id, ...data}) => ({
+        id: `${data.doctype}:${id}`,
+        data
+      }))
+      controller.update((draft) => {
+        draft.nodes = nodes
+        draft.edges = []
+      })
+    }
+    call()
+  }, [])
   // React.useEffect(() => {
   //   setTimeout(() => {
   //     controller.update((draft) => {
@@ -219,7 +241,7 @@ const AppContainer = ({
         extraData={[configRef.current.visualization]}
         style={{ width: '100%', height: 820, }}
         renderNode={(props) => (
-          <RenderNode 
+          <RenderNode
             {...props}
             {...configRef.current}
           />

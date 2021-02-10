@@ -792,6 +792,7 @@ export type OnCreateNodeSubscription = {
   } | null,
 };
 
+
 export type OnUpdateNodeSubscription = {
   onUpdateNode:  {
     __typename: "Node",
