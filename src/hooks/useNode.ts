@@ -50,7 +50,10 @@ export default (props: Props): Result => {
     render: (callback: () => {}) => setState({}, callback),
     boundingBox: DEFAULT_BOUNDING_BOX,
     settings: {
-      visible: getClusterVisibility(id, clusters),
+      visibility: {
+        cluster: getClusterVisibility(id, clusters),
+        filter: true,
+      },
     },
   } as NodeContext)
   const element = React.useMemo(() => cy!.add({
@@ -84,12 +87,13 @@ export default (props: Props): Result => {
 
   // Update Visibility
   React.useMemo(() => {
-    const visible = getClusterVisibility(element.id(), clusters)
-    if (visible !== contextRef.current.settings.visible) {
-      contextRef.current.settings = {
-        ...contextRef.current.settings,
-        visible,
-      }
+    const clusterVisibility = getClusterVisibility(element.id(), clusters)
+    if (clusterVisibility !== contextRef.current.settings.visibility.cluster) {
+      contextRef.current.settings.visibility.cluster = clusterVisibility
+      // contextRef.current.settings = {
+      //   ...contextRef.current.settings,
+      //   visibility,
+      // }
       element.data({
         context: contextRef.current,
       })

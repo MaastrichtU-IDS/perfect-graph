@@ -33,7 +33,10 @@ export type BoundingBox = {
   height: number;
 }
 export type ElementSettings = {
-  visible: boolean
+  visibility: {
+    cluster: boolean;
+    filter: boolean;
+  }
 }
 export type NodeContext = ElementContext & {
   boundingBox: BoundingBox;

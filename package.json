@@ -63,7 +63,7 @@
     "@types/react-dom": "~17.0.0",
     "aws-amplify": "3.3.14",
     "chromatic": "5.6.0",
-    "colay": "0.0.31",
+    "colay": "0.0.33",
     "colay-dev": "0.0.8",
     "colay-docs": "0.0.60",
     "colay-ui": "0.0.36",

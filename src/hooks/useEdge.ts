@@ -5,6 +5,7 @@ import {
   EdgeContext, ElementConfig, EdgeElement,
 } from '@type'
 import { CYTOSCAPE_EVENT } from '@utils/constants'
+import * as R from 'colay/ramda'
 import { mutableGraphMap } from './useGraph'
 import { useElement } from './useElement'
 
@@ -42,7 +43,10 @@ export default <T>(props: Props<T>): Result<T> => {
     },
     element: null as unknown as EdgeElement,
     settings: {
-      visible: true,
+      visibility: {
+        cluster: true,
+        filter: true,
+      },
     },
   } as EdgeContext)
   contextRef.current.element = React.useMemo(() => {
@@ -97,14 +101,19 @@ export default <T>(props: Props<T>): Result<T> => {
   React.useEffect(
     () => {
       const nodeDataUpdated = (e) => {
+        // Update visibility
+        const oldVisible = R.all(R.isTrue)(Object.values(contextRef.current.settings.visibility))
         const sourceData = element.source().data()
         const targetData = element.target().data()
-        const newVisible = sourceData.context.settings.visible
-        && targetData.context.settings.visible
-        if (newVisible !== contextRef.current.settings.visible) {
-          contextRef.current.settings.visible = newVisible
+        const visibilityFields = Object.keys(sourceData.context.settings.visibility)
+        visibilityFields.map((visibilityField) => {
+          const newClusterVisibility = sourceData.context.settings.visibility[visibilityField]
+        && targetData.context.settings.visibility[visibilityField]
+          contextRef.current.settings.visibility[visibilityField] = newClusterVisibility
+        })
+        if (oldVisible !== R.all(R.isTrue)(Object.values(contextRef.current.settings.visibility))) {
           element.data({
-            settings: contextRef.current,
+            context: contextRef.current,
           })
           contextRef.current.render()
         }

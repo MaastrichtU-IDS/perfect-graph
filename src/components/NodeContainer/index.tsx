@@ -1,9 +1,12 @@
 import React from 'react'
 import { wrapComponent } from 'colay-ui'
 import { useNode } from '@hooks'
-import { RenderNode, NodeConfig, GraphRef } from '@type'
+import {
+  RenderNode, NodeConfig, GraphRef,
+} from '@type'
 import { calculateObjectBoundsWithoutChildren } from '@utils'
 import { useTheme } from '@core/theme'
+import * as R from 'colay/ramda'
 import { Container } from '../Container'
 
 export type NodeContainerProps = {
@@ -58,7 +61,7 @@ const NodeContainerElement = (
     )
   })
   const theme = useTheme()
-  const { visible } = element.data().context.settings
+  const visible = R.all(R.isTrue)(Object.values(context.settings.visibility))
   return (
     <Container
       ref={containerRef}

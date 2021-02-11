@@ -154,7 +154,7 @@ const EdgeContainerElement = (
   const onPositionChange = React.useCallback(({ element }) => {
     drawLineCallback(element)
   }, [drawLineCallback])
-  const { element, cy } = useEdge({
+  const { element, cy, context } = useEdge({
     id: item.id,
     source: item.source,
     target: item.target,
@@ -183,7 +183,8 @@ const EdgeContainerElement = (
     fromPosition,
     undirectedNormVector,
   } = calculateVectorInfo(element.source(), element.target())
-  const { visible } = element.data().context.settings
+  // console.log(R.all(R.isTrue)(Object.values(context.settings.visibility)))
+  const visible = R.all(R.isTrue)(Object.values(context.settings.visibility))
   return (
     <>
       <Container

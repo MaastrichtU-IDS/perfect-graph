@@ -131,6 +131,9 @@ const AppContainer = ({
       nodeSize: null,
       nodeColor: null
     },
+    filtering: {
+      year: [1960, 2021]
+    }
   })
   // const [state, setState]
   // const muiTheme = useMuiTheme()
@@ -160,7 +163,7 @@ const AppContainer = ({
       ]
     },
     settingsBar: {
-      opened: false,
+      opened: true,
       forms: [FILTER_SCHEMA, VIEW_CONFIG_SCHEMA]
     },
     dataBar: {
@@ -181,12 +184,18 @@ const AppContainer = ({
     },draft) => {
       switch (type) {
         case EVENT.SETTINGS_FORM_CHANGED:{
-          console.log(type, extraData)
           draft.settingsBar.forms[extraData.index].formData = extraData.value
           if (extraData.form.schema.title === FILTER_SCHEMA.schema.title) {
-
+            console.log('updateExtraDat',)
+            configRef.current = {
+              ...configRef.current,
+              filtering: extraData.value
+            }
           } else {
-            configRef.current.visualization = extraData.value
+            configRef.current = {
+              ...configRef.current,
+              visualization: extraData.value
+            }
           }
           return false
           break
@@ -275,7 +284,7 @@ const AppContainer = ({
       <GraphEditor
         ref={graphEditorRef}
         {...controllerProps}
-        extraData={[configRef.current.visualization]}
+        extraData={[configRef.current]}
         style={{ width: '100%', height: 820, }}
         renderNode={(props) => (
           <RenderNode
