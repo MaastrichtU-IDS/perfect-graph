@@ -30,9 +30,9 @@ export const RenderNode = ({
       graphRef.current.viewport.on('zoomed',() => {
         const xScale = 1/graphRef.current.viewport.scale.x
         const yScale = 1/graphRef.current.viewport.scale.y
-        if (xScale > 1 && xScale < 5){
+        if (xScale > 1 && xScale < 5) {
           textRef.current.scale.x = xScale
-        textRef.current.scale.y = yScale
+          textRef.current.scale.y = yScale
         }
       })
     }

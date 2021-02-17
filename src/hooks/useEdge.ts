@@ -5,6 +5,7 @@ import {
   EdgeContext, ElementConfig, EdgeElement,
 } from '@type'
 import { CYTOSCAPE_EVENT } from '@utils/constants'
+import { calculateVisibilityByContext } from '@utils'
 import * as R from 'colay/ramda'
 import { mutableGraphMap } from './useGraph'
 import { useElement } from './useElement'
@@ -32,7 +33,7 @@ export default <T>(props: Props<T>): Result<T> => {
     target,
     onPositionChange,
     graphID,
-    config,
+    config = {},
   } = props
   const { cy } = mutableGraphMap[graphID]
   const [, setState] = useStateWithCallback({}, () => {
@@ -44,8 +45,8 @@ export default <T>(props: Props<T>): Result<T> => {
     element: null as unknown as EdgeElement,
     settings: {
       visibility: {
-        cluster: true,
         filter: true,
+        nodeVisible: true,
       },
     },
   } as EdgeContext)
@@ -102,20 +103,20 @@ export default <T>(props: Props<T>): Result<T> => {
     () => {
       const nodeDataUpdated = (e) => {
         // Update visibility
-        const oldVisible = R.all(R.isTrue)(Object.values(contextRef.current.settings.visibility))
+        const oldVisible = calculateVisibilityByContext(contextRef.current)
         const sourceData = element.source().data()
         const targetData = element.target().data()
-        const visibilityFields = Object.keys(sourceData.context.settings.visibility)
-        visibilityFields.map((visibilityField) => {
-          const newClusterVisibility = sourceData.context.settings.visibility[visibilityField]
-        && targetData.context.settings.visibility[visibilityField]
-          contextRef.current.settings.visibility[visibilityField] = newClusterVisibility
-        })
-        if (oldVisible !== R.all(R.isTrue)(Object.values(contextRef.current.settings.visibility))) {
+        const sourceVisible = calculateVisibilityByContext(sourceData.context)
+        const targetVisible = calculateVisibilityByContext(targetData.context)
+        const newNodeVisible = sourceVisible && targetVisible
+        if (newNodeVisible !== contextRef.current.settings.visibility.nodeVisible) {
+          contextRef.current.settings.visibility.nodeVisible = newNodeVisible
           element.data({
             context: contextRef.current,
           })
-          contextRef.current.render()
+          if (oldVisible !== calculateVisibilityByContext(contextRef.current)) {
+            contextRef.current.render()
+          }
         }
       }
       element.source().on(CYTOSCAPE_EVENT.data, nodeDataUpdated)

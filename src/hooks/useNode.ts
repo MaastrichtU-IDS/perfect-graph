@@ -5,7 +5,7 @@ import { Position } from 'colay/type'
 import {
   NodeContext, NodeConfig, Cluster, ElementSettings,
 } from '@type'
-import { getClusterVisibility } from '@utils'
+import { getClusterVisibility, calculateVisibilityByContext } from '@utils'
 import { mutableGraphMap } from './useGraph'
 import { useElement } from './useElement'
 
@@ -89,6 +89,7 @@ export default (props: Props): Result => {
   React.useMemo(() => {
     const clusterVisibility = getClusterVisibility(element.id(), clusters)
     if (clusterVisibility !== contextRef.current.settings.visibility.cluster) {
+      const oldVisible = calculateVisibilityByContext(contextRef.current)
       contextRef.current.settings.visibility.cluster = clusterVisibility
       // contextRef.current.settings = {
       //   ...contextRef.current.settings,
@@ -97,7 +98,9 @@ export default (props: Props): Result => {
       element.data({
         context: contextRef.current,
       })
-      contextRef.current.render()
+      if (oldVisible !== calculateVisibilityByContext(contextRef.current)) {
+        contextRef.current.render()
+      }
     }
   }, [element, clusters])
   useElement({

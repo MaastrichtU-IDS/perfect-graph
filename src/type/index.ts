@@ -23,7 +23,6 @@ export type Style = {[k: string]: any}
 export type OnLayout = (event: LayoutChangeEvent) => void
 export type ElementContext = {
   render: (callback?: () => void) => void;
-  settings: ElementSettings;
 }
 
 export type BoundingBox = {
@@ -32,7 +31,13 @@ export type BoundingBox = {
   width: number;
   height: number;
 }
-export type ElementSettings = {
+export type EdgeElementSettings = {
+  visibility: {
+    filter: boolean;
+    nodeVisible: boolean;
+  }
+}
+export type NodeElementSettings = {
   visibility: {
     cluster: boolean;
     filter: boolean;
@@ -41,10 +46,12 @@ export type ElementSettings = {
 export type NodeContext = ElementContext & {
   boundingBox: BoundingBox;
   element: NodeElement;
+  settings: NodeElementSettings;
 }
 
 export type EdgeContext = ElementContext & {
   element: EdgeElement;
+  settings: EdgeElementSettings
 }
 
 export type Event = keyof typeof EVENT
@@ -151,14 +158,18 @@ export type {
 
 export type CytoscapeEvent = keyof typeof CYTOSCAPE_EVENT
 
+type ElementFilterFunction<E> = (params: {element: E}) => boolean
 export type ElementConfig = {
   renderEvents?: CytoscapeEvent[];
+  filter?: ElementFilterFunction<NodeElement|EdgeElement>
 }
 export type NodeConfig = {
   position?: Position;
+  filter?: ElementFilterFunction<NodeElement>
 } & ElementConfig
 
 export type EdgeConfig = {
+  filter?: ElementFilterFunction<EdgeElement>
 } & ElementConfig
 
 export type Cluster = {
@@ -179,12 +190,14 @@ export type GraphConfig = {
   zoom?: ViewportProps['zoom'];
   transform?: ViewportProps['transform'];
   nodes?: {
+    filter?: ElementFilterFunction<NodeElement>
     renderEvents?: CytoscapeEvent[];
     ids?: {
       [id: string]: NodeConfig;
     }
   };
   edges?: {
+    filter?: ElementFilterFunction<EdgeElement>
     renderEvents?: CytoscapeEvent[];
     ids?: {
       [id: string]: EdgeConfig;

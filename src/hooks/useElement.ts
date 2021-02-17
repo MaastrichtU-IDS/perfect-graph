@@ -4,6 +4,7 @@ import {
   ElementContext, Element, ElementConfig,
 } from '@type'
 import { CYTOSCAPE_EVENT } from '@utils/constants'
+import { calculateVisibilityByContext } from '@utils'
 
 export type Props = {
   element: Element;
@@ -71,7 +72,21 @@ export const useElement = (props: Props): Result => {
     },
     [element, renderEvents],
   )
-
+  // Filter
+  React.useEffect(() => {
+    const oldFilterVisibility = contextRef.current!.settings.visibility.filter
+    const filtered = config.filter?.({ element }) ?? true
+    contextRef.current!.settings.visibility.filter = filtered
+    if (oldFilterVisibility !== filtered) {
+      const oldVisible = calculateVisibilityByContext(contextRef.current)
+      element.data({
+        context: contextRef.current,
+      })
+      if (oldVisible !== calculateVisibilityByContext(contextRef.current)) {
+        contextRef.current?.render()
+      }
+    }
+  }, [config.filter])
   return {
 
   }

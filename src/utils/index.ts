@@ -176,7 +176,6 @@ export const applyEvents = (
     })
 }
 
-
 const processProps = (props: Record<string, any>) => {
   const newProps = { ...props }
   Object
@@ -398,6 +397,12 @@ export const getNodeContextByElement = (element: Element): NodeContext => elemen
 export const getEdgeContextByElement = (element: Element): EdgeContext => element.data(
   ELEMENT_DATA_FIELDS.CONTEXT,
 )
+export const calculateVisibilityByContext = (
+  context: EdgeContext | NodeContext,
+): boolean => {
+  const visibility = R.all(R.isTrue)(Object.values(context.settings.visibility))
+  return visibility
+}
 
 // @ts-ignore
 export const filterEdges = (nodes: {id: string}[]) => (
