@@ -5,6 +5,7 @@ import {
   JSONViewer,
   useAnimation,
 } from 'colay-ui'
+import { View } from 'colay-ui/components/View'
 import {
   IconButton,
   Typography,
@@ -69,15 +70,16 @@ export const DataBar = (props: DataBarProps) => {
         ...animationStyle,
       }}
     >
-      {item && (
-      <Typography
-        variant="h6"
-        sx={{ ml: 2 }}
-      >
-        {` id: ${item?.id}`}
-      </Typography>
-      )}
-      {
+      <View style={{ width: '100%', height: '100%', overflowY: 'scroll' }}>
+        {item && (
+        <Typography
+          variant="h6"
+          sx={{ ml: 2 }}
+        >
+          {` id: ${item?.id}`}
+        </Typography>
+        )}
+        {
         editable && item?.data
           ? (
             <DataEditor
@@ -139,6 +141,7 @@ export const DataBar = (props: DataBarProps) => {
             />
           )
       }
+      </View>
       <IconButton
         style={{
           position: 'absolute',

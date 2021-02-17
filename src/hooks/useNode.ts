@@ -3,7 +3,10 @@ import { useStateWithCallback } from 'colay-ui'
 import { NodeSingular, Core } from 'cytoscape'
 import { Position } from 'colay/type'
 import {
-  NodeContext, NodeConfig, Cluster, ElementSettings,
+  NodeContext,
+  NodeConfig,
+  Cluster,
+  NodeData,
 } from '@type'
 import { getClusterVisibility, calculateVisibilityByContext } from '@utils'
 import { mutableGraphMap } from './useGraph'
@@ -16,6 +19,7 @@ export type Props = {
   isCluster?: boolean;
   onPositionChange?: (c: {element: NodeSingular; context: NodeContext }) => void|any;
   config?: NodeConfig;
+  item?: NodeData;
 }
 
 type Result = {
@@ -39,6 +43,7 @@ export default (props: Props): Result => {
     onPositionChange,
     graphID,
     config,
+    item,
     isCluster = false,
   } = props
   const { cy, clustersByNodeId, clustersByChildClusterId } = mutableGraphMap[graphID]
@@ -108,6 +113,7 @@ export default (props: Props): Result => {
     cy,
     element,
     config,
+    item,
   })
   return {
     element,

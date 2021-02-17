@@ -4,9 +4,11 @@ import { useNode } from '@hooks'
 import {
   RenderNode, NodeConfig, GraphRef,
 } from '@type'
-import { calculateObjectBoundsWithoutChildren } from '@utils'
+import {
+  calculateObjectBoundsWithoutChildren,
+  calculateVisibilityByContext,
+} from '@utils'
 import { useTheme } from '@core/theme'
-import * as R from 'colay/ramda'
 import { Container } from '../Container'
 
 export type NodeContainerProps = {
@@ -46,6 +48,7 @@ const NodeContainerElement = (
       context.boundingBox.x = x
       context.boundingBox.y = y
     },
+    item,
   })
   const { x, y } = element.position()
   const onDrag = React.useCallback(
@@ -61,7 +64,7 @@ const NodeContainerElement = (
     )
   })
   const theme = useTheme()
-  const visible = R.all(R.isTrue)(Object.values(context.settings.visibility))
+  const visible = calculateVisibilityByContext(context)
   return (
     <Container
       ref={containerRef}

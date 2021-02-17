@@ -1,6 +1,6 @@
 import { Stage } from '@inlet/react-pixi'
 import React from 'react'
-import { useMeasure, Div } from 'colay-ui'
+import { useMeasure, View } from 'colay-ui'
 // @ts-ignore
 import { Story as StoryType } from '@storybook/react/types-6-0'
 import * as C from 'colay/color'
@@ -9,7 +9,7 @@ import '../src/core/config'
 export const StageDecorator = (props) => {
   const [ref, {width, height,}] = useMeasure()
   return (
-    <Div
+    <View
       ref={ref}
       style={{ width: '70%', height: 200 }}
     >
@@ -25,7 +25,7 @@ export const StageDecorator = (props) => {
       >
           {props.children}
       </Stage>
-    </Div>
+    </View>
   )
 }
 

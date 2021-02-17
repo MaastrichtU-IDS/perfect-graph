@@ -5,8 +5,8 @@ import {
   wrapComponent,
   useForwardRef,
   useMeasure,
-  Div,
-  DivProps,
+  View,
+  ViewProps,
   DataRender,
 } from 'colay-ui'
 import * as C from 'colay/color'
@@ -23,14 +23,14 @@ import { Viewport, ViewportProps } from '../Viewport'
 import { NodeContainer } from '../NodeContainer'
 import { EdgeContainer } from '../EdgeContainer'
 import { Pressable } from '../Pressable'
-import { Text } from '../Text'
-import { View } from '../View'
+import { Text as GraphText } from '../Text'
+import { View as GraphView } from '../View'
 
 export type GraphProps = {
   extraData?: any;
   nodes: NodeData[];
   edges: EdgeData[];
-  style?: DivProps['style'];
+  style?: ViewProps['style'];
   renderNode?: RenderNode;
   renderEdge?: RenderEdge;
   onPress?: ViewportProps['onPress'];
@@ -61,7 +61,7 @@ export const DefaultRenderNode: RenderNode = ({
 }) => {
   const hasSelectedEdge = element.connectedEdges(':selected').length > 0
   return (
-    <View
+    <GraphView
       style={{
         width: 50,
         height: 50,
@@ -93,7 +93,7 @@ export const DefaultRenderNode: RenderNode = ({
       //   console.log('onPressEnd', e)
       // }}
     >
-      <Text
+      <GraphText
         style={{
           position: 'absolute',
           top: -40,
@@ -102,8 +102,8 @@ export const DefaultRenderNode: RenderNode = ({
         isSprite
       >
         {R.last(item.id.split('/'))?.substring(0, 10)}
-      </Text>
-    </View>
+      </GraphText>
+    </GraphView>
   )
 }
 
@@ -113,7 +113,7 @@ export const DefaultRenderEdge: RenderEdge = ({
   item,
   element,
 }) => (
-  <Pressable
+  <GraphView
     style={{
       // width: 20,
       // height: 20,
@@ -128,12 +128,12 @@ export const DefaultRenderEdge: RenderEdge = ({
       //   : DefaultTheme.palette.background.paper,
       // borderRadius: 50,
     }}
-    onPress={() => {
+    click={() => {
       cy.$(':selected').unselect()
       element.select()
     }}
   >
-    <Text
+    <GraphText
       style={{
         // position: 'absolute',
         // top: -40,
@@ -144,8 +144,8 @@ export const DefaultRenderEdge: RenderEdge = ({
       isSprite
     >
       {R.last(item.id.split('/'))?.substring(0, 10)}
-    </Text>
-  </Pressable>
+    </GraphText>
+  </GraphView>
 )
 
 export type GraphType = React.FC<GraphProps>
@@ -252,7 +252,7 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
   //   stageRef: stageRef.current, layout: config.layout, width, height,
   // })
   return (
-    <Div
+    <View
       ref={containerRef}
       style={style}
     >
@@ -322,7 +322,7 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
           </Viewport>
         </ThemeProvider>
       </Stage>
-    </Div>
+    </View>
   )
 }
 

@@ -7,7 +7,7 @@ import {
    ThemeProvider as MuiThemeProvider,
    createMuiTheme
 } from '@material-ui/core'
-import { Div, } from 'colay-ui'
+import { View, } from 'colay-ui'
 import { 
   DarkTheme,
   DefaultTheme,
@@ -150,12 +150,7 @@ const AppContainer = ({
     graphConfig: {
       layout: Graph.Layouts.grid,
       zoom: 0.2,
-      nodes: {
-        filter: ({ element }) => {
-          console.log(element.data())
-          return true
-        }
-      }
+      nodes: {},
     },
     settingsBar: {
       opened: true,
@@ -185,6 +180,10 @@ const AppContainer = ({
               ...configRef.current,
               filtering: extraData.value
             }
+            draft.graphConfig.nodes.filter =  ({ element,item }) => {
+              const year = configRef.current.filtering.year
+                return R.inBetween(year[0], year[1])(item.data.year)
+              }
 
           } else {
             configRef.current = {
@@ -275,7 +274,7 @@ const AppContainer = ({
   // }, [])
   const graphEditorRef = React.useRef(null)
   return (
-      <Div style={{ display: 'flex', flexDirection: 'column',width: '100%', height: '100%'}}>
+      <View style={{ display: 'flex', flexDirection: 'column',width: '100%', height: '100%'}}>
       <GraphEditor
         ref={graphEditorRef}
         {...controllerProps}
@@ -373,7 +372,7 @@ const AppContainer = ({
         // }}
         {...rest}
       />
-      </Div>
+      </View>
   )
 }
 

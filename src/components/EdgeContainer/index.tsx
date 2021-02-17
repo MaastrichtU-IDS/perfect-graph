@@ -4,7 +4,7 @@ import * as R from 'colay/ramda'
 import * as C from 'colay/color'
 import { useTheme } from '@core/theme'
 import { useEdge } from '@hooks'
-import { getNodeContextByElement } from '@utils'
+import { getNodeContextByElement, calculateVisibilityByContext } from '@utils'
 import { EDGE_CONTAINER_Z_INDEX } from '@utils/constants'
 import {
   RenderEdge,
@@ -161,6 +161,7 @@ const EdgeContainerElement = (
     graphID,
     onPositionChange,
     config,
+    item,
   })
   React.useEffect(
     () => {
@@ -184,7 +185,7 @@ const EdgeContainerElement = (
     undirectedNormVector,
   } = calculateVectorInfo(element.source(), element.target())
   // console.log(R.all(R.isTrue)(Object.values(context.settings.visibility)))
-  const visible = R.all(R.isTrue)(Object.values(context.settings.visibility))
+  const visible = calculateVisibilityByContext(context)
   return (
     <>
       <Container

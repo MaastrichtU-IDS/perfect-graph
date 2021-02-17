@@ -2,7 +2,10 @@ import { useStateWithCallback } from 'colay-ui'
 import { EdgeSingular, Core } from 'cytoscape'
 import React from 'react'
 import {
-  EdgeContext, ElementConfig, EdgeElement,
+  EdgeContext,
+  ElementConfig,
+  EdgeElement,
+  EdgeData
 } from '@type'
 import { CYTOSCAPE_EVENT } from '@utils/constants'
 import { calculateVisibilityByContext } from '@utils'
@@ -12,6 +15,7 @@ import { useElement } from './useElement'
 
 export type Props<T> = {
   children?: React.ReactNode;
+  item?: EdgeData;
   id: string;
   source: string;
   target: string;
@@ -34,6 +38,7 @@ export default <T>(props: Props<T>): Result<T> => {
     onPositionChange,
     graphID,
     config = {},
+    item
   } = props
   const { cy } = mutableGraphMap[graphID]
   const [, setState] = useStateWithCallback({}, () => {
@@ -133,6 +138,7 @@ export default <T>(props: Props<T>): Result<T> => {
     contextRef,
     cy,
     element,
+    item,
     config,
   })
   return {
