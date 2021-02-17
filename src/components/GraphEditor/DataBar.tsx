@@ -10,7 +10,6 @@ import {
   IconButton,
   Typography,
   Paper,
-  Box,
 } from '@material-ui/core'
 import { Icon } from '@components/Icon'
 import { DataEditor, DataEditorProps } from './DataEditor'
@@ -70,7 +69,14 @@ export const DataBar = (props: DataBarProps) => {
         ...animationStyle,
       }}
     >
-      <View style={{ width: '100%', height: '100%', overflowY: 'scroll' }}>
+      <View style={{
+        width: '100%',
+        height: '100%',
+        overflowY: 'scroll',
+        wordWrap: 'break-word',
+        flexWrap: 'wrap'
+      }}
+      >
         {item && (
         <Typography
           variant="h6"
@@ -113,9 +119,8 @@ export const DataBar = (props: DataBarProps) => {
                 </IconButton>
               )}
               renderItem={({ item: { key, value } }) => (
-                <Box
-                  sx={{
-                    display: 'flex',
+                <View
+                  style={{
                     flexDirection: 'row',
                     justifyContent: 'space-between',
                   }}
@@ -136,7 +141,7 @@ export const DataBar = (props: DataBarProps) => {
                       </Typography>
                     )
                     : null}
-                </Box>
+                </View>
               )}
             />
           )
