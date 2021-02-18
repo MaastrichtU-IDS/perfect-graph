@@ -186,10 +186,14 @@ const EdgeContainerElement = (
   } = calculateVectorInfo(element.source(), element.target())
   // console.log(R.all(R.isTrue)(Object.values(context.settings.visibility)))
   const visible = calculateVisibilityByContext(context)
+  const opacity = context.settings.filtered
+    ? 1
+    : (config.filter?.settings?.opacity ?? 0.2)
   return (
     <>
       <Container
         ref={containerRef}
+        alpha={opacity}
         visible={visible}
         style={{
           left: midpointPosition.x + sortedIndex * undirectedNormVector.x * DEFAULT_DISTANCE,
@@ -213,6 +217,7 @@ const EdgeContainerElement = (
       <Graphics
         ref={graphicsRef}
         visible={visible}
+        alpha={opacity}
       />
     </>
   )

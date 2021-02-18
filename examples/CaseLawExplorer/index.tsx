@@ -180,10 +180,15 @@ const AppContainer = ({
               ...configRef.current,
               filtering: extraData.value
             }
-            draft.graphConfig.nodes.filter =  ({ element,item }) => {
-              const year = configRef.current.filtering.year
-                return R.inBetween(year[0], year[1])(item.data.year)
-              }
+            draft.graphConfig.nodes.filter =  {
+              test: ({ element,item }) => {
+                const year = configRef.current.filtering.year
+                  return R.inBetween(year[0], year[1])(item.data.year)
+                },
+                settings: {
+                  opacity: 0.2
+                }
+            }
 
           } else {
             configRef.current = {
@@ -279,7 +284,7 @@ const AppContainer = ({
         ref={graphEditorRef}
         {...controllerProps}
         extraData={[configRef.current]}
-        style={{ width: '100%', height: 820, }}
+        style={{ width: '100%', height: 800, }}
         renderNode={(props) => (
           <RenderNode
             {...props}
@@ -400,3 +405,21 @@ export default (props: Props) => {
     </MuiThemeProvider>
   )
 }
+
+// type Node = {
+//   id: string;
+//   data: {
+//     year: string;
+//     ...
+//   },
+// }
+
+// type Edge = {
+//   id: string;
+//   source: string;
+//   target: string;
+//   data: {
+//     year: string;
+//     ...
+//   },
+// }

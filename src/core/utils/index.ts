@@ -11,7 +11,7 @@ export const filter = (
   cy: Core,
   predicate: (el: Collection) => boolean | string[],
 ) => R.ifElse(
-  R.isArray,
+  R.is(Array),
   () => R.reduce(
     (accCollection: Collection, id: string) => accCollection.union(
       cy.getElementById(id),

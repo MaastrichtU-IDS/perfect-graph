@@ -39,17 +39,6 @@ export const RenderNode = ({
     
   }, [graphRef.current.viewport])
   
-  // const year = new Date(item.data.date).getFullYear()
-  // console.log(filtering.year[0],filtering.year[1], year)
-  // const filterVisibility = R.inBetween(filtering.year[0],filtering.year[1])(new Date(item.data.date).getFullYear())
-  // const context = element.data().context
-  // if (context.settings.visibility.filter !== filterVisibility) {
-  //   context.settings.visibility.filter = filterVisibility
-  //   element.data({
-  //     context
-  //   })
-  // }
-  // console.log(year, filterVisibility)
   return (
     <Graph.Pressable
       style={{

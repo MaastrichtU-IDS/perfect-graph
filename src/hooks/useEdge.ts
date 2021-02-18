@@ -49,8 +49,8 @@ export default <T>(props: Props<T>): Result<T> => {
     },
     element: null as unknown as EdgeElement,
     settings: {
+      filtered: true,
       visibility: {
-        filter: true,
         nodeVisible: true,
       },
     },

@@ -55,9 +55,9 @@ export default (props: Props): Result => {
     render: (callback: () => {}) => setState({}, callback),
     boundingBox: DEFAULT_BOUNDING_BOX,
     settings: {
+      filtered: true,
       visibility: {
         cluster: getClusterVisibility(id, clusters),
-        filter: true,
       },
     },
   } as NodeContext)

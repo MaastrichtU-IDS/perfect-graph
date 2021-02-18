@@ -66,15 +66,16 @@ export const DataBar = (props: DataBarProps) => {
         width: `${WIDTH_PROPORTION}%`,
         height: '100%',
         top: 0,
+        // overflow: 'hidden',
         ...animationStyle,
       }}
     >
       <View style={{
         width: '100%',
         height: '100%',
-        overflowY: 'scroll',
-        wordWrap: 'break-word',
-        flexWrap: 'wrap'
+        // overflowY: 'scroll',
+        // wordWrap: 'break-word',
+        // flexWrap: 'wrap',
       }}
       >
         {item && (

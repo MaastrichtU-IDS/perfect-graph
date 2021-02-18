@@ -78,15 +78,14 @@ export const useElement = (props: Props): Result => {
   )
   // Filter
   React.useEffect(() => {
-    const oldFilterVisibility = contextRef.current!.settings.visibility.filter
-    const oldVisible = calculateVisibilityByContext(contextRef.current)
-    const filtered = config.filter?.({ element, item }) ?? true
-    contextRef.current!.settings.visibility.filter = filtered
-    if (oldFilterVisibility !== filtered) {
+    const oldFiltered = contextRef.current!.settings.filtered
+    const filtered = config.filter?.test?.({ element, item }) ?? true
+    contextRef.current!.settings.filtered = filtered
+    if (oldFiltered !== filtered) {
       element.data({
         context: contextRef.current,
       })
-      if (oldVisible !== calculateVisibilityByContext(contextRef.current)) {
+      if (calculateVisibilityByContext(contextRef.current)) {
         contextRef.current?.render()
       }
     }

@@ -65,6 +65,9 @@ const NodeContainerElement = (
   })
   const theme = useTheme()
   const visible = calculateVisibilityByContext(context)
+  const opacity = context.settings.filtered
+    ? 1
+    : (config.filter?.settings?.opacity ?? 0.2)
   return (
     <Container
       ref={containerRef}
@@ -72,6 +75,7 @@ const NodeContainerElement = (
         left: x,
         top: y,
       }}
+      alpha={opacity}
       visible={visible}
       draggable
       onDrag={onDrag}
