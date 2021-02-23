@@ -186,9 +186,11 @@ const EdgeContainerElement = (
   } = calculateVectorInfo(element.source(), element.target())
   // console.log(R.all(R.isTrue)(Object.values(context.settings.visibility)))
   const visible = calculateVisibilityByContext(context)
-  const opacity = context.settings.filtered
+  const filtered = context.settings.filtered && context.settings.nodeFiltered
+  const opacity = filtered
     ? 1
     : (config.filter?.settings?.opacity ?? 0.2)
+
   return (
     <>
       <Container

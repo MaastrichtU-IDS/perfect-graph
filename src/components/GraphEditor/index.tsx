@@ -34,7 +34,7 @@ export type GraphEditorProps = {
   label?: GraphLabelData;
   settingsBar?: SettingsBarProps;
   dataBar?: Pick<DataBarProps, 'editable'| 'opened'>;
-  actionBar?: Pick<ActionBarProps, 'renderMoreAction' | 'opened' | 'recording'>;
+  actionBar?: Pick<ActionBarProps, 'renderMoreAction' | 'opened' | 'recording' |'eventRecording'>;
   selectedElementId?: string | null;
   mode?: EditorMode;
   renderEdge?: RenderEdge<RenderElementAdditionalInfo>;
@@ -105,9 +105,8 @@ const GraphEditorElement = (
   const onEventCallback = React.useCallback((eventInfo) => {
     onEvent({
       ...eventInfo,
-      graphEditor: graphEditorRef.current,
     })
-  }, [onEvent, graphEditorRef.current])
+  }, [onEvent])
   return (
     <Box
       style={{
@@ -147,8 +146,7 @@ const GraphEditorElement = (
               element.select()
               onEventCallback({
                 type: EVENT.ELEMENT_SELECTED,
-                item,
-                element,
+                elementId: element.id(),
                 event,
               })
             }}
@@ -174,8 +172,7 @@ const GraphEditorElement = (
               element.select()
               onEventCallback({
                 type: EVENT.ELEMENT_SELECTED,
-                item,
-                element,
+                elementId: element.id(),
               })
             }}
           >

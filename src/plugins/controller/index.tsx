@@ -3,6 +3,7 @@ import {
   EditorMode,
   GraphLabelData, RDFType,
   DataItem, EventInfo,
+  GraphEditorRef,
 } from '@type'
 import { GraphEditorProps } from '@components/GraphEditor'
 import { Graph } from '@components'
@@ -14,6 +15,13 @@ import { getSelectedItemByElement } from '@utils'
 import { download } from 'colay-ui/utils'
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import * as R from 'colay/ramda'
+
+type RecordedEvent = {
+  data: any
+  type: string;
+  date: any
+  after: number;
+}
 
 type ControllerOptions = {
   // onEvent?: (info: EventInfo, draft: ControllerState) => boolean;
@@ -43,6 +51,7 @@ GraphEditorProps,
 
 export const useController = (
   useControllerData: UseControllerData,
+  _graphEditorRef?: React.MutableRefObject<GraphEditorRef>,
   options: ControllerOptions = {},
 ) => {
   const controllerConfig: UseControllerData = React.useMemo<UseControllerData>(
@@ -52,6 +61,8 @@ export const useController = (
     ]) as UseControllerData, [], // useControllerData
   )
   const [state, update] = useImmer(controllerConfig)
+  const localGraphEditorRef = React.useRef(null)
+  const graphEditorRef = _graphEditorRef ?? localGraphEditorRef
   // const [state, update] = React.useState<ControllerState>(
   //   controllerConfig,
   // )
@@ -59,16 +70,30 @@ export const useController = (
   const onEvent = React.useCallback((eventInfo: EventInfo) => {
     const {
       type,
-      element,
       extraData = {},
       index = 0,
       dataItem = {} as DataItem,
-      graphEditor,
       event,
+      elementId,
+      // element,
+      // graphEditor,
       // graphEditor,
     } = eventInfo
+    const element = elementId ? graphEditorRef.current.cy.$(`#${elementId}`) : null
+    const localDataRef = React.useRef({
+      recordedEvents: [] as RecordedEvent[],
+      date: new Date().toString(),
+    })
     const isNode = element?.isNode()
     const targetPath = isNode ? 'nodes' : 'edges'
+    // let recordableEvent = true
+    const lastEvent = R.last(localDataRef.current.recordedEvents)
+    localDataRef.current.recordedEvents.push({
+      type: 'x',
+      data: eventInfo,
+      date: new Date(),
+      after: lastEvent ? new Date() - new Date(lastEvent.datetime) : 0,
+    })
     update((draft) => {
       const isAllowedToProcess = controllerConfig.onEvent?.(eventInfo, draft)
       if (isAllowedToProcess === false) {
@@ -298,6 +323,13 @@ export const useController = (
         case EVENT.TOGGLE_RECORD:
           draft.actionBar.recording = !draft.actionBar?.recording
           break
+        case EVENT.TOGGLE_RECORD_EVENTS:
+          if (draft.actionBar?.eventRecording) {
+            download(JSON.stringify(localDataRef.current.recordedEvents), 'recorded-events.json')
+            localDataRef.current.recordedEvents = []
+          }
+          draft.actionBar.eventRecording = !draft.actionBar?.eventRecording
+          break
         case EVENT.RECORD_FINISHED:
           download(eventInfo.extraData.value, 'perfect-graph.mp4')
           break
@@ -333,6 +365,11 @@ export const useController = (
     // @ts-ignore
     {
       ...state,
+      ...(
+        !_graphEditorRef
+          ? { ref: localGraphEditorRef }
+          : {}
+      ),
       onEvent,
     } as Pick<GraphEditorProps, 'nodes' | 'edges' | 'onEvent' | 'graphConfig'>,
     {

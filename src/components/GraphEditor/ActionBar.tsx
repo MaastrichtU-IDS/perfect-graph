@@ -44,11 +44,13 @@ export type ActionBarProps = {
   mode?: EditorMode;
   layoutName?: string;
   recording?: boolean;
+  eventRecording?: boolean;
   graphEditorRef: React.MutableRefObject<GraphEditorRef>;
   // layout?: LayoutOptionsValue;
   graphConfig?: GraphConfig;
   actions?: {
     add: ActionOption;
+    recordEvents: ActionOption;
     delete: ActionOption;
     // record: { visible: boolean; };
     options: {
@@ -62,6 +64,7 @@ export type ActionBarProps = {
 const DEFAULT_ACTIONS = {
   add: { visible: true },
   delete: { visible: true },
+  recordEvents: { visible: true },
   options: {
     actions: { import: { visible: true } },
   },
@@ -89,6 +92,7 @@ const ActionBarElement = (props: ActionBarProps) => {
     mode,
     opened = false,
     recording = false,
+    eventRecording = false,
     // recordingActions = false,
     graphEditorRef,
     graphConfig,
@@ -243,6 +247,18 @@ const ActionBarElement = (props: ActionBarProps) => {
             layout={graphConfig?.layout}
             createOnActionCallback={createOnActionCallback}
           />
+          )
+        }
+        {
+          actions.recordEvents.visible && (
+          <IconButton
+            onClick={createOnActionCallback(EVENT.TOGGLE_RECORD_EVENTS)}
+          >
+            <Icon
+              name="addjust"
+              color={!eventRecording ? 'inherit' : 'error'}
+            />
+          </IconButton>
           )
         }
         {/* <Icon

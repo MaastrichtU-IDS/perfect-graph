@@ -1,6 +1,7 @@
 import React from 'react'
 import {
   AddCircle,
+  Adjust,
   DeleteRounded,
   RecordVoiceOverRounded,
   Edit,
@@ -26,6 +27,7 @@ import { IconProps } from '@material-ui/core'
 
 const ICONS = {
   add_circle: AddCircle,
+  addjust: Adjust,
   delete_rounded: DeleteRounded,
   record_voice_over_rounded: RecordVoiceOverRounded,
   build_circle_outlined: BuildCircleOutlined,

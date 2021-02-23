@@ -5,7 +5,7 @@ import {
   EdgeContext,
   ElementConfig,
   EdgeElement,
-  EdgeData
+  EdgeData,
 } from '@type'
 import { CYTOSCAPE_EVENT } from '@utils/constants'
 import { calculateVisibilityByContext } from '@utils'
@@ -38,7 +38,7 @@ export default <T>(props: Props<T>): Result<T> => {
     onPositionChange,
     graphID,
     config = {},
-    item
+    item,
   } = props
   const { cy } = mutableGraphMap[graphID]
   const [, setState] = useStateWithCallback({}, () => {
@@ -50,6 +50,7 @@ export default <T>(props: Props<T>): Result<T> => {
     element: null as unknown as EdgeElement,
     settings: {
       filtered: true,
+      nodeFiltered: true,
       visibility: {
         nodeVisible: true,
       },
@@ -114,14 +115,28 @@ export default <T>(props: Props<T>): Result<T> => {
         const sourceVisible = calculateVisibilityByContext(sourceData.context)
         const targetVisible = calculateVisibilityByContext(targetData.context)
         const newNodeVisible = sourceVisible && targetVisible
+        let forceRender = false
         if (newNodeVisible !== contextRef.current.settings.visibility.nodeVisible) {
           contextRef.current.settings.visibility.nodeVisible = newNodeVisible
           element.data({
             context: contextRef.current,
           })
           if (oldVisible !== calculateVisibilityByContext(contextRef.current)) {
-            contextRef.current.render()
+            forceRender = false
           }
+        }
+        const oldNodeFiltered = contextRef.current.settings.nodeFiltered
+        const newNodeFiltered = sourceData.context.settings.filtered
+        && targetData.context.settings.filtered
+        contextRef.current.settings.nodeFiltered = newNodeFiltered
+        if (newNodeFiltered !== oldNodeFiltered) {
+          forceRender = true
+          element.data({
+            context: contextRef.current,
+          })
+        }
+        if (forceRender) {
+          contextRef.current.render()
         }
       }
       element.source().on(CYTOSCAPE_EVENT.data, nodeDataUpdated)

@@ -7,6 +7,7 @@ import {
   Paper,
   Box,
   IconButton,
+  Button,
 } from '@material-ui/core'
 import { Icon } from '@components/Icon'
 import { EVENT } from '@utils/constants'
@@ -98,7 +99,15 @@ const SettingsBarElement = (props: SettingsBarProps) => {
               EVENT.SETTINGS_FORM_CHANGED,
               { form, value: e.formData, index },
             )()}
-          />
+          >
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+            >
+              Apply
+            </Button>
+          </Form>
         ))
       }
       </Box>

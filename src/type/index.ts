@@ -33,6 +33,7 @@ export type BoundingBox = {
 }
 export type EdgeElementSettings = {
   filtered: boolean;
+  nodeFiltered: boolean;
   visibility: {
     nodeVisible: boolean;
   }
@@ -237,11 +238,10 @@ export type GraphLabelData = {
 export type EventInfo = {
   type: Event;
   item: ElementData;
-  element: Element;
+  elementId: string;
   extraData?: any;
   dataItem?: DataItem;
   index?: number;
-  graphEditor: GraphEditorRef;
   event?: PIXI.InteractionEvent;
 }
 
