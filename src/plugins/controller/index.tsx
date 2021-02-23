@@ -15,6 +15,7 @@ import { getSelectedItemByElement } from '@utils'
 import { download } from 'colay-ui/utils'
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import * as R from 'colay/ramda'
+import json from 'colay/json'
 
 type RecordedEvent = {
   data: any
@@ -66,7 +67,11 @@ export const useController = (
   // const [state, update] = React.useState<ControllerState>(
   //   controllerConfig,
   // )
-  const targetNodeRef = React.useRef(null)
+  const localDataRef = React.useRef({
+    recordedEvents: [] as RecordedEvent[],
+    date: new Date().toString(),
+    targetNode: null,
+  })
   const onEvent = React.useCallback((eventInfo: EventInfo) => {
     const {
       type,
@@ -79,22 +84,28 @@ export const useController = (
       // graphEditor,
       // graphEditor,
     } = eventInfo
-    const element = elementId ? graphEditorRef.current.cy.$(`#${elementId}`) : null
-    const localDataRef = React.useRef({
-      recordedEvents: [] as RecordedEvent[],
-      date: new Date().toString(),
-    })
+    const element = elementId
+      ? graphEditorRef.current.cy.$(`#${elementId}`)
+      : null
     const isNode = element?.isNode()
     const targetPath = isNode ? 'nodes' : 'edges'
     // let recordableEvent = true
-    const lastEvent = R.last(localDataRef.current.recordedEvents)
-    localDataRef.current.recordedEvents.push({
-      type: 'x',
-      data: eventInfo,
-      date: new Date(),
-      after: lastEvent ? new Date() - new Date(lastEvent.datetime) : 0,
-    })
     update((draft) => {
+      if (draft.actionBar?.eventRecording) {
+        const _event = R.pickPaths([
+          ['data', 'originalEvent', 'metaKey'],
+        ])(event)
+        const lastEvent = R.last(localDataRef.current.recordedEvents)
+        localDataRef.current.recordedEvents.push({
+          type: '@',
+          data: {
+            ...eventInfo,
+            event: _event,
+          },
+          date: new Date(),
+          after: lastEvent ? new Date() - new Date(lastEvent.datetime) : 0,
+        })
+      }
       const isAllowedToProcess = controllerConfig.onEvent?.(eventInfo, draft)
       if (isAllowedToProcess === false) {
         return
@@ -180,19 +191,19 @@ export const useController = (
             [EDITOR_MODE.ADD, EDITOR_MODE.CONTINUES_ADD].includes(draft.mode)
           ) {
             if (isNode) {
-              if (targetNodeRef.current) {
+              if (localDataRef.current.targetNode) {
                 draft.edges.push({
                   id: R.uuid(),
-                  source: targetNodeRef.current.id(),
+                  source: localDataRef.current.targetNode.id(),
                   target: element.id(),
                   data: {},
                 })
-                targetNodeRef.current = null
+                localDataRef.current.targetNode = null
               } else {
-                targetNodeRef.current = element
+                localDataRef.current.targetNode = element
               }
             }
-            if (!targetNodeRef.current && draft.mode === EDITOR_MODE.ADD) {
+            if (!localDataRef.current.targetNode && draft.mode === EDITOR_MODE.ADD) {
               draft.mode = EDITOR_MODE.DEFAULT
             }
             return
@@ -234,7 +245,7 @@ export const useController = (
         }
         case EVENT.MODE_CHANGED: {
           draft.mode = extraData.value
-          targetNodeRef.current = null
+          localDataRef.current.targetNode.current = null
           break
         }
         case EVENT.CHANGE_DATA_NAME:

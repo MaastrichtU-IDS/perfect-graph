@@ -52,6 +52,7 @@ const example3 = `@base <http://example.org/> .
         rel:enemyOf <#green-goblin> ;
         a foaf:Person ;
         foaf:name "Spiderman", "Человек-паук"@ru .`
+
 export const convertToJSONLD = async (text: string): Promise<Record<string, any>[]> => {
   const result = await toNquad(text)
   const jsonLDList = await jsonld.fromRDF(result.quadList)
