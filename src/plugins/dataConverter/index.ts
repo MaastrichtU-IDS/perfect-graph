@@ -1,7 +1,7 @@
 import { Parser, Quad } from 'n3'
 import * as jsonld from 'jsonld'
 import * as R from 'colay/ramda'
-import { data } from './example'
+import { data, data2 } from './example'
 
 type ToNquadResult = {
   quadList: Quad[];
@@ -56,6 +56,7 @@ const example3 = `@base <http://example.org/> .
 export const convertToJSONLD = async (text: string): Promise<Record<string, any>[]> => {
   const result = await toNquad(text)
   const jsonLDList = await jsonld.fromRDF(result.quadList)
+
   const resultList: Record<string, any>[] = await R.mapAsync(
     async (jsonLDItem) =>
       // // @ts-ignore
@@ -247,8 +248,94 @@ export const filterEdges = (nodes: {id: string}[]) => (
 //   const graphData = convertJSONLDToGraphData(await jsonld.expand(data))
 //   return graphData
 // }
+
+// "predicate": {
+//   "type": "uri",
+//   "value": "http://bio2rdf.org/drugbank_vocabulary:food-interaction"
+// },
+// "objectCount": {
+//   "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+//   "type": "literal",
+//   "value": "312"
+// },
+// "subject": {
+//   "type": "uri",
+//   "value": "http://bio2rdf.org/drugbank_vocabulary:Resource"
+// },
+// "graph": {
+//   "type": "uri",
+//   "value": "http://bio2rdf.org/drugbank_resource:bio2rdf.dataset.drugbank.R3"
+// },
+// "subjectCount": {
+//   "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+//   "type": "literal",
+//   "value": "649"
+// },
+// "object": {
+//   "type": "uri",
+//   "value": "http://bio2rdf.org/drugbank_vocabulary:Resource"
+// }
+// <#green-goblin>
+//         rel:enemyOf <#spiderman> ;
+//         a foaf:Person ;    # in the context of the Marvel universe
+//         foaf:name "Green Goblin" .
+
+export const sparqlResultToRDF = (sparqlResult) => {
+  const prefixMap = {}
+  let rdfText = `@base <http://example.org/> .
+  @prefix rel: <http://www.perceive.net/schemas/relationship/> .`
+  sparqlResult.results.bindings.forEach((binding) => {
+    const {
+      subject,
+      predicate,
+      object,
+      ...rest
+    } = binding
+    const isObjectUri = object.type === 'uri'
+    const prefixSplitter = predicate.value.includes('#')
+      ? '#'
+      : '/'
+    const hasPrefix = predicate.value.includes('http')
+    const prefix = hasPrefix
+      ? R.last(predicate.value.split(prefixSplitter))
+      : 'rel'
+    prefixMap[prefix] = hasPrefix
+      ? R.dropLast(1, predicate.value.split(prefixSplitter)).join('')
+      : 'http://www.perceive.net/schemas/relationship'
+    rdfText += `
+    <#${subject.value}>
+      ${prefix}:'${predicate.value}'
+      ${isObjectUri ? '<#' : ''}${object.value}${isObjectUri ? '>' : ''} ;
+      ${
+  Object.keys(rest).map((key) => {
+    const prop = rest[key]
+    const isObjectUri = prop.type === 'uri'
+    return `rel:${key} ${isObjectUri ? '<#' : ''}${prop.value}${isObjectUri ? '>' : ''} `
+  }).join(';\n')
+} ; .
+    `
+  })
+  rdfText = `${
+    Object.keys(prefixMap).map((key) => `@prefix ${key}: <${prefixMap[key]}> .`)
+      .join('\n')
+  }
+  ${rdfText}`
+  return rdfText
+}
+
 export const convertRDFToGraphData = async () => {
-  const jsonLD = await convertToJSONLD(example3)
+  const example1 = sparqlResultToRDF({
+    results: {
+      bindings: R.splitEvery(100, data2.results.bindings)[0],
+    },
+  })
+  // <#green-goblin>
+  // rel:enemyOf <#spiderman> ;
+  // a foaf:Person ;    # in the context of the Marvel universe
+  // foaf:name "Green Goblin" .
+
+  console.log(example1)
+  const jsonLD = await convertToJSONLD(example1) // example3
   const graphData = convertJSONLDToGraphData(jsonLD)
   return graphData
 }
