@@ -17,8 +17,8 @@ export const getFilterSchema  = (props: {onPopupPress: () => void}) => {
       ],
       additionalProperties: false,
       properties: {
-        title: {
-          type: 'boolean',
+        label: {
+          type: 'string',
         },
         year: {
           type: 'array',
@@ -28,9 +28,74 @@ export const getFilterSchema  = (props: {onPopupPress: () => void}) => {
           minimum: 1969,
           maximum: 2015,
         },
-        live: {
-          title: 'boolean',
+        popup: {
+          title: 'More Settings',
           type: 'boolean',
+        },
+      },
+    },
+    uiSchema: {
+      'year': {
+        'ui:field': ({ formData, schema, onChange}) => {
+          return (
+            <Slider
+              value={formData ?? [schema.minimum, schema.maximum ]}
+              onChange={(e) => {
+                onChange(e.target.value)
+              }}
+              valueLabelDisplay="auto"
+              aria-labelledby="range-slider"
+              min={schema.minimum}
+              max={schema.maximum}
+              // getAriaValueText={(text)=> text}
+            />
+            // <RangeSlider
+            //   style={{ width: '90%', height: 40 }}
+              // min={schema.minimum}
+              // max={schema.maximum}
+            //   value={formData}
+            //   onValueChange={onChange}
+            // />
+          )
+        },
+      },
+      'popup': {
+        'ui:field': ({ formData, schema, onChange}) => {
+          return (
+            <Button onClick={onPopupPress}>Open</Button>
+          )
+        },
+      },
+    }
+  }
+}
+
+export const getFetchSchema  = (props: {onPopupPress: () => void}) => {
+  const {
+     onPopupPress
+  } = props
+  return {
+    schema: {
+      title: 'Fetch',
+      type: 'object',
+      required: [
+        // 'title',
+        // 'year',
+        // 'rechtsgebied',
+        // 'adjustLayout',
+      ],
+      additionalProperties: false,
+      properties: {
+        label: {
+          type: 'string',
+        },
+        year: {
+          type: 'array',
+          items: {
+            type: 'number',
+          },
+          minimum: 1969,
+          maximum: 2015,
         },
         popup: {
           title: 'More Settings',

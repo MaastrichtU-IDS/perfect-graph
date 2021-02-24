@@ -21,7 +21,7 @@ import { UseEffect } from '../../src/components/UseEffect'
 import {drawLine} from '../../src/components/Graphics'
 import defaultData from './data'
 import * as C from 'colay/color'
-import { getFilterSchema, VIEW_CONFIG_SCHEMA  } from './constants'
+import { getFilterSchema, getFetchSchema, VIEW_CONFIG_SCHEMA  } from './constants'
 import { EVENT } from '../../src/utils/constants'
 import {useController} from '../../src/plugins/controller'
 import {calculateStatistics} from './utils/networkStatistics'
@@ -139,6 +139,9 @@ const AppContainer = ({
   const FILTER_SCHEMA = React.useMemo(() => getFilterSchema({
     onPopupPress: () => console.log('popup')
   }), [])
+  const FETCH_SCHEMA = React.useMemo(() => getFetchSchema({
+    onPopupPress: () => console.log('popup')
+  }), [])
   const THEMES = {
     Dark: DarkTheme,
     Default: DefaultTheme
@@ -154,7 +157,7 @@ const AppContainer = ({
     },
     settingsBar: {
       opened: true,
-      forms: [FILTER_SCHEMA, VIEW_CONFIG_SCHEMA]
+      forms: [FETCH_SCHEMA, VIEW_CONFIG_SCHEMA, FILTER_SCHEMA, ]
     },
     dataBar: {
       editable: false,
