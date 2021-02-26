@@ -83,7 +83,6 @@ const NodeContainerElement = (
       //   event.data.originalEvent.preventDefault()
       //   event.data.originalEvent.stopPropagation()
       // }}
-      // onPress={(e) => console.log('press')}
     >
       {children({
         item,

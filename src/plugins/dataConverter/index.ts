@@ -334,7 +334,6 @@ export const convertRDFToGraphData = async () => {
   // a foaf:Person ;    # in the context of the Marvel universe
   // foaf:name "Green Goblin" .
 
-  console.log(example1)
   const jsonLD = await convertToJSONLD(example1) // example3
   const graphData = convertJSONLDToGraphData(jsonLD)
   return graphData

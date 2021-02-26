@@ -13,6 +13,7 @@ export {
 
 export type Options = {
   onFinish?: () => void;
+  onPlayChanged?: () => void;
   autostart?: boolean
 }
 export const createTimeoutManager = <T extends Timer<any>>(
@@ -23,6 +24,7 @@ export const createTimeoutManager = <T extends Timer<any>>(
   const {
     onFinish: onFinishCallback,
     autostart = true,
+    onPlayChanged: onPlayChangedCallback,
   } = options
   const isEmpty = timers.length === 0
   const timeoutInstances: TimeoutInstance[] = []
@@ -31,12 +33,14 @@ export const createTimeoutManager = <T extends Timer<any>>(
     controller.finished = true
     onFinishCallback?.()
   }
+  const onPlayChanged = () => {
+    onPlayChangedCallback?.()
+  }
   const controller = {
     currentIndex: 0,
     timeoutInstances,
     finished: isEmpty,
-    started: true,
-    paused: false,
+    paused: !autostart,
     pause: () => {
       timeoutInstances.forEach((timeoutInstance, index) => {
         if (index >= controller.currentIndex) {
@@ -44,6 +48,7 @@ export const createTimeoutManager = <T extends Timer<any>>(
         }
       })
       controller.paused = true
+      onPlayChanged()
     },
     start: () => {
       timeoutInstances.forEach((timeoutInstance, index) => {
@@ -52,6 +57,7 @@ export const createTimeoutManager = <T extends Timer<any>>(
         }
       })
       controller.paused = false
+      onPlayChanged()
     },
     clear: () => {
       timeoutInstances.forEach((timeoutInstance) => {

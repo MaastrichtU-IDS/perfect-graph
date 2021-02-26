@@ -101,14 +101,11 @@ const AppContainer = () => {
     //       )
     //     }}
     //     // onElementSelected={({ item}) => {
-    //     //   console.log('selection',item)
     //     // }}
     //     // {...data}
     //     // onEvent={(info) => {
-    //     //   console.log('event', info)
     //     // }}
     //     // onEventAdditional={(info) => {
-    //     //   console.log('eventAdd', info)
     //     // }}
     //   />
     // </ApplicationProvider>
@@ -116,10 +113,6 @@ const AppContainer = () => {
 }
 
 export default ({ skipLoadingScreen }: Props) => {
-  // console.log('schema',createSchema([
-  //   { name: 'string', age: 12},
-  //   { name: 'string', },
-  // ]))
   return (
     // <App/>
       <AppContainer />

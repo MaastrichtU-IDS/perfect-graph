@@ -9,6 +9,7 @@ type Options = {
   deps?: any[];
   renderOnTimeout?: boolean;
   renderOnFinished?: boolean;
+  renderOnPlayChanged?: boolean;
   onFinish?: () => void
   autostart?: boolean;
 }
@@ -21,32 +22,34 @@ export const useTimeoutManager = <T extends Timer<T>>(
     deps = [],
     renderOnTimeout = false,
     renderOnFinished = false,
+    renderOnPlayChanged = false,
     onFinish,
     autostart = true,
   } = options
   const [state, setState] = React.useState({})
-  console.log('timeoutTick')
-  const eventTimeoutsManager = React.useMemo(() => {
-    console.log('createTimeoutManager')
-    return createTimeoutManager(
-      timers,
-      (timer, index, timeout) => {
-        callback(timer, index, timeout)
-        if (renderOnTimeout) {
+  const eventTimeoutsManager = React.useMemo(() => createTimeoutManager(
+    timers,
+    (timer, index, timeout) => {
+      callback(timer, index, timeout)
+      if (renderOnTimeout) {
+        setState({})
+      }
+    },
+    {
+      onFinish: () => {
+        onFinish?.()
+        if (renderOnFinished) {
           setState({})
         }
       },
-      {
-        onFinish: () => {
-          onFinish?.()
-          if (renderOnFinished) {
-            setState({})
-          }
-        },
-        autostart,
+      onPlayChanged: () => {
+        if (renderOnPlayChanged) {
+          setState({})
+        }
       },
-    )
-  }, deps)
+      autostart,
+    },
+  ), deps)
   React.useEffect(
     () => () => {
       eventTimeoutsManager.clear()

@@ -84,13 +84,10 @@ export const DefaultRenderNode: RenderNode = ({
         // alert('Heyy')
       // }}
       // onRightPress={(e) => {
-      //   console.log('onRightPress', e)
       // }}
       // mouseover={(e) => {
-      //   console.log('onHoverStart', e)
       // }}
       // onPressEnd={(e) => {
-      //   console.log('onPressEnd', e)
       // }}
     >
       <GraphText

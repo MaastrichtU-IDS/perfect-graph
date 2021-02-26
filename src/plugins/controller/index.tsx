@@ -327,7 +327,7 @@ export const useController = (
             // R.mapObjIndexed((value, key) => {
             //   draft[key] = value
             // })(extraData.value)
-            draft.events = extraData.value
+            draft.events = [...(extraData.value ?? [])]
             break
           case EVENT.EXPORT_DATA:
             download(JSON.stringify(extraData.value), 'perfect-graph.json')

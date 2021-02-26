@@ -62,7 +62,6 @@ const prepareData = (data) =>  {
 const data = prepareData(defaultData)
 type Props = Partial<GraphEditorProps>
 
-// console.log('statistics', calculateStatistics(data))
 const NODE_SIZE = {
   width: 80,
   height: 80,
@@ -137,10 +136,10 @@ const AppContainer = ({
     }
   })
   const FILTER_SCHEMA = React.useMemo(() => getFilterSchema({
-    onPopupPress: () => console.log('popup')
+    onPopupPress: () => {}
   }), [])
   const FETCH_SCHEMA = React.useMemo(() => getFetchSchema({
-    onPopupPress: () => console.log('popup')
+    onPopupPress: () => {}
   }), [])
   const THEMES = {
     Dark: DarkTheme,
@@ -211,7 +210,6 @@ const AppContainer = ({
           break
         }
         // case EVENT.ELEMENT_SELECTED: {
-        //   console.log('ELEMENT_SELECTED', element.isNode(), graphRef)
         //   if (element.isNode()) {
         //     // const TARGET_SIZE = 700
         //     // const {
@@ -255,7 +253,6 @@ const AppContainer = ({
   // React.useEffect(() => {
   //   const call = async () =>{
   //     const results = await listCases()
-  //     console.log(results)
   //     const nodes = results.map(({id, ...data}) => ({
   //       id: `${data.doctype}:${id}`,
   //       data

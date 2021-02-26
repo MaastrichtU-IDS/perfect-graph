@@ -31,7 +31,7 @@ export type TripleInputProps = {
 export const mockTripleInputProps: TripleInputProps = {
   placeholder: 'Enter Value',
   value: 'Heyy',
-  onValueChange: (value) => console.log('val:', value),
+  onValueChange: (value) => {},
   getSuggestions: async () => [
     { title: 'Izmir', value: 'Izmir' },
     { title: 'Istanbul', value: 'Istanbul' },

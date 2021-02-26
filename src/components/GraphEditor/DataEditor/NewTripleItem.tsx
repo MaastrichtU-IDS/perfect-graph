@@ -21,7 +21,7 @@ const ICON_SIZE = 15
 // ]
 
 export const MockNewTripleItemProps: NewTripleItemProps = {
-  onAdd: (data) => console.log('newItem', data),
+  onAdd: (data) => {},
 }
 
 export const NewTripleItem = (props: NewTripleItemProps) => {

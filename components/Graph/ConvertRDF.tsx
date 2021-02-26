@@ -35,7 +35,6 @@ export default function Animation() {
     }
     call()
   },[])
-  console.log(controllerProps.nodes)
   return (
     <GraphEditor
         style={{ width: '100%', height: 600 }}

@@ -121,9 +121,6 @@ const GraphEditorElement = (
       ...eventInfo,
     })
   }, [onEvent])
-  const localDataRef = React.useRef({
-    stopEvents: false,
-  })
   // const eventTimeoutsManagerRef = React.useRef(null)
   // React.useEffect(
   //   () => {
@@ -152,9 +149,14 @@ const GraphEditorElement = (
     (event) => {
       onEvent(event.data)
     },
-    { deps: [events], renderOnFinished: true },
+    {
+      deps: [events],
+      renderOnFinished: true,
+      renderOnPlayChanged: true,
+      autostart: false,
+    },
   )
-  
+
   return (
     <Box
       style={{
@@ -330,32 +332,67 @@ const EventsModal = (props: EventsModalProps) => {
   } = props
   const isOpen = !timeoutManager.finished
   const [state, setState] = React.useState({
-    paused: false,
+    alert: {
+      visible: false,
+    },
   })
   return (
     <Modal
       open={isOpen}
-      onClose={onClose}
+      // onClose={onClose}
+      BackdropProps={{
+        style: {
+          backgroundColor: 'rgba(0, 0, 0, 0)',
+        },
+        onClick: () => {
+          setState({
+            ...state,
+            alert: {
+              ...state.alert,
+              visible: true,
+            },
+          })
+          setTimeout(() => {
+            setState({
+              ...state,
+              alert: {
+                ...state.alert,
+                visible: false,
+              },
+            })
+          }, 1500)
+        },
+      }}
     >
       <Paper style={{ display: 'flex', flexDirection: 'column' }}>
-        <View>
-          <Typography variant="h6">Events are implementing</Typography>
+        <View
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Typography variant="h6">Play Events</Typography>
+          {state.alert.visible && (
+            <Typography
+              variant="h6"
+              color="error"
+            >
+              You cannot take action while the events are playing
+            </Typography>
+          )}
         </View>
         <View style={{ flexDirection: 'row' }}>
           <Button onClick={() => {
-            state.paused
+            timeoutManager.paused
               ? timeoutManager.start()
               : timeoutManager.pause()
-            setState({
-              paused: !state.paused,
-            })
           }}
           >
-            {state.paused ? 'Play' : 'Pause'}
+            {timeoutManager.paused ? 'Play' : 'Pause'}
           </Button>
           <Button onClick={() => {
             onClose()
-            // timeoutManager.clear()
           }}
           >
             Close
@@ -397,7 +434,12 @@ PropsWithRef<GraphEditorRef, GraphEditorProps>
 >(
   GraphEditorElement,
   {
-    isEqual: R.equalsExclude(R.is(Function)),
+    isEqual: (item, otherItem) => {
+      if (R.is(Function, item)) {
+        return true
+      }
+      return item === otherItem
+    }, // R.equalsExclude(R.is(Function)),
     isForwardRef: true,
   },
 )
