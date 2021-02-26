@@ -28,7 +28,7 @@ export const RenderNode = ({
   React.useEffect(() => {
     if (graphRef.current.viewport) {
       graphRef.current.viewport.on('zoomed',() => {
-        return
+        // return
         const xScale = 1/graphRef.current.viewport.scale.x
         const yScale = 1/graphRef.current.viewport.scale.y
         if (xScale > 1 && xScale < 5) {

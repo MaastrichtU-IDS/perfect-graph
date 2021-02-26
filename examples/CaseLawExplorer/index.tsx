@@ -150,7 +150,7 @@ const AppContainer = ({
   const filteredDataRef = React.useRef({})
   const [controllerProps, controller] = useController({
     ...data,
-    events: RECORDED_EVENTS,
+    // events: RECORDED_EVENTS,
     graphConfig: {
       layout: Graph.Layouts.grid,
       zoom: 0.2,
@@ -164,7 +164,7 @@ const AppContainer = ({
       editable: false,
     },
     actionBar: {
-      opened: true,
+      // opened: true,
       eventRecording: false,
       actions: {
         add: { visible: false },

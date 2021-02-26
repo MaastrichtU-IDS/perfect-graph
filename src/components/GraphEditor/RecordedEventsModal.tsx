@@ -167,3 +167,25 @@ function CircularProgressWithLabel(props) {
     </View>
   )
 }
+
+// <View
+//   style={{
+//     width: 200,
+//   }}
+// >
+//   <Typography
+//     style={{
+//       left: '-100%',
+//       width: '200%',
+//       whiteSpace: 'nowrap',
+//       position: 'relative',
+//       overflow: 'hidden', /* Required to make ellipsis work */
+//       textOverflow: 'ellipsis',
+//       '-webkit-transition': 'left 3s, width 3s',
+//       '-moz-transition': 'left 3s, width 3s',
+//       transition: 'left 3s, width 3s',
+//     }}
+//   >
+//     {JSON.stringify(currentTimer?.data)}
+//   </Typography>
+// </View>
