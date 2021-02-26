@@ -25,6 +25,7 @@ import {
 import { PropsWithRef } from 'colay-ui/type'
 import * as R from 'colay/ramda'
 import { createTimeoutManager, TimeoutManager } from '@utils/TimeoutManager'
+import { useTimeoutManager } from '@utils/useTimeoutManager'
 import { ActionBar, ActionBarProps } from './ActionBar'
 import { DataBar, DataBarProps } from './DataBar'
 import { SettingsBar, SettingsBarProps } from './SettingsBar'
@@ -123,29 +124,37 @@ const GraphEditorElement = (
   const localDataRef = React.useRef({
     stopEvents: false,
   })
-  const eventTimeoutsManagerRef = React.useRef(null)
-  React.useEffect(
-    () => {
-      if (!events) {
-        return () => {}
-      }
-      const eventTimeoutsManager = createTimeoutManager(
-        events,
-        (event, index) => {
-          if (index === events.length - 1) {
-            eventTimeoutsManagerRef.current = null
-          }
-          onEvent(event.data)
-        },
-      )
-      eventTimeoutsManagerRef.current = eventTimeoutsManager
-      return () => {
-        eventTimeoutsManager?.clear()
-        eventTimeoutsManagerRef.current = null
-      }
+  // const eventTimeoutsManagerRef = React.useRef(null)
+  // React.useEffect(
+  //   () => {
+  //     if (!events) {
+  //       return () => {}
+  //     }
+  //     const eventTimeoutsManager = createTimeoutManager(
+  //       events,
+  // (event, index) => {
+  //   if (index === events.length - 1) {
+  //     eventTimeoutsManagerRef.current = null
+  //   }
+  //   onEvent(event.data)
+  // },
+  //     )
+  //     eventTimeoutsManagerRef.current = eventTimeoutsManager
+  //     return () => {
+  //       eventTimeoutsManager?.clear()
+  //       eventTimeoutsManagerRef.current = null
+  //     }
+  //   },
+  //   [events],
+  // )
+  const eventTimeoutsManager = useTimeoutManager(
+    events,
+    (event) => {
+      onEvent(event.data)
     },
-    [events],
+    { deps: [events], renderOnFinished: true },
   )
+  
   return (
     <Box
       style={{
@@ -286,11 +295,10 @@ const GraphEditorElement = (
         cursor
       />
       <EventsModal
-        timeoutManager={eventTimeoutsManagerRef.current}
+        timeoutManager={eventTimeoutsManager}
         onClose={() => {
           setState({ ...state })
-          eventTimeoutsManagerRef.current.clear()
-          eventTimeoutsManagerRef.current = null
+          eventTimeoutsManager.clear()
         }}
       />
     </Box>
@@ -320,7 +328,7 @@ const EventsModal = (props: EventsModalProps) => {
     timeoutManager,
     onClose,
   } = props
-  const isOpen = !!timeoutManager
+  const isOpen = !timeoutManager.finished
   const [state, setState] = React.useState({
     paused: false,
   })
