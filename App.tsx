@@ -1,22 +1,13 @@
 import React from 'react'
-import * as R from 'unitx/ramda'
-import { ApplicationProvider, Icon,Text, useWhyDidUpdate } from 'unitx-ui'
 import { GraphEditor } from './src/components/GraphEditor'
 import { Graph } from './src/components'
 import { Text as PIXIText, Sprite } from '@inlet/react-pixi'
 import MusicGraph from './examples/Music'
 import CaseLawExplorerGraph from './examples/CaseLawExplorer'
 import {useController} from './src/plugins/controller'
-import {createSchema} from './src/plugins/createSchema'
 import {getLabel} from './src/utils'
 import { RenderJSON,mockRenderJSON } from './src/components/RenderJSON'
-// import { VIEW_CONFIG_SCHEMA } from './examples/CaseLawExplorer/constants'
-// import './src/plugins/dataConverter'
-// import './src/plugins/parseContext'
-import App from './src/App'
-// import './src/machine/config'
-// import { store, sender, useSelector } from './src/machine'
-// import './src/useLogic'
+import App from './examples/CaseLawExplorer'
 
 
 
@@ -62,10 +53,10 @@ const data = {
   }
 }
 const AppContainer = () => {
-  const [controllerProps] = useController({
-    // ...PROFILE_GRAPH,
-    ...data
-  })
+  // const [controllerProps] = useController({
+  //   // ...PROFILE_GRAPH,
+  //   ...data
+  // })
   // const [data, setData] = React.useState({
   //   nodes: [
   //        { id: 1, position: { x: 10, y: 10 } , data: []},

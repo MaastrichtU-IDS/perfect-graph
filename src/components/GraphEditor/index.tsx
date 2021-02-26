@@ -11,14 +11,20 @@ import {
   RenderEdge,
   RenderNode,
   GraphEditorRef,
+  RecordedEvent,
 } from '@type'
 import { getLabel, getSelectedItemByElement } from '@utils'
 // import { useGraph } from '@hooks'
 import { EDITOR_MODE, EVENT } from '@utils/constants'
-import { wrapComponent, useForwardRef } from 'colay-ui'
-import { Box } from '@material-ui/core'
+import {
+  wrapComponent, useForwardRef, useDisclosure, View,
+} from 'colay-ui'
+import {
+  Box, Paper, Modal, Button, Typography,
+} from '@material-ui/core'
 import { PropsWithRef } from 'colay-ui/type'
 import * as R from 'colay/ramda'
+import { createTimeoutManager, TimeoutManager } from '@utils/TimeoutManager'
 import { ActionBar, ActionBarProps } from './ActionBar'
 import { DataBar, DataBarProps } from './DataBar'
 import { SettingsBar, SettingsBarProps } from './SettingsBar'
@@ -39,6 +45,7 @@ export type GraphEditorProps = {
   mode?: EditorMode;
   renderEdge?: RenderEdge<RenderElementAdditionalInfo>;
   renderNode?: RenderNode<RenderElementAdditionalInfo>;
+  events?: RecordedEvent[]
 } & Omit<
 GraphProps,
 'config'|'onPress' | 'renderNode' | 'renderEdge'
@@ -83,8 +90,14 @@ const GraphEditorElement = (
     selectedElementId,
     label,
     mode = EDITOR_MODE.DEFAULT,
+    events,
     ...rest
   } = props
+  const [state, setState] = React.useState({
+    eventsModal: {
+      visible: false,
+    },
+  })
   const graphId = React.useMemo<string>(
     () => graphConfig?.graphId ?? R.uuid(),
     [graphConfig?.graphId],
@@ -107,6 +120,32 @@ const GraphEditorElement = (
       ...eventInfo,
     })
   }, [onEvent])
+  const localDataRef = React.useRef({
+    stopEvents: false,
+  })
+  const eventTimeoutsManagerRef = React.useRef(null)
+  React.useEffect(
+    () => {
+      if (!events) {
+        return () => {}
+      }
+      const eventTimeoutsManager = createTimeoutManager(
+        events,
+        (event, index) => {
+          if (index === events.length - 1) {
+            eventTimeoutsManagerRef.current = null
+          }
+          onEvent(event.data)
+        },
+      )
+      eventTimeoutsManagerRef.current = eventTimeoutsManager
+      return () => {
+        eventTimeoutsManager?.clear()
+        eventTimeoutsManagerRef.current = null
+      }
+    },
+    [events],
+  )
   return (
     <Box
       style={{
@@ -246,6 +285,14 @@ const GraphEditorElement = (
         name={MODE_ICON_MAP_BY_URL[mode]}
         cursor
       />
+      <EventsModal
+        timeoutManager={eventTimeoutsManagerRef.current}
+        onClose={() => {
+          setState({ ...state })
+          eventTimeoutsManagerRef.current.clear()
+          eventTimeoutsManagerRef.current = null
+        }}
+      />
     </Box>
   )
 }
@@ -264,6 +311,52 @@ const extractGraphEditorData = (props: GraphEditorProps) =>
     edges: props.edges,
   })
 
+  type EventsModalProps = {
+    timeoutManager: TimeoutManager
+    onClose: () => void
+  }
+const EventsModal = (props: EventsModalProps) => {
+  const {
+    timeoutManager,
+    onClose,
+  } = props
+  const isOpen = !!timeoutManager
+  const [state, setState] = React.useState({
+    paused: false,
+  })
+  return (
+    <Modal
+      open={isOpen}
+      onClose={onClose}
+    >
+      <Paper style={{ display: 'flex', flexDirection: 'column' }}>
+        <View>
+          <Typography variant="h6">Events are implementing</Typography>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <Button onClick={() => {
+            state.paused
+              ? timeoutManager.start()
+              : timeoutManager.pause()
+            setState({
+              paused: !state.paused,
+            })
+          }}
+          >
+            {state.paused ? 'Play' : 'Pause'}
+          </Button>
+          <Button onClick={() => {
+            onClose()
+            // timeoutManager.clear()
+          }}
+          >
+            Close
+          </Button>
+        </View>
+      </Paper>
+    </Modal>
+  )
+}
 /**
  * ## Usage
  * To create a GraphEditor easily, you can just pass data and render methods.

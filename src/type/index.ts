@@ -264,3 +264,10 @@ export type GraphRef = {
 
 export type GraphEditorRef = GraphRef & {
 }
+
+export type RecordedEvent = {
+  data: any
+  type: string;
+  date: any
+  after: number;
+}

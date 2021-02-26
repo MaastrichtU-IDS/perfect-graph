@@ -4,6 +4,7 @@ import {
   GraphLabelData, RDFType,
   DataItem, EventInfo,
   GraphEditorRef,
+  RecordedEvent,
 } from '@type'
 import { GraphEditorProps } from '@components/GraphEditor'
 import { Graph } from '@components'
@@ -15,14 +16,6 @@ import { getSelectedItemByElement } from '@utils'
 import { download } from 'colay-ui/utils'
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import * as R from 'colay/ramda'
-import json from 'colay/json'
-
-type RecordedEvent = {
-  data: any
-  type: string;
-  date: any
-  after: number;
-}
 
 type ControllerOptions = {
   // onEvent?: (info: EventInfo, draft: ControllerState) => boolean;
@@ -40,7 +33,7 @@ type UseControllerData = Pick<
 GraphEditorProps,
 'nodes'| 'edges' | 'mode'
 | 'actionBar' | 'dataBar' | 'settingsBar'
-| 'graphConfig'
+| 'graphConfig' | 'events'
 > & {
   onEvent?: (info: EventInfo, draft: ControllerState) => boolean;
 }
@@ -69,7 +62,6 @@ export const useController = (
   // )
   const localDataRef = React.useRef({
     recordedEvents: [] as RecordedEvent[],
-    date: new Date().toString(),
     targetNode: null,
   })
   const onEvent = React.useCallback((eventInfo: EventInfo) => {
@@ -84,16 +76,16 @@ export const useController = (
       // graphEditor,
       // graphEditor,
     } = eventInfo
+    const graphEditor = graphEditorRef.current
     const element = elementId
-      ? graphEditorRef.current.cy.$id(`${elementId}`)
+      ? graphEditor.cy.$id(`${elementId}`)
       : null
     const isNode = element?.isNode()
     const targetPath = isNode ? 'nodes' : 'edges'
     // let recordableEvent = true
-    const graphEditor = graphEditorRef.current
     update((draft) => {
       try {
-        if (draft.actionBar?.eventRecording) {
+        if (draft.actionBar?.eventRecording && type !== EVENT.TOGGLE_RECORD_EVENTS) {
           const _event = R.pickPaths([
             ['data', 'originalEvent', 'metaKey'],
           ])(event)
@@ -105,7 +97,7 @@ export const useController = (
               event: _event,
             },
             date: new Date(),
-            after: lastEvent ? new Date() - new Date(lastEvent.datetime) : 0,
+            after: lastEvent ? new Date() - new Date(lastEvent.date) : 0,
           })
         }
         const isAllowedToProcess = controllerConfig.onEvent?.(eventInfo, draft)
@@ -210,6 +202,7 @@ export const useController = (
               }
               return
             }
+            graphEditor.cy.$(':selected').unselect()
             element.select()
             draft.selectedElementId = item.id
             if (event && event.data.originalEvent.metaKey) {
@@ -329,6 +322,12 @@ export const useController = (
             R.mapObjIndexed((value, key) => {
               draft[key] = value
             })(extraData.value)
+            break
+          case EVENT.IMPORT_EVENTS:
+            // R.mapObjIndexed((value, key) => {
+            //   draft[key] = value
+            // })(extraData.value)
+            draft.events = extraData.value
             break
           case EVENT.EXPORT_DATA:
             download(JSON.stringify(extraData.value), 'perfect-graph.json')

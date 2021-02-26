@@ -5,7 +5,7 @@ import {
   GraphEditorRef,
   OnEvent,
 } from '@type'
-// import { readTextFile } from '@utils'
+import { readTextFile } from '@utils'
 import { EDITOR_MODE, EVENT, LAYOUT_NAMES } from '@utils/constants'
 import React from 'react'
 import {
@@ -27,7 +27,7 @@ import { useAnimation, wrapComponent, useDisclosure } from 'colay-ui'
 import Form from '@rjsf/material-ui'
 // import Form from 'unitx-ui/components/Form'
 import * as R from 'colay/ramda'
-// import { DocumentPicker } from 'unitx-ui/@/DocumentPicker'
+import DocumentPicker from '@utils/DocumentPicker'
 import { Recorder } from 'colay-ui/components/Recorder'
 
 // export const ACTION = {
@@ -328,6 +328,7 @@ type MoreOptionsProps = {
 const OPTIONS = {
   Import: 'Import',
   Export: 'Export',
+  ImportEvents: 'Import Events',
 } as const
 const MoreOptions = (props: MoreOptionsProps) => {
   const {
@@ -341,19 +342,30 @@ const MoreOptions = (props: MoreOptionsProps) => {
     onClose,
     onOpen,
   } = useDisclosure({})
-  const handleMenuItemClick = (event: Event, index: number) => {
+  const handleMenuItemClick = async (event: Event, index: number) => {
     onClose()
     const action = Object.values(OPTIONS)[index]
     switch (action) {
       case OPTIONS.Import: {
-        // const result = await DocumentPicker.getDocumentAsync({ type: 'application/json' })
-        // if (result.type === 'success') {
-        //   const fileText = await readTextFile(result.file!)
-        //   createOnActionCallback(
-        //     EVENT.IMPORT_DATA,
-        //     { value: JSON.parse(fileText) },
-        //   )()
-        // }
+        const result = await DocumentPicker.getDocumentAsync({ type: 'application/json' })
+        if (result.type === 'success') {
+          const fileText = await readTextFile(result.file!)
+          createOnActionCallback(
+            EVENT.IMPORT_DATA,
+            { value: JSON.parse(fileText) },
+          )()
+        }
+        break
+      }
+      case OPTIONS.ImportEvents: {
+        const result = await DocumentPicker.getDocumentAsync({ type: 'application/json' })
+        if (result.type === 'success') {
+          const fileText = await readTextFile(result.file!)
+          createOnActionCallback(
+            EVENT.IMPORT_EVENTS,
+            { value: JSON.parse(fileText) },
+          )()
+        }
         break
       }
       case OPTIONS.Export:

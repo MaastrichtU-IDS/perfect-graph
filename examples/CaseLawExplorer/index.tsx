@@ -156,14 +156,15 @@ const AppContainer = ({
       nodes: {},
     },
     settingsBar: {
-      opened: true,
+      opened: false,
       forms: [FETCH_SCHEMA, VIEW_CONFIG_SCHEMA, FILTER_SCHEMA, ]
     },
     dataBar: {
       editable: false,
     },
     actionBar: {
-      opened: false,
+      opened: true,
+      eventRecording: false,
       actions: {
         add: { visible: false },
         delete: { visible: false },
@@ -172,8 +173,8 @@ const AppContainer = ({
     onEvent: ({
       type,
       extraData,
-      element,
-      graphRef
+      elementId,
+      graphRef,
     },draft) => {
       switch (type) {
         case EVENT.SETTINGS_FORM_CHANGED:{
