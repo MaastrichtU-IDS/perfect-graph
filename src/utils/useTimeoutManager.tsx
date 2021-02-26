@@ -26,7 +26,7 @@ export const useTimeoutManager = <T extends Timer<T>>(
     onFinish,
     autostart = true,
   } = options
-  const [state, setState] = React.useState({})
+  const [, setState] = React.useState({})
   const eventTimeoutsManager = React.useMemo(() => createTimeoutManager(
     timers,
     (timer, index, timeout) => {

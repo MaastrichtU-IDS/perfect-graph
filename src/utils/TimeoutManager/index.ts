@@ -31,13 +31,31 @@ export const createTimeoutManager = <T extends Timer<any>>(
   let afterTotal = 0
   const onFinish = () => {
     controller.finished = true
+    controller.duration = 0
     onFinishCallback?.()
   }
-  const onPlayChanged = () => {
+  const onPlayChanged = (started: boolean) => {
+    if (started) {
+      controller.durationCounter = createDurationCounter()
+    } else {
+      controller.durationCounter && clearInterval(controller.durationCounter)
+    }
+    controller.paused = !started
     onPlayChangedCallback?.()
   }
+  let totalDuration = 0
+  timers.forEach(({ after }) => {
+    totalDuration += after
+  })
+  const createDurationCounter = () => setInterval(() => {
+    controller.duration += 100
+  }, 100)
   const controller = {
     currentIndex: 0,
+    totalDuration,
+    duration: 0,
+    durationCounter: null,
+    timers,
     timeoutInstances,
     finished: isEmpty,
     paused: !autostart,
@@ -47,8 +65,7 @@ export const createTimeoutManager = <T extends Timer<any>>(
           timeoutInstance.pause()
         }
       })
-      controller.paused = true
-      onPlayChanged()
+      onPlayChanged(false)
     },
     start: () => {
       timeoutInstances.forEach((timeoutInstance, index) => {
@@ -56,15 +73,13 @@ export const createTimeoutManager = <T extends Timer<any>>(
           timeoutInstance.resume()
         }
       })
-      controller.paused = false
-      onPlayChanged()
+      onPlayChanged(true)
     },
     clear: () => {
       timeoutInstances.forEach((timeoutInstance) => {
         timeoutInstance.clear()
-        // if (index >= controller.currentIndex) {
-        // }
       })
+      controller.durationCounter && clearInterval(controller.durationCounter)
       onFinish()
     },
   }
@@ -73,8 +88,8 @@ export const createTimeoutManager = <T extends Timer<any>>(
     const timeoutInstance = Timeout.instantiate(() => {
       controller.currentIndex = index + 1
       callback(timer, index, timeoutInstance)
-      if (index === timers.length) {
-        onFinish()
+      if (index === timers.length - 1) {
+        controller.clear()
       }
     }, afterTotal)
     if (!autostart) {
@@ -84,7 +99,9 @@ export const createTimeoutManager = <T extends Timer<any>>(
       timeoutInstance,
     )
   })
-
+  if (autostart) {
+    controller.durationCounter = createDurationCounter()
+  }
   return controller
 }
 

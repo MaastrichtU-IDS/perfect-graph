@@ -1,39 +1,35 @@
-import React from 'react'
 import {
   DefaultRenderEdge,
   DefaultRenderNode, Graph, GraphProps,
 } from '@components'
 import {
-  EventInfo,
+  Box,
+} from '@material-ui/core'
+import {
+  EditorMode, EventInfo,
   GraphConfig,
-  GraphLabelData,
-  EditorMode,
-  RenderEdge,
+  GraphEditorRef, GraphLabelData,
+  RecordedEvent, RenderEdge,
   RenderNode,
-  GraphEditorRef,
-  RecordedEvent,
 } from '@type'
 import { getLabel, getSelectedItemByElement } from '@utils'
 // import { useGraph } from '@hooks'
 import { EDITOR_MODE, EVENT } from '@utils/constants'
-import {
-  wrapComponent, useForwardRef, useDisclosure, View,
-} from 'colay-ui'
-import {
-  Box, Paper, Modal, Button, Typography,
-} from '@material-ui/core'
+import { useTimeoutManager } from '@utils/useTimeoutManager'
+import { useForwardRef, wrapComponent } from 'colay-ui'
 import { PropsWithRef } from 'colay-ui/type'
 import * as R from 'colay/ramda'
-import { createTimeoutManager, TimeoutManager } from '@utils/TimeoutManager'
-import { useTimeoutManager } from '@utils/useTimeoutManager'
+import React from 'react'
 import { ActionBar, ActionBarProps } from './ActionBar'
 import { DataBar, DataBarProps } from './DataBar'
-import { SettingsBar, SettingsBarProps } from './SettingsBar'
 import { MouseIcon } from './MouseIcon'
+import { SettingsBar, SettingsBarProps } from './SettingsBar'
+import { RecordedEventsModal } from './RecordedEventsModal'
 
 type RenderElementAdditionalInfo = {
   label: string;
 }
+
 export type GraphEditorProps = {
   onEvent?: (info: EventInfo) => void;
   graphConfig?: GraphConfig;
@@ -51,14 +47,6 @@ export type GraphEditorProps = {
 GraphProps,
 'config'|'onPress' | 'renderNode' | 'renderEdge'
 >
-
-// const MODE_ICON_MAP = {
-//   [EDITOR_MODE.ADD]: 'plus',
-//   [EDITOR_MODE.DELETE]: 'minus',
-//   [EDITOR_MODE.CONTINUES_ADD]: 'plus-circle-outline',
-//   [EDITOR_MODE.CONTINUES_DELETE]: 'minus-circle-outline',
-//   [EDITOR_MODE.DEFAULT]: null,
-// }
 
 const MODE_ICON_SCALE = 0.8
 const MODE_ICON_MAP_BY_URL = {
@@ -296,7 +284,7 @@ const GraphEditorElement = (
         name={MODE_ICON_MAP_BY_URL[mode]}
         cursor
       />
-      <EventsModal
+      <RecordedEventsModal
         timeoutManager={eventTimeoutsManager}
         onClose={() => {
           setState({ ...state })
@@ -307,101 +295,17 @@ const GraphEditorElement = (
   )
 }
 
-const extractGraphEditorData = (props: GraphEditorProps) =>
-// const x = {}
+const extractGraphEditorData = (props: GraphEditorProps) => ({
+  graphConfig: props.graphConfig,
+  label: props.label,
+  settingsBar: props.settingsBar,
+  dataBar: props.dataBar,
+  actionBar: props.actionBar,
+  mode: props.mode,
+  nodes: props.nodes,
+  edges: props.edges,
+})
 
-  ({
-    graphConfig: props.graphConfig,
-    label: props.label,
-    settingsBar: props.settingsBar,
-    dataBar: props.dataBar,
-    actionBar: props.actionBar,
-    mode: props.mode,
-    nodes: props.nodes,
-    edges: props.edges,
-  })
-
-  type EventsModalProps = {
-    timeoutManager: TimeoutManager
-    onClose: () => void
-  }
-const EventsModal = (props: EventsModalProps) => {
-  const {
-    timeoutManager,
-    onClose,
-  } = props
-  const isOpen = !timeoutManager.finished
-  const [state, setState] = React.useState({
-    alert: {
-      visible: false,
-    },
-  })
-  return (
-    <Modal
-      open={isOpen}
-      // onClose={onClose}
-      BackdropProps={{
-        style: {
-          backgroundColor: 'rgba(0, 0, 0, 0)',
-        },
-        onClick: () => {
-          setState({
-            ...state,
-            alert: {
-              ...state.alert,
-              visible: true,
-            },
-          })
-          setTimeout(() => {
-            setState({
-              ...state,
-              alert: {
-                ...state.alert,
-                visible: false,
-              },
-            })
-          }, 1500)
-        },
-      }}
-    >
-      <Paper style={{ display: 'flex', flexDirection: 'column' }}>
-        <View
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-          }}
-        >
-          <Typography variant="h6">Play Events</Typography>
-          {state.alert.visible && (
-            <Typography
-              variant="h6"
-              color="error"
-            >
-              You cannot take action while the events are playing
-            </Typography>
-          )}
-        </View>
-        <View style={{ flexDirection: 'row' }}>
-          <Button onClick={() => {
-            timeoutManager.paused
-              ? timeoutManager.start()
-              : timeoutManager.pause()
-          }}
-          >
-            {timeoutManager.paused ? 'Play' : 'Pause'}
-          </Button>
-          <Button onClick={() => {
-            onClose()
-          }}
-          >
-            Close
-          </Button>
-        </View>
-      </Paper>
-    </Modal>
-  )
-}
 /**
  * ## Usage
  * To create a GraphEditor easily, you can just pass data and render methods.

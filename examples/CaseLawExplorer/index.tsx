@@ -21,7 +21,7 @@ import { UseEffect } from '../../src/components/UseEffect'
 import {drawLine} from '../../src/components/Graphics'
 import defaultData from './data'
 import * as C from 'colay/color'
-import { getFilterSchema, getFetchSchema, VIEW_CONFIG_SCHEMA  } from './constants'
+import { getFilterSchema, getFetchSchema, VIEW_CONFIG_SCHEMA, RECORDED_EVENTS  } from './constants'
 import { EVENT } from '../../src/utils/constants'
 import {useController} from '../../src/plugins/controller'
 import {calculateStatistics} from './utils/networkStatistics'
@@ -135,6 +135,7 @@ const AppContainer = ({
       year: [1960, 2021]
     }
   })
+  
   const FILTER_SCHEMA = React.useMemo(() => getFilterSchema({
     onPopupPress: () => {}
   }), [])
@@ -149,6 +150,7 @@ const AppContainer = ({
   const filteredDataRef = React.useRef({})
   const [controllerProps, controller] = useController({
     ...data,
+    events: RECORDED_EVENTS,
     graphConfig: {
       layout: Graph.Layouts.grid,
       zoom: 0.2,

@@ -169,3 +169,83 @@ export const VIEW_CONFIG_SCHEMA = {
     },
   },
 }
+
+export const RECORDED_EVENTS = [
+  {
+      "type": "@",
+      "data": {
+          "type": "PRESS_BACKGROUND",
+          "extraData": {
+              "x": 1552.63671875,
+              "y": 2627.20703125
+          },
+          "event": {}
+      },
+      "date": "2021-02-26T07:59:37.065Z",
+      "after": 0
+  },
+  {
+      "type": "@",
+      "data": {
+          "type": "ELEMENT_SELECTED",
+          "elementId": "http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2009:BF8875",
+          "event": {
+              "data": {
+                  "originalEvent": {
+                      "metaKey": false
+                  }
+              }
+          }
+      },
+      "date": "2021-02-26T07:59:37.992Z",
+      "after": 927
+  },
+  {
+      "type": "@",
+      "data": {
+          "type": "ELEMENT_SELECTED",
+          "elementId": "http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2009:BJ7832",
+          "event": {
+              "data": {
+                  "originalEvent": {
+                      "metaKey": false
+                  }
+              }
+          }
+      },
+      "date": "2021-02-26T07:59:39.640Z",
+      "after": 1648
+  },
+  {
+      "type": "@",
+      "data": {
+          "type": "ELEMENT_SELECTED",
+          "elementId": "http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2011:BR5223",
+          "event": {
+              "data": {
+                  "originalEvent": {
+                      "metaKey": false
+                  }
+              }
+          }
+      },
+      "date": "2021-02-26T07:59:41.945Z",
+      "after": 2305
+  },
+  {
+      "type": "@",
+      "data": {
+          "type": "ELEMENT_SELECTED",
+          "elementId": "http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2012:BV1295",
+          "event": {
+              "data": {
+                  "originalEvent": {
+                      "metaKey": false
+                  }
+              }
+          }
+      },
+      "date": "2021-02-26T07:59:44.725Z",
+      "after": 2780
+  }
+]
