@@ -1,4 +1,11 @@
 import {
+  Icon,
+} from '@components/Icon'
+import {
+  Box, Button, FormControl, IconButton, InputLabel, Menu,
+  MenuItem, Select, useTheme,
+} from '@material-ui/core'
+import {
   EditorMode,
   Event,
   GraphConfig,
@@ -6,29 +13,14 @@ import {
   OnEvent,
 } from '@type'
 import { readTextFile } from '@utils'
-import { EDITOR_MODE, EVENT, LAYOUT_NAMES } from '@utils/constants'
-import React from 'react'
-import {
-  Button,
-  IconButton,
-  Menu,
-  MenuItem,
-  Box,
-  useTheme,
-  Popover,
-  FormControl,
-  InputLabel,
-  Select,
-} from '@material-ui/core'
-import {
-  Icon,
-} from '@components/Icon'
-import { useAnimation, wrapComponent, useDisclosure } from 'colay-ui'
-import Form from '@rjsf/material-ui'
+import { EDITOR_MODE, EVENT } from '@utils/constants'
+import DocumentPicker from '@utils/DocumentPicker'
+import { useAnimation, useDisclosure, wrapComponent } from 'colay-ui'
+import { Recorder } from 'colay-ui/components/Recorder'
 // import Form from 'unitx-ui/components/Form'
 import * as R from 'colay/ramda'
-import DocumentPicker from '@utils/DocumentPicker'
-import { Recorder } from 'colay-ui/components/Recorder'
+import React from 'react'
+import { LayoutOptions } from './LayoutOptions'
 
 // export const ACTION = {
 //   EXPORT_DATA: 'EXPORT_DATA',
@@ -423,135 +415,6 @@ const MoreOptions = (props: MoreOptionsProps) => {
   )
 }
 
-type LayoutOptionsValue = {
-  name?: string;
-  animationDuration?: number;
-}
-type LayoutOptionsProps = {
-  createOnActionCallback: CreateActionCallback;
-  layout?: LayoutOptionsValue;
-}
-
-const LayoutOptions = (props: LayoutOptionsProps) => {
-  const {
-    layout = {},
-    createOnActionCallback,
-  } = props
-  // const [anchorEl, setAnchorEl] = React.useState(null)
-
-  // const handleClick = (event) => {
-  //   setAnchorEl(event.currentTarget)
-  // }
-
-  // const handleClose = () => {
-  //   setAnchorEl(null)
-  // }
-  const {
-    anchorEl,
-    isOpen,
-    onClose,
-    onOpen,
-  } = useDisclosure({})
-  const onSubmitCallback = React.useCallback((e) => {
-    createOnActionCallback(
-      EVENT.LAYOUT_CHANGED,
-      {
-        form: e,
-        value: e.formData,
-      },
-    )()
-    onClose()
-  }, [createOnActionCallback])
-  // const onItemSelect = React.useCallback((layoutName: string) => {
-  //   handleClose()
-  //   createOnActionCallback(
-  //     EVENT.LAYOUT_SELECTED,
-  //     {
-  //       value: layoutName,
-  //     },
-  //   )()
-  // }, [setAnchorEl, createOnActionCallback])
-  // const animationDuration = layout.animationDuration ?? 5000
-  return (
-    <Box>
-      <Button
-        onClick={onOpen}
-        sx={{
-          color: (theme) => theme.palette.text.secondary,
-        }}
-        // variant="text"
-      >
-        {layout.name ?? 'Select Layout'}
-      </Button>
-      <Popover
-        // id={id}
-        open={isOpen}
-        anchorEl={anchorEl}
-        onClose={onClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'center',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'center',
-        }}
-        PaperProps={{
-          sx: {
-            width: { sx: '10vw', md: '50vw' },
-          },
-        }}
-      >
-        <Box
-          sx={{
-            width: { sx: '10vw', md: '50vw' },
-          }}
-        >
-          <Form
-            schema={{
-              title: 'Layout',
-              properties: {
-                name: {
-                  type: 'string',
-                  enum: LAYOUT_NAMES,
-                },
-                animationDuration: {
-                  type: 'number',
-                  minimum: 0,
-                  maximum: 10000,
-                },
-                refresh: {
-                  type: 'number',
-                  minimum: 0,
-                  maximum: 100,
-                },
-                maxIterations: {
-                  type: 'number',
-                  minimum: 0,
-                  maximum: 1000,
-                },
-                maxSimulationTime: {
-                  type: 'number',
-                  minimum: 0,
-                  maximum: 1000,
-                },
-              },
-            }}
-            extraData={[layout]}
-            formData={{
-              name: layout.name,
-              animationDuration: layout.animationDuration,
-              refresh: layout.refresh,
-              maxIterations: layout.maxIterations,
-              maxSimulationTime: layout.maxSimulationTime,
-            }}
-            onSubmit={onSubmitCallback}
-          />
-        </Box>
-      </Popover>
-    </Box>
-  )
-}
 export const ActionBar = wrapComponent<ActionBarProps>(ActionBarElement, {})
 
 const styles = {
