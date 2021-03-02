@@ -25,7 +25,7 @@
 - Label Positioning
 - Add field for LocalFilter (Degree 2<)
 - double label fontSizes
-- Euler as default layout
+- Euler as default layout // cose?
 - Layout Item explanation (as Gif or Image)
 
 # DONE

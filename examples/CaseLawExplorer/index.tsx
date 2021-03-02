@@ -155,7 +155,7 @@ const AppContainer = ({
     ...data,
     // events: RECORDED_EVENTS,
     graphConfig: {
-      layout: Graph.Layouts.euler,
+      layout: Graph.Layouts.cose,
       zoom: 0.2,
       nodes: {},
     },

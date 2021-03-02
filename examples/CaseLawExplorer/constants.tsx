@@ -71,10 +71,6 @@ export const getFilterSchema  = (props: {onPopupPress: () => void}) => {
           minimum: 0,
           maximum: 100,
         },
-        popup: {
-          title: 'More Settings',
-          type: 'boolean',
-        },
       },
     },
     uiSchema: {
@@ -89,13 +85,6 @@ export const getFilterSchema  = (props: {onPopupPress: () => void}) => {
       },
       'outdegree': {
         'ui:field': SliderUIField,
-      },
-      'popup': {
-        'ui:field': ({ formData, schema, onChange}) => {
-          return (
-            <Button onClick={onPopupPress}>Open</Button>
-          )
-        },
       },
     }
   }
