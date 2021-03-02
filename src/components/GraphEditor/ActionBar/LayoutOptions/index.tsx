@@ -38,16 +38,31 @@ export const LayoutOptions = (props: LayoutOptionsProps) => {
     onClose()
   }, [createOnActionCallback])
   return (
+
     <Box>
       <Button
         onClick={onOpen}
         sx={{
           color: (theme) => theme.palette.text.secondary,
         }}
-        // variant="text"
       >
         {layout.name ?? 'Select Layout'}
       </Button>
+      {/* <Popover
+        open={isOpen}
+        anchorEl={anchorEl}
+        PaperProps={{
+          style: {
+            width: '100%',
+            height: '100%',
+            top: 0,
+            left: 0,
+            position: 'absolute',
+            backgroundColor: 'rgba(0,0,0,0.4)',
+            zIndex: 100,
+          },
+        }}
+      /> */}
       <Popover
         // id={id}
         open={isOpen}
@@ -61,12 +76,8 @@ export const LayoutOptions = (props: LayoutOptionsProps) => {
           vertical: 'top',
           horizontal: 'center',
         }}
-        PaperProps={{
-          sx: {
-            width: { sx: '10vw', md: '50vw' },
-          },
-        }}
       >
+
         <Box
           sx={{
             width: { sx: '10vw', md: '50vw' },
@@ -86,6 +97,7 @@ export const LayoutOptions = (props: LayoutOptionsProps) => {
           />
         </Box>
       </Popover>
+
     </Box>
   )
 }

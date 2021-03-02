@@ -1,8 +1,11 @@
-import React from 'react'
-import { MenuItem, TextField, Typography } from '@material-ui/core'
-import { WidgetProps, utils } from '@rjsf/core'
+import {
+  MenuItem, Paper, Popper, TextField, Typography
+} from '@material-ui/core'
+import { utils, WidgetProps } from '@rjsf/core'
 import { LAYOUT_NAMES } from '@utils/constants'
-import { View } from 'colay-ui'
+import { useDisclosure, View } from 'colay-ui'
+import React from 'react'
+import { LAYOUT_INFO } from './layoutInfo'
 
 const { asNumber, guessType } = utils
 
@@ -66,7 +69,13 @@ const LayoutNameSelect = (props: WidgetProps) => {
   const _onFocus = ({
     target: { value },
   }: React.FocusEvent<HTMLInputElement>) => onFocus(id, processValue(schema, value))
-
+  const {
+    anchorEl,
+    isOpen,
+    onClose,
+    onOpen,
+  } = useDisclosure({})
+  const hoveredIndexRef = React.useRef(null)
   return (
     <TextField
       id={id}
@@ -94,31 +103,128 @@ const LayoutNameSelect = (props: WidgetProps) => {
             key={i}
             value={value}
             disabled={disabled}
+            onMouseEnter={(e) => {
+              hoveredIndexRef.current = i
+              onOpen(e)
+            }}
+            onMouseLeave={onClose}
           >
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                width: '100%',
+            <LayoutNameItem
+              openInfo={{
+                anchorEl,
+                isOpen: hoveredIndexRef.current === i,
               }}
-            >
-              <Typography>
-                {label}
-              </Typography>
-              <img
-                src="https://images.pexels.com/photos/6202038/pexels-photo-6202038.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500"
-                width={32}
-                height={32}
-                alt={label}
-              />
-            </View>
+              value={value}
+              label={label}
+              disabled={disabled}
+            />
           </MenuItem>
+
+        // <MenuItem
+        //   key={i}
+        //   value={value}
+        //   disabled={disabled}
+        // >
+
+        //   <View
+        //   style={{
+        //     flexDirection: 'row',
+        //     justifyContent: 'space-between',
+        //     width: '100%',
+        //   }}
+        // >
+        //   <Typography>
+        //     {label}
+        //   </Typography>
+        //   <img
+        //     src={`https://raw.githubusercontent.com/sabaturgay/assets/main/gifs/${value}Layout.gif`}
+        //     width={32}
+        //     height={32}
+        //     alt={label}
+        //   />
+        // </View>
+        // </MenuItem>
         )
       })}
     </TextField>
   )
 }
 
+type LayoutNameItemProps = {
+  value: string;
+  label: string;
+  disabled?: boolean;
+  openInfo: {
+    anchorEl: any;
+    isOpen: boolean
+  };
+}
+const LayoutNameItem = (props: LayoutNameItemProps) => {
+  const {
+    label,
+    value,
+    openInfo = {},
+  } = props
+  const {
+    isOpen,
+    anchorEl,
+  } = openInfo
+  const info = LAYOUT_INFO[value]
+  return (
+    <>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          width: '100%',
+        }}
+      >
+        <Typography>
+          {label}
+        </Typography>
+        <img
+          src={`https://raw.githubusercontent.com/sabaturgay/assets/main/gifs/${value}Layout.gif`}
+          width={32}
+          height={32}
+          alt={label}
+        />
+      </View>
+      <Popper
+        // id={id}
+        open={isOpen}
+        anchorEl={anchorEl}
+        transition
+        // disablePortal
+        placement="right-start"
+      >
+
+        <Paper
+          sx={{
+            width: { sx: '8vw', md: '50vw' },
+            display: 'flex',
+            padding: 10,
+            flexDirection: 'column',
+          }}
+        >
+          <Typography variant="h1">
+            {info.title}
+          </Typography>
+          <img
+            src={info.image}
+            width={250}
+            height={250}
+            alt={label}
+          />
+          <Typography
+            variant="body1"
+          >
+            {info.content}
+          </Typography>
+        </Paper>
+      </Popper>
+    </>
+  )
+}
 export const getFormProps = () => ({
   schema: {
     title: 'Layout',
