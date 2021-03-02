@@ -7,7 +7,8 @@ import { RenderNode as RenderNodeType,  } from '../../src/type'
 
 export type RenderNodeProps = Parameters<RenderNodeType>[0]
 
-const DEFAULT_FONT_SIZE = 16
+const DEFAULT_FONT_SIZE = 20
+const TOP_SCALE = 3.1
 export const RenderNode = ({
    item, element, cy, theme,
    visualization, 
@@ -22,26 +23,55 @@ export const RenderNode = ({
   ) : theme.palette.background.paper
   const hasSelectedEdge = element.connectedEdges(':selected').length > 0
   const textRef = React.useRef(null)
-  const configRef = React.useRef({
-    fontSize: DEFAULT_FONT_SIZE
+  const localDataRef = React.useRef({
+    scale: {
+      x: 1,
+      y: 1
+    },
+    text: {
+      top: - DEFAULT_FONT_SIZE * TOP_SCALE,
+      left:- DEFAULT_FONT_SIZE / 2, 
+    }
   })
   React.useEffect(() => {
-    if (graphRef.current.viewport) {
-      graphRef.current.viewport.on('zoomed',() => {
-        // return
+    const onZoom = () => {
         const xScale = 1/graphRef.current.viewport.scale.x
         const yScale = 1/graphRef.current.viewport.scale.y
-        if (xScale > 1 && xScale < 5) {
+        localDataRef.current.scale.x = xScale
+        localDataRef.current.scale.y = yScale
+        if (xScale >= 1 && xScale <= 5) {
           textRef.current.scale.x = xScale
           textRef.current.scale.y = yScale
+          const top =  - DEFAULT_FONT_SIZE * TOP_SCALE * yScale
+          const left =  (- DEFAULT_FONT_SIZE/2 +6) * xScale
+          // if (text === 'BC6699') {
+          //   console.log(top, left)
+          // }
+          return
+          textRef.current.__yoga.top =  top
+            textRef.current.__yoga.left =  left
+            localDataRef.current.text.top = top
+            localDataRef.current.text.left = left
+            if (text === 'BC6699') {
+              console.log(top, left)
+            }
+          
+          
+          
         }
+    }
+    if (graphRef.current.viewport) {
+      onZoom()
+      graphRef.current.viewport.on('zoomed',() => {
+        // return
+        onZoom()
       })
     }
     
   }, [graphRef.current.viewport])
   
   return (
-    <Graph.Pressable
+    <Graph.View
       style={{
         width: size,
         height: size,
@@ -53,14 +83,9 @@ export const RenderNode = ({
         : (element.selected()
           ? theme.palette.primary.main
           : color),
-        // hasSelectedEdge
-        //   ? theme.palette.secondary.main
-        //   : (element.selected()
-        //     ? theme.palette.primary.main
-        //     : theme.palette.background.paper),
         borderRadius: size,
       }}
-      onPress={(e) => {
+      click={(e) => {
         cy.$(':selected').unselect()
         element.select()
       }}
@@ -69,15 +94,15 @@ export const RenderNode = ({
         ref={textRef}
         style={{
           position: 'absolute',
-          top: -size/1.5,
-          left: 20,
-          fontSize: configRef.current.fontSize
+          // left: localDataRef.current.text.left,
+          top: localDataRef.current.text.top,
+          fontSize: DEFAULT_FONT_SIZE
         }}
         isSprite
       >
         {text}
       </Graph.Text>
-    </Graph.Pressable>
+    </Graph.View>
   )
 }
 

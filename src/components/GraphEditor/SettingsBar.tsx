@@ -2,6 +2,7 @@ import React from 'react'
 import {
   wrapComponent,
   useAnimation,
+  View,
 } from 'colay-ui'
 import {
   Paper,
@@ -79,12 +80,14 @@ const SettingsBarElement = (props: SettingsBarProps) => {
         ...animationStyle,
       }}
     >
-      <Box style={{
-        overflowY: 'auto',
-        overflowX: 'hidden',
-        paddingRight: 10,
-        paddingLeft: 10,
-      }}
+      <View
+        style={{
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          paddingRight: 10,
+          paddingLeft: 10,
+          height: '100%',
+        }}
       >
         {
         forms.map((form, index) => (
@@ -110,7 +113,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
           </Form>
         ))
       }
-      </Box>
+      </View>
       <IconButton
         style={styles.icon}
         onClick={createOnActionCallback(EVENT.TOGGLE_FILTER_BAR)}

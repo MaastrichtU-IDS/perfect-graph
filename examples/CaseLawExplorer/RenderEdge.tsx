@@ -7,7 +7,7 @@ import { RenderEdge as RenderEdgeType,  } from '../../src/type'
 
 export type RenderEdgeProps = Parameters<RenderEdgeType>[0]
 
-const DEFAULT_FONT_SIZE = 12
+const DEFAULT_FONT_SIZE = 16
 
 export const RenderEdge = ({
    item, element, cy, theme,
@@ -21,15 +21,19 @@ export const RenderEdge = ({
     fontSize: DEFAULT_FONT_SIZE
   })
   React.useEffect(() => {
-    if (graphRef.current.viewport) {
-      graphRef.current.viewport.on('zoomed-end', () => {
-        // return
-        const xScale = 1/graphRef.current.viewport.scale.x
+    const onZoom = () => {
+      const xScale = 1/graphRef.current.viewport.scale.x
         const yScale = 1/graphRef.current.viewport.scale.y
-        if (xScale > 1 && xScale < 5){
+        if (xScale >= 1 && xScale <= 5){
           textRef.current.scale.x = xScale
           textRef.current.scale.y = yScale
         }
+    }
+    if (graphRef.current.viewport) {
+      onZoom()
+      graphRef.current.viewport.on('zoomed', () => {
+        // return
+        onZoom()
       })
     }
     
@@ -55,7 +59,7 @@ export const RenderEdge = ({
                   // position: 'absolute',
                   // top: -40,
                   // backgroundColor: DefaultTheme.palette.background.paper,
-                  fontSize: configRef.current.fontSize
+                  fontSize: DEFAULT_FONT_SIZE
                 }}
                 isSprite
               >

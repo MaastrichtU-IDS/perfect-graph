@@ -132,7 +132,10 @@ const AppContainer = ({
       nodeColor: null
     },
     filtering: {
-      year: [1960, 2021]
+      year: [1960, 2021],
+      degree: [0, 100],
+      indegree: [0, 100],
+      outdegree: [0, 100]
     }
   })
   
@@ -152,13 +155,13 @@ const AppContainer = ({
     ...data,
     // events: RECORDED_EVENTS,
     graphConfig: {
-      layout: Graph.Layouts.grid,
+      layout: Graph.Layouts.euler,
       zoom: 0.2,
       nodes: {},
     },
     settingsBar: {
-      opened: false,
-      forms: [FETCH_SCHEMA, VIEW_CONFIG_SCHEMA, FILTER_SCHEMA, ]
+      opened: true,
+      forms: [FETCH_SCHEMA, VIEW_CONFIG_SCHEMA, {...FILTER_SCHEMA,  formData: configRef.current.filtering}, ]
     },
     dataBar: {
       editable: false,
@@ -187,8 +190,20 @@ const AppContainer = ({
             }
             draft.graphConfig.nodes.filter =  {
               test: ({ element,item }) => {
-                const year = configRef.current.filtering.year
-                  return R.inBetween(year[0], year[1])(item.data.year)
+                const {
+                  year,
+                  degree,
+                  indegree,
+                  outdegree
+                 }= extraData.value
+                 console.log(extraData.value)
+                  return (
+                    R.inBetween(year[0], year[1])(item.data.year)
+                      && R.inBetween(degree[0], degree[1])(element.degree())
+                      && R.inBetween(indegree[0], indegree[1])(element.indegree())
+                      && R.inBetween(outdegree[0], outdegree[1])(element.outdegree())
+                      
+                    )
                 },
                 settings: {
                   opacity: 0.2

@@ -1,6 +1,25 @@
 import React from 'react'
-import {Button, Slider } from '@material-ui/core'
+import {Button, Slider, Typography} from '@material-ui/core'
 
+const SliderUIField = ({ formData, schema, onChange, name}) => {
+  return (
+    <>
+    <Typography id="continuous-slider" gutterBottom>
+        {schema.title ?? name}
+    </Typography>
+    <Slider
+      value={formData ?? [schema.minimum, schema.maximum ]}
+      onChange={(e) => {
+        onChange(e.target.value)
+      }}
+      valueLabelDisplay="auto"
+      aria-labelledby="range-slider"
+      min={schema.minimum}
+      max={schema.maximum}
+    />
+    </>
+  )
+}
 export const getFilterSchema  = (props: {onPopupPress: () => void}) => {
   const {
      onPopupPress
@@ -28,6 +47,30 @@ export const getFilterSchema  = (props: {onPopupPress: () => void}) => {
           minimum: 1969,
           maximum: 2015,
         },
+        degree: {
+          type: 'array',
+          items: {
+            type: 'number',
+          },
+          minimum: 0,
+          maximum: 100,
+        },
+        indegree: {
+          type: 'array',
+          items: {
+            type: 'number',
+          },
+          minimum: 0,
+          maximum: 100,
+        },
+        outdegree: {
+          type: 'array',
+          items: {
+            type: 'number',
+          },
+          minimum: 0,
+          maximum: 100,
+        },
         popup: {
           title: 'More Settings',
           type: 'boolean',
@@ -36,28 +79,16 @@ export const getFilterSchema  = (props: {onPopupPress: () => void}) => {
     },
     uiSchema: {
       'year': {
-        'ui:field': ({ formData, schema, onChange}) => {
-          return (
-            <Slider
-              value={formData ?? [schema.minimum, schema.maximum ]}
-              onChange={(e) => {
-                onChange(e.target.value)
-              }}
-              valueLabelDisplay="auto"
-              aria-labelledby="range-slider"
-              min={schema.minimum}
-              max={schema.maximum}
-              // getAriaValueText={(text)=> text}
-            />
-            // <RangeSlider
-            //   style={{ width: '90%', height: 40 }}
-              // min={schema.minimum}
-              // max={schema.maximum}
-            //   value={formData}
-            //   onValueChange={onChange}
-            // />
-          )
-        },
+        'ui:field': SliderUIField,
+      },
+      'degree': {
+        'ui:field': SliderUIField,
+      },
+      'indegree': {
+        'ui:field': SliderUIField,
+      },
+      'outdegree': {
+        'ui:field': SliderUIField,
       },
       'popup': {
         'ui:field': ({ formData, schema, onChange}) => {
