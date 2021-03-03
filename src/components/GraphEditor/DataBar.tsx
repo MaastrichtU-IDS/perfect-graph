@@ -155,7 +155,12 @@ export const DataBar = (props: DataBarProps) => {
           top: 0,
           fontSize: 24,
         }}
-        onClick={createOnActionCallback(EVENT.TOGGLE_DATA_BAR)}
+        onClick={() => {
+          onEvent({
+            type: EVENT.TOGGLE_DATA_BAR,
+            avoidHistoryRecording: true,
+          })
+        }}
       >
         <Icon
           name="info_outlined"

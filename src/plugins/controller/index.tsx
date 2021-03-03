@@ -16,6 +16,7 @@ import { getSelectedItemByElement } from '@utils'
 import { download } from 'colay-ui/utils'
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import * as R from 'colay/ramda'
+import { createHistory } from '@utils/createHistory'
 
 type ControllerOptions = {
   // onEvent?: (info: EventInfo, draft: ControllerState) => boolean;
@@ -54,6 +55,16 @@ export const useController = (
       useControllerData,
     ]) as UseControllerData, [], // useControllerData
   )
+  const history = React.useMemo(() => createHistory({
+    onAction: (event) => {
+      // const {
+      //   actions,
+      //   name,
+      //   type
+      // } = event
+      console.log(event)
+    },
+  }), [])
   const [state, update] = useImmer(controllerConfig)
   const localGraphEditorRef = React.useRef(null)
   const graphEditorRef = _graphEditorRef ?? localGraphEditorRef
@@ -72,6 +83,8 @@ export const useController = (
       dataItem = {} as DataItem,
       event,
       elementId,
+      avoidEventRecording,
+      avoidHistoryRecording,
       // element,
       // graphEditor,
       // graphEditor,
@@ -85,16 +98,36 @@ export const useController = (
     // let recordableEvent = true
     update((draft) => {
       try {
-        if (draft.actionBar?.eventRecording && type !== EVENT.TOGGLE_RECORD_EVENTS) {
-          const _event = R.pickPaths([
-            ['data', 'originalEvent', 'metaKey'],
-          ])(event)
+        const recordableOriginalEvent = R.pickPaths([
+          ['data', 'originalEvent', 'metaKey'],
+        ])(event)
+        if (!avoidHistoryRecording) {
+          history.add({
+            doActions: [
+              {
+                ...eventInfo,
+                event: recordableOriginalEvent,
+              },
+            ],
+            undoActions: [
+              {
+                ...eventInfo,
+                event: recordableOriginalEvent,
+              },
+            ],
+          })
+        }
+        if (
+          draft.actionBar?.eventRecording
+          && type !== EVENT.TOGGLE_RECORD_EVENTS
+          && !avoidEventRecording
+        ) {
           const lastEvent = R.last(localDataRef.current.recordedEvents)
           localDataRef.current.recordedEvents.push({
             type: '@',
             data: {
               ...eventInfo,
-              event: _event,
+              event: recordableOriginalEvent,
             },
             date: new Date(),
             after: lastEvent ? new Date() - new Date(lastEvent.date) : 0,
@@ -111,6 +144,12 @@ export const useController = (
         const targetDataList = item?.data!// getSelectedItemByElement(element, draft).data
 
         switch (type) {
+          case EVENT.REDO_EVENT:
+            history.redo()
+            break
+          case EVENT.UNDO_EVENT:
+            history.undo()
+            break
           case EVENT.UPDATE_DATA:
             item.data = extraData.value
             break

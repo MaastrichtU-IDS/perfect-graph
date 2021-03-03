@@ -28,7 +28,7 @@ import {useController} from '../../src/plugins/controller'
 import {calculateStatistics} from './utils/networkStatistics'
 import {RenderNode} from './RenderNode'
 import {RenderEdge} from './RenderEdge'
-import {listCases} from './API'
+// import * as API from './API'
 import {QueryBuilder} from './QueryBuilder'
 // import { Data } from '../../components/Graph/Default'
 
@@ -413,6 +413,7 @@ const AppContainer = ({
           draft.queryBuilder.visible = false
           draft.queryBuilder.query = query
           alert(JSON.stringify(query))
+          // const data = API.complexQuery(query)
           // QueryCallback(query)
         })}
       />

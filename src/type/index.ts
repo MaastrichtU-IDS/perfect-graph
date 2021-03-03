@@ -243,6 +243,8 @@ export type EventInfo = {
   dataItem?: DataItem;
   index?: number;
   event?: PIXI.InteractionEvent;
+  avoidEventRecording?: boolean;
+  avoidHistoryRecording?: boolean;
 }
 
 export type OnEvent = (eventInfo: EventInfo) => void

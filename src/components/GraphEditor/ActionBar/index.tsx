@@ -299,8 +299,13 @@ const ActionBarElement = (props: ActionBarProps) => {
         />
       </Box>
       <IconButton
-        onClick={createOnActionCallback(EVENT.TOGGLE_ACTION_BAR)}
         style={styles.icon}
+        onClick={() => {
+          onEvent({
+            type: EVENT.TOGGLE_ACTION_BAR,
+            avoidHistoryRecording: true,
+          })
+        }}
       >
         <Icon
           name="build_circle_outlined"

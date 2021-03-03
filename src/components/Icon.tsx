@@ -21,7 +21,9 @@ import {
   FiberManualRecord,
   Settings,
   BuildCircleOutlined,
-  MoreVert
+  MoreVert,
+  Redo,
+  Undo,
 } from '@material-ui/icons'
 import { IconProps } from '@material-ui/core'
 
@@ -48,6 +50,8 @@ const ICONS = {
   videocam: Videocam,
   fiber_manual_record: FiberManualRecord,
   settings: Settings,
+  redo: Redo,
+  undo: Undo,
 } as const
 
 type IconName = keyof typeof ICONS

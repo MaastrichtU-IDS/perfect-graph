@@ -45,3 +45,38 @@ export async function listCases() {
     console.log('error creating node:', err)
   }
 }
+
+const COMPLEX_QUERY = `query ListCases($query) {
+  complexQuery(query: $query) {
+    items {
+      abstract
+      country
+      court
+      date
+      doctype
+      id
+      subject
+    }
+  }
+}`
+
+export async function complexQuery(query: any) {
+  try {
+    const listCasesResult = await API.graphql({
+      query: COMPLEX_QUERY,
+      authMode: API_AUTH_MODE.API_KEY,
+      variables: query
+    })
+    const caseResults = listCasesResult.data.listCaselaws.items
+    return caseResults
+    // return caseResults.map(project => ({
+    //   // ...project,
+    //   nodes: project.nodes.items.map(convertJSONStringFields),
+    //   // edges: project.edges.items.map(convertJSONStringFields),
+    // }))
+  } catch (err) {
+    console.log('error creating node:', err)
+  }
+}
+
+

@@ -6,7 +6,7 @@ import {
 } from 'colay-ui'
 import {
   Paper,
-  Box,
+  Typography,
   IconButton,
   Button,
 } from '@material-ui/core'
@@ -40,6 +40,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
     onEvent,
     // schema = {},
     forms = [],
+    history,
     // children,
     // ...formProps
   } = props
@@ -86,7 +87,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
           overflowX: 'hidden',
           paddingRight: 10,
           paddingLeft: 10,
-          height: '100%',
+          height: '50%',
         }}
       >
         {
@@ -114,9 +115,74 @@ const SettingsBarElement = (props: SettingsBarProps) => {
         ))
       }
       </View>
+      <View
+        style={{
+          overflowY: 'auto',
+          overflowX: 'hidden',
+          paddingRight: 10,
+          paddingLeft: 10,
+          height: '50%',
+        }}
+      >
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'space-between',
+            width: '70%',
+          }}
+        >
+          <Typography
+            variant="h6"
+          >
+            History
+          </Typography>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'space-between',
+            }}
+          >
+            <IconButton
+              onClick={() => {
+                onEvent({
+                  type: EVENT.UNDO_EVENT,
+                  avoidEventRecording: true,
+                  avoidHistoryRecording: true,
+                })
+              }}
+            >
+              <Icon
+                name="undo"
+              />
+            </IconButton>
+            <IconButton
+              onClick={() => {
+                onEvent({
+                  type: EVENT.REDO_EVENT,
+                  avoidEventRecording: true,
+                  avoidHistoryRecording: true,
+                })
+              }}
+            >
+              <Icon
+                name="redo"
+              />
+            </IconButton>
+          </View>
+        </View>
+
+        {/* {
+          history.events.map()
+        } */}
+      </View>
       <IconButton
         style={styles.icon}
-        onClick={createOnActionCallback(EVENT.TOGGLE_FILTER_BAR)}
+        onClick={() => {
+          onEvent({
+            type: EVENT.TOGGLE_FILTER_BAR,
+            avoidHistoryRecording: true,
+          })
+        }}
       >
         <Icon
           name="settings"
