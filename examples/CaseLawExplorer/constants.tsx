@@ -194,7 +194,7 @@ export const RECORDED_EVENTS = [
       "type": "@",
       "data": {
           "type": "PRESS_BACKGROUND",
-          "extraData": {
+          "payload": {
               "x": 1552.63671875,
               "y": 2627.20703125
           },

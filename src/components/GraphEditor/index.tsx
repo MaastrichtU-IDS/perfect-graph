@@ -174,7 +174,7 @@ const GraphEditorElement = (
         onPress={({ position }) => {
           onEventCallback({
             type: EVENT.PRESS_BACKGROUND,
-            extraData: position,
+            payload: position,
           })
         }}
         renderNode={({ item, element, ...rest }) => (
@@ -261,7 +261,7 @@ const GraphEditorElement = (
               case EVENT.EXPORT_DATA:
                 onEventCallback({
                   type: EVENT.EXPORT_DATA,
-                  extraData: {
+                  payload: {
                     value: extractGraphEditorData(props),
                   },
                 })
@@ -270,7 +270,7 @@ const GraphEditorElement = (
               default:
                 onEventCallback({
                   type,
-                  extraData: value,
+                  payload: value,
                 })
                 break
             }

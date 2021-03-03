@@ -16,7 +16,7 @@ export type DataEditorProps = {
   data: DataItem[];
   onEvent: (param: {
     type: EventType;
-    extraData: any;
+    payload: any;
     index?: number;
     item?: DataItem;
   }) => void;
@@ -43,8 +43,8 @@ const DataEditorElement = (props: DataEditorProps) => {
         <ListItem key={`${index}`}>
           <TripleItem
             {...item}
-            onEvent={(type, extraData) => onEvent({
-              extraData, index, item, type,
+            onEvent={({type, payload}) => onEvent({
+              payload, index, item, type,
             })}
             isLocalLabel={R.equals(localLabel, [ELEMENT_DATA_FIELDS.DATA, item.name])}
             isGlobalLabel={R.equals(globalLabel, [ELEMENT_DATA_FIELDS.DATA, item.name])}
@@ -58,7 +58,7 @@ const DataEditorElement = (props: DataEditorProps) => {
           <NewTripleItem
             onAdd={(item) => onEvent({
               type: EVENT.ADD_DATA,
-              extraData: item,
+              payload: item,
             })}
           />
         </ListItem>

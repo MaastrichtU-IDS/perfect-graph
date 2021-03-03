@@ -40,8 +40,8 @@ export const IconBox = (props: IconBoxProps) => {
         }}
       >
         <IconButton
-          onClick={() => onEvent(EVENT.MAKE_DATA_LABEL)}
-          onDoubleClick={() => onEvent(EVENT.MAKE_DATA_LABEL_FIRST)}
+          onClick={() => onEvent({ type: EVENT.MAKE_DATA_LABEL })}
+          onDoubleClick={() => onEvent({ type: EVENT.MAKE_DATA_LABEL_FIRST })}
         >
           <Icon
             name={isLocalLabel ? 'bookmark' : 'bookmark_border'}
@@ -61,8 +61,8 @@ export const IconBox = (props: IconBoxProps) => {
         />
         )} */}
         <IconButton
-          onClick={() => onEvent(EVENT.MAKE_GLOBAL_DATA_LABEL)}
-          onDoubleClick={() => onEvent(EVENT.MAKE_GLOBAL_DATA_LABEL_FIRST)}
+          onClick={() => onEvent({ type: EVENT.MAKE_GLOBAL_DATA_LABEL })}
+          onDoubleClick={() => onEvent({ type: EVENT.MAKE_GLOBAL_DATA_LABEL_FIRST })}
         >
           <Icon
             name={isLocalLabel ? 'bookmarks' : 'bookmark_border'}
@@ -90,7 +90,7 @@ export const IconBox = (props: IconBoxProps) => {
         </IconButton>
         {extended && (
         <IconButton
-          onClick={() => onEvent(EVENT.DELETE_DATA)}
+          onClick={() => onEvent({ type: EVENT.DELETE_DATA })}
         >
           <Icon
             name="delete_rounded"

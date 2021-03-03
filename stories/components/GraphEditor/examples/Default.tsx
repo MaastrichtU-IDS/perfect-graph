@@ -29,17 +29,12 @@ export const DefaultElement = () => {
     },
     onEvent: ({
       type,
-      extraData,
+      payload,
       element
     }) => {
       switch (type) {
         
         case EVENT.SETTINGS_FORM_CHANGED:{
-          // if (extraData.form.schema.title === FILTER_SCHEMA.schema.title) {
-
-          // } else {
-          //   configRef.current.visualization = extraData.value
-          // }
           break
         }
       

@@ -22,7 +22,7 @@ import { CYTOSCAPE_EVENT } from '@utils/constants'
 import { Viewport, ViewportProps } from '../Viewport'
 import { NodeContainer } from '../NodeContainer'
 import { EdgeContainer } from '../EdgeContainer'
-import { Pressable } from '../Pressable'
+// import { Pressable } from '../Pressable'
 import { Text as GraphText } from '../Text'
 import { View as GraphView } from '../View'
 

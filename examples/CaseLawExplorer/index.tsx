@@ -184,17 +184,17 @@ const AppContainer = ({
     },
     onEvent: ({
       type,
-      extraData,
+      payload,
       elementId,
       graphRef,
     },draft) => {
       switch (type) {
         case EVENT.SETTINGS_FORM_CHANGED:{
-          draft.settingsBar.forms[extraData.index].formData = extraData.value
-          if (extraData.form.schema.title === FILTER_SCHEMA.schema.title) {
+          draft.settingsBar.forms[payload.index].formData = payload.value
+          if (payload.form.schema.title === FILTER_SCHEMA.schema.title) {
             configRef.current = {
               ...configRef.current,
-              filtering: extraData.value
+              filtering: payload.value
             }
             draft.graphConfig.nodes.filter =  {
               test: ({ element,item }) => {
@@ -203,8 +203,7 @@ const AppContainer = ({
                   degree,
                   indegree,
                   outdegree
-                 }= extraData.value
-                 console.log(extraData.value)
+                 }= payload.value
                   return (
                     R.inBetween(year[0], year[1])(item.data.year)
                       && R.inBetween(degree[0], degree[1])(element.degree())
@@ -221,7 +220,7 @@ const AppContainer = ({
           } else {
             configRef.current = {
               ...configRef.current,
-              visualization: extraData.value
+              visualization: payload.value
             }
           }
           return false
@@ -229,8 +228,8 @@ const AppContainer = ({
         }
       
         case EVENT.CHANGE_THEME:{
-          draft.graphConfig.theme = THEMES[extraData]
-          changeMUITheme(extraData)
+          draft.graphConfig.theme = THEMES[payload]
+          changeMUITheme(payload)
           return false
           break
         }
@@ -309,7 +308,7 @@ const AppContainer = ({
       <GraphEditor
         ref={graphEditorRef}
         {...controllerProps}
-        extraData={[configRef.current]}
+        payload={[configRef.current]}
         style={{ width: '100%', height: 800, }}
         renderNode={(props) => (
           <RenderNode

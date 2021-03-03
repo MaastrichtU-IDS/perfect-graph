@@ -48,17 +48,6 @@ export const DataBar = (props: DataBarProps) => {
   React.useEffect(() => {
     animationRef.current?.play?.(opened)
   }, [animationRef, opened])
-  const createOnActionCallback = React.useCallback(
-    (
-      type: Event,
-      extraData?: any,
-      // @ts-ignore
-    ) => () => onEvent?.({ type, extraData }),
-    [onEvent],
-  )
-  // React.useEffect(() => {
-  //   animationRef?.current?.start()
-  // }, [])
   return (
     <Paper
       style={{

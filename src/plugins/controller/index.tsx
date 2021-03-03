@@ -43,6 +43,55 @@ GraphEditorProps,
 //   UseControllerData,
 //   {},
 // ]
+const getUndoActions = (events: EventInfo[]) => {
+  const addHistory = true
+  const undoActions: EventInfo[] = R.unnest(
+    events.map((event): EventInfo[] => {
+      const {
+        item,
+        type,
+      } = event
+      switch (type) {
+        case EVENT.ADD_NODE:
+          return [
+            {
+              type: EVENT.DELETE_NODE,
+              item,
+            },
+          ]
+        case EVENT.DELETE_EDGE:
+          return [
+            {
+              type: EVENT.ADD_EDGE,
+              item,
+            },
+          ]
+        case EVENT.DELETE_NODE:
+          return [
+            {
+              type: EVENT.ADD_NODE,
+              item,
+            },
+          ]
+        case EVENT.LAYOUT_CHANGED:
+          return [
+            {
+              type: EVENT.LAYOUT_CHANGED,
+              payload
+            },
+          ]
+
+        default:
+          break
+      }
+      return []
+    }),
+  )
+  return {
+    addHistory,
+    undoActions,
+  }
+}
 
 export const useController = (
   useControllerData: UseControllerData,
@@ -78,16 +127,13 @@ export const useController = (
   const onEvent = React.useCallback((eventInfo: EventInfo) => {
     const {
       type,
-      extraData = {},
+      payload = {},
       index = 0,
       dataItem = {} as DataItem,
       event,
       elementId,
       avoidEventRecording,
       avoidHistoryRecording,
-      // element,
-      // graphEditor,
-      // graphEditor,
     } = eventInfo
     const graphEditor = graphEditorRef.current
     const element = elementId
@@ -95,7 +141,6 @@ export const useController = (
       : null
     const isNode = element?.isNode()
     const targetPath = isNode ? 'nodes' : 'edges'
-    // let recordableEvent = true
     update((draft) => {
       try {
         const recordableOriginalEvent = R.pickPaths([
@@ -151,12 +196,12 @@ export const useController = (
             history.undo()
             break
           case EVENT.UPDATE_DATA:
-            item.data = extraData.value
+            item.data = payload.value
             break
           case EVENT.ADD_DATA:
             targetDataList.push({
-              ...extraData,
-              value: [extraData.value],
+              ...payload,
+              value: [payload.value],
             })
             break
           case EVENT.MAKE_DATA_LABEL: {
@@ -167,7 +212,7 @@ export const useController = (
             } else {
               draft.label[targetPath][item.id] = newLabel
             }
-            // targetDataList[index].name = extraData.value
+            // targetDataList[index].name = payload.value
             break
           }
           case EVENT.MAKE_DATA_LABEL_FIRST: {
@@ -189,7 +234,7 @@ export const useController = (
               // @ts-ignore
               [EDITOR_MODE.ADD, EDITOR_MODE.CONTINUES_ADD].includes(draft.mode)
             ) {
-              const position = extraData
+              const position = payload
               draft.nodes.push({
                 id: `${draft.nodes.length + 1}`, // R.uuid(),
                 position,
@@ -278,42 +323,42 @@ export const useController = (
             break
           }
           case EVENT.MODE_CHANGED: {
-            draft.mode = extraData.value
+            draft.mode = payload.value
             localDataRef.current.targetNode.current = null
             break
           }
           case EVENT.CHANGE_DATA_NAME:
-            targetDataList[index].name = extraData.value
+            targetDataList[index].name = payload.value
             break
           case EVENT.CHANGE_DATA_VALUE:
-            targetDataList[index].value[extraData.valueIndex] = getValueByType(
+            targetDataList[index].value[payload.valueIndex] = getValueByType(
               dataItem.type!,
-              extraData.value,
+              payload.value,
             )
             break
           case EVENT.ADD_DATA_VALUE:
-            targetDataList[index].value.push(extraData.value)
+            targetDataList[index].value.push(payload.value)
             break
           case EVENT.DELETE_DATA_VALUE:
-            targetDataList[index].value.splice(extraData.valueIndex, 1)
+            targetDataList[index].value.splice(payload.valueIndex, 1)
             break
           case EVENT.DATA_VALUE_UP: {
             const { value } = targetDataList[index]
             const { length } = value
-            const temporary = value[extraData.valueIndex]
-            const changeIndex = (extraData.valueIndex === 0
+            const temporary = value[payload.valueIndex]
+            const changeIndex = (payload.valueIndex === 0
               ? (length - 1)
-              : (extraData.valueIndex - 1)) % length
-            value[extraData.valueIndex] = value[changeIndex]
+              : (payload.valueIndex - 1)) % length
+            value[payload.valueIndex] = value[changeIndex]
             value[changeIndex] = temporary
             break
           }
           case EVENT.DATA_VALUE_DOWN: {
             const { value } = targetDataList[index]
             const { length } = value
-            const temporary = value[extraData.valueIndex]
-            const changeIndex = (extraData.valueIndex + 1) % length
-            value[extraData.valueIndex] = value[changeIndex]
+            const temporary = value[payload.valueIndex]
+            const changeIndex = (payload.valueIndex + 1) % length
+            value[payload.valueIndex] = value[changeIndex]
             value[changeIndex] = temporary
             break
           }
@@ -322,31 +367,29 @@ export const useController = (
             break
 
           case EVENT.CHANGE_DATA_NAME_ADDITIONAL: {
-            const additionalItem = targetDataList[index]!.additional![extraData.index]!
-            additionalItem.name = extraData.value
+            const additionalItem = targetDataList[index]!.additional![payload.index]!
+            additionalItem.name = payload.value
             break
           }
           case EVENT.CHANGE_DATA_VALUE_ADDITIONAL: {
-            const additionalItem = targetDataList[index]!.additional![extraData.index]
-            targetDataList[index]!.additional![extraData.index].value[extraData.valueIndex] = getValueByType(
-              additionalItem.type, extraData.value,
+            const additionalItem = targetDataList[index]!.additional![payload.index]
+            targetDataList[index]!.additional![payload.index].value[payload.valueIndex] = getValueByType(
+              additionalItem.type, payload.value,
             )
             break
           }
           case EVENT.ADD_DATA_ADDITIONAL:
-            targetDataList[index]!.additional!.push(extraData)
+            targetDataList[index]!.additional!.push(payload)
             break
           case EVENT.ADD_DATA_VALUE_ADDITIONAL: {
-            // const additionalItem = targetDataList[index]!.additional![extraData.index]!
-            // additionalItem.type === DATA_TYPE.number ? 0 : ''
-            targetDataList[index]!.additional![extraData.index].value.push(extraData.value)
+            targetDataList[index]!.additional![payload.index].value.push(payload.value)
             break
           }
           case EVENT.DELETE_DATA_VALUE_ADDITIONAL:
-            targetDataList[index]!.additional![extraData.index].value.splice(extraData.valueIndex, 1)
+            targetDataList[index]!.additional![payload.index].value.splice(payload.valueIndex, 1)
             break
           case EVENT.DELETE_DATA_ADDITIONAL:
-            targetDataList[index]!.additional!.splice(extraData.index, 1)
+            targetDataList[index]!.additional!.splice(payload.index, 1)
             break
           case EVENT.TOGGLE_FILTER_BAR:
             draft.settingsBar!.opened = !draft.settingsBar?.opened
@@ -360,16 +403,13 @@ export const useController = (
           case EVENT.IMPORT_DATA:
             R.mapObjIndexed((value, key) => {
               draft[key] = value
-            })(extraData.value)
+            })(payload.value)
             break
           case EVENT.IMPORT_EVENTS:
-            // R.mapObjIndexed((value, key) => {
-            //   draft[key] = value
-            // })(extraData.value)
-            draft.events = [...(extraData.value ?? [])]
+            draft.events = [...(payload.value ?? [])]
             break
           case EVENT.EXPORT_DATA:
-            download(JSON.stringify(extraData.value), 'perfect-graph.json')
+            download(JSON.stringify(payload.value), 'perfect-graph.json')
             break
           case EVENT.TOGGLE_RECORD:
             draft.actionBar.recording = !draft.actionBar?.recording
@@ -382,29 +422,17 @@ export const useController = (
             draft.actionBar.eventRecording = !draft.actionBar?.eventRecording
             break
           case EVENT.RECORD_FINISHED:
-            download(eventInfo.extraData.value, 'perfect-graph.mp4')
+            download(eventInfo.payload.value, 'perfect-graph.mp4')
             break
-          case EVENT.LAYOUT_SELECTED: {
-            const animationDuration = draft.graphConfig.layout?.animationDuration ?? 5000
-            draft.graphConfig.layout = GraphLayouts[extraData.value]
-            draft.graphConfig.layout.animationDuration = animationDuration
-            break
-          }
           case EVENT.LAYOUT_CHANGED: {
             let layout
-            if (extraData.value.name) {
+            if (payload.value.name) {
               layout = R.pickBy((val) => R.isNotNil(val))({
-                ...GraphLayouts[extraData.value.name],
-                ...extraData.value,
+                ...GraphLayouts[payload.value.name],
+                ...payload.value,
               })
             }
             draft.graphConfig.layout = layout
-            break
-          }
-          case EVENT.LAYOUT_ANIMATION_DURATION_CHANGED: {
-            if (draft.graphConfig?.layout) {
-              draft.graphConfig.layout.animationDuration = eventInfo.extraData.value
-            }
             break
           }
           default:

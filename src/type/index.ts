@@ -239,7 +239,7 @@ export type EventInfo = {
   type: Event;
   item: ElementData;
   elementId: string;
-  extraData?: any;
+  payload?: any;
   dataItem?: DataItem;
   index?: number;
   event?: PIXI.InteractionEvent;

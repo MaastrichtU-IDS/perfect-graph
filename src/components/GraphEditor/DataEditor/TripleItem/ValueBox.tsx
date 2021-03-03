@@ -34,7 +34,10 @@ export const ValueBox = (props: ValueBoxProps) => {
                   <TripleInput
                     placeholder="Enter Value"
                     value={valueItem}
-                    onValueChange={(value) => onEvent(EVENT.CHANGE_DATA_VALUE, { value, valueIndex })}
+                    onValueChange={(value) => onEvent({
+                      type: EVENT.CHANGE_DATA_VALUE,
+                      payload: { value, valueIndex },
+                    })}
                     // type={type}
                   />
                   <Box
@@ -43,7 +46,10 @@ export const ValueBox = (props: ValueBoxProps) => {
                     {
                     isMulti && (
                     <IconButton
-                      onClick={() => onEvent(EVENT.DELETE_DATA_VALUE, { valueIndex, valueItem })}
+                      onClick={() => onEvent({
+                        type: EVENT.DELETE_DATA_VALUE,
+                        payload: { valueIndex, valueItem },
+                      })}
                       sx={{ width: ICON_SIZE, height: ICON_SIZE, p: 0 }}
                     >
                       <Icon
@@ -57,7 +63,10 @@ export const ValueBox = (props: ValueBoxProps) => {
                     isMulti && !isAdditional && (
                     <>
                       <IconButton
-                        onClick={() => onEvent(EVENT.DATA_VALUE_UP, { valueIndex, valueItem })}
+                        onClick={() => onEvent({
+                          type: EVENT.DATA_VALUE_UP,
+                          payload: { valueIndex, valueItem },
+                        })}
                         sx={{ width: ICON_SIZE, height: ICON_SIZE }}
                       >
                         <Icon
@@ -66,7 +75,10 @@ export const ValueBox = (props: ValueBoxProps) => {
                         />
                       </IconButton>
                       <IconButton
-                        onClick={() => onEvent(EVENT.DATA_VALUE_DOWN, { valueIndex, valueItem })}
+                        onClick={() => onEvent({
+                          type: EVENT.DATA_VALUE_DOWN,
+                          payload: { valueIndex, valueItem },
+                        })}
                         sx={{ width: ICON_SIZE, height: ICON_SIZE }}
                       >
                         <Icon
@@ -98,7 +110,10 @@ export const ValueBox = (props: ValueBoxProps) => {
                 newDataValue: value,
               })}
               onEnter={() => {
-                onEvent(EVENT.ADD_DATA_VALUE, { value: state.newDataValue })
+                onEvent({
+                  type: EVENT.ADD_DATA_VALUE,
+                  payload: { value: state.newDataValue },
+                })
                 setState({
                   ...state,
                   newDataValue: '',

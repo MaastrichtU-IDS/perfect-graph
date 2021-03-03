@@ -72,11 +72,6 @@ const RECORDING_STATUS_MAP = {
 const HEIGHT = 40
 // const AnimatedSurface = animated(Box)
 
-type CreateActionCallback = (
-  type: Event,
-  extraData?: any,
-) => () => void
-
 const ActionBarElement = (props: ActionBarProps) => {
   const {
     onEvent,
@@ -106,14 +101,6 @@ const ActionBarElement = (props: ActionBarProps) => {
   React.useEffect(() => {
     animationRef.current.play(opened)
   }, [animationRef.current, opened])
-  const createOnActionCallback = React.useCallback(
-    (
-      type: Event,
-      extraData?: any,
-      // @ts-ignore
-    ) => () => onEvent?.({ type, extraData }),
-    [onEvent],
-  )
   const theme = useTheme()
 
   const recordingRef = React.useRef(
@@ -176,14 +163,17 @@ const ActionBarElement = (props: ActionBarProps) => {
             startIcon={(
               <Icon name="add_circle" />
 )}
-            onClick={createOnActionCallback(EVENT.MODE_CHANGED, {
-              value: [
-                EDITOR_MODE.ADD,
-                EDITOR_MODE.CONTINUES_ADD,
-                // @ts-ignore
-              ].includes(mode)
-                ? EDITOR_MODE.DEFAULT
-                : EDITOR_MODE.ADD,
+            onClick={() => onEvent({
+              type: EVENT.MODE_CHANGED,
+              payload: {
+                value: [
+                  EDITOR_MODE.ADD,
+                  EDITOR_MODE.CONTINUES_ADD,
+                  // @ts-ignore
+                ].includes(mode)
+                  ? EDITOR_MODE.DEFAULT
+                  : EDITOR_MODE.ADD,
+              },
             })}
             variant={EDITOR_MODE.CONTINUES_ADD === mode ? 'contained' : 'outlined'}
             color={[
@@ -191,10 +181,10 @@ const ActionBarElement = (props: ActionBarProps) => {
               EDITOR_MODE.CONTINUES_ADD,
               // @ts-ignore
             ].includes(mode) ? 'secondary' : 'primary'}
-            onDoubleClick={createOnActionCallback(
-              EVENT.MODE_CHANGED,
-              { value: EDITOR_MODE.CONTINUES_ADD },
-            )}
+            onDoubleClick={() => onEvent({
+              type: EVENT.MODE_CHANGED,
+              payload: { value: EDITOR_MODE.CONTINUES_ADD },
+            })}
           >
             Add
           </Button>
@@ -215,19 +205,22 @@ const ActionBarElement = (props: ActionBarProps) => {
               ? 'primary'
               : 'secondary'}
             variant={EDITOR_MODE.CONTINUES_DELETE === mode ? 'contained' : 'outlined'}
-            onClick={createOnActionCallback(EVENT.MODE_CHANGED, {
-              value: [
-                EDITOR_MODE.DELETE,
-                EDITOR_MODE.CONTINUES_DELETE,
+            onClick={() => onEvent({
+              type: EVENT.MODE_CHANGED,
+              payload: {
+                value: [
+                  EDITOR_MODE.DELETE,
+                  EDITOR_MODE.CONTINUES_DELETE,
                 // @ts-ignore
-              ].includes(mode)
-                ? EDITOR_MODE.DEFAULT
-                : EDITOR_MODE.DELETE,
+                ].includes(mode)
+                  ? EDITOR_MODE.DEFAULT
+                  : EDITOR_MODE.DELETE,
+              },
             })}
-            onDoubleClick={createOnActionCallback(
-              EVENT.MODE_CHANGED,
-              { value: EDITOR_MODE.CONTINUES_DELETE },
-            )}
+            onDoubleClick={() => onEvent({
+              type: EVENT.MODE_CHANGED,
+              payload: { value: EDITOR_MODE.CONTINUES_DELETE },
+            })}
           >
             Delete
           </Button>
@@ -237,14 +230,14 @@ const ActionBarElement = (props: ActionBarProps) => {
           actions.layout.visible && (
           <LayoutOptions
             layout={graphConfig?.layout}
-            createOnActionCallback={createOnActionCallback}
+            onEvent={onEvent}
           />
           )
         }
         {
           actions.recordEvents.visible && (
           <IconButton
-            onClick={createOnActionCallback(EVENT.TOGGLE_RECORD_EVENTS)}
+            onClick={() => onEvent({ type: EVENT.TOGGLE_RECORD_EVENTS })}
           >
             <Icon
               name="addjust"
@@ -253,11 +246,6 @@ const ActionBarElement = (props: ActionBarProps) => {
           </IconButton>
           )
         }
-        {/* <Icon
-          name="playlist-play"
-          color={recordingActions ? 'red' : 'black'}
-          onPress={createOnActionCallback(EVENT.TOGGLE_RECORD_ACTIONS)}
-        /> */}
         <Recorder
           // @ts-ignore
           getStream={() => graphEditorRef.current.app.renderer.view.captureStream(25)}
@@ -276,7 +264,7 @@ const ActionBarElement = (props: ActionBarProps) => {
             }
             return (
               <IconButton
-                onClick={createOnActionCallback(EVENT.TOGGLE_RECORD)}
+                onClick={() => onEvent({ type: EVENT.TOGGLE_RECORD })}
               >
                 <Icon
                   name="videocam"
@@ -286,15 +274,15 @@ const ActionBarElement = (props: ActionBarProps) => {
             )
           }}
           onStop={(_, blob) => {
-            createOnActionCallback(
-              EVENT.RECORD_FINISHED,
-              { value: blob },
-            )()
+            onEvent({
+              type: EVENT.RECORD_FINISHED,
+              payload: { value: blob },
+            })
           }}
         />
         <MoreOptions
           renderMoreAction={renderMoreAction}
-          createOnActionCallback={createOnActionCallback}
+          onEvent={onEvent}
           onAction={onAction}
         />
       </Box>
@@ -316,9 +304,8 @@ const ActionBarElement = (props: ActionBarProps) => {
   )
 }
 type MoreOptionsProps = {
-  createOnActionCallback: (
-    type: Event,
-    extraData?: any,
+  onEvent: (
+    params: any
   ) => () => void;
 } & Pick<ActionBarProps, 'renderMoreAction' | 'onAction'>
 
@@ -330,7 +317,7 @@ const OPTIONS = {
 const MoreOptions = (props: MoreOptionsProps) => {
   const {
     renderMoreAction = () => <Box />,
-    createOnActionCallback,
+    onEvent,
     onAction,
   } = props
   const {
@@ -347,10 +334,10 @@ const MoreOptions = (props: MoreOptionsProps) => {
         const result = await DocumentPicker.getDocumentAsync({ type: 'application/json' })
         if (result.type === 'success') {
           const fileText = await readTextFile(result.file!)
-          createOnActionCallback(
-            EVENT.IMPORT_DATA,
-            { value: JSON.parse(fileText) },
-          )()
+          onEvent({
+            type: EVENT.IMPORT_DATA,
+            payload: { value: JSON.parse(fileText) },
+          })
         }
         break
       }
@@ -358,16 +345,15 @@ const MoreOptions = (props: MoreOptionsProps) => {
         const result = await DocumentPicker.getDocumentAsync({ type: 'application/json' })
         if (result.type === 'success') {
           const fileText = await readTextFile(result.file!)
-          createOnActionCallback(
-            EVENT.IMPORT_EVENTS,
-            { value: JSON.parse(fileText) },
-          )()
+          onEvent({
+            type: EVENT.IMPORT_EVENTS,
+            payload: { value: JSON.parse(fileText) },
+          })
         }
         break
       }
       case OPTIONS.Export:
         onAction({ type: EVENT.EXPORT_DATA })
-        // createOnActionCallback(EVENT.EXPORT_DATA)()
         break
 
       default:

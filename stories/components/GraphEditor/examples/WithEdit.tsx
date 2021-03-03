@@ -40,24 +40,19 @@ export const WithEditElement = () => {
     },
     onEvent: ({
       type,
-      extraData,
+      payload,
       element,
       item,
       graphEditor
     }, draft) => {
       switch (type) {
         case EVENT.SETTINGS_FORM_CHANGED:{
-          // if (extraData.form.schema.title === FILTER_SCHEMA.schema.title) {
-
-          // } else {
-          //   configRef.current.visualization = extraData.value
-          // }
           break
         }
         case EVENT.UPDATE_DATA: {
           API.updateNode({
             id: element.id(),
-            data: extraData.value
+            data: payload.value
           })
           return false
         }
@@ -110,7 +105,7 @@ export const WithEditElement = () => {
             // @ts-ignore
             [EDITOR_MODE.ADD, EDITOR_MODE.CONTINUES_ADD].includes(draft.mode)
             ) {
-            const position = extraData
+            const position = payload
             API.createNode({
               position,
               data: [],

@@ -29,7 +29,7 @@ FormProps<any>,
 >
 export type SettingsBarProps = {
   opened?: boolean;
-  onEvent?: OnEvent;
+  onEvent: OnEvent;
   forms?: SettingsForm[];
 }
 
@@ -60,17 +60,6 @@ const SettingsBarElement = (props: SettingsBarProps) => {
   React.useEffect(() => {
     animationRef.current.play(opened)
   }, [animationRef, opened])
-  const createOnActionCallback = React.useCallback(
-    (
-      type: Event,
-      extraData?: any,
-      // @ts-ignore
-    ) => () => onEvent?.({ type, extraData }),
-    [onEvent],
-  )
-  // React.useEffect(() => {
-  //   animationRef?.current?.start()
-  // }, [])
   return (
     <Paper
       style={{
@@ -99,10 +88,10 @@ const SettingsBarElement = (props: SettingsBarProps) => {
             {...form}
             onSubmit={(
               e,
-            ) => createOnActionCallback(
-              EVENT.SETTINGS_FORM_CHANGED,
-              { form, value: e.formData, index },
-            )()}
+            ) => onEvent({
+              type: EVENT.SETTINGS_FORM_CHANGED,
+              payload: { form, value: e.formData, index },
+            })}
           >
             <Button
               type="submit"

@@ -9,7 +9,7 @@ export type DataEditorProps = {
   data: DataItem[];
   onEvent: (param: {
     type: EventType;
-    extraData: any;
+    payload: any;
     index?: number;
     item?: DataItem;
   }) => void;
@@ -35,7 +35,7 @@ export const DataForm = (props: DataEditorProps) => {
         formData={data ?? []}
         onSubmit={(e) => onEvent({
           type: EVENT.UPDATE_DATA,
-          extraData: {
+          payload: {
             value: e.formData,
           },
         })}

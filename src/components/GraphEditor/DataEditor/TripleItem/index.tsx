@@ -1,7 +1,7 @@
 import {
   Box,
 } from '@material-ui/core'
-import { DataItem } from '@type'
+import { DataItem, EventInfo } from '@type'
 import { DATA_TYPE, EVENT } from '@utils/constants'
 import * as R from 'colay/ramda'
 import React from 'react'
@@ -14,7 +14,7 @@ export type EventType = keyof typeof EVENT
 
 export type TripleItemProps = {
   isAdditional?: boolean;
-  onEvent: (type: EventType, extraData: any) => void;
+  onEvent: (event: EventInfo) => void;
   isLocalLabel?: boolean;
   isGlobalLabel?: boolean;
   isGlobalLabelFirst?: boolean;
@@ -27,8 +27,7 @@ export const MockTripleItemProps: TripleItemProps = {
   value: ['Holland', 'Netherlands'],
   type: DATA_TYPE.string,
   additional: [{ name: '@lang', value: ['en'], type: DATA_TYPE.string }],
-  onEvent: (type, extraData) => {
-    console.log('onEvent', type, extraData)
+  onEvent: (event) => {
   },
 }
 
@@ -74,7 +73,10 @@ export const TripleItem = (props: TripleItemProps) => {
           <TripleInput
             placeholder="Enter Type"
             value={name}
-            onValueChange={(value) => onEvent(EVENT.CHANGE_DATA_NAME, { value })}
+            onValueChange={(value) => onEvent({
+              type: EVENT.CHANGE_DATA_NAME,
+              payload: { value },
+            })}
           />
         </Box>
         <Box
