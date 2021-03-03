@@ -227,7 +227,7 @@ const AppContainer = ({
           break
         }
       
-        case EVENT.CHANGE_THEME:{
+        case EVENT.CHANGE_THEME: {
           draft.graphConfig.theme = THEMES[payload]
           changeMUITheme(payload)
           return false

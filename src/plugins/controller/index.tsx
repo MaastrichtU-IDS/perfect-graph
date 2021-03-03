@@ -43,26 +43,28 @@ GraphEditorProps,
 //   UseControllerData,
 //   {},
 // ]
-const getUndoActions = (events: EventInfo[]) => {
+type GetUndoActionsSettings = {
+  state: ControllerState,
+  graphEditor: GraphEditorRef
+}
+const getUndoActions = (events: EventInfo[], settings: GetUndoActionsSettings) => {
+  const {
+    state,
+    graphEditor,
+  } = settings
   const addHistory = true
   const undoActions: EventInfo[] = R.unnest(
     events.map((event): EventInfo[] => {
       const {
         item,
         type,
+        payload,
       } = event
       switch (type) {
         case EVENT.ADD_NODE:
           return [
             {
               type: EVENT.DELETE_NODE,
-              item,
-            },
-          ]
-        case EVENT.DELETE_EDGE:
-          return [
-            {
-              type: EVENT.ADD_EDGE,
               item,
             },
           ]
@@ -73,13 +75,46 @@ const getUndoActions = (events: EventInfo[]) => {
               item,
             },
           ]
+        case EVENT.DELETE_EDGE:
+          return [
+            {
+              type: EVENT.ADD_EDGE,
+              item,
+            },
+          ]
+
         case EVENT.LAYOUT_CHANGED:
           return [
             {
               type: EVENT.LAYOUT_CHANGED,
-              payload
+              payload,
             },
           ]
+        case EVENT.CHANGE_THEME:
+          return [
+            {
+              type: EVENT.CHANGE_THEME,
+              payload: payload === 'dark' ? 'default' : 'dark',
+            },
+          ]
+        case EVENT.ELEMENT_SELECTED:
+          const oldElementId = state.selectedElementId
+          return oldElementId
+            ? [
+              {
+                type: EVENT.ELEMENT_SELECTED,
+                payload: payload === 'dark' ? 'default' : 'dark',
+              },
+            ]
+            : [
+              {
+                type: EVENT.PRESS_BACKGROUND,
+                payload: {
+                  x: graphEditor.viewport.center.x,
+                  y: graphEditor.viewport.center.y,
+                },
+              },
+            ]
 
         default:
           break
@@ -88,7 +123,7 @@ const getUndoActions = (events: EventInfo[]) => {
     }),
   )
   return {
-    addHistory,
+    addHistory: !R.isEmpty(undoActions),
     undoActions,
   }
 }
