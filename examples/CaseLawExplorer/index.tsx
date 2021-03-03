@@ -8,6 +8,7 @@ import {
    createMuiTheme
 } from '@material-ui/core'
 import { View, } from 'colay-ui'
+import { useImmer } from 'colay-ui/hooks/useImmer'
 import { 
   DarkTheme,
   DefaultTheme,
@@ -28,6 +29,7 @@ import {calculateStatistics} from './utils/networkStatistics'
 import {RenderNode} from './RenderNode'
 import {RenderEdge} from './RenderEdge'
 import {listCases} from './API'
+import {QueryBuilder} from './QueryBuilder'
 // import { Data } from '../../components/Graph/Default'
 
 const MUIDarkTheme = createMuiTheme({
@@ -139,11 +141,11 @@ const AppContainer = ({
     }
   })
   
-  const FILTER_SCHEMA = React.useMemo(() => getFilterSchema({
-    onPopupPress: () => {}
-  }), [])
+  const FILTER_SCHEMA = React.useMemo(() => getFilterSchema(), [])
   const FETCH_SCHEMA = React.useMemo(() => getFetchSchema({
-    onPopupPress: () => {}
+    onPopupPress: () => updateState((draft) => {
+      draft.queryBuilder.visible = true
+    })
   }), [])
   const THEMES = {
     Dark: DarkTheme,
@@ -151,6 +153,12 @@ const AppContainer = ({
   }
   const NODE_ID = 'http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2014:3519'
   const filteredDataRef = React.useRef({})
+  const [state, updateState] = useImmer({
+    queryBuilder: {
+      visible: false,
+      query: {},
+    }
+  })
   const [controllerProps, controller] = useController({
     ...data,
     // events: RECORDED_EVENTS,
@@ -394,6 +402,19 @@ const AppContainer = ({
         //   )
         // }}
         {...rest}
+      />
+      <QueryBuilder 
+        isOpen={state.queryBuilder.visible}
+        query={state.queryBuilder.query}
+        onClose={() => updateState((draft) => {
+          draft.queryBuilder.visible = false
+        })}
+        onCreate={(query) => updateState((draft) => {
+          draft.queryBuilder.visible = false
+          draft.queryBuilder.query = query
+          alert(JSON.stringify(query))
+          // QueryCallback(query)
+        })}
       />
       </View>
   )

@@ -20,9 +20,8 @@ const SliderUIField = ({ formData, schema, onChange, name}) => {
     </>
   )
 }
-export const getFilterSchema  = (props: {onPopupPress: () => void}) => {
+export const getFilterSchema  = (props: {} = {}) => {
   const {
-     onPopupPress
   } = props
   return {
     schema: {
