@@ -3,7 +3,7 @@ import {
 } from '@material-ui/core'
 import Form from '@rjsf/material-ui'
 import { EVENT } from '@utils/constants'
-import { OnEvent } from '@type'
+import { OnEventLite } from '@type'
 import { useDisclosure } from 'colay-ui'
 import React from 'react'
 import { getFormProps } from './getFormProps'
@@ -14,7 +14,7 @@ type LayoutOptionsValue = {
 }
 export type LayoutOptionsProps = {
   layout?: LayoutOptionsValue;
-  onEvent: OnEvent;
+  onEvent: OnEventLite;
 }
 
 export const LayoutOptions = (props: LayoutOptionsProps) => {

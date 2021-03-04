@@ -10,7 +10,7 @@ import {
   Event,
   GraphConfig,
   GraphEditorRef,
-  OnEvent,
+  OnEventLite,
 } from '@type'
 import { readTextFile } from '@utils'
 import { EDITOR_MODE, EVENT } from '@utils/constants'
@@ -32,7 +32,7 @@ type ActionOption = {
 export type ActionBarProps = {
   renderMoreAction?: () => React.ReactElement;
   opened?: boolean;
-  onEvent: OnEvent;
+  onEvent: OnEventLite;
   mode?: EditorMode;
   layoutName?: string;
   recording?: boolean;

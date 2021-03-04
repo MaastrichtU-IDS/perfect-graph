@@ -11,6 +11,7 @@ import {
   GraphEditorRef, GraphLabelData,
   RecordedEvent, RenderEdge,
   RenderNode, EventHistory,
+  OnEvent
 } from '@type'
 import { getLabel, getSelectedItemByElement } from '@utils'
 // import { useGraph } from '@hooks'
@@ -31,7 +32,7 @@ type RenderElementAdditionalInfo = {
 }
 
 export type GraphEditorProps = {
-  onEvent?: (info: EventInfo) => void;
+  onEvent?: OnEvent;
   graphConfig?: GraphConfig;
   renderMoreAction?: () => React.ReactElement;
   label?: GraphLabelData;
@@ -109,6 +110,8 @@ const GraphEditorElement = (
   const onEventCallback = React.useCallback((eventInfo) => {
     onEvent({
       ...eventInfo,
+      id: R.uuid(),
+      date: new Date()
     })
   }, [onEvent])
   // const eventTimeoutsManagerRef = React.useRef(null)

@@ -2,22 +2,26 @@ import { Icon } from '@components/Icon'
 import {
   IconButton, Typography,
   List,
-  ListSubheader,
   ListItem,
   ListItemText,
   ListItemSecondaryAction,
+  ListItemAvatar,
+  Checkbox,
 } from '@material-ui/core'
-import { EventHistory, OnEvent } from '@type'
+import { EventHistory, OnEventLite } from '@type'
 import { EVENT } from '@utils/constants'
 import {
-  View, wrapComponent,
+  View,
+  wrapComponent,
 } from 'colay-ui'
+import { useImmer } from 'colay-ui/hooks/useImmer'
 import React from 'react'
+import * as R from 'colay/ramda'
 
 export type EventHistoryTableProps = {
   opened?: boolean;
-  onEvent: OnEvent;
-  eventHistory?: EventHistory;
+  onEvent: OnEventLite;
+  eventHistory: EventHistory;
 }
 
 const EventHistoryTableElement = (props: EventHistoryTableProps) => {
@@ -25,6 +29,9 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
     onEvent,
     eventHistory,
   } = props
+  const [state, updateState] = useImmer({
+    selectedEventIds: [] as string[],
+  })
   return (
     <View
       style={{
@@ -39,10 +46,22 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
       <View
         style={{
           flexDirection: 'row',
-          alignItems: 'space-between',
-          width: '70%',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          width: '100%',
         }}
       >
+        <Checkbox
+          checked={state.selectedEventIds.length === eventHistory.events.length}
+          onChange={(_, checked) => updateState((draft) => {
+            if (checked) {
+              draft.selectedEventIds = eventHistory.events.map((event) => event.id)
+            } else {
+              draft.selectedEventIds = []
+            }
+          })}
+          inputProps={{ 'aria-label': 'primary checkbox' }}
+        />
         <Typography
           variant="h6"
         >
@@ -50,23 +69,9 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
         </Typography>
         <View
           style={{
-            flexDirection: 'row',
             alignItems: 'space-between',
           }}
         >
-          <IconButton
-            onClick={() => {
-              onEvent({
-                type: EVENT.UNDO_EVENT,
-                avoidEventRecording: true,
-                avoidHistoryRecording: true,
-              })
-            }}
-          >
-            <Icon
-              name="undo"
-            />
-          </IconButton>
           <IconButton
             onClick={() => {
               onEvent({
@@ -77,25 +82,45 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
             }}
           >
             <Icon
-              name="redo"
+              name="keyboard_arrow_up"
+            />
+          </IconButton>
+          <IconButton
+            onClick={() => {
+              onEvent({
+                type: EVENT.UNDO_EVENT,
+                avoidEventRecording: true,
+                avoidHistoryRecording: true,
+              })
+            }}
+          >
+            <Icon
+              name="keyboard_arrow_down"
             />
           </IconButton>
         </View>
       </View>
       <List dense>
         {
-          eventHistory?.events.reverse().map((event, index) => {
-            const length = eventHistory?.events.length
-            console.log(eventHistory, index, eventHistory.currentIndex === index)
+          R.reverse(eventHistory.events).map((event, index) => {
+            const { length } = eventHistory.events
             return (
               <ListItem
-                selected={eventHistory.currentIndex === (length - 1) - index}
+                selected={eventHistory.currentIndex === (length - 2) - index}
               >
-                {/* <ListItemAvatar>
-                        <Avatar>
-                          <FolderIcon />
-                        </Avatar>
-                      </ListItemAvatar> */}
+                <ListItemAvatar>
+                  <Checkbox
+                    checked={state.selectedEventIds.includes(event.id)}
+                    onChange={(_, checked) => updateState((draft) => {
+                      if (checked) {
+                        draft.selectedEventIds.push(event.id)
+                      } else {
+                        draft.selectedEventIds = draft.selectedEventIds.filter((id) => id !== event.id)
+                      }
+                    })}
+                    inputProps={{ 'aria-label': 'primary checkbox' }}
+                  />
+                </ListItemAvatar>
                 <ListItemText
                   primary={event.type}
                 />

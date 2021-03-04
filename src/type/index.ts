@@ -236,6 +236,8 @@ export type GraphLabelData = {
 }
 
 export type EventInfo = {
+  id: string;
+  date: Date;
   type: Event;
   item?: ElementData;
   elementId?: string;
@@ -248,6 +250,7 @@ export type EventInfo = {
 }
 
 export type OnEvent = (eventInfo: EventInfo) => void
+export type OnEventLite = (eventInfo: Omit<EventInfo, 'id' | 'date'>) => void
 
 export type DrawLine = (
   arg: Parameters<RenderEdge>[0] & {

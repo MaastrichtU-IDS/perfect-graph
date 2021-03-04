@@ -152,9 +152,6 @@ export const useController = (
   const [state, update] = useImmer(controllerConfig)
   const localGraphEditorRef = React.useRef(null)
   const graphEditorRef = _graphEditorRef ?? localGraphEditorRef
-  // const [state, update] = React.useState<ControllerState>(
-  //   controllerConfig,
-  // )
   const localDataRef = React.useRef({
     recordedEvents: [] as RecordedEvent[],
     targetNode: null,
@@ -482,10 +479,6 @@ export const useController = (
       }
     })
   }, [])
-  console.log('event', {
-    currentIndex: eventHistory.record.currentIndex,
-    events: R.unnest(eventHistory.record.doActionsList),
-  })
   return [
     // @ts-ignore
     {

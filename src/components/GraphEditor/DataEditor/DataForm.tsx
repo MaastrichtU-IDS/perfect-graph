@@ -3,16 +3,12 @@ import Form from '@rjsf/semantic-ui'
 // import Form from '@rjsf/semantic-ui'
 import { Box } from '@material-ui/core'
 import { EVENT } from '@utils/constants'
+import { OnEventLite } from '@type'
 
 export type DataEditorProps = {
   style?: BoxProps['style'];
   data: DataItem[];
-  onEvent: (param: {
-    type: EventType;
-    payload: any;
-    index?: number;
-    item?: DataItem;
-  }) => void;
+  onEvent: OnEventLite;
   localLabel?: string[]| null;
   globalLabel?: string[] | null;
   isGlobalLabelFirst?: boolean;

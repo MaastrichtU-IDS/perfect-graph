@@ -6,13 +6,13 @@ import {
 } from 'colay-ui'
 import {
   Paper,
-  Typography,
+  Divider,
   IconButton,
   Button,
 } from '@material-ui/core'
 import { Icon } from '@components/Icon'
 import { EVENT } from '@utils/constants'
-import { OnEvent, EventHistory } from '@type'
+import { OnEventLite, EventHistory } from '@type'
 import Form from '@rjsf/material-ui'
 import { FormProps } from '@rjsf/core'
 import { EventHistoryTable } from './EventHistoryTable'
@@ -30,7 +30,7 @@ FormProps<any>,
 >
 export type SettingsBarProps = {
   opened?: boolean;
-  onEvent: OnEvent;
+  onEvent: OnEventLite;
   forms?: SettingsForm[];
   eventHistory?: EventHistory;
 }
@@ -108,10 +108,13 @@ const SettingsBarElement = (props: SettingsBarProps) => {
       </View>
       {
         eventHistory && (
-          <EventHistoryTable
-            onEvent={onEvent}
-            eventHistory={eventHistory}
-          />
+          <>
+            <Divider style={{ marginTop: 5, marginBottom: 5 }} />
+            <EventHistoryTable
+              onEvent={onEvent}
+              eventHistory={eventHistory}
+            />
+          </>
         )
       }
       <IconButton

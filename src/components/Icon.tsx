@@ -23,7 +23,10 @@ import {
   BuildCircleOutlined,
   MoreVert,
   Redo,
-  Undo,
+  ChevronLeft,
+  ChevronRight,
+  KeyboardArrowUp,
+  KeyboardArrowDown,
 } from '@material-ui/icons'
 import { IconProps } from '@material-ui/core'
 
@@ -51,7 +54,10 @@ const ICONS = {
   fiber_manual_record: FiberManualRecord,
   settings: Settings,
   redo: Redo,
-  undo: Undo,
+  chevron_left: ChevronLeft,
+  chevron_right: ChevronRight,
+  keyboard_arrow_up: KeyboardArrowUp,
+  keyboard_arrow_down: KeyboardArrowDown,
 } as const
 
 type IconName = keyof typeof ICONS
