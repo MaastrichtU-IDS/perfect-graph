@@ -482,7 +482,10 @@ export const useController = (
       }
     })
   }, [])
-  console.log('event')
+  console.log('event', {
+    currentIndex: eventHistory.record.currentIndex,
+    events: R.unnest(eventHistory.record.doActionsList),
+  })
   return [
     // @ts-ignore
     {
@@ -493,8 +496,8 @@ export const useController = (
           : {}
       ),
       eventHistory: {
-        currentIndex: eventHistory.record.currentIndex,
-        eventsList: eventHistory.record.doActionsList,
+        currentIndex: eventHistory.record.currentIndex - 1,
+        events: R.unnest(eventHistory.record.doActionsList),
       },
       onEvent,
     } as Pick<GraphEditorProps, 'nodes' | 'edges' | 'onEvent' | 'graphConfig' | 'eventHistory'>,

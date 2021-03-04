@@ -33,6 +33,7 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
         paddingRight: 10,
         paddingLeft: 10,
         height: '50%',
+        width: '100%',
       }}
     >
       <View
@@ -83,36 +84,32 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
       </View>
       <List dense>
         {
-          eventHistory?.eventsList.map((eventList, index) => (
-            <>
-              {/* <ListSubheader>""</ListSubheader> */}
-              {
-                eventList.map((event) => (
-                  <ListItem
-                    selected={eventHistory.currentIndex === index}
+          eventHistory?.events.reverse().map((event, index) => {
+            const length = eventHistory?.events.length
+            console.log(eventHistory, index, eventHistory.currentIndex === index)
+            return (
+              <ListItem
+                selected={eventHistory.currentIndex === (length - 1) - index}
+              >
+                {/* <ListItemAvatar>
+                        <Avatar>
+                          <FolderIcon />
+                        </Avatar>
+                      </ListItemAvatar> */}
+                <ListItemText
+                  primary={event.type}
+                />
+                <ListItemSecondaryAction>
+                  <IconButton
+                    edge="end"
+                    aria-label="delete"
                   >
-                    {/* <ListItemAvatar>
-                      <Avatar>
-                        <FolderIcon />
-                      </Avatar>
-                    </ListItemAvatar> */}
-                    <ListItemText
-                      primary={event.type}
-                      // secondary={secondary ? 'Secondary text' : null}
-                    />
-                    <ListItemSecondaryAction>
-                      <IconButton
-                        edge="end"
-                        aria-label="delete"
-                      >
-                        <Icon name="delete_rounded" />
-                      </IconButton>
-                    </ListItemSecondaryAction>
-                  </ListItem>
-                ))
-              }
-            </>
-          ))
+                    <Icon name="delete_rounded" />
+                  </IconButton>
+                </ListItemSecondaryAction>
+              </ListItem>
+            )
+          })
         }
       </List>
     </View>

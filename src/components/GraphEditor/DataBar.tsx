@@ -18,7 +18,7 @@ export type DataBarProps = {
   editable?: boolean;
   item?: ElementData|null;
   opened?: boolean;
-  onEvent?: OnEvent;
+  onEvent: OnEvent;
 } & Omit<DataEditorProps, 'data'>
 
 const WIDTH_PROPORTION = 40

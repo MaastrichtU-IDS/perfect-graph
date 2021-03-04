@@ -1,8 +1,9 @@
 import {
-  Box, Button, Popover
+  Box, Button, Popover,
 } from '@material-ui/core'
 import Form from '@rjsf/material-ui'
 import { EVENT } from '@utils/constants'
+import { OnEvent } from '@type'
 import { useDisclosure } from 'colay-ui'
 import React from 'react'
 import { getFormProps } from './getFormProps'
@@ -12,14 +13,14 @@ type LayoutOptionsValue = {
   animationDuration?: number;
 }
 export type LayoutOptionsProps = {
-  createOnActionCallback: CreateActionCallback;
   layout?: LayoutOptionsValue;
+  onEvent: OnEvent;
 }
 
 export const LayoutOptions = (props: LayoutOptionsProps) => {
   const {
     layout = {},
-    createOnActionCallback,
+    onEvent,
   } = props
   const {
     anchorEl,
@@ -28,15 +29,15 @@ export const LayoutOptions = (props: LayoutOptionsProps) => {
     onOpen,
   } = useDisclosure({})
   const onSubmitCallback = React.useCallback((e) => {
-    createOnActionCallback(
-      EVENT.LAYOUT_CHANGED,
-      {
+    onEvent({
+      type: EVENT.LAYOUT_CHANGED,
+      payload: {
         form: e,
         value: e.formData,
       },
-    )()
+    })
     onClose()
-  }, [createOnActionCallback])
+  }, [onEvent])
   return (
 
     <Box>

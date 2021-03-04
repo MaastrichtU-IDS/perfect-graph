@@ -276,5 +276,5 @@ export type RecordedEvent = {
 
 export type EventHistory = {
   currentIndex: number;
-  eventsList: EventInfo[][];
+  events: EventInfo[];
 }

@@ -168,14 +168,14 @@ const AppContainer = ({
       nodes: {},
     },
     settingsBar: {
-      // opened: true,
+      opened: true,
       forms: [FETCH_SCHEMA, VIEW_CONFIG_SCHEMA, {...FILTER_SCHEMA,  formData: configRef.current.filtering}, ]
     },
     dataBar: {
       editable: false,
     },
     actionBar: {
-      opened: true,
+      // opened: true,
       eventRecording: false,
       actions: {
         add: { visible: false },
@@ -303,7 +303,6 @@ const AppContainer = ({
   //   }, 9000)
   // }, [])
   const graphEditorRef = React.useRef(null)
-  console.log(controllerProps)
   return (
       <View style={{ display: 'flex', flexDirection: 'column',width: '100%', height: '100%'}}>
       <GraphEditor

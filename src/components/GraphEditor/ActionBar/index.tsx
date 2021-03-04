@@ -32,7 +32,7 @@ type ActionOption = {
 export type ActionBarProps = {
   renderMoreAction?: () => React.ReactElement;
   opened?: boolean;
-  onEvent?: OnEvent;
+  onEvent: OnEvent;
   mode?: EditorMode;
   layoutName?: string;
   recording?: boolean;
