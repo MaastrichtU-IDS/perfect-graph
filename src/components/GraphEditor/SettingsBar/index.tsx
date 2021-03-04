@@ -16,9 +16,6 @@ import { OnEventLite, EventHistory } from '@type'
 import Form from '@rjsf/material-ui'
 import { FormProps } from '@rjsf/core'
 import { EventHistoryTable } from './EventHistoryTable'
-// import Form, {
-//   FormProps,
-// } from 'unitx-ui/components/Form'
 
 type SettingsForm = {
   schema: FormProps<any>['schema'];

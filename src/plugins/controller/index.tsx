@@ -44,22 +44,30 @@ GraphEditorProps,
 //   {},
 // ]
 type GetUndoActionsSettings = {
-  state: ControllerState,
+  draft: ControllerState,
   graphEditor: GraphEditorRef
 }
 const getUndoActions = (events: EventInfo[], settings: GetUndoActionsSettings) => {
   const {
-    state,
+    draft,
     graphEditor,
   } = settings
   const addHistory = true
   const undoActions: EventInfo[] = R.unnest(
     events.map((event): EventInfo[] => {
       const {
-        item,
+        elementId,
         type,
         payload,
       } = event
+      const oldSelectedElementId = draft.selectedElementId
+      const element = elementId
+          ? graphEditor.cy.$id(`${elementId}`)
+          : null
+          const {
+            item,
+            index: itemIndex,
+          } = (element && getSelectedItemByElement(element, draft)) ?? {}
       switch (type) {
         case EVENT.ADD_NODE:
           return [
@@ -86,8 +94,14 @@ const getUndoActions = (events: EventInfo[], settings: GetUndoActionsSettings) =
         case EVENT.LAYOUT_CHANGED:
           return [
             {
-              type: EVENT.LAYOUT_CHANGED,
-              payload,
+              type: EVENT.SET_POSITIONS_IMPERATIVELY,
+              payload: {
+                oldLayout: draft.graphConfig?.layout,
+                positions: graphEditor.cy.nodes().map((element) => ({
+                  position: element.position(),
+                  elementId: element.id()
+                }))
+              },
             },
           ]
         case EVENT.CHANGE_THEME:
@@ -98,12 +112,12 @@ const getUndoActions = (events: EventInfo[], settings: GetUndoActionsSettings) =
             },
           ]
         case EVENT.ELEMENT_SELECTED:
-          const oldElementId = state.selectedElementId
-          return oldElementId
+          return oldSelectedElementId
             ? [
               {
                 type: EVENT.ELEMENT_SELECTED,
-                payload: payload === 'dark' ? 'default' : 'dark',
+                elementId: oldSelectedElementId,
+                ...event
               },
             ]
             : [
@@ -115,6 +129,16 @@ const getUndoActions = (events: EventInfo[], settings: GetUndoActionsSettings) =
                 },
               },
             ]
+        case EVENT.PRESS_BACKGROUND:
+          return oldSelectedElementId
+            ? [
+              {
+                type: EVENT.ELEMENT_SELECTED,
+                elementId: oldSelectedElementId,
+                ...event
+              },
+            ]
+            : []
 
         default:
           break
@@ -179,24 +203,37 @@ export const useController = (
           ['data', 'originalEvent', 'metaKey'],
         ])(event)
         if (!avoidHistoryRecording) {
-          eventHistory.add({
-            doActions: [
-              {
-                ...eventInfo,
-                event: recordableOriginalEvent,
+          const {
+              addHistory,
+              undoActions
+          } = getUndoActions([eventInfo], { graphEditor, draft })
+          console.log(undoActions)
+          if (addHistory) {
+            eventHistory.add({
+              doActions: [
+                {
+                  ...eventInfo,
+                  event: recordableOriginalEvent,
+                  avoidEventRecording: true,
+                  avoidHistoryRecording: true,
+                },
+              ],
+              undoActions: undoActions.map((e) => ({
+                ...e,
                 avoidEventRecording: true,
                 avoidHistoryRecording: true,
-              },
-            ],
-            undoActions: [
-              {
-                ...eventInfo,
-                event: recordableOriginalEvent,
-                avoidEventRecording: true,
-                avoidHistoryRecording: true,
-              },
-            ],
-          })
+              }))
+              // [
+              //   {
+              //     ...eventInfo,
+              //     event: recordableOriginalEvent,
+                  // avoidEventRecording: true,
+                  // avoidHistoryRecording: true,
+              //   },
+              // ],
+            })
+          }
+          
         }
         if (
           draft.actionBar?.eventRecording
@@ -469,6 +506,17 @@ export const useController = (
               })
             }
             draft.graphConfig.layout = layout
+            break
+          }
+          case EVENT.SET_POSITIONS_IMPERATIVELY: {
+            const {
+              positions,
+              oldLayout
+            } = payload
+            positions.forEach((positionItem) => {
+              graphEditor?.cy.$id(positionItem.elementId).position(positionItem.position)
+            })
+            draft.graphConfig.layout = oldLayout
             break
           }
           default:
