@@ -39,7 +39,7 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
         overflowX: 'hidden',
         paddingRight: 10,
         paddingLeft: 10,
-        height: '50%',
+        height: '100%',
         width: '100%',
       }}
     >
@@ -69,7 +69,7 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
         </Typography>
         <View
           style={{
-            alignItems: 'space-between',
+            // alignItems: 'space-between',
           }}
         >
           <IconButton

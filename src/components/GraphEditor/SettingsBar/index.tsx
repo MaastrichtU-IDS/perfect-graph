@@ -78,7 +78,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
           overflowX: 'hidden',
           paddingRight: 10,
           paddingLeft: 10,
-          height: eventHistory ? '50%' : '100%',
+          height: eventHistory ? '60%' : '100%',
         }}
       >
         {
@@ -108,13 +108,20 @@ const SettingsBarElement = (props: SettingsBarProps) => {
       </View>
       {
         eventHistory && (
-          <>
-            <Divider style={{ marginTop: 5, marginBottom: 5 }} />
+        <>
+          <Divider style={{ marginTop: 5, marginBottom: 5 }} />
+          <View
+            style={{
+              height: '40%',
+              width: '100%',
+            }}
+          >
             <EventHistoryTable
               onEvent={onEvent}
               eventHistory={eventHistory}
             />
-          </>
+          </View>
+        </>
         )
       }
       <IconButton
