@@ -12,9 +12,10 @@ import {
 } from '@material-ui/core'
 import { Icon } from '@components/Icon'
 import { EVENT } from '@utils/constants'
-import { Event, OnEvent } from '@type'
+import { OnEvent, EventHistory } from '@type'
 import Form from '@rjsf/material-ui'
 import { FormProps } from '@rjsf/core'
+import { EventHistoryTable } from './EventHistoryTable'
 // import Form, {
 //   FormProps,
 // } from 'unitx-ui/components/Form'
@@ -31,6 +32,7 @@ export type SettingsBarProps = {
   opened?: boolean;
   onEvent: OnEvent;
   forms?: SettingsForm[];
+  eventHistory?: EventHistory;
 }
 
 const WIDTH_PROPORTION = 30
@@ -40,7 +42,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
     onEvent,
     // schema = {},
     forms = [],
-    history,
+    eventHistory,
     // children,
     // ...formProps
   } = props
@@ -76,7 +78,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
           overflowX: 'hidden',
           paddingRight: 10,
           paddingLeft: 10,
-          height: '50%',
+          height: eventHistory ? '50%' : '100%',
         }}
       >
         {
@@ -104,66 +106,14 @@ const SettingsBarElement = (props: SettingsBarProps) => {
         ))
       }
       </View>
-      <View
-        style={{
-          overflowY: 'auto',
-          overflowX: 'hidden',
-          paddingRight: 10,
-          paddingLeft: 10,
-          height: '50%',
-        }}
-      >
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'space-between',
-            width: '70%',
-          }}
-        >
-          <Typography
-            variant="h6"
-          >
-            History
-          </Typography>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'space-between',
-            }}
-          >
-            <IconButton
-              onClick={() => {
-                onEvent({
-                  type: EVENT.UNDO_EVENT,
-                  avoidEventRecording: true,
-                  avoidHistoryRecording: true,
-                })
-              }}
-            >
-              <Icon
-                name="undo"
-              />
-            </IconButton>
-            <IconButton
-              onClick={() => {
-                onEvent({
-                  type: EVENT.REDO_EVENT,
-                  avoidEventRecording: true,
-                  avoidHistoryRecording: true,
-                })
-              }}
-            >
-              <Icon
-                name="redo"
-              />
-            </IconButton>
-          </View>
-        </View>
-
-        {/* {
-          history.events.map()
-        } */}
-      </View>
+      {
+        eventHistory && (
+          <EventHistoryTable
+            onEvent={onEvent}
+            eventHistory={eventHistory}
+          />
+        )
+      }
       <IconButton
         style={styles.icon}
         onClick={() => {

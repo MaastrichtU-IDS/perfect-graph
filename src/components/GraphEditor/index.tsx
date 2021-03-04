@@ -10,7 +10,7 @@ import {
   GraphConfig,
   GraphEditorRef, GraphLabelData,
   RecordedEvent, RenderEdge,
-  RenderNode,
+  RenderNode, EventHistory,
 } from '@type'
 import { getLabel, getSelectedItemByElement } from '@utils'
 // import { useGraph } from '@hooks'
@@ -43,6 +43,7 @@ export type GraphEditorProps = {
   renderEdge?: RenderEdge<RenderElementAdditionalInfo>;
   renderNode?: RenderNode<RenderElementAdditionalInfo>;
   events?: RecordedEvent[]
+  eventHistory?: EventHistory;
 } & Omit<
 GraphProps,
 'config'|'onPress' | 'renderNode' | 'renderEdge'
@@ -80,6 +81,7 @@ const GraphEditorElement = (
     label,
     mode = EDITOR_MODE.DEFAULT,
     events,
+    eventHistory,
     ...rest
   } = props
   const [state, setState] = React.useState({
@@ -232,7 +234,15 @@ const GraphEditorElement = (
           </Graph.Pressable>
         )}
       />
-
+      {
+        settingsBar && (
+          <SettingsBar
+            {...settingsBar}
+            onEvent={onEventCallback}
+            eventHistory={eventHistory}
+          />
+        )
+      }
       <DataBar
         {...dataBar}
         item={selectedItem}
@@ -241,14 +251,7 @@ const GraphEditorElement = (
         isGlobalLabelFirst={label?.isGlobalFirst}
         onEvent={onEventCallback}
       />
-      {
-        settingsBar && (
-          <SettingsBar
-            {...settingsBar}
-            onEvent={onEventCallback}
-          />
-        )
-      }
+
       {
         actionBar && (
         <ActionBar

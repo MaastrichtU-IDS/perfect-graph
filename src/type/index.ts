@@ -237,8 +237,8 @@ export type GraphLabelData = {
 
 export type EventInfo = {
   type: Event;
-  item: ElementData;
-  elementId: string;
+  item?: ElementData;
+  elementId?: string;
   payload?: any;
   dataItem?: DataItem;
   index?: number;
@@ -272,4 +272,9 @@ export type RecordedEvent = {
   type: string;
   date: any
   after: number;
+}
+
+export type EventHistory = {
+  currentIndex: number;
+  eventsList: EventInfo[][];
 }

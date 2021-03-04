@@ -303,6 +303,7 @@ const AppContainer = ({
   //   }, 9000)
   // }, [])
   const graphEditorRef = React.useRef(null)
+  console.log(controllerProps)
   return (
       <View style={{ display: 'flex', flexDirection: 'column',width: '100%', height: '100%'}}>
       <GraphEditor

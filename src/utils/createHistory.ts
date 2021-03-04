@@ -11,14 +11,14 @@ type HistoryItem = {
 type HistoryRecord = {
   doActionsList: DoActions[];
   undoActionsList: UndoActions[];
-  index: number;
+  currentIndex: number;
 }
 
 const DEFAULT_INDEX = 0
 const DEFAULT_HISTORY_DATA_ITEM: HistoryRecord = {
   doActionsList: [],
   undoActionsList: [],
-  index: DEFAULT_INDEX,
+  currentIndex: DEFAULT_INDEX,
 }
 
 const ACTION_TYPE = {
@@ -27,7 +27,7 @@ const ACTION_TYPE = {
 } as const
 
 export type History = {
-  historyRecord: HistoryRecord;
+  record: HistoryRecord;
   add: (item: HistoryItem) => void;
   clear: () => void;
   new: () => void;
@@ -61,22 +61,22 @@ export const createHistory = (options: CreateHistoryOptions) => {
   const ref = {
     current: null as unknown as History,
   }
-  const historyRecord: HistoryRecord = R.clone(DEFAULT_HISTORY_DATA_ITEM)
+  const record: HistoryRecord = R.clone(DEFAULT_HISTORY_DATA_ITEM)
   ref.current = {
-    historyRecord,
+    record,
     add: (item: HistoryItem) => {
-      const currentIndex = historyRecord.index
-      historyRecord.doActionsList = R.slice(
+      const currentIndex = record.currentIndex
+      record.doActionsList = R.slice(
         0,
         currentIndex,
-      )(historyRecord.doActionsList)
-      historyRecord.undoActionsList = R.slice(
+      )(record.doActionsList)
+      record.undoActionsList = R.slice(
         0,
         currentIndex,
-      )(historyRecord.undoActionsList)
-      historyRecord.doActionsList.push(item.doActions)
-      historyRecord.undoActionsList.push(item.undoActions)
-      historyRecord.index = historyRecord.doActionsList.length
+      )(record.undoActionsList)
+      record.doActionsList.push(item.doActions)
+      record.undoActionsList.push(item.undoActions)
+      record.currentIndex = record.doActionsList.length
     },
     clear: () => {
       const {
@@ -87,74 +87,73 @@ export const createHistory = (options: CreateHistoryOptions) => {
     set: (newHistoryRecord: HistoryRecord) => {
       Object.keys(newHistoryRecord).forEach((key) => {
         // @ts-ignore
-        historyRecord[key] = newHistoryRecord[key]
+        record[key] = newHistoryRecord[key]
       })
     },
     undo: () => {
-      const currentIndex = historyRecord.index - 1
-      const actions = historyRecord?.undoActionsList?.[currentIndex]
-      console.log('undo', actions, historyRecord)
+      const currentIndex = record.currentIndex - 1
+      const actions = record?.undoActionsList?.[currentIndex]
       if (actions) {
         const undone = onAction({
           actions,
           type: ACTION_TYPE.UNDO,
         }) ?? true
         if (undone) {
-          historyRecord.index = currentIndex
+          record.currentIndex = currentIndex
         }
       }
     },
     redo: () => {
-      const currentIndex = historyRecord.index
-      const actions = historyRecord?.doActionsList?.[currentIndex]
+      const currentIndex = record.currentIndex
+      const actions = record?.doActionsList?.[currentIndex]
       if (actions) {
         const done = onAction({
           actions,
           type: ACTION_TYPE.REDO,
         }) ?? true
         if (done) {
-          historyRecord.index = currentIndex + 1
+          record.currentIndex = currentIndex + 1
         }
       }
     },
     undoAll: () => R.when(
       R.allPass([
         R.isNotNil,
-        () => historyRecord.undoActionsList.length > historyRecord.index,
+        () => record.undoActionsList.length > record.currentIndex,
       ]),
       () => {
         const {
           undoActionsList,
-        } = historyRecord
+        } = record
         const actions = R.unnest(
-          R.slice(0, historyRecord.index + 1)(undoActionsList),
+          R.slice(0, record.currentIndex + 1)(undoActionsList),
         ) as UndoActions[]
         onAction({
           actions,
           type: ACTION_TYPE.UNDO,
         })
-        historyRecord.index = DEFAULT_INDEX
+        record.currentIndex = DEFAULT_INDEX
       },
-    )(historyRecord),
+    )(record),
     redoAll: () => R.when(
       R.allPass([
         R.isNotNil,
-        () => historyRecord.doActionsList.length > historyRecord.index,
+        () => record.doActionsList.length > record.currentIndex,
       ]),
       () => {
         const {
           doActionsList,
-        } = historyRecord
+        } = record
         const actions = R.unnest(
-          R.slice(0, historyRecord.index + 1)(doActionsList),
+          R.slice(0, record.currentIndex + 1)(doActionsList),
         ) as DoActions[]
         onAction({
           actions,
           type: ACTION_TYPE.REDO,
         })
-        historyRecord.index = DEFAULT_INDEX
+        record.currentIndex = DEFAULT_INDEX
       },
-    )(historyRecord),
+    )(record),
   }
   return ref.current
 }

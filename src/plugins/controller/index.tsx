@@ -139,14 +139,14 @@ export const useController = (
       useControllerData,
     ]) as UseControllerData, [], // useControllerData
   )
-  const history = React.useMemo(() => createHistory({
-    onAction: (event) => {
-      // const {
-      //   actions,
-      //   name,
-      //   type
-      // } = event
-      console.log(event)
+  const eventHistory = React.useMemo(() => createHistory({
+    onAction: (action) => {
+      const {
+        actions,
+        name,
+        type,
+      } = action
+      actions.map(onEvent)
     },
   }), [])
   const [state, update] = useImmer(controllerConfig)
@@ -182,17 +182,21 @@ export const useController = (
           ['data', 'originalEvent', 'metaKey'],
         ])(event)
         if (!avoidHistoryRecording) {
-          history.add({
+          eventHistory.add({
             doActions: [
               {
                 ...eventInfo,
                 event: recordableOriginalEvent,
+                avoidEventRecording: true,
+                avoidHistoryRecording: true,
               },
             ],
             undoActions: [
               {
                 ...eventInfo,
                 event: recordableOriginalEvent,
+                avoidEventRecording: true,
+                avoidHistoryRecording: true,
               },
             ],
           })
@@ -225,10 +229,10 @@ export const useController = (
 
         switch (type) {
           case EVENT.REDO_EVENT:
-            history.redo()
+            eventHistory.redo()
             break
           case EVENT.UNDO_EVENT:
-            history.undo()
+            eventHistory.undo()
             break
           case EVENT.UPDATE_DATA:
             item.data = payload.value
@@ -478,6 +482,7 @@ export const useController = (
       }
     })
   }, [])
+  console.log('event')
   return [
     // @ts-ignore
     {
@@ -487,8 +492,12 @@ export const useController = (
           ? { ref: localGraphEditorRef }
           : {}
       ),
+      eventHistory: {
+        currentIndex: eventHistory.record.currentIndex,
+        eventsList: eventHistory.record.doActionsList,
+      },
       onEvent,
-    } as Pick<GraphEditorProps, 'nodes' | 'edges' | 'onEvent' | 'graphConfig'>,
+    } as Pick<GraphEditorProps, 'nodes' | 'edges' | 'onEvent' | 'graphConfig' | 'eventHistory'>,
     {
       update,
       onEvent,
