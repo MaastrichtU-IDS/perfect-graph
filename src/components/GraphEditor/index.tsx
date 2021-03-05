@@ -140,7 +140,7 @@ const GraphEditorElement = (
   const eventTimeoutsManager = useTimeoutManager(
     events,
     (event) => {
-      onEvent(event.data)
+      onEvent(event)
     },
     {
       deps: [events],

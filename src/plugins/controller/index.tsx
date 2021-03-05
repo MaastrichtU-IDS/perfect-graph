@@ -155,6 +155,12 @@ const getUndoActions = (events: EventInfo[], settings: GetUndoActionsSettings) =
   }
 }
 
+const closeAllBars = (draft:UseControllerData) => {
+  draft.actionBar!.opened = false
+  draft.dataBar!.opened = false
+  draft.settingsBar!.opened = false
+}
+
 export const useController = (
   useControllerData: UseControllerData,
   _graphEditorRef?: React.MutableRefObject<GraphEditorRef>,
@@ -236,12 +242,8 @@ export const useController = (
         ) {
           const lastEvent = R.last(localDataRef.current.recordedEvents)
           localDataRef.current.recordedEvents.push({
-            type: '@',
-            data: {
-              ...eventInfo,
-              event: recordableOriginalEvent,
-            },
-            date: new Date(),
+            ...eventInfo,
+            event: recordableOriginalEvent,
             after: lastEvent ? new Date() - new Date(lastEvent.date) : 0,
           })
         }
@@ -473,7 +475,12 @@ export const useController = (
             })(payload.value)
             break
           case EVENT.IMPORT_EVENTS:
+            closeAllBars(draft)
             draft.events = [...(payload.value ?? [])]
+            break
+          case EVENT.PLAY_EVENTS:
+            closeAllBars(draft)
+            draft.events = [...(payload.events ?? [])]
             break
           case EVENT.EXPORT_DATA:
             download(JSON.stringify(payload.value), 'perfect-graph.json')

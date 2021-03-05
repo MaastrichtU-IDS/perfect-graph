@@ -11,9 +11,9 @@ import {
 import {
   EventHistory,
   OnEventLite,
-  EventInfo,
+  Playlist,
 } from '@type'
-import { EVENT } from '@utils/constants'
+import { EVENT, MOCK_DATA } from '@utils/constants'
 import {
   View,
   wrapComponent,
@@ -32,11 +32,6 @@ export type EventHistoryTableProps = {
   eventHistory: EventHistory;
 }
 
-type Playlist = {
-  name: string;
-  events: EventInfo[]
-}
-
 const EventHistoryTableElement = (props: EventHistoryTableProps) => {
   const {
     onEvent,
@@ -45,7 +40,18 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
   const [state, updateState] = useImmer({
     selectedEventIds: [] as string[],
     selectedPlaylistIds: [] as string[],
-    playlists: [] as Playlist[],
+    playlists: [
+      {
+        id: R.uuid(),
+        name: 'My playlist',
+        events: MOCK_DATA.events,
+      },
+      {
+        id: R.uuid(),
+        name: 'My playlist2',
+        events: MOCK_DATA.events,
+      },
+    ] as Playlist[],
   })
   return (
     <View
@@ -60,7 +66,6 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
     >
       <Accordion>
         <AccordionSummary
-          // expandIcon={<Icon name="expand_more" />}
           aria-controls="panel1a-content"
         >
           <View
@@ -71,36 +76,31 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
               width: '100%',
             }}
           >
-            <Checkbox
-              checked={!R.isEmpty(state.selectedEventIds)
-             && state.selectedEventIds.length === eventHistory.events.length}
-              onChange={(_, checked) => updateState((draft) => {
-                if (checked) {
-                  draft.selectedEventIds = eventHistory.events.map((event) => event.id)
-                } else {
-                  draft.selectedEventIds = []
-                }
-              })}
-              inputProps={{ 'aria-label': 'primary checkbox' }}
-            />
-            <Typography
-              variant="h6"
-            >
-              History
-            </Typography>
-            <IconButton
-              onClick={() => {
-                onEvent({
-                  type: EVENT.REDO_EVENT,
-                  avoidEventRecording: true,
-                  avoidHistoryRecording: true,
-                })
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
               }}
             >
-              <Icon
-                name="playlist_add"
+              <Checkbox
+                checked={!R.isEmpty(state.selectedEventIds)
+             && state.selectedEventIds.length === eventHistory.events.length}
+                onChange={(_, checked) => updateState((draft) => {
+                  if (checked) {
+                    draft.selectedEventIds = eventHistory.events.map((event) => event.id)
+                  } else {
+                    draft.selectedEventIds = []
+                  }
+                })}
+                onClick={(e) => e.stopPropagation()}
+                inputProps={{ 'aria-label': 'primary checkbox' }}
               />
-            </IconButton>
+              <Typography
+                variant="h6"
+              >
+                History
+              </Typography>
+            </View>
             <View
               style={{
                 // alignItems: 'space-between',
@@ -108,7 +108,22 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
               }}
             >
               <IconButton
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onEvent({
+                    type: EVENT.REDO_EVENT,
+                    avoidEventRecording: true,
+                    avoidHistoryRecording: true,
+                  })
+                }}
+              >
+                <Icon
+                  name="playlist_add"
+                />
+              </IconButton>
+              <IconButton
+                onClick={(e) => {
+                  e.stopPropagation()
                   onEvent({
                     type: EVENT.UNDO_EVENT,
                     avoidEventRecording: true,
@@ -121,7 +136,8 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
                 />
               </IconButton>
               <IconButton
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation()
                   onEvent({
                     type: EVENT.REDO_EVENT,
                     avoidEventRecording: true,
@@ -137,6 +153,13 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
           </View>
         </AccordionSummary>
         <AccordionDetails>
+          {
+          eventHistory.events.length === 0 && (
+            <Typography>
+              Let's do a few things.
+            </Typography>
+          )
+        }
           <List dense>
             {
           R.reverse(eventHistory.events).map((event, index) => {
@@ -176,8 +199,33 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
           </List>
         </AccordionDetails>
       </Accordion>
-      <PlaylistTable 
-        
+      <PlaylistTable
+        onSelectAllPlaylist={(checked) => updateState((draft) => {
+          if (checked) {
+            draft.selectedPlaylistIds = draft.playlists.map((playlist) => playlist.id)
+          } else {
+            draft.selectedPlaylistIds = []
+          }
+        })}
+        onSelectPlaylist={(playlist, checked) => {
+          updateState((draft) => {
+            if (checked) {
+              draft.selectedEventIds.push(playlist.id)
+            } else {
+              draft.selectedEventIds = draft.selectedEventIds.filter((id) => id !== playlist.id)
+            }
+          })
+        }}
+        playlists={state.playlists}
+        selectedPlaylistIds={state.selectedPlaylistIds}
+        onPlay={(playlist) => {
+          onEvent({
+            type: EVENT.PLAY_EVENTS,
+            payload: {
+              events: playlist.events,
+            },
+          })
+        }}
       />
     </View>
   )

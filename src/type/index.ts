@@ -1,5 +1,5 @@
 import React from 'react'
-import { LayoutChangeEvent } from 'react-native'
+// import { LayoutChangeEvent } from 'react-native'
 import { EdgeSingular, NodeSingular, Core } from 'cytoscape'
 import { Position, Enumerable } from 'colay/type'
 import { Theme } from '@core/theme'
@@ -20,7 +20,7 @@ import GraphLayouts from '@core/layouts'
 import type * as PIXIType from './pixi'
 
 export type Style = {[k: string]: any}
-export type OnLayout = (event: LayoutChangeEvent) => void
+// export type OnLayout = (event: LayoutChangeEvent) => void
 export type ElementContext = {
   render: (callback?: () => void) => void;
 }
@@ -270,10 +270,7 @@ export type GraphRef = {
 export type GraphEditorRef = GraphRef & {
 }
 
-export type RecordedEvent = {
-  data: any
-  type: string;
-  date: any
+export type RecordedEvent = EventInfo & {
   after: number;
 }
 

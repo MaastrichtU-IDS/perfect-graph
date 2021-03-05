@@ -75,7 +75,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
           overflowX: 'hidden',
           paddingRight: 10,
           paddingLeft: 10,
-          height: eventHistory ? '60%' : '100%',
+          height: eventHistory ? '50%' : '100%',
         }}
       >
         {
@@ -109,7 +109,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
           <Divider style={{ marginTop: 5, marginBottom: 5 }} />
           <View
             style={{
-              height: '40%',
+              height: '50%',
               width: '100%',
             }}
           >

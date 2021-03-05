@@ -112,7 +112,7 @@ export const RecordedEventsModal = (props: EventsModalProps) => {
             </Button>
           </View>
           <Typography variant="subtitle">
-            {`Current Event: ${currentTimer?.data.type}`}
+            {`Current Event: ${currentTimer?.type}`}
           </Typography>
           <View
             style={{
