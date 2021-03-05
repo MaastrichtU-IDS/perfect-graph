@@ -9,6 +9,7 @@ import {
   NodeData,
 } from '@type'
 import { getClusterVisibility, calculateVisibilityByContext } from '@utils'
+import { CYTOSCAPE_EVENT } from '@utils/constants'
 import { mutableGraphMap } from './useGraph'
 import { useElement } from './useElement'
 
@@ -73,14 +74,14 @@ export default (props: Props): Result => {
   React.useEffect(
     () => {
       const positionChanged = () => {
+        onPositionChange?.({ element, context: contextRef.current })
         element.connectedEdges().forEach((mutableEdge) => {
           mutableEdge.data().onPositionChange()
         })
-        onPositionChange?.({ element, context: contextRef.current })
       }
-      element.on('position', positionChanged)
+      element.on(CYTOSCAPE_EVENT.position, positionChanged)
       return () => {
-        element.off('position', `#${element.id()}`, positionChanged)
+        element.off(CYTOSCAPE_EVENT.position, `#${element.id()}`, positionChanged)
         cy!.remove(element!)
       }
     }, // destroy

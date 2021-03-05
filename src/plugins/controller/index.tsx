@@ -98,7 +98,10 @@ const getUndoActions = (events: EventInfo[], settings: GetUndoActionsSettings) =
               payload: {
                 oldLayout: draft.graphConfig?.layout,
                 positions: graphEditor.cy.nodes().map((element) => ({
-                  position: element.position(),
+                  position: {
+                    x: element.position().x,
+                    y: element.position().y,
+                  },
                   elementId: element.id()
                 }))
               },
@@ -207,7 +210,6 @@ export const useController = (
               addHistory,
               undoActions
           } = getUndoActions([eventInfo], { graphEditor, draft })
-          console.log(undoActions)
           if (addHistory) {
             eventHistory.add({
               doActions: [
