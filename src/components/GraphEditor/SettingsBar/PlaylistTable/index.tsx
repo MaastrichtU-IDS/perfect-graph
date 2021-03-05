@@ -97,7 +97,9 @@ export const PlaylistTable = (props: EventHistoryTableProps) => {
             playlists.map((playlist, index) => {
               const { events, id, name } = playlist
               return (
-                <Accordion>
+                <Accordion
+                  key={id}
+                >
                   <AccordionSummary
                     aria-controls="panel1a-content"
                   >
@@ -157,8 +159,10 @@ export const PlaylistTable = (props: EventHistoryTableProps) => {
                   </AccordionSummary>
                   <AccordionDetails>
                     {
-                        events.map(({ type }) => (
-                          <ListItem>
+                        events.map((event) => (
+                          <ListItem
+                            key={event.id}
+                          >
                             <ListItemAvatar>
                               <Checkbox
                                 // checked={selectedPlaylistIds.includes(id)}
@@ -170,7 +174,7 @@ export const PlaylistTable = (props: EventHistoryTableProps) => {
                               />
                             </ListItemAvatar>
                             <ListItemText
-                              primary={type}
+                              primary={event.type}
                             />
                             <ListItemSecondaryAction>
                               <IconButton

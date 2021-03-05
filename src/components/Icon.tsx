@@ -31,6 +31,8 @@ import {
   PlaylistAdd,
   PlaylistPlay,
   PlayArrow,
+  NavigateNext,
+  NavigateBefore,
 } from '@material-ui/icons'
 import { IconProps } from '@material-ui/core'
 
@@ -66,6 +68,8 @@ const ICONS = {
   playlist_play: PlaylistPlay,
   expand_more: ExpandMore,
   play_arrow: PlayArrow,
+  navigate_before: NavigateBefore,
+  navigate_next: NavigateNext,
 } as const
 
 type IconName = keyof typeof ICONS

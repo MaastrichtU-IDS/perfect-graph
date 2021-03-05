@@ -5,6 +5,7 @@ import {
   DataItem, EventInfo,
   GraphEditorRef,
   RecordedEvent,
+  ControllerState,
 } from '@type'
 import { GraphEditorProps } from '@components/GraphEditor'
 import { Graph } from '@components'
@@ -12,7 +13,7 @@ import {
   EVENT, ELEMENT_DATA_FIELDS, EDITOR_MODE,
 } from '@utils/constants'
 import GraphLayouts from '@core/layouts'
-import { getSelectedItemByElement } from '@utils'
+import { getSelectedItemByElement, getUndoEvents } from '@utils'
 import { download } from 'colay-ui/utils'
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import * as R from 'colay/ramda'
@@ -21,14 +22,6 @@ import { createHistory } from '@utils/createHistory'
 type ControllerOptions = {
   // onEvent?: (info: EventInfo, draft: ControllerState) => boolean;
 }
-type ControllerState = {
-  label: GraphLabelData;
-} & Pick<
-GraphEditorProps,
-'nodes' | 'edges' | 'mode' | 'selectedElementId'
-| 'actionBar' | 'dataBar' | 'settingsBar'
-| 'graphConfig'
->
 
 type UseControllerData = Pick<
 GraphEditorProps,
@@ -43,117 +36,6 @@ GraphEditorProps,
 //   UseControllerData,
 //   {},
 // ]
-type GetUndoActionsSettings = {
-  draft: ControllerState,
-  graphEditor: GraphEditorRef
-}
-const getUndoActions = (events: EventInfo[], settings: GetUndoActionsSettings) => {
-  const {
-    draft,
-    graphEditor,
-  } = settings
-  const addHistory = true
-  const undoActions: EventInfo[] = R.unnest(
-    events.map((event): EventInfo[] => {
-      const {
-        elementId,
-        type,
-        payload,
-      } = event
-      const oldSelectedElementId = draft.selectedElementId
-      const element = elementId
-        ? graphEditor.cy.$id(`${elementId}`)
-        : null
-      const {
-        item,
-        index: itemIndex,
-      } = (element && getSelectedItemByElement(element, draft)) ?? {}
-      switch (type) {
-        case EVENT.ADD_NODE:
-          return [
-            {
-              type: EVENT.DELETE_NODE,
-              item,
-            },
-          ]
-        case EVENT.DELETE_NODE:
-          return [
-            {
-              type: EVENT.ADD_NODE,
-              item,
-            },
-          ]
-        case EVENT.DELETE_EDGE:
-          return [
-            {
-              type: EVENT.ADD_EDGE,
-              item,
-            },
-          ]
-
-        case EVENT.LAYOUT_CHANGED:
-          return [
-            {
-              type: EVENT.SET_POSITIONS_IMPERATIVELY,
-              payload: {
-                oldLayout: draft.graphConfig?.layout,
-                positions: graphEditor.cy.nodes().map((element) => ({
-                  position: {
-                    x: element.position().x,
-                    y: element.position().y,
-                  },
-                  elementId: element.id(),
-                })),
-              },
-            },
-          ]
-        case EVENT.CHANGE_THEME:
-          return [
-            {
-              type: EVENT.CHANGE_THEME,
-              payload: payload === 'dark' ? 'default' : 'dark',
-            },
-          ]
-        case EVENT.ELEMENT_SELECTED:
-          return oldSelectedElementId
-            ? [
-              {
-                type: EVENT.ELEMENT_SELECTED,
-                elementId: oldSelectedElementId,
-                ...event,
-              },
-            ]
-            : [
-              {
-                type: EVENT.PRESS_BACKGROUND,
-                payload: {
-                  x: graphEditor.viewport.center.x,
-                  y: graphEditor.viewport.center.y,
-                },
-              },
-            ]
-        case EVENT.PRESS_BACKGROUND:
-          return oldSelectedElementId
-            ? [
-              {
-                ...event,
-                elementId: oldSelectedElementId,
-                type: EVENT.ELEMENT_SELECTED,
-              },
-            ]
-            : []
-
-        default:
-          break
-      }
-      return []
-    }),
-  )
-  return {
-    addHistory: !R.isEmpty(undoActions),
-    undoActions,
-  }
-}
 
 const closeAllBars = (draft:UseControllerData) => {
   draft.actionBar!.opened = false
@@ -208,26 +90,22 @@ export const useController = (
     const targetPath = isNode ? 'nodes' : 'edges'
     update((draft) => {
       try {
-        const recordableOriginalEvent = R.pickPaths([
-          ['data', 'originalEvent', 'metaKey'],
-        ])(event)
         if (!avoidHistoryRecording) {
           const {
             addHistory,
-            undoActions,
-          } = getUndoActions([eventInfo], { graphEditor, draft })
-          console.log('undo', undoActions)
+            events: undoEvents,
+          } = getUndoEvents([eventInfo], { graphEditor, draft })
           if (addHistory) {
             eventHistory.add({
               doActions: [
                 {
                   ...eventInfo,
-                  event: recordableOriginalEvent,
+                  event,
                   avoidEventRecording: true,
                   avoidHistoryRecording: true,
                 },
               ],
-              undoActions: undoActions.map((e) => ({
+              undoActions: undoEvents.map((e) => ({
                 ...e,
                 avoidEventRecording: true,
                 avoidHistoryRecording: true,
@@ -240,11 +118,9 @@ export const useController = (
           && type !== EVENT.TOGGLE_RECORD_EVENTS
           && !avoidEventRecording
         ) {
-          const lastEvent = R.last(localDataRef.current.recordedEvents)
           localDataRef.current.recordedEvents.push({
             ...eventInfo,
-            event: recordableOriginalEvent,
-            after: lastEvent ? new Date() - new Date(lastEvent.date) : 0,
+            event,
           })
         }
         const isAllowedToProcess = controllerConfig.onEvent?.(eventInfo, draft)
@@ -482,6 +358,9 @@ export const useController = (
             closeAllBars(draft)
             draft.events = [...(payload.events ?? [])]
             break
+          case EVENT.APPLY_EVENTS:
+            payload.events.map((event) => onEvent(event))
+            break
           case EVENT.EXPORT_DATA:
             download(JSON.stringify(payload.value), 'perfect-graph.json')
             break
@@ -520,6 +399,17 @@ export const useController = (
             draft.graphConfig.layout = oldLayout
             break
           }
+          case EVENT.DELETE_HISTORY_EVENT: {
+            // const {
+            //   positions,
+            //   oldLayout,
+            // } = payload
+            // positions.forEach((positionItem) => {
+            //   graphEditor?.cy.$id(positionItem.elementId).position(positionItem.position)
+            // })
+            // draft.graphConfig.layout = oldLayout
+            break
+          }
           default:
             break
         }
@@ -540,6 +430,7 @@ export const useController = (
       eventHistory: {
         currentIndex: eventHistory.record.currentIndex - 1,
         events: R.unnest(eventHistory.record.doActionsList),
+        undoEvents: R.unnest(eventHistory.record.undoActionsList),
       },
       onEvent,
     } as Pick<GraphEditorProps, 'nodes' | 'edges' | 'onEvent' | 'graphConfig' | 'eventHistory'>,

@@ -7,9 +7,9 @@ import { NativeEventMap } from 'colay-ui/type'
 import {
   Element, NodeData, EdgeData, ElementData,
   DisplayObjectWithYoga, NodeContext, EdgeContext,
-  Cluster,
+  Cluster, EventInfo, GraphEditorRef, ControllerState,
 } from '@type'
-import { ELEMENT_DATA_FIELDS, PIXI_EVENT_NAMES } from '@utils/constants'
+import { ELEMENT_DATA_FIELDS, PIXI_EVENT_NAMES, EVENT } from '@utils/constants'
 
 // type Result = {
 //   x: number;
@@ -412,4 +412,123 @@ export const filterEdges = (nodes: {id: string}[]) => (
   return R.filter(
     (edge) => nodeMap[edge.source] && nodeMap[edge.target],
   )(edges)
+}
+
+type GetUndoActionsSettings = {
+  draft: ControllerState,
+  graphEditor: GraphEditorRef
+}
+export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSettings) => {
+  const {
+    draft,
+    graphEditor,
+  } = settings
+  const addHistory = true
+  const undoEvents: EventInfo[] = R.unnest(
+    events.map((event): EventInfo[] => {
+      const {
+        elementId,
+        type,
+        payload,
+      } = event
+      const oldSelectedElementId = draft.selectedElementId
+      const element = elementId
+        ? graphEditor.cy.$id(`${elementId}`)
+        : null
+      const {
+        item,
+        index: itemIndex,
+      } = (element && getSelectedItemByElement(element, draft)) ?? {}
+      switch (type) {
+        case EVENT.ADD_NODE:
+          return [
+            {
+              type: EVENT.DELETE_NODE,
+              item,
+            },
+          ]
+        case EVENT.DELETE_NODE:
+          return [
+            {
+              type: EVENT.ADD_NODE,
+              item,
+            },
+          ]
+        case EVENT.DELETE_EDGE:
+          return [
+            {
+              type: EVENT.ADD_EDGE,
+              item,
+            },
+          ]
+
+        case EVENT.LAYOUT_CHANGED:
+          return [
+            {
+              type: EVENT.SET_POSITIONS_IMPERATIVELY,
+              payload: {
+                oldLayout: draft.graphConfig?.layout,
+                positions: graphEditor.cy.nodes().map((element) => ({
+                  position: {
+                    x: element.position().x,
+                    y: element.position().y,
+                  },
+                  elementId: element.id(),
+                })),
+              },
+            },
+          ]
+        case EVENT.CHANGE_THEME:
+          return [
+            {
+              type: EVENT.CHANGE_THEME,
+              payload: payload === 'dark' ? 'default' : 'dark',
+            },
+          ]
+        case EVENT.ELEMENT_SELECTED:
+          return oldSelectedElementId
+            ? [
+              {
+                type: EVENT.ELEMENT_SELECTED,
+                elementId: oldSelectedElementId,
+                ...event,
+              },
+            ]
+            : [
+              {
+                type: EVENT.PRESS_BACKGROUND,
+                payload: {
+                  x: graphEditor.viewport.center.x,
+                  y: graphEditor.viewport.center.y,
+                },
+              },
+            ]
+        case EVENT.PRESS_BACKGROUND:
+          return oldSelectedElementId
+            ? [
+              {
+                ...event,
+                elementId: oldSelectedElementId,
+                type: EVENT.ELEMENT_SELECTED,
+                event: {
+                  data: {
+                    originalEvent: {
+                      metaKey: false,
+                    },
+                  },
+                },
+              },
+            ]
+            : []
+
+        default:
+          break
+      }
+      return []
+    }),
+  )
+  return {
+    addHistory: !R.isEmpty(undoEvents),
+    events: undoEvents,
+  }
 }

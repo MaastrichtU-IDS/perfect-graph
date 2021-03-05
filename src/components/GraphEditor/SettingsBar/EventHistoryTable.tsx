@@ -7,6 +7,9 @@ import {
   ListItemSecondaryAction,
   ListItemAvatar,
   Checkbox,
+  Dialog,
+  DialogTitle,
+  TextField, Button,
 } from '@material-ui/core'
 import {
   EventHistory,
@@ -14,6 +17,7 @@ import {
   Playlist,
 } from '@type'
 import { EVENT, MOCK_DATA } from '@utils/constants'
+import { getUndoEvents } from '@utils'
 import {
   View,
   wrapComponent,
@@ -52,6 +56,10 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
         events: MOCK_DATA.events,
       },
     ] as Playlist[],
+    createPlaylistDialog: {
+      visible: false,
+      name: '',
+    },
   })
   return (
     <View
@@ -110,10 +118,9 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
               <IconButton
                 onClick={(e) => {
                   e.stopPropagation()
-                  onEvent({
-                    type: EVENT.REDO_EVENT,
-                    avoidEventRecording: true,
-                    avoidHistoryRecording: true,
+                  updateState((draft) => {
+                    draft.createPlaylistDialog.name = ''
+                    draft.createPlaylistDialog.visible = true
                   })
                 }}
               >
@@ -166,6 +173,7 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
             const { length } = eventHistory.events
             return (
               <ListItem
+                key={event.id}
                 selected={eventHistory.currentIndex === (length - 1) - index}
               >
                 <ListItemAvatar>
@@ -187,9 +195,48 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
                 <ListItemSecondaryAction>
                   <IconButton
                     edge="end"
-                    aria-label="play"
+                    onClick={() => onEvent({
+                      type: EVENT.APPLY_EVENTS,
+                      payload: {
+                        events: [{
+                          ...eventHistory.undoEvents[index],
+                          avoidEventRecording: true,
+                          avoidHistoryRecording: true,
+                        }],
+                      },
+                    })}
                   >
-                    <Icon name="play_arrow" />
+                    <Icon name="navigate_before" />
+                  </IconButton>
+                  <IconButton
+                    edge="end"
+                    onClick={() => onEvent({
+                      type: EVENT.APPLY_EVENTS,
+                      payload: {
+                        events: [{
+                          ...event,
+                          avoidEventRecording: true,
+                          avoidHistoryRecording: true,
+                        }],
+                      },
+                    })}
+                  >
+                    <Icon name="navigate_next" />
+                  </IconButton>
+                  <IconButton
+                    edge="end"
+                  >
+                    <Icon
+                      name="delete_rounded"
+                      onClick={() => onEvent({
+                        type: EVENT.DELETE_HISTORY_EVENT,
+                        payload: {
+                          event,
+                          avoidEventRecording: true,
+                          avoidHistoryRecording: true,
+                        },
+                      })}
+                    />
                   </IconButton>
                 </ListItemSecondaryAction>
               </ListItem>
@@ -227,6 +274,51 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
           })
         }}
       />
+      <Dialog
+        onClose={() => updateState((draft) => {
+          draft.createPlaylistDialog.visible = false
+        })}
+        aria-labelledby="simple-dialog-title"
+        open={state.createPlaylistDialog.visible}
+      >
+        <DialogTitle id="simple-dialog-title">Create Playlist</DialogTitle>
+        <View
+          style={{
+            width: '50%',
+            padding: 10,
+            justifyContent: 'center',
+          }}
+        >
+          <TextField
+            style={{
+              marginBottom: 10,
+              width: '50vw',
+            }}
+            fullWidth
+            label="name"
+            value={state.createPlaylistDialog.name}
+            onChange={({ target: { value } }) => updateState((draft) => {
+              draft.createPlaylistDialog.name = value
+            })}
+          />
+          <Button
+            fullWidth
+            onClick={() => updateState((draft) => {
+              const playlistEvents = draft.selectedEventIds.map(
+                (eventId) => eventHistory.events.find((event) => event.id === eventId)!,
+              ).sort((item, other) => (item.date > other.date ? 1 : -1))
+              draft.playlists.push({
+                id: R.uuid(),
+                name: draft.createPlaylistDialog.name,
+                events: playlistEvents,
+              })
+              draft.createPlaylistDialog.visible = false
+            })}
+          >
+            Create
+          </Button>
+        </View>
+      </Dialog>
     </View>
   )
 }

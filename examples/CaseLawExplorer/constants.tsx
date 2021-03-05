@@ -201,7 +201,6 @@ export const RECORDED_EVENTS = [
           "event": {}
       },
       "date": "2021-02-26T07:59:37.065Z",
-      "after": 0
   },
   {
       "type": "@",
@@ -217,7 +216,6 @@ export const RECORDED_EVENTS = [
           }
       },
       "date": "2021-02-26T07:59:37.992Z",
-      "after": 927
   },
   {
       "type": "@",
@@ -233,7 +231,6 @@ export const RECORDED_EVENTS = [
           }
       },
       "date": "2021-02-26T07:59:39.640Z",
-      "after": 1648
   },
   {
       "type": "@",
@@ -249,7 +246,6 @@ export const RECORDED_EVENTS = [
           }
       },
       "date": "2021-02-26T07:59:41.945Z",
-      "after": 2305
   },
   {
       "type": "@",
@@ -265,6 +261,5 @@ export const RECORDED_EVENTS = [
           }
       },
       "date": "2021-02-26T07:59:44.725Z",
-      "after": 2780
   }
 ]

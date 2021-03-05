@@ -17,6 +17,7 @@ import * as PIXI from 'pixi.js'
 import { YogaConstants } from '@utils/addFlexLayout/flex-layout/YogaContants'
 import { YogaLayout } from '@utils/addFlexLayout/flex-layout/YogaLayout'
 import GraphLayouts from '@core/layouts'
+import type { GraphEditorProps } from '@components/GraphEditor'
 import type * as PIXIType from './pixi'
 
 export type Style = {[k: string]: any}
@@ -237,7 +238,7 @@ export type GraphLabelData = {
 
 export type EventInfo = {
   id: string;
-  date: Date;
+  date: string;
   type: Event;
   item?: ElementData;
   elementId?: string;
@@ -270,13 +271,12 @@ export type GraphRef = {
 export type GraphEditorRef = GraphRef & {
 }
 
-export type RecordedEvent = EventInfo & {
-  after: number;
-}
+export type RecordedEvent = EventInfo
 
 export type EventHistory = {
   currentIndex: number;
   events: EventInfo[];
+  undoEvents: EventInfo[];
 }
 
 export type Playlist = {
@@ -284,3 +284,12 @@ export type Playlist = {
   name: string;
   events: EventInfo[]
 }
+
+export type ControllerState = {
+  label: GraphLabelData;
+} & Pick<
+GraphEditorProps,
+'nodes' | 'edges' | 'mode' | 'selectedElementId'
+| 'actionBar' | 'dataBar' | 'settingsBar'
+| 'graphConfig'
+>

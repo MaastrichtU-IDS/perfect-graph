@@ -11,7 +11,7 @@ import {
   GraphEditorRef, GraphLabelData,
   RecordedEvent, RenderEdge,
   RenderNode, EventHistory,
-  OnEvent
+  OnEvent,
 } from '@type'
 import { getLabel, getSelectedItemByElement } from '@utils'
 // import { useGraph } from '@hooks'
@@ -111,7 +111,16 @@ const GraphEditorElement = (
     onEvent({
       ...eventInfo,
       id: R.uuid(),
-      date: new Date()
+      date: new Date().toString(),
+      ...(
+        eventInfo.event
+          ? {
+            event: R.pickPaths([
+              ['data', 'originalEvent', 'metaKey'],
+            ])(eventInfo.event),
+          }
+          : {}
+      ),
     })
   }, [onEvent])
   // const eventTimeoutsManagerRef = React.useRef(null)
@@ -138,7 +147,12 @@ const GraphEditorElement = (
   //   [events],
   // )
   const eventTimeoutsManager = useTimeoutManager(
-    events,
+    events?.map((event, index) => ({
+      ...event,
+      after: events[index - 1]
+        ? new Date(event.date) - new Date(events[index - 1].date)
+        : 0,
+    })),
     (event) => {
       onEvent(event)
     },
