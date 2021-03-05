@@ -5,6 +5,7 @@ import {
   DeleteRounded,
   RecordVoiceOverRounded,
   Edit,
+  ExpandMore,
   BuildCircle,
   RepeatOne,
   SortByAlpha,
@@ -27,6 +28,9 @@ import {
   ChevronRight,
   KeyboardArrowUp,
   KeyboardArrowDown,
+  PlaylistAdd,
+  PlaylistPlay,
+  PlayArrow,
 } from '@material-ui/icons'
 import { IconProps } from '@material-ui/core'
 
@@ -58,6 +62,10 @@ const ICONS = {
   chevron_right: ChevronRight,
   keyboard_arrow_up: KeyboardArrowUp,
   keyboard_arrow_down: KeyboardArrowDown,
+  playlist_add: PlaylistAdd,
+  playlist_play: PlaylistPlay,
+  expand_more: ExpandMore,
+  play_arrow: PlayArrow,
 } as const
 
 type IconName = keyof typeof ICONS

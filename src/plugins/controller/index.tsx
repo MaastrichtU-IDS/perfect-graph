@@ -62,12 +62,12 @@ const getUndoActions = (events: EventInfo[], settings: GetUndoActionsSettings) =
       } = event
       const oldSelectedElementId = draft.selectedElementId
       const element = elementId
-          ? graphEditor.cy.$id(`${elementId}`)
-          : null
-          const {
-            item,
-            index: itemIndex,
-          } = (element && getSelectedItemByElement(element, draft)) ?? {}
+        ? graphEditor.cy.$id(`${elementId}`)
+        : null
+      const {
+        item,
+        index: itemIndex,
+      } = (element && getSelectedItemByElement(element, draft)) ?? {}
       switch (type) {
         case EVENT.ADD_NODE:
           return [
@@ -102,8 +102,8 @@ const getUndoActions = (events: EventInfo[], settings: GetUndoActionsSettings) =
                     x: element.position().x,
                     y: element.position().y,
                   },
-                  elementId: element.id()
-                }))
+                  elementId: element.id(),
+                })),
               },
             },
           ]
@@ -120,7 +120,7 @@ const getUndoActions = (events: EventInfo[], settings: GetUndoActionsSettings) =
               {
                 type: EVENT.ELEMENT_SELECTED,
                 elementId: oldSelectedElementId,
-                ...event
+                ...event,
               },
             ]
             : [
@@ -136,9 +136,9 @@ const getUndoActions = (events: EventInfo[], settings: GetUndoActionsSettings) =
           return oldSelectedElementId
             ? [
               {
-                type: EVENT.ELEMENT_SELECTED,
+                ...event,
                 elementId: oldSelectedElementId,
-                ...event
+                type: EVENT.ELEMENT_SELECTED,
               },
             ]
             : []
@@ -207,9 +207,10 @@ export const useController = (
         ])(event)
         if (!avoidHistoryRecording) {
           const {
-              addHistory,
-              undoActions
+            addHistory,
+            undoActions,
           } = getUndoActions([eventInfo], { graphEditor, draft })
+          console.log('undo', undoActions)
           if (addHistory) {
             eventHistory.add({
               doActions: [
@@ -224,18 +225,9 @@ export const useController = (
                 ...e,
                 avoidEventRecording: true,
                 avoidHistoryRecording: true,
-              }))
-              // [
-              //   {
-              //     ...eventInfo,
-              //     event: recordableOriginalEvent,
-                  // avoidEventRecording: true,
-                  // avoidHistoryRecording: true,
-              //   },
-              // ],
+              })),
             })
           }
-          
         }
         if (
           draft.actionBar?.eventRecording
@@ -513,7 +505,7 @@ export const useController = (
           case EVENT.SET_POSITIONS_IMPERATIVELY: {
             const {
               positions,
-              oldLayout
+              oldLayout,
             } = payload
             positions.forEach((positionItem) => {
               graphEditor?.cy.$id(positionItem.elementId).position(positionItem.position)
@@ -573,16 +565,3 @@ const DEFAULT_CONTROLLER_CONFIG = {
   selectedElementId: null as string | null,
   graphConfig: {},
 }
-
-// if (type === DATA_TYPE.number) {
-//   try {
-//     return Number.parseFloat(value)
-//   } catch (error) {
-//     // Toast.show({
-//     //   color: 'danger',
-//     //   text: 'Please enter number value!!!',
-//     //   title: 'Error',
-//     // })
-//   }
-// }
-// return value

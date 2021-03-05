@@ -8,7 +8,11 @@ import {
   ListItemAvatar,
   Checkbox,
 } from '@material-ui/core'
-import { EventHistory, OnEventLite } from '@type'
+import {
+  EventHistory,
+  OnEventLite,
+  EventInfo,
+} from '@type'
 import { EVENT } from '@utils/constants'
 import {
   View,
@@ -17,11 +21,20 @@ import {
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import React from 'react'
 import * as R from 'colay/ramda'
+import Accordion from '@material-ui/core/Accordion'
+import AccordionSummary from '@material-ui/core/AccordionSummary'
+import AccordionDetails from '@material-ui/core/AccordionDetails'
+import { PlaylistTable } from './PlaylistTable'
 
 export type EventHistoryTableProps = {
   opened?: boolean;
   onEvent: OnEventLite;
   eventHistory: EventHistory;
+}
+
+type Playlist = {
+  name: string;
+  events: EventInfo[]
 }
 
 const EventHistoryTableElement = (props: EventHistoryTableProps) => {
@@ -31,6 +44,8 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
   } = props
   const [state, updateState] = useImmer({
     selectedEventIds: [] as string[],
+    selectedPlaylistIds: [] as string[],
+    playlists: [] as Playlist[],
   })
   return (
     <View
@@ -43,70 +58,92 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
         width: '100%',
       }}
     >
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          width: '100%',
-        }}
-      >
-        <Checkbox
-          checked={state.selectedEventIds.length === eventHistory.events.length}
-          onChange={(_, checked) => updateState((draft) => {
-            if (checked) {
-              draft.selectedEventIds = eventHistory.events.map((event) => event.id)
-            } else {
-              draft.selectedEventIds = []
-            }
-          })}
-          inputProps={{ 'aria-label': 'primary checkbox' }}
-        />
-        <Typography
-          variant="h6"
+      <Accordion>
+        <AccordionSummary
+          // expandIcon={<Icon name="expand_more" />}
+          aria-controls="panel1a-content"
         >
-          History
-        </Typography>
-        <View
-          style={{
-            // alignItems: 'space-between',
-          }}
-        >
-          <IconButton
-            onClick={() => {
-              onEvent({
-                type: EVENT.REDO_EVENT,
-                avoidEventRecording: true,
-                avoidHistoryRecording: true,
-              })
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              width: '100%',
             }}
           >
-            <Icon
-              name="keyboard_arrow_up"
+            <Checkbox
+              checked={!R.isEmpty(state.selectedEventIds)
+             && state.selectedEventIds.length === eventHistory.events.length}
+              onChange={(_, checked) => updateState((draft) => {
+                if (checked) {
+                  draft.selectedEventIds = eventHistory.events.map((event) => event.id)
+                } else {
+                  draft.selectedEventIds = []
+                }
+              })}
+              inputProps={{ 'aria-label': 'primary checkbox' }}
             />
-          </IconButton>
-          <IconButton
-            onClick={() => {
-              onEvent({
-                type: EVENT.UNDO_EVENT,
-                avoidEventRecording: true,
-                avoidHistoryRecording: true,
-              })
-            }}
-          >
-            <Icon
-              name="keyboard_arrow_down"
-            />
-          </IconButton>
-        </View>
-      </View>
-      <List dense>
-        {
+            <Typography
+              variant="h6"
+            >
+              History
+            </Typography>
+            <IconButton
+              onClick={() => {
+                onEvent({
+                  type: EVENT.REDO_EVENT,
+                  avoidEventRecording: true,
+                  avoidHistoryRecording: true,
+                })
+              }}
+            >
+              <Icon
+                name="playlist_add"
+              />
+            </IconButton>
+            <View
+              style={{
+                // alignItems: 'space-between',
+                flexDirection: 'row',
+              }}
+            >
+              <IconButton
+                onClick={() => {
+                  onEvent({
+                    type: EVENT.UNDO_EVENT,
+                    avoidEventRecording: true,
+                    avoidHistoryRecording: true,
+                  })
+                }}
+              >
+                <Icon
+                  name="keyboard_arrow_down"
+                />
+              </IconButton>
+              <IconButton
+                onClick={() => {
+                  onEvent({
+                    type: EVENT.REDO_EVENT,
+                    avoidEventRecording: true,
+                    avoidHistoryRecording: true,
+                  })
+                }}
+              >
+                <Icon
+                  name="keyboard_arrow_up"
+                />
+              </IconButton>
+            </View>
+          </View>
+        </AccordionSummary>
+        <AccordionDetails>
+          <List dense>
+            {
           R.reverse(eventHistory.events).map((event, index) => {
             const { length } = eventHistory.events
             return (
               <ListItem
-                selected={eventHistory.currentIndex === (length - 2) - index}
+                selected={eventHistory.currentIndex === (length - 1) - index}
               >
                 <ListItemAvatar>
                   <Checkbox
@@ -127,16 +164,21 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
                 <ListItemSecondaryAction>
                   <IconButton
                     edge="end"
-                    aria-label="delete"
+                    aria-label="play"
                   >
-                    <Icon name="delete_rounded" />
+                    <Icon name="play_arrow" />
                   </IconButton>
                 </ListItemSecondaryAction>
               </ListItem>
             )
           })
         }
-      </List>
+          </List>
+        </AccordionDetails>
+      </Accordion>
+      <PlaylistTable 
+        
+      />
     </View>
   )
 }

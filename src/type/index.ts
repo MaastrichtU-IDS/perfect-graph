@@ -281,3 +281,9 @@ export type EventHistory = {
   currentIndex: number;
   events: EventInfo[];
 }
+
+export type Playlist = {
+  id: string;
+  name: string;
+  events: EventInfo[]
+}
