@@ -1,5 +1,10 @@
 import {
-  MenuItem, Paper, Popper, TextField, Typography,
+  MenuItem,
+  Popper,
+  TextField,
+  Typography,
+  Backdrop,
+  Portal,
   Card,
   CardActionArea,
   CardMedia,
@@ -200,6 +205,9 @@ const LayoutNameItem = (props: LayoutNameItemProps) => {
         transition
         // disablePortal
         placement="right-start"
+        style={{
+          zIndex: 2000,
+        }}
       >
         <LayoutCard
           {...info}
@@ -218,39 +226,40 @@ const LayoutCard = (props: LayoutCardProps) => {
     title,
   } = props
   return (
-    <Card
-      style={{
-        width: '50vw',
-      }}
-    >
-      <CardActionArea>
-        <CardMedia
-          component="img"
-          alt="Contemplative Reptile"
-          height="340"
-          width="240"
-          
-          image={image}
-          title={title}
-        />
-        <CardContent>
-          <Typography
-            gutterBottom
-            variant="h5"
-            component="h2"
-          >
-            {title}
-          </Typography>
-          <Typography
-            variant="body2"
-            color="textSecondary"
-            component="p"
-          >
-            {content}
-          </Typography>
-        </CardContent>
-      </CardActionArea>
-      {/*
+    <>
+      <Card
+        sx={{
+          width: '50vw',
+          zIndex: (theme) => theme.zIndex.modal,
+        }}
+      >
+        <CardActionArea>
+          <CardMedia
+            component="img"
+            height="340"
+            width="240"
+
+            image={image}
+            title={title}
+          />
+          <CardContent>
+            <Typography
+              gutterBottom
+              variant="h5"
+              component="h2"
+            >
+              {title}
+            </Typography>
+            <Typography
+              variant="body2"
+              color="textSecondary"
+              component="p"
+            >
+              {content}
+            </Typography>
+          </CardContent>
+        </CardActionArea>
+        {/*
       <CardActions>
         <Button size="small" color="primary">
           Share
@@ -259,7 +268,8 @@ const LayoutCard = (props: LayoutCardProps) => {
           Learn More
         </Button>
       </CardActions> */}
-    </Card>
+      </Card>
+    </>
   //   <Paper
   //   sx={{
   //     width: { sx: '8vw', md: '50vw' },

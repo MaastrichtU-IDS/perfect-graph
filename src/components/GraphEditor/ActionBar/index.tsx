@@ -411,7 +411,12 @@ const MoreOptions = (props: MoreOptionsProps) => {
             value={theming?.value}
           >
             {theming?.options?.map((themeOption) => (
-              <MenuItem value={themeOption.value}>{themeOption.name}</MenuItem>
+              <MenuItem
+                key={themeOption.value}
+                value={themeOption.value}
+              >
+                {themeOption.name}
+              </MenuItem>
             ))}
           </Select>
         </FormControl>

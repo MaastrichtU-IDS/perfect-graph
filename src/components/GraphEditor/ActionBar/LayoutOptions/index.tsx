@@ -1,5 +1,7 @@
 import {
   Box, Button, Popover,
+  Backdrop,
+  Portal,
 } from '@material-ui/core'
 import Form from '@rjsf/material-ui'
 import { EVENT } from '@utils/constants'
@@ -78,10 +80,23 @@ export const LayoutOptions = (props: LayoutOptionsProps) => {
           horizontal: 'center',
         }}
       >
-
+        <Portal>
+          <Backdrop
+            open
+            sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              zIndex: (theme) => theme.zIndex.drawer,
+              width: '100vw',
+              height: '100vw',
+            }}
+          />
+        </Portal>
         <Box
           sx={{
             width: { sx: '10vw', md: '50vw' },
+            padding: 2,
           }}
         >
           <Form
