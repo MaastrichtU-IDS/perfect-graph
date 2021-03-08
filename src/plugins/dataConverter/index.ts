@@ -297,14 +297,15 @@ export const sparqlResultToRDF = (sparqlResult) => {
       : '/'
     const hasPrefix = predicate.value.includes('http')
     const prefix = hasPrefix
-      ? R.last(predicate.value.split(prefixSplitter))
+      ? R.replace(/:/g, '_', R.last(predicate.value.split(prefixSplitter)))
       : 'rel'
-    prefixMap[prefix] = hasPrefix
-      ? R.dropLast(1, predicate.value.split(prefixSplitter)).join('')
+    const prefixValue = hasPrefix
+      ? R.dropLast(1, predicate.value.split(prefixSplitter)).join(prefixSplitter) + prefixSplitter
       : 'http://www.perceive.net/schemas/relationship'
+    prefixMap[prefix] = prefixValue
     rdfText += `
     <#${subject.value}>
-      ${prefix}:'${predicate.value}'
+      ${prefix}:${predicate.value.replace(prefixValue, '')}
       ${isObjectUri ? '<#' : ''}${object.value}${isObjectUri ? '>' : ''} ;
       ${
   Object.keys(rest).map((key) => {
@@ -320,6 +321,7 @@ export const sparqlResultToRDF = (sparqlResult) => {
       .join('\n')
   }
   ${rdfText}`
+  console.log('rdf:', rdfText)
   return rdfText
 }
 

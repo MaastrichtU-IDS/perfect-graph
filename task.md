@@ -19,6 +19,7 @@
   - Add expand button
   - Add renderCell
 - Change Label (labelPath)
+- Sparql results to RDF
 
 # DOING
 
