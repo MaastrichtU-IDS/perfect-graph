@@ -101,7 +101,7 @@ export const LayoutOptions = (props: LayoutOptionsProps) => {
         >
           <Form
             {...getFormProps()}
-            extraData={[layout]}
+            // extraData={[layout]}
             formData={{
               name: layout.name,
               animationDuration: layout.animationDuration,
