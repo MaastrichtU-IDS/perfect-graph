@@ -1,5 +1,9 @@
 import {
-  MenuItem, Paper, Popper, TextField, Typography
+  MenuItem, Paper, Popper, TextField, Typography,
+  Card,
+  CardActionArea,
+  CardMedia,
+  CardContent,
 } from '@material-ui/core'
 import { utils, WidgetProps } from '@rjsf/core'
 import { LAYOUT_NAMES } from '@utils/constants'
@@ -197,32 +201,88 @@ const LayoutNameItem = (props: LayoutNameItemProps) => {
         // disablePortal
         placement="right-start"
       >
+        <LayoutCard
+          {...info}
+        />
 
-        <Paper
-          sx={{
-            width: { sx: '8vw', md: '50vw' },
-            display: 'flex',
-            padding: 10,
-            flexDirection: 'column',
-          }}
-        >
-          <Typography variant="h1">
-            {info.title}
-          </Typography>
-          <img
-            src={info.image}
-            width={250}
-            height={250}
-            alt={label}
-          />
-          <Typography
-            variant="body1"
-          >
-            {info.content}
-          </Typography>
-        </Paper>
       </Popper>
     </>
+  )
+}
+
+type LayoutCardProps = typeof LAYOUT_INFO['breadthfirst']
+const LayoutCard = (props: LayoutCardProps) => {
+  const {
+    content,
+    image,
+    title,
+  } = props
+  return (
+    <Card
+      style={{
+        width: '50vw',
+      }}
+    >
+      <CardActionArea>
+        <CardMedia
+          component="img"
+          alt="Contemplative Reptile"
+          height="340"
+          width="240"
+          
+          image={image}
+          title={title}
+        />
+        <CardContent>
+          <Typography
+            gutterBottom
+            variant="h5"
+            component="h2"
+          >
+            {title}
+          </Typography>
+          <Typography
+            variant="body2"
+            color="textSecondary"
+            component="p"
+          >
+            {content}
+          </Typography>
+        </CardContent>
+      </CardActionArea>
+      {/*
+      <CardActions>
+        <Button size="small" color="primary">
+          Share
+        </Button>
+        <Button size="small" color="primary">
+          Learn More
+        </Button>
+      </CardActions> */}
+    </Card>
+  //   <Paper
+  //   sx={{
+  //     width: { sx: '8vw', md: '50vw' },
+  //     display: 'flex',
+  //     padding: 10,
+  //     flexDirection: 'column',
+  //   }}
+  // >
+  //   <Typography variant="h1">
+  //     {info.title}
+  //   </Typography>
+  //   <img
+  //     src={info.image}
+  //     width={250}
+  //     height={250}
+  //     alt={label}
+  //   />
+  //   <Typography
+  //     variant="body1"
+  //   >
+  //     {info.content}
+  //   </Typography>
+  // </Paper>
   )
 }
 export const getFormProps = () => ({

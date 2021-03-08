@@ -35,6 +35,13 @@ export type ActionBarProps = {
   onEvent: OnEventLite;
   mode?: EditorMode;
   layoutName?: string;
+  theming?: {
+    options?: {
+      name: string;
+      value: string;
+    }[];
+    value?: string;
+  }
   recording?: boolean;
   eventRecording?: boolean;
   graphEditorRef: React.MutableRefObject<GraphEditorRef>;
@@ -84,6 +91,14 @@ const ActionBarElement = (props: ActionBarProps) => {
     graphEditorRef,
     graphConfig,
     onAction,
+    theming = {
+      options: [
+        { name: 'Default', value: 'Default' },
+        { name: 'Dark', value: 'Dark' },
+      ],
+      value: 'Default',
+    },
+
   } = props
   const {
     style: animationStyle,
@@ -102,7 +117,6 @@ const ActionBarElement = (props: ActionBarProps) => {
     animationRef.current.play(opened)
   }, [animationRef.current, opened])
   const theme = useTheme()
-
   const recordingRef = React.useRef(
     RECORDING_STATUS_MAP.IDLE,
   )
@@ -282,6 +296,7 @@ const ActionBarElement = (props: ActionBarProps) => {
         />
         <MoreOptions
           renderMoreAction={renderMoreAction}
+          theming={theming}
           onEvent={onEvent}
           onAction={onAction}
         />
@@ -307,7 +322,7 @@ type MoreOptionsProps = {
   onEvent: (
     params: any
   ) => () => void;
-} & Pick<ActionBarProps, 'renderMoreAction' | 'onAction'>
+} & Pick<ActionBarProps, 'renderMoreAction' | 'onAction' | 'theming'>
 
 const OPTIONS = {
   Import: 'Import',
@@ -319,6 +334,7 @@ const MoreOptions = (props: MoreOptionsProps) => {
     renderMoreAction = () => <Box />,
     onEvent,
     onAction,
+    theming,
   } = props
   const {
     anchorEl,
@@ -388,16 +404,15 @@ const MoreOptions = (props: MoreOptionsProps) => {
           </MenuItem>
         ))}
         <FormControl fullWidth>
-          <InputLabel id="demo-simple-select-label">Default</InputLabel>
+          <InputLabel id="simple-select-label">Theme</InputLabel>
           <Select
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            // value={age}
+            labelId="simple-select-label"
             onChange={handleThemeChange}
+            value={theming?.value}
           >
-            <MenuItem value="Default">Default</MenuItem>
-            <MenuItem value="Dark">Dark</MenuItem>
-            {/* <MenuItem value={30}>Thirty</MenuItem> */}
+            {theming?.options?.map((themeOption) => (
+              <MenuItem value={themeOption.value}>{themeOption.name}</MenuItem>
+            ))}
           </Select>
         </FormControl>
         {renderMoreAction()}

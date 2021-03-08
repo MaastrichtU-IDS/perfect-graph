@@ -225,17 +225,17 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
                   </IconButton>
                   <IconButton
                     edge="end"
+                    onClick={() => onEvent({
+                      type: EVENT.DELETE_HISTORY_EVENT,
+                      payload: {
+                        event,
+                        avoidEventRecording: true,
+                        avoidHistoryRecording: true,
+                      },
+                    })}
                   >
                     <Icon
                       name="delete_rounded"
-                      onClick={() => onEvent({
-                        type: EVENT.DELETE_HISTORY_EVENT,
-                        payload: {
-                          event,
-                          avoidEventRecording: true,
-                          avoidHistoryRecording: true,
-                        },
-                      })}
                     />
                   </IconButton>
                 </ListItemSecondaryAction>

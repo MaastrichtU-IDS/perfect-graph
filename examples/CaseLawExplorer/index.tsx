@@ -168,19 +168,33 @@ const AppContainer = ({
       nodes: {},
     },
     settingsBar: {
-      opened: true,
+      // opened: true,
       forms: [FETCH_SCHEMA, VIEW_CONFIG_SCHEMA, {...FILTER_SCHEMA,  formData: configRef.current.filtering}, ]
     },
     dataBar: {
+      // opened: true,
       editable: false,
     },
     actionBar: {
-      // opened: true,
+      opened: true,
       eventRecording: false,
       actions: {
         add: { visible: false },
         delete: { visible: false },
-      }
+      },
+      theming: {
+        options: [
+          {
+            name: 'Dark',
+            value: 'Dark',
+          },
+          {
+            name: 'Default',
+            value: 'Default',
+          }
+        ],
+        value: 'Default'
+      },
     },
     onEvent: ({
       type,
@@ -228,8 +242,12 @@ const AppContainer = ({
         }
       
         case EVENT.CHANGE_THEME: {
-          draft.graphConfig.theme = THEMES[payload]
-          changeMUITheme(payload)
+          const {
+            value
+          } = payload
+          draft.graphConfig.theme = THEMES[value]
+          changeMUITheme(value)
+          draft.actionBar.theming.value = value
           return false
           break
         }

@@ -286,6 +286,14 @@ const GraphEditorElement = (
                   },
                 })
                 break
+              case EVENT.CHANGE_THEME:
+                onEventCallback({
+                  type: EVENT.CHANGE_THEME,
+                  payload: {
+                    value,
+                  },
+                })
+                break
 
               default:
                 onEventCallback({

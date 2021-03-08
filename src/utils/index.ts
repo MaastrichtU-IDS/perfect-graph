@@ -482,7 +482,9 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
           return [
             {
               type: EVENT.CHANGE_THEME,
-              payload: payload === 'dark' ? 'default' : 'dark',
+              payload: {
+                value: draft.actionBar.theming.value,
+              },
             },
           ]
         case EVENT.ELEMENT_SELECTED:
