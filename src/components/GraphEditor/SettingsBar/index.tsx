@@ -1,4 +1,5 @@
 import React from 'react'
+import * as R from 'colay/ramda'
 import {
   wrapComponent,
   useAnimation,
@@ -9,6 +10,10 @@ import {
   Divider,
   IconButton,
   Button,
+  Typography,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from '@material-ui/core'
 import { Icon } from '@components/Icon'
 import { EVENT } from '@utils/constants'
@@ -73,43 +78,57 @@ const SettingsBarElement = (props: SettingsBarProps) => {
         style={{
           overflowY: 'auto',
           overflowX: 'hidden',
-          paddingRight: 10,
-          paddingLeft: 10,
-          height: eventHistory ? '50%' : '100%',
+          // paddingRight: 10,
+          // paddingLeft: 10,
+          height: '100%', // eventHistory ? '50%' : '100%',
         }}
       >
         {
         forms.map((form, index) => (
-          <Form
-            key={form.schema.title ?? `${index}`}
+          <>
+            <Accordion>
+              <AccordionSummary>
+                <Typography
+                  variant="h6"
+                >
+                  {form.schema.title}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Form
+                  key={form.schema.title ?? `${index}`}
             // schema={schema}
             // {...formProps}
-            {...form}
-            onSubmit={(
-              e,
-            ) => onEvent({
-              type: EVENT.SETTINGS_FORM_CHANGED,
-              payload: { form, value: e.formData, index },
-            })}
-          >
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-            >
-              Apply
-            </Button>
-          </Form>
+                  {...form}
+                  schema={R.omit(['title'])(form.schema)}
+                  onSubmit={(
+                    e,
+                  ) => onEvent({
+                    type: EVENT.SETTINGS_FORM_CHANGED,
+                    payload: { form, value: e.formData, index },
+                  })}
+                >
+                  <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                  >
+                    Apply
+                  </Button>
+                </Form>
+              </AccordionDetails>
+            </Accordion>
+            <View style={{ marginTop: 5, marginBottom: 5 }} />
+          </>
         ))
       }
-      </View>
-      {
+        {
         eventHistory && (
         <>
           <Divider style={{ marginTop: 5, marginBottom: 5 }} />
           <View
             style={{
-              height: '50%',
+              // height: '50%',
               width: '100%',
             }}
           >
@@ -121,6 +140,8 @@ const SettingsBarElement = (props: SettingsBarProps) => {
         </>
         )
       }
+      </View>
+
       <IconButton
         style={styles.icon}
         onClick={() => {

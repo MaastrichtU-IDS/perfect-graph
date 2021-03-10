@@ -66,8 +66,8 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
       style={{
         overflowY: 'auto',
         overflowX: 'hidden',
-        paddingRight: 10,
-        paddingLeft: 10,
+        // paddingRight: 10,
+        // paddingLeft: 10,
         height: '100%',
         width: '100%',
       }}

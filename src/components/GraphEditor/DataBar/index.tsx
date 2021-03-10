@@ -71,29 +71,35 @@ export const DataBar = (props: DataBarProps) => {
         ...animationStyle,
       }}
     >
-
-      {item && (
-      <Accordion
-        defaultExpanded
+      <View
+        style={{
+          height: '100%',
+          width: '100%',
+          overflowY: 'scroll',
+        }}
       >
-        <AccordionSummary>
-          <Typography
-            variant="h6"
-            sx={{ ml: 2 }}
-          >
-            {` id: ${item?.id}`}
-          </Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <View style={{
-            width: '100%',
-            height: hasStatistics ? '70%' : '100%',
-            overflowY: 'scroll',
-            // wordWrap: 'break-word',
-            // flexWrap: 'wrap',
-          }}
-          >
-            {
+        {item && (
+        <Accordion
+          defaultExpanded
+        >
+          <AccordionSummary>
+            <Typography
+              variant="h6"
+              sx={{ ml: 2 }}
+            >
+              {` id: ${item?.id}`}
+            </Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <View style={{
+              width: '100%',
+              height: hasStatistics ? '70%' : '100%',
+              overflowY: 'scroll',
+              // wordWrap: 'break-word',
+              // flexWrap: 'wrap',
+            }}
+            >
+              {
         editable && item?.data
           ? (
             <DataEditor
@@ -156,13 +162,13 @@ export const DataBar = (props: DataBarProps) => {
             />
           )
       }
-          </View>
-        </AccordionDetails>
-      </Accordion>
+            </View>
+          </AccordionDetails>
+        </Accordion>
 
-      )}
+        )}
 
-      {
+        {
         hasStatistics && (
           <View
             style={{
@@ -190,6 +196,8 @@ export const DataBar = (props: DataBarProps) => {
           </View>
         )
       }
+      </View>
+
       <IconButton
         style={{
           position: 'absolute',
