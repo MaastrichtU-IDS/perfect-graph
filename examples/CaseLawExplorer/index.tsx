@@ -176,7 +176,7 @@ const AppContainer = ({
       editable: false,
     },
     actionBar: {
-      opened: true,
+      // opened: true,
       eventRecording: false,
       actions: {
         add: { visible: false },
@@ -326,6 +326,7 @@ const AppContainer = ({
       <GraphEditor
         ref={graphEditorRef}
         {...controllerProps}
+        // {...R.omit(['eventHistory', ])(controllerProps)}
         payload={[configRef.current]}
         style={{ width: '100%', height: 800, }}
         renderNode={(props) => (

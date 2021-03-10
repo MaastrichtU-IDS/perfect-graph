@@ -3,7 +3,7 @@
 - StackList of events as history
 - Create PlayList of events
 - Parameterized event PlayList
-- Dynamic JSON Schema List
+- Dynamic JSON Schema List (betweenness_centrality, pagerank, indegree, outdegree automatically min max)
 - Lazy mode navigation on a graph
 - Prefetching some info
 - https://yasgui.triply.cc/
@@ -28,6 +28,7 @@
 - double label fontSizes
 - Euler as default layout // cose?
 - Layout Item explanation (as Gif or Image)
+- Work on Network statistics tab
 
 # DONE
 
