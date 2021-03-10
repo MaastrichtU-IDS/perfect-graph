@@ -95,7 +95,7 @@ export const getFetchSchema  = (props: {onPopupPress: () => void}) => {
   } = props
   return {
     schema: {
-      title: 'Fetch',
+      title: 'Fetch Data',
       type: 'object',
       required: [
         // 'title',
@@ -124,33 +124,12 @@ export const getFetchSchema  = (props: {onPopupPress: () => void}) => {
     },
     uiSchema: {
       'year': {
-        'ui:field': ({ formData, schema, onChange}) => {
-          return (
-            <Slider
-              value={formData ?? [schema.minimum, schema.maximum ]}
-              onChange={(e) => {
-                onChange(e.target.value)
-              }}
-              valueLabelDisplay="auto"
-              aria-labelledby="range-slider"
-              min={schema.minimum}
-              max={schema.maximum}
-              // getAriaValueText={(text)=> text}
-            />
-            // <RangeSlider
-            //   style={{ width: '90%', height: 40 }}
-              // min={schema.minimum}
-              // max={schema.maximum}
-            //   value={formData}
-            //   onValueChange={onChange}
-            // />
-          )
-        },
+        'ui:field': SliderUIField,
       },
       'popup': {
         'ui:field': ({ formData, schema, onChange}) => {
           return (
-            <Button onClick={onPopupPress}>Open</Button>
+            <Button onClick={onPopupPress}>Open Query Builder</Button>
           )
         },
       },

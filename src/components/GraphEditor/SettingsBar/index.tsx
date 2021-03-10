@@ -122,10 +122,10 @@ const SettingsBarElement = (props: SettingsBarProps) => {
           </>
         ))
       }
+        <Divider />
         {
         eventHistory && (
         <>
-          <Divider style={{ marginTop: 5, marginBottom: 5 }} />
           <View
             style={{
               // height: '50%',
@@ -137,6 +137,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
               eventHistory={eventHistory}
             />
           </View>
+          <Divider style={{ marginTop: 5, marginBottom: 5 }} />
         </>
         )
       }
