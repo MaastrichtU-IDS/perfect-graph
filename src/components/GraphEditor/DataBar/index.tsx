@@ -1,6 +1,8 @@
 import React from 'react'
 import { EVENT } from '@utils/constants'
-import { Event, OnEvent, ElementData } from '@type'
+import {
+  Event, OnEvent, ElementData, GraphEditorConfig,
+} from '@type'
 import {
   JSONViewer,
   useAnimation,
@@ -10,15 +12,25 @@ import {
   IconButton,
   Typography,
   Paper,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from '@material-ui/core'
 import { Icon } from '@components/Icon'
-import { DataEditor, DataEditorProps } from './DataEditor'
+import { DataEditor, DataEditorProps } from '../DataEditor'
+import { LocalNetworkStatistics } from './LocalNetworkStatistics'
+import { GlobalNetworkStatistics } from './GlobalNetworkStatistics'
 
 export type DataBarProps = {
   editable?: boolean;
   item?: ElementData|null;
   opened?: boolean;
   onEvent: OnEventLite;
+  graphEditorConfig: GraphEditorConfig;
+  statistics?: {
+    globalNetworkStatistics?: any;
+    localNetworkStatistics?: any;
+  }
 } & Omit<DataEditorProps, 'data'>
 
 const WIDTH_PROPORTION = 40
@@ -29,6 +41,8 @@ export const DataBar = (props: DataBarProps) => {
     item,
     onEvent,
     opened = false,
+    graphEditorConfig,
+    statistics,
     ...rest
   } = props
   const {
@@ -43,11 +57,10 @@ export const DataBar = (props: DataBarProps) => {
     },
     autoPlay: false,
   })
-  // const theme = useTheme()
-  // const initialized = React.useRef(false)
   React.useEffect(() => {
     animationRef.current?.play?.(opened)
   }, [animationRef, opened])
+  const hasStatistics = Object.values(statistics).find((val) => val)
   return (
     <Paper
       style={{
@@ -55,27 +68,32 @@ export const DataBar = (props: DataBarProps) => {
         width: `${WIDTH_PROPORTION}%`,
         height: '100%',
         top: 0,
-        // overflow: 'hidden',
         ...animationStyle,
       }}
     >
-      <View style={{
-        width: '100%',
-        height: '100%',
-        // overflowY: 'scroll',
-        // wordWrap: 'break-word',
-        // flexWrap: 'wrap',
-      }}
+
+      {item && (
+      <Accordion
+        defaultExpanded
       >
-        {item && (
-        <Typography
-          variant="h6"
-          sx={{ ml: 2 }}
-        >
-          {` id: ${item?.id}`}
-        </Typography>
-        )}
-        {
+        <AccordionSummary>
+          <Typography
+            variant="h6"
+            sx={{ ml: 2 }}
+          >
+            {` id: ${item?.id}`}
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <View style={{
+            width: '100%',
+            height: hasStatistics ? '70%' : '100%',
+            overflowY: 'scroll',
+            // wordWrap: 'break-word',
+            // flexWrap: 'wrap',
+          }}
+          >
+            {
         editable && item?.data
           ? (
             <DataEditor
@@ -125,6 +143,8 @@ export const DataBar = (props: DataBarProps) => {
                     ? (
                       <Typography
                         variant="subtitle1"
+                        // noWrap
+                        display="inline"
                         style={{ alignContent: 'center' }}
                       >
                         {value}
@@ -136,7 +156,40 @@ export const DataBar = (props: DataBarProps) => {
             />
           )
       }
-      </View>
+          </View>
+        </AccordionDetails>
+      </Accordion>
+
+      )}
+
+      {
+        hasStatistics && (
+          <View
+            style={{
+              height: '30%',
+              width: '100%',
+              overflowY: 'scroll',
+            }}
+          >
+            {
+          statistics.globalNetworkStatistics && (
+            <GlobalNetworkStatistics
+              data={statistics.globalNetworkStatistics}
+              onEvent={onEvent}
+            />
+          )
+        }
+            {
+          statistics.localNetworkStatistics && (
+            <LocalNetworkStatistics
+              data={statistics.localNetworkStatistics}
+              onEvent={onEvent}
+            />
+          )
+        }
+          </View>
+        )
+      }
       <IconButton
         style={{
           position: 'absolute',

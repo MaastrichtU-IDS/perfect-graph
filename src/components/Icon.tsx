@@ -33,10 +33,12 @@ import {
   PlayArrow,
   NavigateNext,
   NavigateBefore,
+  Assessment
 } from '@material-ui/icons'
 import { IconProps } from '@material-ui/core'
 
 const ICONS = {
+  assessment: Assessment,
   add_circle: AddCircle,
   addjust: Adjust,
   delete_rounded: DeleteRounded,

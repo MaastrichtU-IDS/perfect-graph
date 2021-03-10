@@ -172,15 +172,15 @@ const AppContainer = ({
       forms: [FETCH_SCHEMA, VIEW_CONFIG_SCHEMA, {...FILTER_SCHEMA,  formData: configRef.current.filtering}, ]
     },
     dataBar: {
-      // opened: true,
+      opened: true,
       editable: false,
     },
     actionBar: {
-      // opened: true,
+      opened: true,
       eventRecording: false,
       actions: {
-        add: { visible: false },
-        delete: { visible: false },
+        // add: { visible: false },
+        // delete: { visible: false },
       },
       theming: {
         options: [

@@ -12,11 +12,13 @@ import {
   RecordedEvent, RenderEdge,
   RenderNode, EventHistory,
   OnEvent,
+  GraphEditorConfig,
 } from '@type'
 import { getLabel, getSelectedItemByElement } from '@utils'
 // import { useGraph } from '@hooks'
 import { EDITOR_MODE, EVENT } from '@utils/constants'
 import { useTimeoutManager } from '@utils/useTimeoutManager'
+import { calculateStatistics } from '@utils/networkStatistics'
 import { useForwardRef, wrapComponent } from 'colay-ui'
 import { PropsWithRef } from 'colay-ui/type'
 import * as R from 'colay/ramda'
@@ -34,6 +36,7 @@ type RenderElementAdditionalInfo = {
 export type GraphEditorProps = {
   onEvent?: OnEvent;
   graphConfig?: GraphConfig;
+  config?: GraphEditorConfig;
   renderMoreAction?: () => React.ReactElement;
   label?: GraphLabelData;
   settingsBar?: SettingsBarProps;
@@ -63,6 +66,9 @@ const DEFAULT_HANDLER = R.identity as (info: EventInfo) => void
 
 export type GraphEditorType = React.FC<GraphEditorProps>
 
+const DEFAULT_GRAPH_EDITOR_CONFIG: GraphEditorConfig = {
+  enableNetworkStatistics: true,
+}
 const GraphEditorElement = (
   props: GraphEditorProps,
   ref: React.ForwardedRef<GraphEditorRef>,
@@ -83,8 +89,13 @@ const GraphEditorElement = (
     mode = EDITOR_MODE.DEFAULT,
     events,
     eventHistory,
+    config = DEFAULT_GRAPH_EDITOR_CONFIG,
     ...rest
   } = props
+  const initializedRef = React.useRef(false)
+  React.useEffect(() => {
+    initializedRef.current = true
+  }, [])
   const [state, setState] = React.useState({
     eventsModal: {
       visible: false,
@@ -94,9 +105,6 @@ const GraphEditorElement = (
     () => graphConfig?.graphId ?? R.uuid(),
     [graphConfig?.graphId],
   )
-  // const { cy } = useGraph({
-  //   id: graphId,
-  // })
   const graphEditorRef = useForwardRef(ref)
   const selectedElement = React.useMemo(
     () => selectedElementId && graphEditorRef.current.cy && graphEditorRef.current.cy.$id(selectedElementId),
@@ -108,6 +116,14 @@ const GraphEditorElement = (
   const selectedElementIsNode = selectedElement && selectedElement.isNode()
   const targetPath = selectedElementIsNode ? 'nodes' : 'edges'
   const onEventCallback = React.useCallback((eventInfo) => {
+    // switch (eventInfo.type) {
+    //   case EVENT.CALCULATE_LOCAL_NETWORK_STATISTICS:
+    //     localNetworkStatisticsRef.current = calculateStatistics({ nodes, edges })
+    //     break
+
+    //   default:
+    //     break
+    // }
     onEvent({
       ...eventInfo,
       id: R.uuid(),
@@ -123,29 +139,6 @@ const GraphEditorElement = (
       ),
     })
   }, [onEvent])
-  // const eventTimeoutsManagerRef = React.useRef(null)
-  // React.useEffect(
-  //   () => {
-  //     if (!events) {
-  //       return () => {}
-  //     }
-  //     const eventTimeoutsManager = createTimeoutManager(
-  //       events,
-  // (event, index) => {
-  //   if (index === events.length - 1) {
-  //     eventTimeoutsManagerRef.current = null
-  //   }
-  //   onEvent(event.data)
-  // },
-  //     )
-  //     eventTimeoutsManagerRef.current = eventTimeoutsManager
-  //     return () => {
-  //       eventTimeoutsManager?.clear()
-  //       eventTimeoutsManagerRef.current = null
-  //     }
-  //   },
-  //   [events],
-  // )
   const eventTimeoutsManager = useTimeoutManager(
     events?.map((event, index) => ({
       ...event,
@@ -163,7 +156,19 @@ const GraphEditorElement = (
       autostart: false,
     },
   )
-
+  const localNetworkStatisticsRef = React.useRef(null)
+  React.useEffect(() => {
+    if (!config.enableNetworkStatistics) {
+      localNetworkStatisticsRef.current = null
+    } else {
+      localNetworkStatisticsRef.current = calculateStatistics({ nodes, edges })
+    }
+  }, [])
+  React.useMemo(() => {
+    if (initializedRef.current) {
+      localNetworkStatisticsRef.current = calculateStatistics({ nodes, edges })
+    }
+  }, [nodes, edges, config.enableNetworkStatistics])
   return (
     <Box
       style={{
@@ -262,11 +267,16 @@ const GraphEditorElement = (
       }
       <DataBar
         {...dataBar}
+        graphEditorConfig={config}
         item={selectedItem}
         localLabel={selectedElement && (label?.[targetPath][selectedItem?.id!])}
         globalLabel={label?.global?.[targetPath]}
         isGlobalLabelFirst={label?.isGlobalFirst}
         onEvent={onEventCallback}
+        statistics={{
+          localNetworkStatistics: localNetworkStatisticsRef.current?.[selectedItem?.id],
+          // globalNetworkStatistics: localNetworkStatisticsRef.current?.[selectedItem?.id],
+        }}
       />
 
       {

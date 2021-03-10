@@ -293,3 +293,7 @@ GraphEditorProps,
 | 'actionBar' | 'dataBar' | 'settingsBar'
 | 'graphConfig'
 >
+
+export type GraphEditorConfig = {
+  enableNetworkStatistics?: boolean;
+}
