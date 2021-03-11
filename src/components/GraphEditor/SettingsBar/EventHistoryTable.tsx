@@ -278,10 +278,10 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
         onClose={() => updateState((draft) => {
           draft.createPlaylistDialog.visible = false
         })}
-        aria-labelledby="simple-dialog-title"
+        aria-labelledby="create-playlist-dialog-title"
         open={state.createPlaylistDialog.visible}
       >
-        <DialogTitle id="simple-dialog-title">Create Playlist</DialogTitle>
+        <DialogTitle id="create-playlist-dialog-title">Create Playlist</DialogTitle>
         <View
           style={{
             width: '50%',

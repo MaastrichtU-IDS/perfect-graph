@@ -541,3 +541,15 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
     events: undoEvents,
   }
 }
+
+const throttleTimeTable: Record<string, number> = {}
+export const throttle = (callback: (id: string)=> void, delay: number, _id?: string) => {
+  const time = (new Date()).getTime()
+  const id = _id ?? R.uuid()
+  const diff = throttleTimeTable[id] ? (time - throttleTimeTable[id]) : time
+
+  if (diff > delay) {
+    throttleTimeTable[id] = time
+    callback(id)
+  }
+}

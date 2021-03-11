@@ -15,7 +15,7 @@ import {
   GraphEditorConfig,
   NodeElement,
 } from '@type'
-import { getLabel, getSelectedItemByElement } from '@utils'
+import { getLabel, getSelectedItemByElement, throttle } from '@utils'
 // import { useGraph } from '@hooks'
 import { EDITOR_MODE, EVENT } from '@utils/constants'
 import { useTimeoutManager } from '@utils/useTimeoutManager'
@@ -42,7 +42,7 @@ export type GraphEditorProps = {
   label?: GraphLabelData;
   settingsBar?: SettingsBarProps;
   dataBar?: Pick<DataBarProps, 'editable'| 'opened'>;
-  actionBar?: Pick<ActionBarProps, 'renderMoreAction' | 'opened' | 'recording' |'eventRecording'>;
+  actionBar?: Pick<ActionBarProps, 'renderMoreAction' | 'opened' | 'recording' |'eventRecording' | 'autoOpen'>;
   selectedElementId?: string | null;
   mode?: EditorMode;
   renderEdge?: RenderEdge<RenderElementAdditionalInfo>;
@@ -184,6 +184,36 @@ const GraphEditorElement = (
         ...style,
         overflow: 'hidden',
         position: 'relative',
+      }}
+      onMouseMove={(e) => {
+        throttle(
+          () => {
+            const {
+              pageY,
+            } = e.nativeEvent
+            const {
+              offsetHeight,
+              offsetTop,
+            } = e.currentTarget
+            if (props.actionBar && props.actionBar.autoOpen) {
+              if (pageY + 25 >= offsetTop + offsetHeight
+                && !props.actionBar?.opened) {
+                return onEvent({
+                  type: EVENT.TOGGLE_ACTION_BAR,
+                  avoidHistoryRecording: true,
+                })
+              }
+              if (pageY + 50 <= offsetTop + offsetHeight && props.actionBar?.opened) {
+                return onEvent({
+                  type: EVENT.TOGGLE_ACTION_BAR,
+                  avoidHistoryRecording: true,
+                })
+              }
+            }
+          },
+          1000,
+          'GraphEditorOnMouseMove',
+        )
       }}
     >
       <Graph

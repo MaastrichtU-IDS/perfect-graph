@@ -85,7 +85,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
       >
         {
         forms.map((form, index) => (
-          <>
+          <React.Fragment key={form.schema.title}>
             <Accordion>
               <AccordionSummary>
                 <Typography
@@ -119,7 +119,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
               </AccordionDetails>
             </Accordion>
             <View style={{ marginTop: 5, marginBottom: 5 }} />
-          </>
+          </React.Fragment>
         ))
       }
         <Divider />

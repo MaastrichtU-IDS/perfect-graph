@@ -32,6 +32,7 @@ type ActionOption = {
 export type ActionBarProps = {
   renderMoreAction?: () => React.ReactElement;
   opened?: boolean;
+  autoOpen?: boolean;
   onEvent: OnEventLite;
   mode?: EditorMode;
   layoutName?: string;
@@ -85,6 +86,7 @@ const ActionBarElement = (props: ActionBarProps) => {
     renderMoreAction,
     mode,
     opened = false,
+    autoOpen= false,
     recording = false,
     eventRecording = false,
     // recordingActions = false,
@@ -301,19 +303,23 @@ const ActionBarElement = (props: ActionBarProps) => {
           onAction={onAction}
         />
       </Box>
-      <IconButton
-        style={styles.icon}
-        onClick={() => {
-          onEvent({
-            type: EVENT.TOGGLE_ACTION_BAR,
-            avoidHistoryRecording: true,
-          })
-        }}
-      >
-        <Icon
-          name="build_circle_outlined"
-        />
-      </IconButton>
+      {
+        !autoOpen && (
+          <IconButton
+            style={styles.icon}
+            onClick={() => {
+              onEvent({
+                type: EVENT.TOGGLE_ACTION_BAR,
+                avoidHistoryRecording: true,
+              })
+            }}
+          >
+            <Icon
+              name="build_circle_outlined"
+            />
+          </IconButton>
+        )
+      }
 
     </Box>
   )
@@ -404,9 +410,9 @@ const MoreOptions = (props: MoreOptionsProps) => {
           </MenuItem>
         ))}
         <FormControl fullWidth>
-          <InputLabel id="simple-select-label">Theme</InputLabel>
+          <InputLabel id="theme-select-label">Theme</InputLabel>
           <Select
-            labelId="simple-select-label"
+            labelId="theme-select-label"
             onChange={handleThemeChange}
             value={theming?.value}
           >

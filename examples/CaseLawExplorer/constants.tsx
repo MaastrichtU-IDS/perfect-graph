@@ -4,7 +4,7 @@ import {Button, Slider, Typography} from '@material-ui/core'
 const SliderUIField = ({ formData, schema, onChange, name}) => {
   return (
     <>
-    <Typography id="continuous-slider" gutterBottom>
+    <Typography id={`${schema.title}-continuous-slider`} gutterBottom>
         {schema.title ?? name}
     </Typography>
     <Slider
@@ -13,7 +13,7 @@ const SliderUIField = ({ formData, schema, onChange, name}) => {
         onChange(e.target.value)
       }}
       valueLabelDisplay="auto"
-      aria-labelledby="range-slider"
+      aria-labelledby={`${schema.title}-continuous-slider`}
       min={schema.minimum}
       max={schema.maximum}
     />
