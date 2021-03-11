@@ -13,6 +13,7 @@ import {
   RenderNode, EventHistory,
   OnEvent,
   GraphEditorConfig,
+  NodeElement,
 } from '@type'
 import { getLabel, getSelectedItemByElement } from '@utils'
 // import { useGraph } from '@hooks'
@@ -92,9 +93,14 @@ const GraphEditorElement = (
     config = DEFAULT_GRAPH_EDITOR_CONFIG,
     ...rest
   } = props
-  const initializedRef = React.useRef(false)
+  const localDataRef = React.useRef({
+    initialized: false,
+    targetNode: null as NodeElement | null,
+    props,
+  })
+  localDataRef.current.props = props
   React.useEffect(() => {
-    initializedRef.current = true
+    localDataRef.current.initialized = true
   }, [])
   const [state, setState] = React.useState({
     eventsModal: {
@@ -165,10 +171,13 @@ const GraphEditorElement = (
     }
   }, [])
   React.useMemo(() => {
-    if (initializedRef.current) {
+    if (localDataRef.current.initialized) {
       localNetworkStatisticsRef.current = calculateStatistics({ nodes, edges })
     }
   }, [nodes, edges, config.enableNetworkStatistics])
+  React.useEffect(() => {
+    localDataRef.current.targetNode = null
+  }, [mode])
   return (
     <Box
       style={{
@@ -196,14 +205,62 @@ const GraphEditorElement = (
           graphId,
         }}
         onPress={({ position }) => {
+          const { mode } = localDataRef.current.props
+          if (
+            // @ts-ignore
+            [EDITOR_MODE.ADD, EDITOR_MODE.CONTINUES_ADD].includes(mode)
+          ) {
+            onEventCallback({
+              type: EVENT.ADD_NODE,
+              payload: {
+                id: R.uuid(),
+                position,
+              },
+            })
+            return
+          }
           onEventCallback({
             type: EVENT.PRESS_BACKGROUND,
-            payload: position,
+            payload: { position },
           })
         }}
         renderNode={({ item, element, ...rest }) => (
           <Graph.Pressable
             onPress={(event) => {
+              const { mode } = localDataRef.current.props
+              if (
+                // @ts-ignore
+                [
+                  EDITOR_MODE.DELETE,
+                  EDITOR_MODE.CONTINUES_DELETE].includes(mode)
+              ) {
+                onEventCallback({
+                  type: EVENT.DELETE_NODE,
+                  item,
+                  event,
+                })
+                return
+              }
+              if (
+                [EDITOR_MODE.ADD, EDITOR_MODE.CONTINUES_ADD].includes(mode)
+              ) {
+                if (localDataRef.current.targetNode) {
+                  onEventCallback({
+                    type: EVENT.ADD_EDGE,
+                    elementId: element.id(),
+                    payload: {
+                      id: R.uuid(),
+                      source: localDataRef.current.targetNode.id(),
+                      target: element.id(),
+                    },
+                    event,
+                  })
+                  localDataRef.current.targetNode = null
+                } else {
+                  localDataRef.current.targetNode = element
+                }
+                return
+              }
               graphEditorRef.current.cy.$(':selected').unselect()
               element.select()
               onEventCallback({
@@ -229,7 +286,21 @@ const GraphEditorElement = (
         )}
         renderEdge={({ item, element, ...rest }) => (
           <Graph.Pressable
-            onPress={() => {
+            onPress={(event) => {
+              const { mode } = localDataRef.current.props
+              if (
+                // @ts-ignore
+                [
+                  EDITOR_MODE.DELETE,
+                  EDITOR_MODE.CONTINUES_DELETE].includes(mode)
+              ) {
+                onEventCallback({
+                  type: EVENT.DELETE_EDGE,
+                  elementId: element.id(),
+                  event,
+                })
+                return
+              }
               graphEditorRef.current.cy.$(':selected').unselect()
               element.select()
               onEventCallback({

@@ -1,7 +1,7 @@
 import React from 'react'
 import { EVENT } from '@utils/constants'
 import {
-  Event, OnEvent, ElementData, GraphEditorConfig,
+  OnEventLite, ElementData, GraphEditorConfig,
 } from '@type'
 import {
   JSONViewer,
@@ -15,6 +15,7 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  Divider,
 } from '@material-ui/core'
 import { Icon } from '@components/Icon'
 import { DataEditor, DataEditorProps } from '../DataEditor'
@@ -41,7 +42,7 @@ export const DataBar = (props: DataBarProps) => {
     item,
     onEvent,
     opened = false,
-    graphEditorConfig,
+    // graphEditorConfig,
     statistics,
     ...rest
   } = props
@@ -75,7 +76,8 @@ export const DataBar = (props: DataBarProps) => {
         style={{
           height: '100%',
           width: '100%',
-          overflowY: 'scroll',
+          overflowY: 'auto',
+          overflowX: 'hidden',
         }}
       >
         {item && (
@@ -85,7 +87,7 @@ export const DataBar = (props: DataBarProps) => {
           <AccordionSummary>
             <Typography
               variant="h6"
-              sx={{ ml: 2 }}
+              // style={{ marginLeft: 2 }}
             >
               {` id: ${item?.id}`}
             </Typography>
@@ -94,7 +96,6 @@ export const DataBar = (props: DataBarProps) => {
             <View style={{
               width: '100%',
               height: hasStatistics ? '70%' : '100%',
-              overflowY: 'scroll',
               // wordWrap: 'break-word',
               // flexWrap: 'wrap',
             }}
@@ -167,14 +168,13 @@ export const DataBar = (props: DataBarProps) => {
         </Accordion>
 
         )}
-
+        <Divider />
         {
         hasStatistics && (
           <View
             style={{
               height: '30%',
               width: '100%',
-              overflowY: 'scroll',
             }}
           >
             {
@@ -185,6 +185,7 @@ export const DataBar = (props: DataBarProps) => {
             />
           )
         }
+            <Divider />
             {
           statistics.localNetworkStatistics && (
             <LocalNetworkStatistics

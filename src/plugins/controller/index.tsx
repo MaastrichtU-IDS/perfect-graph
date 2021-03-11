@@ -69,7 +69,7 @@ export const useController = (
   const graphEditorRef = _graphEditorRef ?? localGraphEditorRef
   const localDataRef = React.useRef({
     recordedEvents: [] as RecordedEvent[],
-    targetNode: null,
+    // targetNode: null,
   })
   const onEvent = React.useCallback((eventInfo: EventInfo) => {
     const {
@@ -79,6 +79,7 @@ export const useController = (
       dataItem = {} as DataItem,
       event,
       elementId,
+      item,
       avoidEventRecording,
       avoidHistoryRecording,
     } = eventInfo
@@ -128,11 +129,11 @@ export const useController = (
           return
         }
         const {
-          item,
-          index: itemIndex,
+          item: selectedItem,
+          index: selectedItemIndex,
         } = (element && getSelectedItemByElement(element, draft)) ?? {}
-        const targetDataList = item?.data!// getSelectedItemByElement(element, draft).data
-
+        const targetDataList = selectedItem?.data!// getSelectedItemByElement(element, draft).data
+        console.log(eventInfo)
         switch (type) {
           case EVENT.REDO_EVENT:
             eventHistory.redo()
@@ -141,7 +142,7 @@ export const useController = (
             eventHistory.undo()
             break
           case EVENT.UPDATE_DATA:
-            item.data = payload.value
+            selectedItem.data = payload.value
             break
           case EVENT.ADD_DATA:
             targetDataList.push({
@@ -151,11 +152,11 @@ export const useController = (
             break
           case EVENT.MAKE_DATA_LABEL: {
             const newLabel = [ELEMENT_DATA_FIELDS.DATA, dataItem.name]
-            const isSame = R.equals(draft.label[targetPath][item.id], newLabel)
+            const isSame = R.equals(draft.label[targetPath][selectedItem.id], newLabel)
             if (isSame) {
-              delete draft.label[targetPath][item.id]
+              delete draft.label[targetPath][selectedItem.id]
             } else {
-              draft.label[targetPath][item.id] = newLabel
+              draft.label[targetPath][selectedItem.id] = newLabel
             }
             // targetDataList[index].name = payload.value
             break
@@ -174,66 +175,118 @@ export const useController = (
             draft.label.isGlobalFirst = true
             break
           }
-          case EVENT.PRESS_BACKGROUND: {
-            if (
-              // @ts-ignore
-              [EDITOR_MODE.ADD, EDITOR_MODE.CONTINUES_ADD].includes(draft.mode)
-            ) {
-              const position = payload
-              draft.nodes.push({
-                id: `${draft.nodes.length + 1}`, // R.uuid(),
-                position,
-                data: [],
-              })
-              if (draft.mode === EDITOR_MODE.ADD) {
-                draft.mode = EDITOR_MODE.DEFAULT
-              }
-            } else {
-              draft.selectedElementId = null
-              graphEditor.cy.$(':selected').unselect()
+          case EVENT.ADD_NODE: {
+            draft.nodes.push(payload)
+            // const { position } = payload
+            // draft.nodes.push({
+            //   id: `${draft.nodes.length + 1}`, // R.uuid(),
+            //   position,
+            //   data: [],
+            // })
+            if (draft.mode === EDITOR_MODE.ADD) {
+              draft.mode = EDITOR_MODE.DEFAULT
             }
             break
           }
+          case EVENT.DELETE_NODE: {
+            const itemIndex = draft.nodes.findIndex((node) => node.id === item.id)
+            draft.nodes.splice(itemIndex, 1)
+            draft.edges = draft.edges.filter(
+              (edgeItem) => edgeItem.source !== item.id && edgeItem.target !== item.id,
+            )
+            if (draft.mode === EDITOR_MODE.DELETE) {
+              draft.mode = EDITOR_MODE.DEFAULT
+            }
+            break
+          }
+          case EVENT.ADD_EDGE: {
+            draft.edges.push(payload)
+            // const {
+            //   id,
+            //   source,
+            //   target,
+            // } = payload
+            // draft.edges.push({
+            //   id,
+            //   source,
+            //   target,
+            //   data: {},
+            // })
+            if (draft.mode === EDITOR_MODE.ADD) {
+              draft.mode = EDITOR_MODE.DEFAULT
+            }
+            break
+          }
+          case EVENT.DELETE_EDGE: {
+            const itemIndex = draft.nodes.findIndex((node) => node.id === item.id)
+            draft.edges.splice(itemIndex, 1)
+            if (draft.mode === EDITOR_MODE.DELETE) {
+              draft.mode = EDITOR_MODE.DEFAULT
+            }
+            break
+          }
+          case EVENT.PRESS_BACKGROUND: {
+            // if (
+            //   // @ts-ignore
+            //   [EDITOR_MODE.ADD, EDITOR_MODE.CONTINUES_ADD].includes(draft.mode)
+            // ) {
+            //   const { position } = payload
+            //   draft.nodes.push({
+            //     id: `${draft.nodes.length + 1}`, // R.uuid(),
+            //     position,
+            //     data: [],
+            //   })
+            //   if (draft.mode === EDITOR_MODE.ADD) {
+            //     draft.mode = EDITOR_MODE.DEFAULT
+            //   }
+            // } else {
+            //   draft.selectedElementId = null
+            //   graphEditor.cy.$(':selected').unselect()
+            // }
+            draft.selectedElementId = null
+            graphEditor.cy.$(':selected').unselect()
+            break
+          }
           case EVENT.ELEMENT_SELECTED: {
-            if (
-              // @ts-ignore
-              [EDITOR_MODE.DELETE, EDITOR_MODE.CONTINUES_DELETE].includes(draft.mode)
-            ) {
-              draft[targetPath].splice(itemIndex, 1)
-              if (isNode) {
-                draft.edges = draft.edges.filter(
-                  (edgeItem) => edgeItem.source !== item.id && edgeItem.target !== item.id,
-                )
-              }
-              if (draft.mode === EDITOR_MODE.DELETE) {
-                draft.mode = EDITOR_MODE.DEFAULT
-              }
-              return
-            }
-            if (
-              [EDITOR_MODE.ADD, EDITOR_MODE.CONTINUES_ADD].includes(draft.mode)
-            ) {
-              if (isNode) {
-                if (localDataRef.current.targetNode) {
-                  draft.edges.push({
-                    id: R.uuid(),
-                    source: localDataRef.current.targetNode.id(),
-                    target: element.id(),
-                    data: {},
-                  })
-                  localDataRef.current.targetNode = null
-                } else {
-                  localDataRef.current.targetNode = element
-                }
-              }
-              if (!localDataRef.current.targetNode && draft.mode === EDITOR_MODE.ADD) {
-                draft.mode = EDITOR_MODE.DEFAULT
-              }
-              return
-            }
+            // if (
+            //   // @ts-ignore
+            //   [EDITOR_MODE.DELETE, EDITOR_MODE.CONTINUES_DELETE].includes(draft.mode)
+            // ) {
+            // draft[targetPath].splice(itemIndex, 1)
+            // if (isNode) {
+            //   draft.edges = draft.edges.filter(
+            //     (edgeItem) => edgeItem.source !== item.id && edgeItem.target !== item.id,
+            //   )
+            // }
+            // if (draft.mode === EDITOR_MODE.DELETE) {
+            //   draft.mode = EDITOR_MODE.DEFAULT
+            // }
+            //   return
+            // }
+            // if (
+            //   [EDITOR_MODE.ADD, EDITOR_MODE.CONTINUES_ADD].includes(draft.mode)
+            // ) {
+            //   if (isNode) {
+            //     if (localDataRef.current.targetNode) {
+            //       draft.edges.push({
+            //         id: R.uuid(),
+            //         source: localDataRef.current.targetNode.id(),
+            //         target: element.id(),
+            //         data: {},
+            //       })
+            //       localDataRef.current.targetNode = null
+            //     } else {
+            //       localDataRef.current.targetNode = element
+            //     }
+            //   }
+            //   if (!localDataRef.current.targetNode && draft.mode === EDITOR_MODE.ADD) {
+            //     draft.mode = EDITOR_MODE.DEFAULT
+            //   }
+            //   return
+            // }
             graphEditor.cy.$(':selected').unselect()
             element.select()
-            draft.selectedElementId = item.id
+            draft.selectedElementId = selectedItem.id
             if (event && event.data.originalEvent.metaKey) {
               draft.dataBar!.opened = true
               const {
@@ -269,7 +322,7 @@ export const useController = (
           }
           case EVENT.MODE_CHANGED: {
             draft.mode = payload.value
-            localDataRef.current.targetNode.current = null
+            // localDataRef.current.targetNode.current = null
             break
           }
           case EVENT.CHANGE_DATA_NAME:
