@@ -18,6 +18,7 @@ import {
   Divider,
 } from '@material-ui/core'
 import { Icon } from '@components/Icon'
+import * as R from 'colay/ramda'
 import { DataEditor, DataEditorProps } from '../DataEditor'
 import { LocalNetworkStatistics } from './LocalNetworkStatistics'
 import { GlobalNetworkStatistics } from './GlobalNetworkStatistics'
@@ -44,6 +45,9 @@ export const DataBar = (props: DataBarProps) => {
     opened = false,
     // graphEditorConfig,
     statistics,
+    globalLabel,
+    localLabel,
+    isGlobalLabelFirst,
     ...rest
   } = props
   const {
@@ -111,6 +115,7 @@ export const DataBar = (props: DataBarProps) => {
           )
           : (
             <JSONViewer
+              extraData={[localLabel, globalLabel,]}
               data={item?.data}
               left={({ collapsed, onCollapse, noChild }) => (
                 <IconButton
@@ -133,6 +138,69 @@ export const DataBar = (props: DataBarProps) => {
                   />
                 </IconButton>
               )}
+              right={(props) => {
+                const {
+                  item: { path }
+                } = props
+                const isLocalLabel = R.equals(path, localLabel)
+                const isGlobalLabel = R.equals(path, globalLabel)
+                return (
+                  <>
+                    <IconButton
+                      size="small"
+                      sx={{ height: 24 }}
+                      onClick={() => onEvent(
+                        isLocalLabel
+                          ? {
+                            type: EVENT.CLEAR_NODE_LOCAL_LABEL,
+                          }
+                          : {
+                            type: EVENT.SET_NODE_LOCAL_LABEL,
+                            payload: {
+                              value: path,
+                            },
+                          },
+                      )}
+                    >
+                      <Icon
+                        style={{
+                          fontSize: 24,
+                          textDecoration: !isGlobalLabelFirst ? 'underline' : '',
+                        }}
+                        name={
+                          isLocalLabel ? 'bookmark' : 'bookmark_border'
+                        }
+                      />
+                    </IconButton>
+                    <IconButton
+                      size="small"
+                      sx={{ height: 24 }}
+                      onClick={() => onEvent(
+                        isGlobalLabel
+                          ? {
+                            type: EVENT.CLEAR_NODE_GLOBAL_LABEL,
+                          }
+                          : {
+                            type: EVENT.SET_NODE_GLOBAL_LABEL,
+                            payload: {
+                              value: path,
+                            },
+                          },
+                      )}
+                    >
+                      <Icon
+                        style={{
+                          fontSize: 24,
+                          textDecoration: isGlobalLabelFirst ? 'underline' : '',
+                        }}
+                        name={
+                          isGlobalLabel ? 'bookmarks' : 'bookmark_border'
+  }
+                      />
+                    </IconButton>
+                  </>
+                )
+              }}
               renderItem={({ item: { key, value } }) => (
                 <View
                   style={{

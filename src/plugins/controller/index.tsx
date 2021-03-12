@@ -27,7 +27,7 @@ type UseControllerData = Pick<
 GraphEditorProps,
 'nodes'| 'edges' | 'mode'
 | 'actionBar' | 'dataBar' | 'settingsBar'
-| 'graphConfig' | 'events'
+| 'graphConfig' | 'events' | 'label'
 > & {
   onEvent?: (info: EventInfo, draft: ControllerState) => boolean;
 }
@@ -461,6 +461,32 @@ export const useController = (
             //   graphEditor?.cy.$id(positionItem.elementId).position(positionItem.position)
             // })
             // draft.graphConfig.layout = oldLayout
+            break
+          }
+          case EVENT.SET_NODE_LOCAL_LABEL: {
+            const {
+              value,
+            } = payload
+            draft.label.nodes[selectedItem.id] = value
+            break
+          }
+          case EVENT.CLEAR_NODE_LOCAL_LABEL: {
+            delete draft.label.nodes[selectedItem.id]
+            break
+          }
+          case EVENT.TOGGLE_NODE_GLOBAL_LABEL_FIRST: {
+            draft.label.isGlobalFirst.nodes = !draft.label?.isGlobalFirst?.nodes
+            break
+          }
+          case EVENT.SET_NODE_GLOBAL_LABEL: {
+            const {
+              value,
+            } = payload
+            draft.label.global.nodes = value
+            break
+          }
+          case EVENT.CLEAR_NODE_GLOBAL_LABEL: {
+            delete draft.label.global.nodes
             break
           }
           default:

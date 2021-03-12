@@ -314,6 +314,9 @@ export const getSelectedItemByElement = (
 }
 
 export const getLabel = (path: string[] = [], item: ElementData): string => {
+  return R.isEmpty(path)
+    ? item.id
+    : R.path([ELEMENT_DATA_FIELDS.DATA, ...path])(item) ?? item.id
   const firstKey = path[0]
   if (firstKey === ELEMENT_DATA_FIELDS.DATA) {
     const name = path[1]

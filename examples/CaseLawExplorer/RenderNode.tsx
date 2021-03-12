@@ -13,9 +13,11 @@ export const RenderNode = ({
    item, element, cy, theme,
    visualization, 
    filtering,
+   labelPath,
+   label,
   graphRef 
 }: RenderNodeProps) => {
-  const text = R.takeLast(6, item.id)
+  const text = R.takeLast(6, `${label}`)//item.id
   const size = calculateNodeSize(item.data, visualization.nodeSize)
   const color = visualization.nodeColor ? calculateColor(
     item.data,

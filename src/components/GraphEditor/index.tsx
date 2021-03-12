@@ -131,6 +131,7 @@ const GraphEditorElement = (
     //     break
     // }
     onEvent({
+      ...(selectedElement ? { elementId: selectedElement.id() } : {}),
       ...eventInfo,
       id: R.uuid(),
       date: new Date().toString(),
@@ -144,7 +145,7 @@ const GraphEditorElement = (
           : {}
       ),
     })
-  }, [onEvent])
+  }, [onEvent, selectedElement?.id()])
   const eventTimeoutsManager = useTimeoutManager(
     events?.map((event, index) => ({
       ...event,
@@ -310,6 +311,9 @@ const GraphEditorElement = (
                   : (label?.nodes?.[item.id] ?? label?.global.nodes),
                 item,
               ),
+              labelPath: label?.isGlobalFirst
+              ? (label?.global.nodes ?? label?.nodes?.[item.id])
+              : (label?.nodes?.[item.id] ?? label?.global.nodes),
               ...rest,
             })}
           </Graph.Pressable>
@@ -350,6 +354,9 @@ const GraphEditorElement = (
                   : (label?.edges?.[item.id] ?? label?.global.edges),
                 item,
               ),
+              labelPath: label?.isGlobalFirst
+              ? (label?.global.edges ?? label?.edges?.[item.id])
+              : (label?.edges?.[item.id] ?? label?.global.edges),
               element,
               ...rest,
             })
@@ -372,7 +379,7 @@ const GraphEditorElement = (
         item={selectedItem}
         localLabel={selectedElement && (label?.[targetPath][selectedItem?.id!])}
         globalLabel={label?.global?.[targetPath]}
-        isGlobalLabelFirst={label?.isGlobalFirst}
+        isGlobalLabelFirst={label?.isGlobalFirst?.[targetPath]}
         onEvent={onEventCallback}
         statistics={{
           localNetworkStatistics: localNetworkStatisticsRef.current?.[selectedItem?.id],

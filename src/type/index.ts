@@ -101,6 +101,8 @@ type RenderElementParams = {
   cy: Core;
   graphRef: React.RefObject<GraphRef>;
   theme: Theme;
+  labelPath?: string[]
+  label: string
 }
 export type RenderEdge<Additional extends Record<string, any> = {}> = (c: {
   item: EdgeData;
@@ -233,7 +235,7 @@ export type GraphLabelData = {
   global: { nodes: string[]; edges: string[] };
   nodes: Record<string, string[]>;
   edges: Record<string, string[]>;
-  isGlobalFirst?: boolean;
+  isGlobalFirst?: { nodes: boolean; edges: boolean; };
 }
 
 export type EventInfo = {
