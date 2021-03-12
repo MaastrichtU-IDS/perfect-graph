@@ -177,6 +177,7 @@ const AppContainer = ({
     },
     actionBar: {
       opened: true,
+      // autoOpen: true,
       eventRecording: false,
       actions: {
         // add: { visible: false },

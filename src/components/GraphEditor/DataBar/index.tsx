@@ -36,6 +36,7 @@ export type DataBarProps = {
 } & Omit<DataEditorProps, 'data'>
 
 const WIDTH_PROPORTION = 40
+const ICON_SIZE = 16
 
 export const DataBar = (props: DataBarProps) => {
   const {
@@ -115,40 +116,21 @@ export const DataBar = (props: DataBarProps) => {
           )
           : (
             <JSONViewer
-              extraData={[localLabel, globalLabel,]}
+              extraData={[localLabel, globalLabel]}
               data={item?.data}
-              left={({ collapsed, onCollapse, noChild }) => (
-                <IconButton
-                  size="small"
-                  sx={{ height: 24 }}
-                  disabled={noChild}
-                  onClick={() => onCollapse(!collapsed)}
-                >
-                  <Icon
-                    style={{
-                      fontSize: noChild ? 12 : 24,
-                    }}
-                    name={
-                      noChild
-                        ? 'fiber_manual_record'
-                        : collapsed
-                          ? 'arrow_drop_down_rounded'
-                          : 'arrow_drop_up_rounded'
-}
-                  />
-                </IconButton>
-              )}
-              right={(props) => {
+              left={(props) => {
                 const {
-                  item: { path }
+                  item: { path },
+                  collapsed, onCollapse, noChild,
                 } = props
                 const isLocalLabel = R.equals(path, localLabel)
                 const isGlobalLabel = R.equals(path, globalLabel)
                 return (
                   <>
+
                     <IconButton
                       size="small"
-                      sx={{ height: 24 }}
+                      sx={{ height: ICON_SIZE }}
                       onClick={() => onEvent(
                         isLocalLabel
                           ? {
@@ -164,7 +146,7 @@ export const DataBar = (props: DataBarProps) => {
                     >
                       <Icon
                         style={{
-                          fontSize: 24,
+                          fontSize: ICON_SIZE,
                           textDecoration: !isGlobalLabelFirst ? 'underline' : '',
                         }}
                         name={
@@ -174,7 +156,7 @@ export const DataBar = (props: DataBarProps) => {
                     </IconButton>
                     <IconButton
                       size="small"
-                      sx={{ height: 24 }}
+                      sx={{ height: ICON_SIZE }}
                       onClick={() => onEvent(
                         isGlobalLabel
                           ? {
@@ -190,7 +172,7 @@ export const DataBar = (props: DataBarProps) => {
                     >
                       <Icon
                         style={{
-                          fontSize: 24,
+                          fontSize: ICON_SIZE,
                           textDecoration: isGlobalLabelFirst ? 'underline' : '',
                         }}
                         name={
@@ -198,9 +180,31 @@ export const DataBar = (props: DataBarProps) => {
   }
                       />
                     </IconButton>
+                    <IconButton
+                      size="small"
+                      sx={{ height: ICON_SIZE }}
+                      disabled={noChild}
+                      onClick={() => onCollapse(!collapsed)}
+                    >
+                      <Icon
+                        style={{
+                          fontSize: ICON_SIZE, // noChild ? 12 : ICON_SIZE,
+                        }}
+                        name={
+                      noChild
+                        ? 'fiber_manual_record'
+                        : collapsed
+                          ? 'arrow_drop_down_rounded'
+                          : 'arrow_drop_up_rounded'
+}
+                      />
+                    </IconButton>
                   </>
                 )
               }}
+              // right={(props) => {
+
+              // }}
               renderItem={({ item: { key, value } }) => (
                 <View
                   style={{
