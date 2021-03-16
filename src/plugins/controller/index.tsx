@@ -13,7 +13,7 @@ import {
   EVENT, ELEMENT_DATA_FIELDS, EDITOR_MODE,
 } from '@utils/constants'
 import GraphLayouts from '@core/layouts'
-import { getSelectedItemByElement, getUndoEvents } from '@utils'
+import { getSelectedItemByElement, getUndoEvents, cyUnselectAll } from '@utils'
 import { download } from 'colay-ui/utils'
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import * as R from 'colay/ramda'
@@ -241,10 +241,10 @@ export const useController = (
             //   }
             // } else {
             //   draft.selectedElementId = null
-            //   graphEditor.cy.$(':selected').unselect()
+            //  cyUnselectAll(graphEditor.cy)
             // }
             draft.selectedElementId = null
-            graphEditor.cy.$(':selected').unselect()
+            cyUnselectAll(graphEditor.cy)
             break
           }
           case EVENT.ELEMENT_SELECTED: {
@@ -284,7 +284,7 @@ export const useController = (
             //   }
             //   return
             // }
-            graphEditor.cy.$(':selected').unselect()
+            cyUnselectAll(graphEditor.cy)
             element.select()
             draft.selectedElementId = selectedItem.id
             if (event && event.data.originalEvent.metaKey) {

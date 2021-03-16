@@ -5,7 +5,9 @@ import * as PIXI from 'pixi.js'
 // import Cull from 'pixi-cull'
 import React from 'react'
 import { wrapComponent, useForwardRef } from 'colay-ui'
-import { Position } from 'colay-ui/type'
+import { getBoundingBox } from '@utils'
+import { Position, BoundingBox } from 'colay/type'
+import { drawGraphics } from '@components/Graphics'
 
 type NativeViewportProps = {
   app: PIXI.Application;
@@ -28,10 +30,26 @@ type NativeViewportProps = {
     pivotX?: number;
     pivotY?: number;
   };
+  onBoxSelectionStart: (c: {
+    event: PIXI.InteractionEvent;
+    startPosition: Position;
+  }) => void;
+  onBoxSelection: (c: {
+    event: PIXI.InteractionEvent;
+    startPosition: Position;
+    endPosition: Position;
+    boundingBox: BoundingBox;
+  }) => void;
+  onBoxSelectionEnd: (c: {
+    event: PIXI.InteractionEvent;
+    startPosition: Position;
+    endPosition: Position;
+    boundingBox: BoundingBox;
+  }) => void;
 
 }
 type ViewportType = ViewportNative & {clickEvent: any; isClick: boolean}
-
+const DEFAULT_EVENT_HANDLER = () => {}
 const ReactViewportComp = PixiComponent('Viewport', {
   create: (props: NativeViewportProps) => {
     const {
@@ -42,6 +60,9 @@ const ReactViewportComp = PixiComponent('Viewport', {
       height,
       width,
       onCreate,
+      onBoxSelectionStart = DEFAULT_EVENT_HANDLER,
+      onBoxSelection = DEFAULT_EVENT_HANDLER,
+      onBoxSelectionEnd = DEFAULT_EVENT_HANDLER,
     } = props
     const viewport: ViewportType = new ViewportNative({
       screenWidth: width,
@@ -59,11 +80,37 @@ const ReactViewportComp = PixiComponent('Viewport', {
       .drag()
       .pinch()
       .wheel()
+    const localDataRef = {
+      current: {
+        boxSelection: {
+          enabled: false,
+          startPosition: null as Position | null,
+          currentPosition: null as Position | null,
+          boxElement: null as PIXI.DisplayObject | null,
+        },
+      },
+    }
     // to avoid dragging when onClick child
     viewport.on(
       'pointerdown',
       (e) => {
-        if (e.target !== viewport) {
+        const { metaKey } = e.data.originalEvent
+        if (e.target !== viewport || metaKey) {
+          if (metaKey) {
+            const position = getPointerPosition(viewport, e.data.originalEvent)
+            localDataRef.current.boxSelection.enabled = metaKey
+            localDataRef.current.boxSelection.startPosition = {
+              x: position.x,
+              y: position.y,
+            }
+            const boxElement = new PIXI.Graphics()
+            viewport.addChild(boxElement!)
+            localDataRef.current.boxSelection.boxElement = boxElement
+            onBoxSelectionStart({
+              event: e,
+              startPosition: position,
+            })
+          }
           viewport.plugins.pause('drag')
         }
         // const { x, y } = viewport.toWorld(e.data.global)
@@ -73,8 +120,58 @@ const ReactViewportComp = PixiComponent('Viewport', {
         }, 250)
       },
     )
-    viewport.on('pointerup', () => {
+    viewport.on('pointerup', (e) => {
       viewport.plugins.resume('drag')
+      if (localDataRef.current.boxSelection.enabled) {
+        const {
+          boxElement,
+          currentPosition,
+          startPosition,
+        } = localDataRef.current.boxSelection
+        onBoxSelectionEnd({
+          event: e,
+          startPosition: startPosition!,
+          endPosition: currentPosition!,
+          boundingBox: getBoundingBox(startPosition!, currentPosition!),
+        })
+        viewport.removeChild(boxElement!)
+        localDataRef.current.boxSelection.enabled = false
+        boxElement?.destroy()
+        localDataRef.current.boxSelection.boxElement = null
+      }
+    })
+    viewport.on('pointermove', (e) => {
+      // const { metaKey } = e.data.originalEvent
+      if (localDataRef.current.boxSelection.enabled) {
+        const position = getPointerPosition(viewport, e.data.originalEvent)
+        localDataRef.current.boxSelection.currentPosition = {
+          x: position.x,
+          y: position.y,
+        }
+        const {
+          startPosition,
+          currentPosition,
+          boxElement,
+        } = localDataRef.current.boxSelection
+        const boundingBox = getBoundingBox(startPosition!, currentPosition!)
+        onBoxSelection({
+          event: e,
+          endPosition: currentPosition!,
+          startPosition: startPosition!,
+          boundingBox,
+        })
+        boxElement.x = boundingBox.x
+        boxElement.y = boundingBox.y
+        drawGraphics(boxElement, {
+          style: {
+            width: boundingBox.width,
+            height: boundingBox.height,
+            backgroundColor: 'rgba(0,0,0,0)',
+            borderColor: 'rgba(0,0,0,0.7)',
+            borderWidth: 1,
+          },
+        })
+      }
     })
     viewport.on('wheel', (data) => {
       // @ts-ignore
@@ -126,7 +223,7 @@ const ReactViewportComp = PixiComponent('Viewport', {
       ),
     )(transform)
     mutableViewport.on('click', mutableViewport.clickEvent)
-    // return 
+    // return
   },
   didMount: () => {
   },
@@ -179,3 +276,18 @@ export const Viewport = wrapComponent<ViewportProps>(
     isForwardRef: true,
   },
 )
+
+function getPointerPosition(viewport, event) {
+  const position = {
+    x: event.clientX,
+    y: event.clientY,
+  }
+  if (viewport.options.interaction) {
+    viewport.options.interaction.mapPositionToPoint(position, event.clientX, event.clientY)
+  }
+  position.x /= viewport.scale.x
+  position.y /= viewport.scale.y
+  position.x += viewport.left
+  position.y += viewport.top
+  return position
+}

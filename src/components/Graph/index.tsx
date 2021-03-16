@@ -16,9 +16,11 @@ import {
   GraphConfig, DrawLine, GraphRef, ViewportRef,
 } from '@type'
 import { PropsWithRef } from 'colay-ui/type'
+import { BoundingBox } from 'colay/type'
 import '@core/config'
 import { ThemeProvider, DefaultTheme } from '@core/theme'
 import { CYTOSCAPE_EVENT } from '@utils/constants'
+import { isPositionInBox, cyUnselectAll } from '@utils'
 import { Viewport, ViewportProps } from '../Viewport'
 import { NodeContainer } from '../NodeContainer'
 import { EdgeContainer } from '../EdgeContainer'
@@ -36,6 +38,11 @@ export type GraphProps = {
   onPress?: ViewportProps['onPress'];
   drawLine?: DrawLine;
   config?: GraphConfig;
+  onBoxSelection?: (c: {
+    event: PIXI.InteractionEvent,
+    elements: cytoscape.Collection,
+    boundingBox: BoundingBox;
+  }) => void
 }
 
 const DEFAULT_NODE_CONFIG = {
@@ -77,7 +84,7 @@ export const DefaultRenderNode: RenderNode = ({
       }}
       interactive
       click={() => {
-        cy.$(':selected').unselect()
+        cyUnselectAll(cy)
         element.select()
       }}
       // rightclick={(e) => {
@@ -126,7 +133,7 @@ export const DefaultRenderEdge: RenderEdge = ({
       // borderRadius: 50,
     }}
     click={() => {
-      cy.$(':selected').unselect()
+      cyUnselectAll(cy)
       element.select()
     }}
   >
@@ -161,7 +168,9 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
     drawLine,
     extraData,
     config: _config = {} as Partial<GraphConfig>,
+    onBoxSelection,
   } = props
+  const boxSelectionEnabled = !!onBoxSelection
   const config = React.useMemo(() => ({
     ...DEFAULT_CONFIG,
     ..._config,
@@ -248,6 +257,10 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
   // useWhyDidUpdate('heyy', {
   //   stageRef: stageRef.current, layout: config.layout, width, height,
   // })
+  const onPressCallback = React.useCallback((e) => {
+    cyUnselectAll(cy)
+    onPress?.(e)
+  }, [cy, onPress])
   return (
     <View
       ref={containerRef}
@@ -272,10 +285,29 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
           <Viewport
           // @ts-ignore
             ref={viewportRef}
-            onPress={onPress}
+            onPress={onPressCallback}
             zoom={config.zoom}
             transform={config.transform}
             {...{ width, height }}
+            onBoxSelectionEnd={({
+              event,
+              boundingBox,
+            }) => {
+              cyUnselectAll(cy)
+              const selectedCollection = cy.nodes().filter((element) => {
+                const elementPosition = element.position()
+                const selected = isPositionInBox(elementPosition, boundingBox)
+                if (selected) {
+                  element.select()
+                }
+                return selected
+              })
+              onBoxSelection?.({
+                boundingBox,
+                elements: selectedCollection,
+                event,
+              })
+            }}
           >
             <DataRender
               extraData={[extraData, config.nodes]}

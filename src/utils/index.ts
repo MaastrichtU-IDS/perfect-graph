@@ -2,6 +2,7 @@ import * as R from 'colay/ramda'
 import * as PIXI from 'pixi.js'
 import { applyDefaultProps as nativeApplyDefaultProps } from '@inlet/react-pixi'
 import { NativeEventMap } from 'colay-ui/type'
+import { BoundingBox, Position } from 'colay/type'
 // import { Properties } from 'csstype'
 // import * as C from 'colay/color'
 import {
@@ -555,4 +556,23 @@ export const throttle = (callback: (id: string)=> void, delay: number, _id?: str
     throttleTimeTable[id] = time
     callback(id)
   }
+}
+
+export const isPositionInBox = (position: Position, box: BoundingBox) => {
+  const {
+    x,
+    y,
+  } = position
+  return x >= box.x && y >= box.y && x <= box.x + box.width
+  && y <= box.y + box.height
+}
+
+export const getBoundingBox = (startPos: Position, endPos: Position) => ({
+  ...startPos,
+  width: Math.abs(startPos.x - endPos.x),
+  height: Math.abs(startPos.y - endPos.y),
+})
+
+export const cyUnselectAll = (cy: cytoscape.Core) => {
+  cy.nodes(':selected').unselect()
 }

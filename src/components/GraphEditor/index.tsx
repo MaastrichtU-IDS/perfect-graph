@@ -15,7 +15,8 @@ import {
   GraphEditorConfig,
   NodeElement,
 } from '@type'
-import { getLabel, getSelectedItemByElement, throttle } from '@utils'
+import { getLabel, getSelectedItemByElement,
+   throttle,cyUnselectAll } from '@utils'
 // import { useGraph } from '@hooks'
 import { EDITOR_MODE, EVENT } from '@utils/constants'
 import { useTimeoutManager } from '@utils/useTimeoutManager'
@@ -292,7 +293,7 @@ const GraphEditorElement = (
                 }
                 return
               }
-              graphEditorRef.current.cy.$(':selected').unselect()
+              cyUnselectAll(graphEditorRef.current.cy)
               element.select()
               onEventCallback({
                 type: EVENT.ELEMENT_SELECTED,
@@ -335,7 +336,7 @@ const GraphEditorElement = (
                 })
                 return
               }
-              graphEditorRef.current.cy.$(':selected').unselect()
+              cyUnselectAll(graphEditorRef.current.cy)
               element.select()
               onEventCallback({
                 type: EVENT.ELEMENT_SELECTED,

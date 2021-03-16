@@ -281,3 +281,28 @@ export const drawLine = (
 // })
 
 export { Graphics } from '@inlet/react-pixi'
+
+export const drawGraphics = (instance: PIXI.Graphics, props: {
+  style: any
+}) => {
+  const {
+    style: {
+      width = 0,
+      height = 0,
+      backgroundColor = 'black',
+      borderRadius = 0,
+      borderWidth = 0,
+      borderColor = 'black',
+    } = {},
+  } = props
+  instance.clear()
+  instance.beginFill(C.rgbNumber(backgroundColor), C.getAlpha(backgroundColor))
+  instance.lineStyle(borderWidth, C.rgbNumber(borderColor))
+  const radius = width / 2
+  if ((width === height) && (borderRadius >= radius)) {
+    instance.drawCircle(radius, radius, radius)
+  } else {
+    instance.drawRoundedRect(0, 0, width, height, borderRadius)
+  }
+  instance.endFill()
+}
