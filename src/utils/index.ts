@@ -574,7 +574,7 @@ export const getBoundingBox = (startPos: Position, endPos: Position) => ({
 })
 
 export const cyUnselectAll = (cy: cytoscape.Core) => {
-  cy.nodes(':selected').unselect()
+  cy.elements(':selected').unselect()
 }
 
 export const getElementsCollectionByIds = (cy: cytoscape.Core, ids: string[]) => {

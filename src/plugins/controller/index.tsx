@@ -439,12 +439,43 @@ export const useController = (
           }
           case EVENT.SELECT_CLUSTER: {
             const {
-              cluster,
+              clusterId,
             } = payload
-            draft.selectedElementIds = cluster.ids
-            // const collection = getElementsCollectionByIds(graphEditor?.cy, cluster.ids)
-            // cyUnselectAll(graphEditor.cy)
-            // collection.select()
+            const selectedCluster = draft.graphConfig?.clusters?.find((cluster) => cluster.id === clusterId)
+            draft.selectedElementIds = selectedCluster.ids
+            break
+          }
+          case EVENT.DELETE_CLUSTER: {
+            const {
+              clusterId,
+            } = payload
+            draft.graphConfig.clusters = draft.graphConfig?.clusters?.filter((cluster) => cluster.id !== clusterId)
+            break
+          }
+          case EVENT.DELETE_CLUSTER_ELEMENT: {
+            const {
+              clusterId,
+              elementId
+            } = payload
+            const selectedCluster = draft.graphConfig?.clusters?.find((cluster) => cluster.id === clusterId)
+            selectedCluster.ids = selectedCluster?.ids.filter((id) => id !== elementId)
+            break
+          }
+          case EVENT.PRESS_ADD_CLUSTER_ELEMENT: {
+            if (draft.mode === EDITOR_MODE.ADD_CLUSTER_ELEMENT) {
+              draft.mode = EDITOR_MODE.DEFAULT
+              return
+            }
+            draft.mode = EDITOR_MODE.ADD_CLUSTER_ELEMENT
+            break
+          }
+          case EVENT.ADD_CLUSTER_ELEMENTS: {
+            const {
+              clusterId,
+              elementIds
+            } = payload
+            const selectedCluster = draft.graphConfig?.clusters?.find((cluster) => cluster.id === clusterId)
+            selectedCluster.ids = R.union(selectedCluster?.ids, elementIds)
             break
           }
           default:

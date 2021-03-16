@@ -61,6 +61,7 @@ const MODE_ICON_MAP_BY_URL = {
   [EDITOR_MODE.DELETE]: `https://img.icons8.com/material/${MODE_ICON_SCALE}x/minus--v2.png`,
   [EDITOR_MODE.CONTINUES_ADD]: `https://img.icons8.com/material/${MODE_ICON_SCALE}x/plus.png`,
   [EDITOR_MODE.CONTINUES_DELETE]: `https://img.icons8.com/material/${MODE_ICON_SCALE}x/minus-sign.png`,
+  [EDITOR_MODE.ADD_CLUSTER_ELEMENT]: `https://img.icons8.com/material/${MODE_ICON_SCALE}x/doctors-folder.png`,
   [EDITOR_MODE.DEFAULT]: null,
 }
 
@@ -98,6 +99,7 @@ const GraphEditorElement = (
     initialized: false,
     targetNode: null as NodeElement | null,
     props,
+    issuedClusterId: null as string|null,
   })
   localDataRef.current.props = props
   React.useEffect(() => {
@@ -139,14 +141,14 @@ const GraphEditorElement = (
   const selectedElementIsNode = selectedElement && selectedElement.isNode()
   const targetPath = selectedElementIsNode ? 'nodes' : 'edges'
   const onEventCallback = React.useCallback((eventInfo) => {
-    // switch (eventInfo.type) {
-    //   case EVENT.CALCULATE_LOCAL_NETWORK_STATISTICS:
-    //     localNetworkStatisticsRef.current = calculateStatistics({ nodes, edges })
-    //     break
+    switch (eventInfo.type) {
+      case EVENT.PRESS_ADD_CLUSTER_ELEMENT:
+        localDataRef.current.issuedClusterId = eventInfo.payload.clusterId
+        break
 
-    //   default:
-    //     break
-    // }
+      default:
+        break
+    }
     onEvent({
       ...(selectedElement ? { elementId: selectedElement.id() } : {}),
       ...eventInfo,
@@ -216,13 +218,13 @@ const GraphEditorElement = (
             if (props.actionBar && props.actionBar.autoOpen) {
               if (pageY + 25 >= offsetTop + offsetHeight
                 && !props.actionBar?.opened) {
-                return onEvent({
+                return onEventCallback({
                   type: EVENT.TOGGLE_ACTION_BAR,
                   avoidHistoryRecording: true,
                 })
               }
               if (pageY + 50 <= offsetTop + offsetHeight && props.actionBar?.opened) {
-                return onEvent({
+                return onEventCallback({
                   type: EVENT.TOGGLE_ACTION_BAR,
                   avoidHistoryRecording: true,
                 })
@@ -273,10 +275,33 @@ const GraphEditorElement = (
             payload: { position },
           })
         }}
+        onBoxSelection={(event) => {
+          const { mode } = localDataRef.current.props
+          const {
+            elementIds
+          } = event
+          if (EDITOR_MODE.ADD_CLUSTER_ELEMENT === mode) {
+            onEventCallback({
+              type: EVENT.ADD_CLUSTER_ELEMENTS,
+              payload: {
+                clusterId: localDataRef.current.issuedClusterId,
+                elementIds
+               },
+            })
+            return
+          }
+          onEventCallback({
+            type: EVENT.BOX_SELECTION,
+            payload: {
+              elementIds
+            }
+          })
+        }}
         renderNode={({ item, element, ...rest }) => (
           <Graph.Pressable
             onPress={(event) => {
               const { mode } = localDataRef.current.props
+              const elementId = element.id()
               if (
                 // @ts-ignore
                 [
@@ -296,11 +321,11 @@ const GraphEditorElement = (
                 if (localDataRef.current.targetNode) {
                   onEventCallback({
                     type: EVENT.ADD_EDGE,
-                    elementId: element.id(),
+                    elementId,
                     payload: {
                       id: R.uuid(),
                       source: localDataRef.current.targetNode.id(),
-                      target: element.id(),
+                      target: elementId,
                     },
                     event,
                   })
@@ -308,6 +333,16 @@ const GraphEditorElement = (
                 } else {
                   localDataRef.current.targetNode = element
                 }
+                return
+              }
+              if (EDITOR_MODE.ADD_CLUSTER_ELEMENT === mode) {
+                onEventCallback({
+                  type: EVENT.ADD_CLUSTER_ELEMENTS,
+                  payload: {
+                    clusterId: localDataRef.current.issuedClusterId,
+                    elementIds: [elementId]
+                   },
+                })
                 return
               }
               cyUnselectAll(graphEditorRef.current.cy)
@@ -409,7 +444,7 @@ const GraphEditorElement = (
       {
         actionBar && (
         <ActionBar
-          onEvent={onEvent}
+          onEvent={onEventCallback}
           graphEditorRef={graphEditorRef}
           mode={mode}
           graphConfig={graphConfig}

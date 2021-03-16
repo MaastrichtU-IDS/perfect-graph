@@ -41,6 +41,7 @@ export type GraphProps = {
   onBoxSelection?: (c: {
     event: PIXI.InteractionEvent,
     elements: cytoscape.Collection,
+    elementIds: string[],
     boundingBox: BoundingBox;
   }) => void;
   selectedElementIds?: string[]
@@ -302,11 +303,13 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
               boundingBox,
             }) => {
               cyUnselectAll(cy)
+              const elementIds: string[] = []
               const selectedCollection = cy.nodes().filter((element) => {
                 const elementPosition = element.position()
                 const selected = isPositionInBox(elementPosition, boundingBox)
                 if (selected) {
                   element.select()
+                  elementIds.push(element.id())
                 }
                 return selected
               })
@@ -314,6 +317,7 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
                 boundingBox,
                 elements: selectedCollection,
                 event,
+                elementIds
               })
             }}
           >

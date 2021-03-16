@@ -15,7 +15,7 @@ import {
   wrapComponent,
 } from 'colay-ui'
 import React from 'react'
-import { EVENT } from '@utils/constants'
+import { EVENT, EDITOR_MODE } from '@utils/constants'
 import * as R from 'colay/ramda'
 import Accordion from '@material-ui/core/Accordion'
 import AccordionSummary from '@material-ui/core/AccordionSummary'
@@ -144,6 +144,27 @@ export const ClusterTable = (props: ClusterTableProps) => {
                         <IconButton
                           onClick={(e) => {
                             e.stopPropagation()
+                            onEvent({
+                              type: EVENT.PRESS_ADD_CLUSTER_ELEMENT,
+                              payload: {
+                                clusterId: cluster.id,
+                              },
+                            })
+                          }}
+                        >
+                          <Icon
+                            name="add_circle"
+                          />
+                        </IconButton>
+                        <IconButton
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            onEvent({
+                              type: EVENT.DELETE_CLUSTER,
+                              payload: {
+                                clusterId: cluster.id,
+                              },
+                            })
                           }}
                         >
                           <Icon
@@ -158,7 +179,7 @@ export const ClusterTable = (props: ClusterTableProps) => {
                             onEvent({
                               type: EVENT.SELECT_CLUSTER,
                               payload: {
-                                cluster,
+                                clusterId: cluster.id,
                               },
                             })
                             // onPlay(cluster)
@@ -194,6 +215,13 @@ export const ClusterTable = (props: ClusterTableProps) => {
                                 aria-label="delete"
                                 onClick={(e) => {
                                   e.stopPropagation()
+                                  onEvent({
+                                    type: EVENT.DELETE_CLUSTER_ELEMENT,
+                                    payload: {
+                                      elementId,
+                                      clusterId: cluster.id
+                                    }
+                                  })
                                 }}
                               >
                                 <Icon name="delete_rounded" />

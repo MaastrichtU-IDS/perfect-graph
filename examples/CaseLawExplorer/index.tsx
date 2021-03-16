@@ -180,15 +180,15 @@ const AppContainer = ({
       ]
     },
     settingsBar: {
-      // opened: true,
+      opened: true,
       forms: [FETCH_SCHEMA, VIEW_CONFIG_SCHEMA, {...FILTER_SCHEMA,  formData: configRef.current.filtering}, ]
     },
     dataBar: {
-      opened: true,
+      // opened: true,
       editable: false,
     },
     actionBar: {
-      opened: true,
+      // opened: true,
       // autoOpen: true,
       eventRecording: false,
       actions: {
