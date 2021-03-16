@@ -101,7 +101,7 @@ export const ClusterTable = (props: ClusterTableProps) => {
         <List dense>
           {
             clusters.map((cluster, index) => {
-              const { events, id, name } = cluster
+              const { ids: elementIds, id, name } = cluster
               return (
                 <Accordion
                   key={id}
@@ -164,16 +164,16 @@ export const ClusterTable = (props: ClusterTableProps) => {
                             // onPlay(cluster)
                           }}
                         >
-                          <Icon name="play_arrow" />
+                          <Icon name="beenhere" />
                         </IconButton>
                       </View>
                     </View>
                   </AccordionSummary>
                   <AccordionDetails>
                     {
-                        events.map((event) => (
+                        elementIds.map((elementId) => (
                           <ListItem
-                            key={event.id}
+                            key={elementId}
                           >
                             <ListItemAvatar>
                               <Checkbox
@@ -186,7 +186,7 @@ export const ClusterTable = (props: ClusterTableProps) => {
                               />
                             </ListItemAvatar>
                             <ListItemText
-                              primary={event.type}
+                              primary={R.take(10)(elementId)}
                             />
                             <ListItemSecondaryAction>
                               <IconButton

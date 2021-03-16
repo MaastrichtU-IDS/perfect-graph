@@ -166,6 +166,18 @@ const AppContainer = ({
       layout: Graph.Layouts.cose,
       zoom: 0.2,
       nodes: {},
+      clusters: [
+        {
+          id: '123',
+          name: 'SimpleCluster',
+          ids: [
+            'http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2015:3019',
+            'http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2015:644',
+            'http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2014:3519'
+          ],
+          childClusterIds: []
+        }
+      ]
     },
     settingsBar: {
       // opened: true,

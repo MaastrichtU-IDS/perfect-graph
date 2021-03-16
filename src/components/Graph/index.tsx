@@ -42,7 +42,8 @@ export type GraphProps = {
     event: PIXI.InteractionEvent,
     elements: cytoscape.Collection,
     boundingBox: BoundingBox;
-  }) => void
+  }) => void;
+  selectedElementIds?: string[]
 }
 
 const DEFAULT_NODE_CONFIG = {
@@ -169,6 +170,7 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
     extraData,
     config: _config = {} as Partial<GraphConfig>,
     onBoxSelection,
+    selectedElementIds = []
   } = props
   const boxSelectionEnabled = !!onBoxSelection
   const config = React.useMemo(() => ({
@@ -200,6 +202,12 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
       })
     }
   }, [stageRef.current, viewportRef.current])
+  React.useEffect(() => {
+    cyUnselectAll(cy)
+    selectedElementIds.forEach((id) => {
+      cy.$id(id).select()
+    })
+  }, [selectedElementIds, cy])
   React.useEffect(() => {
     R.when(
       () => stageRef.current && config.layout && initialized,

@@ -95,8 +95,7 @@ export const WithEditElement = () => {
               draft.mode = EDITOR_MODE.DEFAULT
             }
           } else {
-            element.select()
-            draft.selectedElementId = item.id
+            draft.selectedElementIds = [item.id]
           }
           return false
         }
@@ -116,7 +115,7 @@ export const WithEditElement = () => {
             }
           } else {
             graphEditor.cy.$(':selected').unselect()
-            draft.selectedElementId = null
+            draft.selectedElementIds = null
           }
           return false
           break

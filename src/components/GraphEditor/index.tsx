@@ -44,7 +44,7 @@ export type GraphEditorProps = {
   settingsBar?: SettingsBarProps;
   dataBar?: Pick<DataBarProps, 'editable'| 'opened'>;
   actionBar?: Pick<ActionBarProps, 'renderMoreAction' | 'opened' | 'recording' |'eventRecording' | 'autoOpen'>;
-  selectedElementId?: string | null;
+  selectedElementIds?: string[] | null;
   mode?: EditorMode;
   renderEdge?: RenderEdge<RenderElementAdditionalInfo>;
   renderNode?: RenderNode<RenderElementAdditionalInfo>;
@@ -86,7 +86,7 @@ const GraphEditorElement = (
     dataBar = {},
     nodes,
     edges,
-    selectedElementId,
+    selectedElementIds = [],
     label,
     mode = EDITOR_MODE.DEFAULT,
     events,
@@ -114,8 +114,24 @@ const GraphEditorElement = (
   )
   const graphEditorRef = useForwardRef(ref)
   const selectedElement = React.useMemo(
-    () => selectedElementId && graphEditorRef.current.cy && graphEditorRef.current.cy.$id(selectedElementId),
-    [nodes, edges, selectedElementId],
+    () => {
+      return graphEditorRef.current?.cy?.$id(R.last(selectedElementIds)!)
+      // if (!localDataRef.current.initialized) {
+      //   const callback = () => {
+      //     setTimeout(() => {
+      //       if (graphEditorRef.current.cy) {
+
+      //       } else {
+      //         callback()
+      //       }
+      //     }, 1000)
+      //   }
+      // } else if (selectedElementIds?.length > 0) {
+      //   return graphEditorRef.current.cy && graphEditorRef.current.cy.$id(R.last(selectedElementIds))
+      // }
+      
+    },
+    [nodes, edges, selectedElementIds],
   )
   const selectedItem = selectedElement && getSelectedItemByElement(
     selectedElement, { nodes, edges },
@@ -236,6 +252,7 @@ const GraphEditorElement = (
           ...graphConfig,
           graphId,
         }}
+        selectedElementIds={selectedElementIds}
         onPress={({ position }) => {
           const { mode } = localDataRef.current.props
           if (

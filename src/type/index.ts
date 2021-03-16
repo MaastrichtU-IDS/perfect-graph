@@ -291,7 +291,7 @@ export type ControllerState = {
   label: GraphLabelData;
 } & Pick<
 GraphEditorProps,
-'nodes' | 'edges' | 'mode' | 'selectedElementId'
+'nodes' | 'edges' | 'mode' | 'selectedElementIds'
 | 'actionBar' | 'dataBar' | 'settingsBar'
 | 'graphConfig'
 >

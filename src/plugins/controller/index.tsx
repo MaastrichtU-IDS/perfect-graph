@@ -134,7 +134,6 @@ export const useController = (
           index: selectedItemIndex,
         } = (element && getSelectedItemByElement(element, draft)) ?? {}
         const targetDataList = selectedItem?.data!// getSelectedItemByElement(element, draft).data
-        console.log(eventInfo)
         switch (type) {
           case EVENT.REDO_EVENT:
             eventHistory.redo()
@@ -227,14 +226,15 @@ export const useController = (
             break
           }
           case EVENT.PRESS_BACKGROUND: {
-            draft.selectedElementId = null
-            cyUnselectAll(graphEditor.cy)
+            draft.selectedElementIds = []
             break
           }
           case EVENT.ELEMENT_SELECTED: {
-            cyUnselectAll(graphEditor.cy)
-            element.select()
-            draft.selectedElementId = selectedItem.id
+            draft.selectedElementIds = [selectedItem.id]
+            // R.union(
+            //   draft.selectedElementIds ?? [],
+            //   [selectedItem.id]
+            // )
             if (event && event.data.originalEvent.metaKey) {
               draft.dataBar!.opened = true
               const {
@@ -441,9 +441,10 @@ export const useController = (
             const {
               cluster,
             } = payload
-            const collection = getElementsCollectionByIds(graphEditor?.cy, cluster.ids)
-            cyUnselectAll(graphEditor.cy)
-            collection.select()
+            draft.selectedElementIds = cluster.ids
+            // const collection = getElementsCollectionByIds(graphEditor?.cy, cluster.ids)
+            // cyUnselectAll(graphEditor.cy)
+            // collection.select()
             break
           }
           default:
@@ -496,7 +497,7 @@ const DEFAULT_CONTROLLER_CONFIG: UseControllerData = {
     opened: false,
   },
   mode: EDITOR_MODE.DEFAULT as EditorMode,
-  selectedElementId: null as string | null,
+  selectedElementIds: [] as string[] | null,
   graphConfig: {
     clusters: [],
   },

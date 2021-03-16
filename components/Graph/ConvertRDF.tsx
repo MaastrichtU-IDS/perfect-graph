@@ -29,7 +29,7 @@ export default function Animation() {
       })
       setTimeout(( )=>{
         controller.update((draft) => {
-          draft.selectedElementId =  'http://example.org/#green-goblin'
+          draft.selectedElementIds =  ['http://example.org/#green-goblin']
         })
       }, 1500)
     }

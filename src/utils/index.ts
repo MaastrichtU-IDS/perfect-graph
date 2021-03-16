@@ -435,7 +435,7 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
         type,
         payload,
       } = event
-      const oldSelectedElementId = draft.selectedElementId
+      const oldSelectedElementId = R.last(draft.selectedElementIds)
       const element = elementId
         ? graphEditor.cy.$id(`${elementId}`)
         : null
