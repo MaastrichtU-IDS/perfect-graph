@@ -522,7 +522,7 @@ export const useController = (
 
 const getValueByType = (type: RDFType, value: string) => value
 
-const DEFAULT_CONTROLLER_CONFIG = {
+const DEFAULT_CONTROLLER_CONFIG: UseControllerData = {
   label: {
     global: { nodes: ['id'], edges: ['id'] },
     nodes: {},
@@ -540,5 +540,7 @@ const DEFAULT_CONTROLLER_CONFIG = {
   },
   mode: EDITOR_MODE.DEFAULT as EditorMode,
   selectedElementId: null as string | null,
-  graphConfig: {},
+  graphConfig: {
+    clusters: [],
+  },
 }

@@ -17,10 +17,11 @@ import {
 } from '@material-ui/core'
 import { Icon } from '@components/Icon'
 import { EVENT } from '@utils/constants'
-import { OnEventLite, EventHistory } from '@type'
+import { OnEventLite, EventHistory, Cluster } from '@type'
 import Form from '@rjsf/material-ui'
 import { FormProps } from '@rjsf/core'
 import { EventHistoryTable } from './EventHistoryTable'
+import { ClusterTable } from './ClusterTable'
 
 type SettingsForm = {
   schema: FormProps<any>['schema'];
@@ -35,6 +36,7 @@ export type SettingsBarProps = {
   onEvent: OnEventLite;
   forms?: SettingsForm[];
   eventHistory?: EventHistory;
+  clusters?: Cluster[]
 }
 
 const WIDTH_PROPORTION = 30
@@ -45,6 +47,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
     // schema = {},
     forms = [],
     eventHistory,
+    clusters,
     // children,
     // ...formProps
   } = props
@@ -135,6 +138,25 @@ const SettingsBarElement = (props: SettingsBarProps) => {
             <EventHistoryTable
               onEvent={onEvent}
               eventHistory={eventHistory}
+            />
+          </View>
+          <Divider style={{ marginTop: 5, marginBottom: 5 }} />
+        </>
+        )
+      }
+        <Divider />
+        {
+        clusters && (
+        <>
+          <View
+            style={{
+              // height: '50%',
+              width: '100%',
+            }}
+          >
+            <ClusterTable
+              clusters={clusters}
+              onEvent={onEvent}
             />
           </View>
           <Divider style={{ marginTop: 5, marginBottom: 5 }} />

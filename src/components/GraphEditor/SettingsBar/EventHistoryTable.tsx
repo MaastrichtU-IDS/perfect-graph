@@ -61,6 +61,7 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
       name: '',
     },
   })
+  const hasSelected = state.selectedEventIds.length > 0
   return (
     <View
       style={{
@@ -90,19 +91,23 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
                 alignItems: 'center',
               }}
             >
-              <Checkbox
-                checked={!R.isEmpty(state.selectedEventIds)
+              {
+                hasSelected && (
+                <Checkbox
+                  checked={!R.isEmpty(state.selectedEventIds)
              && state.selectedEventIds.length === eventHistory.events.length}
-                onChange={(_, checked) => updateState((draft) => {
-                  if (checked) {
-                    draft.selectedEventIds = eventHistory.events.map((event) => event.id)
-                  } else {
-                    draft.selectedEventIds = []
-                  }
-                })}
-                onClick={(e) => e.stopPropagation()}
-                inputProps={{ 'aria-label': 'primary checkbox' }}
-              />
+                  onChange={(_, checked) => updateState((draft) => {
+                    if (checked) {
+                      draft.selectedEventIds = eventHistory.events.map((event) => event.id)
+                    } else {
+                      draft.selectedEventIds = []
+                    }
+                  })}
+                  onClick={(e) => e.stopPropagation()}
+                  inputProps={{ 'aria-label': 'primary checkbox' }}
+                />
+                )
+}
               <Typography
                 variant="h6"
               >
@@ -115,19 +120,23 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
                 flexDirection: 'row',
               }}
             >
-              <IconButton
-                onClick={(e) => {
-                  e.stopPropagation()
-                  updateState((draft) => {
-                    draft.createPlaylistDialog.name = ''
-                    draft.createPlaylistDialog.visible = true
-                  })
-                }}
-              >
-                <Icon
-                  name="playlist_add"
-                />
-              </IconButton>
+              {
+                hasSelected && (
+                  <IconButton
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      updateState((draft) => {
+                        draft.createPlaylistDialog.name = ''
+                        draft.createPlaylistDialog.visible = true
+                      })
+                    }}
+                  >
+                    <Icon
+                      name="playlist_add"
+                    />
+                  </IconButton>
+                )
+              }
               <IconButton
                 onClick={(e) => {
                   e.stopPropagation()
@@ -257,9 +266,11 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
         onSelectPlaylist={(playlist, checked) => {
           updateState((draft) => {
             if (checked) {
-              draft.selectedEventIds.push(playlist.id)
+              draft.selectedPlaylistIds.push(playlist.id)
             } else {
-              draft.selectedEventIds = draft.selectedEventIds.filter((id) => id !== playlist.id)
+              draft.selectedPlaylistIds = draft.selectedPlaylistIds.filter(
+                (id) => id !== playlist.id
+              )
             }
           })
         }}

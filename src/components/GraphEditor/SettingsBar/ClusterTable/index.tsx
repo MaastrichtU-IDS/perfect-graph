@@ -8,10 +8,7 @@ import {
   Checkbox,
 } from '@material-ui/core'
 import {
-  EventHistory,
-  OnEventLite,
-  EventInfo,
-  Playlist,
+  Cluster,
 } from '@type'
 import {
   View,
@@ -24,24 +21,22 @@ import AccordionSummary from '@material-ui/core/AccordionSummary'
 import AccordionDetails from '@material-ui/core/AccordionDetails'
 import { Icon } from '../../../Icon'
 
-export type EventHistoryTableProps = {
+export type ClusterTableProps = {
   opened?: boolean;
   // onEvent: OnEventLite;
-  selectedPlaylistIds: string[]
-  playlists: Playlist[];
-  onSelectAllPlaylist: (checked: boolean) => void
-  onSelectPlaylist: (playlist: Playlist, checked: boolean) => void
-  onPlay: (playlist: Playlist) => void
+  selectedClusterIds: string[]
+  clusters: Cluster[];
+  onSelectAllClusters: (checked: boolean) => void
+  onSelectCluster: (cluster: Cluster, checked: boolean) => void
 }
-export const PlaylistTable = (props: EventHistoryTableProps) => {
+export const ClusterTable = (props: ClusterTableProps) => {
   const {
-    onSelectAllPlaylist,
-    onSelectPlaylist,
-    playlists,
-    selectedPlaylistIds,
-    onPlay,
+    onSelectAllClusters,
+    onSelectCluster,
+    clusters,
+    selectedClusterIds = [],
   } = props
-  const hasSelected = selectedPlaylistIds.length > 0
+  const hasSelected = selectedClusterIds.length > 0
   return (
     <Accordion>
       <AccordionSummary
@@ -65,9 +60,9 @@ export const PlaylistTable = (props: EventHistoryTableProps) => {
               hasSelected && (
                 <Checkbox
                   onClick={(e) => e.stopPropagation()}
-                  checked={!R.isEmpty(selectedPlaylistIds)
-               && selectedPlaylistIds.length === playlists.length}
-                  onChange={(_, checked) => onSelectAllPlaylist(checked)}
+                  checked={!R.isEmpty(selectedClusterIds)
+               && selectedClusterIds.length === clusters.length}
+                  onChange={(_, checked) => onSelectAllClusters(checked)}
                   inputProps={{ 'aria-label': 'primary checkbox' }}
                 />
               )
@@ -75,7 +70,7 @@ export const PlaylistTable = (props: EventHistoryTableProps) => {
             <Typography
               variant="h6"
             >
-              Playlists
+              Clusters
             </Typography>
           </View>
           {
@@ -95,16 +90,16 @@ export const PlaylistTable = (props: EventHistoryTableProps) => {
       </AccordionSummary>
       <AccordionDetails>
         {
-          playlists.length === 0 && (
+          clusters.length === 0 && (
             <Typography>
-              Let's create a playlist.
+              Let's create a Cluster.
             </Typography>
           )
         }
         <List dense>
           {
-            playlists.map((playlist, index) => {
-              const { events, id, name } = playlist
+            clusters.map((cluster, index) => {
+              const { events, id, name } = cluster
               return (
                 <Accordion
                   key={id}
@@ -128,9 +123,9 @@ export const PlaylistTable = (props: EventHistoryTableProps) => {
                       >
                         <Checkbox
                           onClick={(e) => e.stopPropagation()}
-                          checked={hasSelected
-                          && selectedPlaylistIds.includes(playlist.id)}
-                          onChange={(_, checked) => onSelectPlaylist(playlist, checked)}
+                          checked={!R.isEmpty(selectedClusterIds)
+                          && selectedClusterIds.length === clusters.length}
+                          onChange={(_, checked) => onSelectAllClusters(checked)}
                           inputProps={{ 'aria-label': 'primary checkbox' }}
                         />
                         <Typography
@@ -153,16 +148,16 @@ export const PlaylistTable = (props: EventHistoryTableProps) => {
                             name="delete_rounded"
                           />
                         </IconButton>
-                        <IconButton
+                        {/* <IconButton
                           edge="end"
                           aria-label="play"
                           onClick={(e) => {
                             e.stopPropagation()
-                            onPlay(playlist)
+                            // onPlay(cluster)
                           }}
                         >
                           <Icon name="play_arrow" />
-                        </IconButton>
+                        </IconButton> */}
                       </View>
                     </View>
                   </AccordionSummary>
@@ -174,9 +169,9 @@ export const PlaylistTable = (props: EventHistoryTableProps) => {
                           >
                             <ListItemAvatar>
                               <Checkbox
-                                // checked={selectedPlaylistIds.includes(id)}
+                                // checked={selectedClustersIds.includes(id)}
                                 // onChange={(_, checked) => {
-                                //   onSelectPlaylist(playlist, checked)
+                                //   onSelectCluster(cluster, checked)
                                 // }}
                                 inputProps={{ 'aria-label': 'primary checkbox' }}
                                 onClick={(e) => e.stopPropagation()}

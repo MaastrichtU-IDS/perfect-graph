@@ -371,6 +371,7 @@ const GraphEditorElement = (
             {...settingsBar}
             onEvent={onEventCallback}
             eventHistory={eventHistory}
+            clusters={graphConfig?.clusters}
           />
         )
       }
