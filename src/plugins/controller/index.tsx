@@ -478,6 +478,15 @@ export const useController = (
             selectedCluster.ids = R.union(selectedCluster?.ids, elementIds)
             break
           }
+          case EVENT.CHANGE_CLUSTER_VISIBILITY: {
+            const {
+              clusterId,
+              value
+            } = payload
+            const selectedCluster = draft.graphConfig?.clusters?.find((cluster) => cluster.id === clusterId)
+            selectedCluster.visible = value
+            break
+          }
           default:
             break
         }

@@ -35,6 +35,8 @@ import {
   NavigateBefore,
   Assessment,
   Beenhere,
+  UnfoldLess,
+  UnfoldMore,
 } from '@material-ui/icons'
 import { IconProps } from '@material-ui/core'
 
@@ -74,6 +76,8 @@ const ICONS = {
   navigate_before: NavigateBefore,
   navigate_next: NavigateNext,
   beenhere: Beenhere,
+  unfold_less: UnfoldLess,
+  unfold_more: UnfoldMore,
 } as const
 
 type IconName = keyof typeof ICONS

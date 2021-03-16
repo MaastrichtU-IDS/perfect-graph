@@ -172,6 +172,22 @@ export const ClusterTable = (props: ClusterTableProps) => {
                           />
                         </IconButton>
                         <IconButton
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            onEvent({
+                              type:EVENT.CHANGE_CLUSTER_VISIBILITY,
+                              payload: {
+                                clusterId: cluster.id,
+                                value:  cluster.visible === false ? true : false
+                              }
+                            })
+                          }}
+                        >
+                          <Icon
+                            name={cluster.visible === false ?  'unfold_more' : 'unfold_less'}
+                          />
+                        </IconButton>
+                        <IconButton
                           edge="end"
                           aria-label="beenhere"
                           onClick={(e) => {
