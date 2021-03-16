@@ -33,7 +33,8 @@ import {
   PlayArrow,
   NavigateNext,
   NavigateBefore,
-  Assessment
+  Assessment,
+  Beenhere,
 } from '@material-ui/icons'
 import { IconProps } from '@material-ui/core'
 
@@ -72,6 +73,7 @@ const ICONS = {
   play_arrow: PlayArrow,
   navigate_before: NavigateBefore,
   navigate_next: NavigateNext,
+  beenhere: Beenhere,
 } as const
 
 type IconName = keyof typeof ICONS

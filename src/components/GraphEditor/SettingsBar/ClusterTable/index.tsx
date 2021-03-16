@@ -15,6 +15,7 @@ import {
   wrapComponent,
 } from 'colay-ui'
 import React from 'react'
+import { EVENT } from '@utils/constants'
 import * as R from 'colay/ramda'
 import Accordion from '@material-ui/core/Accordion'
 import AccordionSummary from '@material-ui/core/AccordionSummary'
@@ -23,7 +24,7 @@ import { Icon } from '../../../Icon'
 
 export type ClusterTableProps = {
   opened?: boolean;
-  // onEvent: OnEventLite;
+  onEvent: OnEventLite;
   selectedClusterIds: string[]
   clusters: Cluster[];
   onSelectAllClusters: (checked: boolean) => void
@@ -33,6 +34,7 @@ export const ClusterTable = (props: ClusterTableProps) => {
   const {
     onSelectAllClusters,
     onSelectCluster,
+    onEvent,
     clusters,
     selectedClusterIds = [],
   } = props
@@ -148,16 +150,22 @@ export const ClusterTable = (props: ClusterTableProps) => {
                             name="delete_rounded"
                           />
                         </IconButton>
-                        {/* <IconButton
+                        <IconButton
                           edge="end"
-                          aria-label="play"
+                          aria-label="beenhere"
                           onClick={(e) => {
                             e.stopPropagation()
+                            onEvent({
+                              type: EVENT.SELECT_CLUSTER,
+                              payload: {
+                                cluster,
+                              },
+                            })
                             // onPlay(cluster)
                           }}
                         >
                           <Icon name="play_arrow" />
-                        </IconButton> */}
+                        </IconButton>
                       </View>
                     </View>
                   </AccordionSummary>

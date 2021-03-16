@@ -13,7 +13,8 @@ import {
   EVENT, ELEMENT_DATA_FIELDS, EDITOR_MODE,
 } from '@utils/constants'
 import GraphLayouts from '@core/layouts'
-import { getSelectedItemByElement, getUndoEvents, cyUnselectAll } from '@utils'
+import { getSelectedItemByElement, getUndoEvents, cyUnselectAll,
+  getElementsCollectionByIds } from '@utils'
 import { download } from 'colay-ui/utils'
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import * as R from 'colay/ramda'
@@ -226,64 +227,11 @@ export const useController = (
             break
           }
           case EVENT.PRESS_BACKGROUND: {
-            // if (
-            //   // @ts-ignore
-            //   [EDITOR_MODE.ADD, EDITOR_MODE.CONTINUES_ADD].includes(draft.mode)
-            // ) {
-            //   const { position } = payload
-            //   draft.nodes.push({
-            //     id: `${draft.nodes.length + 1}`, // R.uuid(),
-            //     position,
-            //     data: [],
-            //   })
-            //   if (draft.mode === EDITOR_MODE.ADD) {
-            //     draft.mode = EDITOR_MODE.DEFAULT
-            //   }
-            // } else {
-            //   draft.selectedElementId = null
-            //  cyUnselectAll(graphEditor.cy)
-            // }
             draft.selectedElementId = null
             cyUnselectAll(graphEditor.cy)
             break
           }
           case EVENT.ELEMENT_SELECTED: {
-            // if (
-            //   // @ts-ignore
-            //   [EDITOR_MODE.DELETE, EDITOR_MODE.CONTINUES_DELETE].includes(draft.mode)
-            // ) {
-            // draft[targetPath].splice(itemIndex, 1)
-            // if (isNode) {
-            //   draft.edges = draft.edges.filter(
-            //     (edgeItem) => edgeItem.source !== item.id && edgeItem.target !== item.id,
-            //   )
-            // }
-            // if (draft.mode === EDITOR_MODE.DELETE) {
-            //   draft.mode = EDITOR_MODE.DEFAULT
-            // }
-            //   return
-            // }
-            // if (
-            //   [EDITOR_MODE.ADD, EDITOR_MODE.CONTINUES_ADD].includes(draft.mode)
-            // ) {
-            //   if (isNode) {
-            //     if (localDataRef.current.targetNode) {
-            //       draft.edges.push({
-            //         id: R.uuid(),
-            //         source: localDataRef.current.targetNode.id(),
-            //         target: element.id(),
-            //         data: {},
-            //       })
-            //       localDataRef.current.targetNode = null
-            //     } else {
-            //       localDataRef.current.targetNode = element
-            //     }
-            //   }
-            //   if (!localDataRef.current.targetNode && draft.mode === EDITOR_MODE.ADD) {
-            //     draft.mode = EDITOR_MODE.DEFAULT
-            //   }
-            //   return
-            // }
             cyUnselectAll(graphEditor.cy)
             element.select()
             draft.selectedElementId = selectedItem.id
@@ -487,6 +435,15 @@ export const useController = (
           }
           case EVENT.CLEAR_NODE_GLOBAL_LABEL: {
             delete draft.label.global.nodes
+            break
+          }
+          case EVENT.SELECT_CLUSTER: {
+            const {
+              cluster,
+            } = payload
+            const collection = getElementsCollectionByIds(graphEditor?.cy, cluster.ids)
+            cyUnselectAll(graphEditor.cy)
+            collection.select()
             break
           }
           default:
