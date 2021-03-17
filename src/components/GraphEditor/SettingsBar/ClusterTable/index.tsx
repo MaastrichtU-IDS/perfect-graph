@@ -262,6 +262,19 @@ export const ClusterTable = (props: ClusterTableProps) => {
                             <ListItemSecondaryAction>
                               <IconButton
                                 edge="end"
+                                aria-label="select"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  onEvent({
+                                    type: EVENT.ELEMENT_SELECTED,
+                                    elementId,
+                                  })
+                                }}
+                              >
+                                <Icon name="my_location" />
+                              </IconButton>
+                              <IconButton
+                                edge="end"
                                 aria-label="delete"
                                 onClick={(e) => {
                                   e.stopPropagation()

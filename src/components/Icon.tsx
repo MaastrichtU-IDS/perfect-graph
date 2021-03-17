@@ -37,6 +37,7 @@ import {
   Beenhere,
   UnfoldLess,
   UnfoldMore,
+  MyLocation,
 } from '@material-ui/icons'
 import { IconProps } from '@material-ui/core'
 
@@ -78,6 +79,7 @@ const ICONS = {
   beenhere: Beenhere,
   unfold_less: UnfoldLess,
   unfold_more: UnfoldMore,
+  my_location: MyLocation,
 } as const
 
 type IconName = keyof typeof ICONS
