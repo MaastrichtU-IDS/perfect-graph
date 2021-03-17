@@ -345,6 +345,7 @@ export const ClusterTable = (props: ClusterTableProps) => {
         fullWidth
         onClick={() => {
           updateState((draft) => {
+            draft.currentTab = 0
             draft.createClusterDialog.name = ''
             draft.createClusterDialog.visible = false
             
