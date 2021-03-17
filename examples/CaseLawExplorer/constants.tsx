@@ -35,9 +35,9 @@ export const getFilterSchema  = (props: {} = {}) => {
       ],
       additionalProperties: false,
       properties: {
-        label: {
-          type: 'string',
-        },
+        // label: {
+        //   type: 'string',
+        // },
         year: {
           type: 'array',
           items: {

@@ -36,7 +36,8 @@ export type SettingsBarProps = {
   onEvent: OnEventLite;
   forms?: SettingsForm[];
   eventHistory?: EventHistory;
-  clusters?: Cluster[]
+  clusters?: Cluster[];
+  createClusterForm?: FormProps<any>;
 }
 
 const WIDTH_PROPORTION = 30
@@ -48,6 +49,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
     forms = [],
     eventHistory,
     clusters,
+    createClusterForm,
     // children,
     // ...formProps
   } = props
@@ -157,6 +159,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
             <ClusterTable
               clusters={clusters}
               onEvent={onEvent}
+              createClusterForm={createClusterForm}
             />
           </View>
           <Divider style={{ marginTop: 5, marginBottom: 5 }} />

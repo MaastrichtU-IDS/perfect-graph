@@ -141,6 +141,11 @@ const GraphEditorElement = (
   const selectedElementIsNode = selectedElement && selectedElement.isNode()
   const targetPath = selectedElementIsNode ? 'nodes' : 'edges'
   const onEventCallback = React.useCallback((eventInfo) => {
+    // const {
+    //   props:{
+    //     nodes
+    //   }
+    // } = localDataRef.current
     switch (eventInfo.type) {
       case EVENT.PRESS_ADD_CLUSTER_ELEMENT:
         localDataRef.current.issuedClusterId = eventInfo.payload.clusterId

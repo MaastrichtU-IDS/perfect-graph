@@ -30,7 +30,9 @@ GraphEditorProps,
 | 'actionBar' | 'dataBar' | 'settingsBar'
 | 'graphConfig' | 'events' | 'label'
 > & {
-  onEvent?: (info: EventInfo, draft: ControllerState) => boolean;
+  onEvent?: (info: EventInfo & {
+    graphEditor: GraphEditorRef;
+  }, draft: ControllerState) => boolean;
 }
 
 // export type UseControllerResult = [
@@ -125,7 +127,10 @@ export const useController = (
             event,
           })
         }
-        const isAllowedToProcess = controllerConfig.onEvent?.(eventInfo, draft)
+        const isAllowedToProcess = controllerConfig.onEvent?.({
+          ...eventInfo,
+          graphEditor
+        }, draft)
         if (isAllowedToProcess === false) {
           return
         }

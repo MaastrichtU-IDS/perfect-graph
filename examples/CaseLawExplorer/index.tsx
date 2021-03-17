@@ -181,7 +181,12 @@ const AppContainer = ({
     },
     settingsBar: {
       opened: true,
-      forms: [FETCH_SCHEMA, VIEW_CONFIG_SCHEMA, {...FILTER_SCHEMA,  formData: configRef.current.filtering}, ]
+      forms: [FETCH_SCHEMA, VIEW_CONFIG_SCHEMA, {...FILTER_SCHEMA,  formData: configRef.current.filtering}, ],
+      createClusterForm: {
+        ...FILTER_SCHEMA,
+        schema: {...FILTER_SCHEMA.schema, title: 'Create Cluster', },
+        formData: configRef.current.filtering
+      },
     },
     dataBar: {
       // opened: true,
@@ -214,8 +219,41 @@ const AppContainer = ({
       payload,
       elementId,
       graphRef,
+      graphEditor
     },draft) => {
+      const {
+        cy,
+      } = graphEditor
       switch (type) {
+        case EVENT.CREATE_CLUSTER_FORM_SUBMIT: {
+          const {
+            name,
+            formData,
+          } = payload
+          const {
+            year,
+            degree,
+            indegree,
+            outdegree
+           }= formData
+          const clusterItemIds = draft.nodes.filter((item) => {
+            const element = cy.$id(item.id)
+            return (
+              R.inBetween(year[0], year[1])(item.data.year)
+                && R.inBetween(degree[0], degree[1])(element.degree())
+                && R.inBetween(indegree[0], indegree[1])(element.indegree())
+                && R.inBetween(outdegree[0], outdegree[1])(element.outdegree())
+                
+              )
+          }).map((item) => item.id)
+          draft.graphConfig.clusters.push({
+            id: R.uuid(),
+            name,
+            ids: clusterItemIds,
+            childClusterIds: []
+          })
+          return false
+        }
         case EVENT.SETTINGS_FORM_CHANGED:{
           draft.settingsBar.forms[payload.index].formData = payload.value
           if (payload.form.schema.title === FILTER_SCHEMA.schema.title) {
