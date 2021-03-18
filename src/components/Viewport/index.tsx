@@ -5,7 +5,7 @@ import * as PIXI from 'pixi.js'
 // import Cull from 'pixi-cull'
 import React from 'react'
 import { wrapComponent, useForwardRef } from 'colay-ui'
-import { getBoundingBox } from '@utils'
+import { getBoundingBox, getPointerPositionOnViewport } from '@utils'
 import { Position, BoundingBox } from 'colay/type'
 import { drawGraphics } from '@components/Graphics'
 
@@ -97,7 +97,7 @@ const ReactViewportComp = PixiComponent('Viewport', {
         const { metaKey } = e.data.originalEvent
         if (e.target !== viewport || metaKey) {
           if (metaKey) {
-            const position = getPointerPosition(viewport, e.data.originalEvent)
+            const position = getPointerPositionOnViewport(viewport, e.data.originalEvent)
             localDataRef.current.boxSelection.enabled = metaKey
             localDataRef.current.boxSelection.startPosition = {
               x: position.x,
@@ -143,7 +143,7 @@ const ReactViewportComp = PixiComponent('Viewport', {
     viewport.on('pointermove', (e) => {
       // const { metaKey } = e.data.originalEvent
       if (localDataRef.current.boxSelection.enabled) {
-        const position = getPointerPosition(viewport, e.data.originalEvent)
+        const position = getPointerPositionOnViewport(viewport, e.data.originalEvent)
         localDataRef.current.boxSelection.currentPosition = {
           x: position.x,
           y: position.y,
@@ -277,17 +277,4 @@ export const Viewport = wrapComponent<ViewportProps>(
   },
 )
 
-function getPointerPosition(viewport, event) {
-  const position = {
-    x: event.clientX,
-    y: event.clientY,
-  }
-  if (viewport.options.interaction) {
-    viewport.options.interaction.mapPositionToPoint(position, event.clientX, event.clientY)
-  }
-  position.x /= viewport.scale.x
-  position.y /= viewport.scale.y
-  position.x += viewport.left
-  position.y += viewport.top
-  return position
-}
+

@@ -584,3 +584,18 @@ export const getElementsCollectionByIds = (cy: cytoscape.Core, ids: string[]) =>
   })
   return collection
 }
+
+export const getPointerPositionOnViewport = (viewport, event) => {
+  const position = {
+    x: event.clientX,
+    y: event.clientY,
+  }
+  if (viewport.options.interaction) {
+    viewport.options.interaction.mapPositionToPoint(position, event.clientX, event.clientY)
+  }
+  position.x /= viewport.scale.x
+  position.y /= viewport.scale.y
+  position.x += viewport.left
+  position.y += viewport.top
+  return position
+}

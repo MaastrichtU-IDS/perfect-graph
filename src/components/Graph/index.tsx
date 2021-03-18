@@ -29,6 +29,7 @@ import { Text as GraphText } from '../Text'
 import { View as GraphView } from '../View'
 
 export type GraphProps = {
+  children?: React.ReactNode;
   extraData?: any;
   nodes: NodeData[];
   edges: EdgeData[];
@@ -171,7 +172,8 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
     extraData,
     config: _config = {} as Partial<GraphConfig>,
     onBoxSelection,
-    selectedElementIds = []
+    selectedElementIds = [],
+    children,
   } = props
   const boxSelectionEnabled = !!onBoxSelection
   const config = React.useMemo(() => ({
@@ -360,6 +362,7 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
                 </EdgeContainer>
               )}
             />
+            {children}
           </Viewport>
         </ThemeProvider>
       </Stage>
