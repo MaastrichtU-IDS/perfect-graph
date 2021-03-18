@@ -17,6 +17,7 @@ export type ContextMenuProps = {
 }
 
 const DEFAULT_FONT_SIZE = 20
+const WIDTH = 540
 export const ContextMenu = (props: ContextMenuProps) => {
   const {
     children,
@@ -33,13 +34,17 @@ export const ContextMenu = (props: ContextMenuProps) => {
         position: 'absolute',
         left: position.x,
         top: position.y,
-        backgroundColor: theme.palette.background.paper,
+        backgroundColor: 'white', // theme.palette.text.primary,
+        height: 420,
+        width: WIDTH,
       }}
     >
       {
         items.map(({ value, label }) => (
           <View
+            key={value}
             interactive
+            buttonMode
             click={() => onSelect?.(value)}
           >
             <Text
@@ -51,9 +56,10 @@ export const ContextMenu = (props: ContextMenuProps) => {
             </Text>
             <View
               style={{
-                width: '100%',
-                height: 1,
-                backgroundColor: theme.palette.text.disabled,
+                width: WIDTH,
+                height: 2,
+                backgroundColor: theme.palette.text.primary,
+                marginBottom: 5
               }}
             />
           </View>

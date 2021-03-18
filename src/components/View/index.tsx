@@ -38,22 +38,24 @@ const ViewPIXI = PixiComponent<ViewProps, PIXI.Graphics>('View', {
     const props = preprocessProps(_props)
     const {
       style: {
-        width = 0,
-        height = 0,
-        backgroundColor = props.theme!.palette.background.paper,
+        width = instance.width,
+        height = instance.height,
+        backgroundColor, //= props.theme!.palette.background.paper,
         borderRadius = 0,
         borderWidth = 0,
         borderColor = 'black',
       } = {},
     } = props
     instance.clear()
-    instance.beginFill(C.rgbNumber(backgroundColor), C.getAlpha(backgroundColor))
-    instance.lineStyle(borderWidth, C.rgbNumber(borderColor))
-    const radius = width / 2
-    if ((width === height) && (borderRadius >= radius)) {
-      instance.drawCircle(radius, radius, radius)
-    } else {
-      instance.drawRoundedRect(0, 0, width, height, borderRadius)
+    if (backgroundColor) {
+      instance.beginFill(C.rgbNumber(backgroundColor), C.getAlpha(backgroundColor))
+      instance.lineStyle(borderWidth, C.rgbNumber(borderColor))
+      const radius = width / 2
+      if ((width === height) && (borderRadius >= radius)) {
+        instance.drawCircle(radius, radius, radius)
+      } else {
+        instance.drawRoundedRect(0, 0, width, height, borderRadius)
+      }
     }
     instance.endFill()
     applyDefaultProps(instance, oldProps, props)

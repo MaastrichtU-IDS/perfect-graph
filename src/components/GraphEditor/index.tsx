@@ -105,6 +105,9 @@ const GraphEditorElement = (
     targetNode: null as NodeElement | null,
     props,
     issuedClusterId: null as string|null,
+    newClusterBoxSelection: {
+      elementIds: [] as string[],
+    },
   })
   const [state, updateState] = useImmer({
     eventsModal: {
@@ -270,6 +273,9 @@ const GraphEditorElement = (
         }}
         selectedElementIds={selectedElementIds}
         onPress={({ position }) => {
+          updateState((draft) => {
+            draft.contextMenu.visible = false
+          })
           const { mode } = localDataRef.current.props
           if (
             // @ts-ignore
@@ -305,6 +311,7 @@ const GraphEditorElement = (
             return
           }
           // TODO: DANGER**
+          localDataRef.current.newClusterBoxSelection.elementIds = elementIds
           updateState((draft) => {
             draft.contextMenu.visible = true
             draft.contextMenu.position = getPointerPositionOnViewport(
@@ -448,7 +455,21 @@ const GraphEditorElement = (
             { value: 'Settings', label: 'Settings' },
           ]}
           onSelect={(value) => {
-            console.log('a', value)
+            updateState((draft) => {
+              draft.contextMenu.visible = false
+            })
+            switch(value) {
+              case 'CreateCluster': 
+              onEvent({
+                type: EVENT.CREATE_CLUSTER,
+                payload: {
+                  name: `Cluster-${graphConfig?.clusters?.length ?? 0}`,
+                  elementIds: localDataRef.current.newClusterBoxSelection.elementIds
+                }
+              })
+              localDataRef.current.newClusterBoxSelection.elementIds = []
+              break
+            }
           }}
           position={state.contextMenu.position}
           open={state.contextMenu.visible}

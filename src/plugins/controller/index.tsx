@@ -13,8 +13,10 @@ import {
   EVENT, ELEMENT_DATA_FIELDS, EDITOR_MODE,
 } from '@utils/constants'
 import GraphLayouts from '@core/layouts'
-import { getSelectedItemByElement, getUndoEvents, cyUnselectAll,
-  getElementsCollectionByIds } from '@utils'
+import {
+  getSelectedItemByElement, getUndoEvents, cyUnselectAll,
+  getElementsCollectionByIds,
+} from '@utils'
 import { download } from 'colay-ui/utils'
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import * as R from 'colay/ramda'
@@ -129,7 +131,7 @@ export const useController = (
         }
         const isAllowedToProcess = controllerConfig.onEvent?.({
           ...eventInfo,
-          graphEditor
+          graphEditor,
         }, draft)
         if (isAllowedToProcess === false) {
           return
@@ -460,10 +462,23 @@ export const useController = (
           case EVENT.DELETE_CLUSTER_ELEMENT: {
             const {
               clusterId,
-              elementId
+              elementId,
             } = payload
             const selectedCluster = draft.graphConfig?.clusters?.find((cluster) => cluster.id === clusterId)
             selectedCluster.ids = selectedCluster?.ids.filter((id) => id !== elementId)
+            break
+          }
+          case EVENT.CREATE_CLUSTER: {
+            const {
+              name,
+              elementIds,
+            } = payload
+            draft.graphConfig?.clusters?.push({
+              id: R.uuid(),
+              name,
+              ids: elementIds,
+              childClusterIds: [],
+            })
             break
           }
           case EVENT.PRESS_ADD_CLUSTER_ELEMENT: {
@@ -477,7 +492,7 @@ export const useController = (
           case EVENT.ADD_CLUSTER_ELEMENTS: {
             const {
               clusterId,
-              elementIds
+              elementIds,
             } = payload
             const selectedCluster = draft.graphConfig?.clusters?.find((cluster) => cluster.id === clusterId)
             selectedCluster.ids = R.union(selectedCluster?.ids, elementIds)
@@ -486,7 +501,7 @@ export const useController = (
           case EVENT.CHANGE_CLUSTER_VISIBILITY: {
             const {
               clusterId,
-              value
+              value,
             } = payload
             const selectedCluster = draft.graphConfig?.clusters?.find((cluster) => cluster.id === clusterId)
             selectedCluster.visible = value

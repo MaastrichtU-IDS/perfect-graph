@@ -348,7 +348,6 @@ export const ClusterTable = (props: ClusterTableProps) => {
             draft.currentTab = 0
             draft.createClusterDialog.name = ''
             draft.createClusterDialog.visible = false
-            
           })
           onEvent({
             type: EVENT.CREATE_CLUSTER_FORM_SUBMIT,
