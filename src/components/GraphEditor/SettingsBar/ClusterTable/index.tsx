@@ -122,6 +122,7 @@ export const ClusterTable = (props: ClusterTableProps) => {
               }}
             >
               <Icon
+                color={state.currentTab === 0 ? 'inherit' : 'secondary'}
                 name={state.currentTab === 0 ? 'add_circle' : 'close'}
               />
             </IconButton>
