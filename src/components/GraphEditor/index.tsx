@@ -500,6 +500,8 @@ const GraphEditorElement = (
             onEvent={onEventCallback}
             eventHistory={eventHistory}
             clusters={graphConfig?.clusters}
+            editorMode={mode}
+            graphEditorLocalDataRef={localDataRef}
           />
         )
       }

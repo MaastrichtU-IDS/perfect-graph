@@ -17,7 +17,7 @@ import {
 } from '@material-ui/core'
 import { Icon } from '@components/Icon'
 import { EVENT } from '@utils/constants'
-import { OnEventLite, EventHistory, Cluster } from '@type'
+import { OnEventLite, EventHistory, Cluster, EditorMode } from '@type'
 import Form from '@rjsf/material-ui'
 import { FormProps } from '@rjsf/core'
 import { EventHistoryTable } from './EventHistoryTable'
@@ -38,6 +38,8 @@ export type SettingsBarProps = {
   eventHistory?: EventHistory;
   clusters?: Cluster[];
   createClusterForm?: FormProps<any>;
+  editorMode: EditorMode;
+  graphEditorLocalDataRef: any;
 }
 
 const WIDTH_PROPORTION = 30
@@ -50,6 +52,8 @@ const SettingsBarElement = (props: SettingsBarProps) => {
     eventHistory,
     clusters,
     createClusterForm,
+    graphEditorLocalDataRef,
+    editorMode,
     // children,
     // ...formProps
   } = props
@@ -160,6 +164,8 @@ const SettingsBarElement = (props: SettingsBarProps) => {
               clusters={clusters}
               onEvent={onEvent}
               createClusterForm={createClusterForm}
+              graphEditorLocalDataRef={graphEditorLocalDataRef}
+              editorMode={editorMode}
             />
           </View>
           <Divider style={{ marginTop: 5, marginBottom: 5 }} />
