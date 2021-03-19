@@ -113,12 +113,11 @@ export const ClusterTable = (props: ClusterTableProps) => {
                   e.stopPropagation()
                   updateState((draft) => {
                     draft.currentTab = (state.currentTab + 1) % 2
-
                   })
                 }}
               >
                 <Icon
-                  name="add_circle"
+                  name={state.currentTab === 0 ? "add_circle" : 'close'}
                 />
               </IconButton>
         </View>
