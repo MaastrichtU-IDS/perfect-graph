@@ -64,12 +64,13 @@ export const RenderNode = ({
     }
     if (graphRef.current.viewport) {
       onZoom()
-      graphRef.current.viewport.on('zoomed',() => {
-        // return
-        onZoom()
-      })
+      graphRef.current.viewport.on('zoomed',onZoom)
     }
-    
+    return () => {
+      if (graphRef.current.viewport) {
+        graphRef.current.viewport.off('zoomed',onZoom)
+      }
+    }
   }, [graphRef.current.viewport])
   
   return (

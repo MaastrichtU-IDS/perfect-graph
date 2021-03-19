@@ -284,8 +284,10 @@ const GraphEditorElement = (
             onEventCallback({
               type: EVENT.ADD_NODE,
               payload: {
-                id: R.uuid(),
-                position,
+                items: [{
+                  id: R.uuid(),
+                  position,
+                }],
               },
             })
             return
@@ -340,7 +342,9 @@ const GraphEditorElement = (
               ) {
                 onEventCallback({
                   type: EVENT.DELETE_NODE,
-                  item,
+                  payload: {
+                    items: [item],
+                  },
                   event,
                 })
                 return
@@ -351,11 +355,12 @@ const GraphEditorElement = (
                 if (localDataRef.current.targetNode) {
                   onEventCallback({
                     type: EVENT.ADD_EDGE,
-                    elementId,
                     payload: {
-                      id: R.uuid(),
-                      source: localDataRef.current.targetNode.id(),
-                      target: elementId,
+                      items: [{
+                        id: R.uuid(),
+                        source: localDataRef.current.targetNode.id(),
+                        target: elementId,
+                      }],
                     },
                     event,
                   })
@@ -413,7 +418,9 @@ const GraphEditorElement = (
               ) {
                 onEventCallback({
                   type: EVENT.DELETE_EDGE,
-                  elementId: element.id(),
+                  payload: {
+                    items: [item],
+                  },
                   event,
                 })
                 return
@@ -458,18 +465,29 @@ const GraphEditorElement = (
             updateState((draft) => {
               draft.contextMenu.visible = false
             })
-            switch(value) {
-              case 'CreateCluster': 
-              onEvent({
-                type: EVENT.CREATE_CLUSTER,
-                payload: {
-                  name: `Cluster-${graphConfig?.clusters?.length ?? 0}`,
-                  elementIds: localDataRef.current.newClusterBoxSelection.elementIds
-                }
-              })
-              localDataRef.current.newClusterBoxSelection.elementIds = []
-              break
+            switch (value) {
+              case 'CreateCluster':
+                onEvent({
+                  type: EVENT.CREATE_CLUSTER,
+                  payload: {
+                    name: `Cluster-${graphConfig?.clusters?.length ?? 0}`,
+                    elementIds: localDataRef.current.newClusterBoxSelection.elementIds,
+                  },
+                })
+                break
+              case 'Delete':
+                onEvent({
+                  type: EVENT.DELETE_NODE,
+                  payload: {
+                    items: nodes.filter(
+                      (nodeItem) => localDataRef.current.newClusterBoxSelection.elementIds
+                        .includes(nodeItem.id),
+                    ),
+                  },
+                })
+                break
             }
+            localDataRef.current.newClusterBoxSelection.elementIds = []
           }}
           position={state.contextMenu.position}
           open={state.contextMenu.visible}

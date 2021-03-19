@@ -183,7 +183,10 @@ export const useController = (
             break
           }
           case EVENT.ADD_NODE: {
-            draft.nodes.push(payload)
+            const {
+              items,
+            } = payload
+            draft.nodes = draft.nodes.concat(items)
             // const { position } = payload
             // draft.nodes.push({
             //   id: `${draft.nodes.length + 1}`, // R.uuid(),
@@ -196,10 +199,18 @@ export const useController = (
             break
           }
           case EVENT.DELETE_NODE: {
-            const itemIndex = draft.nodes.findIndex((node) => node.id === item.id)
-            draft.nodes.splice(itemIndex, 1)
+            const {
+              items = [],
+            } = payload as {
+              items: {id: string} []
+            }
+            const itemIds = items.map((item) => item.id)
+            // const itemIndex = draft.nodes.findIndex((node) => node.id === item.id)
+            // draft.nodes.splice(itemIndex, 1)
+            draft.nodes = draft.nodes.filter((nodeItem) => !itemIds.includes(nodeItem.id))
             draft.edges = draft.edges.filter(
-              (edgeItem) => edgeItem.source !== item.id && edgeItem.target !== item.id,
+              (edgeItem) => !itemIds.includes(edgeItem.source)
+              && !itemIds.includes(edgeItem.target),
             )
             if (draft.mode === EDITOR_MODE.DELETE) {
               draft.mode = EDITOR_MODE.DEFAULT
@@ -207,7 +218,7 @@ export const useController = (
             break
           }
           case EVENT.ADD_EDGE: {
-            draft.edges.push(payload)
+            draft.edges = draft.edges.concat(payload.items)
             // const {
             //   id,
             //   source,
@@ -225,8 +236,13 @@ export const useController = (
             break
           }
           case EVENT.DELETE_EDGE: {
-            const itemIndex = draft.nodes.findIndex((node) => node.id === item.id)
-            draft.edges.splice(itemIndex, 1)
+            const {
+              items = [],
+            } = payload as {
+              items: {id: string} []
+            }
+            const itemIds = items.map((item) => item.id)
+            draft.edges = draft.edges.filter((edgeItem) => !itemIds.includes(edgeItem.id))
             if (draft.mode === EDITOR_MODE.DELETE) {
               draft.mode = EDITOR_MODE.DEFAULT
             }
@@ -238,11 +254,7 @@ export const useController = (
           }
           case EVENT.ELEMENT_SELECTED: {
             draft.selectedElementIds = [selectedItem.id]
-            // R.union(
-            //   draft.selectedElementIds ?? [],
-            //   [selectedItem.id]
-            // )
-            if (event && event.data.originalEvent.metaKey) {
+            if (event && event.data.originalEvent.metaKey && element?.isNode()) {
               draft.dataBar!.opened = true
               const {
                 viewport,

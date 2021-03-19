@@ -448,28 +448,28 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
           return [
             {
               type: EVENT.DELETE_NODE,
-              item: payload,
+              payload,
             },
           ]
         case EVENT.DELETE_NODE:
           return [
             {
               type: EVENT.ADD_NODE,
-              payload: item,
+              payload
             },
           ]
         case EVENT.ADD_EDGE:
           return [
             {
               type: EVENT.DELETE_EDGE,
-              item: payload,
+              payload
             },
           ]
         case EVENT.DELETE_EDGE:
           return [
             {
               type: EVENT.ADD_EDGE,
-              payload: item,
+              payload
             },
           ]
 
