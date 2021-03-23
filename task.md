@@ -20,6 +20,7 @@
   - Add renderCell
 - Change Label (labelPath)
 - Sparql results to RDF
+-  checkbox to do automatic updates 
 
 # DOING
 
