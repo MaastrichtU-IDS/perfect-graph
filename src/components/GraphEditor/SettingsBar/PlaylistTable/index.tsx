@@ -6,6 +6,7 @@ import {
   ListItemSecondaryAction,
   ListItemAvatar,
   Checkbox,
+  Card,
 } from '@material-ui/core'
 import {
   EventHistory,
@@ -17,6 +18,7 @@ import {
   View,
   wrapComponent,
 } from 'colay-ui'
+import { useImmer } from 'colay-ui/hooks/useImmer'
 import React from 'react'
 import * as R from 'colay/ramda'
 import Accordion from '@material-ui/core/Accordion'
@@ -42,56 +44,79 @@ export const PlaylistTable = (props: EventHistoryTableProps) => {
     onPlay,
   } = props
   const hasSelected = selectedPlaylistIds.length > 0
+  const [state, updateState] = useImmer({
+    expanded: false,
+  })
   return (
-    <Accordion>
+    <Accordion
+      expanded={state.expanded}
+      onChange={(e, expanded) => updateState((draft) => {
+        draft.expanded = expanded
+      })}
+    >
       <AccordionSummary
         aria-controls="panel1a-content"
       >
-        <View
+        <View 
           style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            width: '100%',
+            width: '100%'
           }}
+        
         >
           <View
             style={{
               flexDirection: 'row',
+              justifyContent: 'space-between',
               alignItems: 'center',
+              width: '100%',
             }}
           >
-            {
-              hasSelected && (
-                <Checkbox
-                  onClick={(e) => e.stopPropagation()}
-                  checked={!R.isEmpty(selectedPlaylistIds)
-               && selectedPlaylistIds.length === playlists.length}
-                  onChange={(_, checked) => onSelectAllPlaylist(checked)}
-                  inputProps={{ 'aria-label': 'primary checkbox' }}
-                />
-              )
-            }
-            <Typography
-              variant="h6"
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}
             >
-              Playlists
-            </Typography>
+              <Typography
+                variant="h6"
+              >
+                Playlists
+              </Typography>
+            </View>
           </View>
           {
-            hasSelected && (
-              <IconButton
-                onClick={(e) => {
-                  e.stopPropagation()
+            state.expanded && hasSelected && (
+              <Card
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  height: 32,
+                  width: '100%',
                 }}
               >
-                <Icon
-                  name="delete_rounded"
-                />
-              </IconButton>
+                <ListItem>
+                  <Checkbox
+                    onClick={(e) => e.stopPropagation()}
+                    checked={!R.isEmpty(selectedPlaylistIds)
+               && selectedPlaylistIds.length === playlists.length}
+                    onChange={(_, checked) => onSelectAllPlaylist(checked)}
+                    inputProps={{ 'aria-label': 'primary checkbox' }}
+                  />
+                  <IconButton
+                    onClick={(e) => {
+                      e.stopPropagation()
+                    }}
+                  >
+                    <Icon
+                      name="delete_rounded"
+                    />
+                  </IconButton>
+                </ListItem>
+              </Card>
             )
-          }
+              }
         </View>
+
       </AccordionSummary>
       <AccordionDetails>
         {

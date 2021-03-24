@@ -4,59 +4,64 @@ type DoActions = any[]
 type UndoActions = any[]
 
 type HistoryItem = {
-  doActions: DoActions;
-  undoActions: UndoActions;
+  id: string;
+  do: DoActions;
+  undo: UndoActions;
 }
+type HistoryItemOptionalId = Omit<HistoryItem, 'id'> & { id?: string; }
 
 type HistoryRecord = {
-  doActionsList: DoActions[];
-  undoActionsList: UndoActions[];
+  items: HistoryItem[]
   currentIndex: number;
 }
 
 const DEFAULT_INDEX = 0
 const DEFAULT_HISTORY_DATA_ITEM: HistoryRecord = {
-  doActionsList: [],
-  undoActionsList: [],
+  items: [],
   currentIndex: DEFAULT_INDEX,
 }
 
-const ACTION_TYPE = {
+const EVENT_TYPE = {
   REDO: 'REDO',
   UNDO: 'UNDO',
+  UNDO_ALL: 'UNDO_ALL',
+  REDO_ALL: 'REDO_ALL',
 } as const
 
-export type History = {
-  record: HistoryRecord;
-  add: (item: HistoryItem) => void;
-  clear: () => void;
-  new: () => void;
-  set: (historyRecord: HistoryRecord) => void;
-  redo: () => void;
-  redoAll: () => void;
-  undo: () => void;
-  undoAll: () => void;
-  createRoot: () => void;
-  clearRoot: () => void;
-  getRoot: () => HistoryRecord;
-  setRoot: (historyRecord: HistoryRecord) => void;
-  ACTION_TYPE: typeof ACTION_TYPE
-}
+// export type History = {
+//   record: HistoryRecord;
+//   add: (item: HistoryItem) => void;
+//   clear: () => void;
+//   new: () => void;
+//   set: (historyRecord: HistoryRecord) => void;
+//   redo: () => void;
+//   redoAll: () => void;
+//   undo: () => void;
+//   undoAll: () => void;
+//   createRoot: () => void;
+//   clearRoot: () => void;
+//   getRoot: () => HistoryRecord;
+//   setRoot: (historyRecord: HistoryRecord) => void;
+//   EVENT_TYPE: typeof EVENT_TYPE
+// }
+export type History = ReturnType<typeof createHistory>
 
-type Action = {
-  type: keyof typeof ACTION_TYPE,
-  actions: (DoActions|UndoActions),
+type Event = {
+  type: keyof typeof EVENT_TYPE;
+  item: HistoryItem;
+  actions: (DoActions|UndoActions);
+  items?: HistoryItem[];
 }
 
 type CreateHistoryOptions = {
-  onAction: (
-    action: Action
+  onEvent: (
+    event: Event
   ) => boolean|void;
 }
 
 export const createHistory = (options: CreateHistoryOptions) => {
   const {
-    onAction = () => {},
+    onEvent = () => {},
   } = options
   const ref = {
     current: null as unknown as History,
@@ -64,19 +69,17 @@ export const createHistory = (options: CreateHistoryOptions) => {
   const record: HistoryRecord = R.clone(DEFAULT_HISTORY_DATA_ITEM)
   ref.current = {
     record,
-    add: (item: HistoryItem) => {
-      const currentIndex = record.currentIndex
-      record.doActionsList = R.slice(
+    add: (item: HistoryItemOptionalId) => {
+      const { currentIndex, items } = record
+      record.items = R.slice(
         0,
         currentIndex,
-      )(record.doActionsList)
-      record.undoActionsList = R.slice(
-        0,
-        currentIndex,
-      )(record.undoActionsList)
-      record.doActionsList.push(item.doActions)
-      record.undoActionsList.push(item.undoActions)
-      record.currentIndex = record.doActionsList.length
+      )(items)
+      record.items.push({
+        id: R.uuid(),
+        ...item,
+      })
+      record.currentIndex = record.items.length
     },
     clear: () => {
       const {
@@ -91,27 +94,28 @@ export const createHistory = (options: CreateHistoryOptions) => {
       })
     },
     undo: () => {
-      const currentIndex = record.currentIndex - 1
-      const actions = record?.undoActionsList?.[currentIndex]
-      if (actions) {
-        const undone = onAction({
-          actions,
-          type: ACTION_TYPE.UNDO,
+      const item = record?.items?.[record.currentIndex - 1]
+      if (item) {
+        const passed = onEvent({
+          item,
+          type: EVENT_TYPE.UNDO,
+          actions: item.undo,
         }) ?? true
-        if (undone) {
-          record.currentIndex = currentIndex
+        if (passed) {
+          record.currentIndex -= 1
         }
       }
     },
     redo: () => {
-      const currentIndex = record.currentIndex
-      const actions = record?.doActionsList?.[currentIndex]
-      if (actions) {
-        const done = onAction({
-          actions,
-          type: ACTION_TYPE.REDO,
+      const { currentIndex } = record
+      const item = record?.items?.[currentIndex]
+      if (item) {
+        const passed = onEvent({
+          item,
+          type: EVENT_TYPE.REDO,
+          actions: item.do,
         }) ?? true
-        if (done) {
+        if (passed) {
           record.currentIndex = currentIndex + 1
         }
       }
@@ -119,18 +123,34 @@ export const createHistory = (options: CreateHistoryOptions) => {
     undoAll: () => R.when(
       R.allPass([
         R.isNotNil,
-        () => record.undoActionsList.length > record.currentIndex,
+        () => record.items.length > record.currentIndex,
       ]),
       () => {
         const {
-          undoActionsList,
+          items,
         } = record
-        const actions = R.unnest(
-          R.slice(0, record.currentIndex + 1)(undoActionsList),
+        const relatedItems = R.slice(0, record.currentIndex + 1)(items)
+        const undoList = R.unnest(
+          R.map(
+            (item) => item.undo,
+            relatedItems,
+          ),
         ) as UndoActions[]
-        onAction({
-          actions,
-          type: ACTION_TYPE.UNDO,
+        const doList = R.unnest(
+          R.map(
+            (item) => item.do,
+            relatedItems,
+          ),
+        ) as DoActions[]
+        onEvent({
+          item: {
+            id: R.uuid,
+            do: doList,
+            undo: undoList,
+          },
+          actions: undoList,
+          items: relatedItems,
+          type: EVENT_TYPE.UNDO_ALL,
         })
         record.currentIndex = DEFAULT_INDEX
       },
@@ -138,22 +158,47 @@ export const createHistory = (options: CreateHistoryOptions) => {
     redoAll: () => R.when(
       R.allPass([
         R.isNotNil,
-        () => record.doActionsList.length > record.currentIndex,
+        () => record.items.length > record.currentIndex,
       ]),
       () => {
         const {
-          doActionsList,
+          items,
         } = record
-        const actions = R.unnest(
-          R.slice(0, record.currentIndex + 1)(doActionsList),
+        const relatedItems = R.slice(0, record.currentIndex + 1)(items)
+        const undoList = R.unnest(
+          R.map(
+            (item) => item.undo,
+            relatedItems,
+          ),
+        ) as UndoActions[]
+        const doList = R.unnest(
+          R.map(
+            (item) => item.do,
+            relatedItems,
+          ),
         ) as DoActions[]
-        onAction({
-          actions,
-          type: ACTION_TYPE.REDO,
+        onEvent({
+          item: {
+            id: R.uuid,
+            do: doList,
+            undo: undoList,
+          },
+          actions: doList,
+          items: relatedItems,
+          type: EVENT_TYPE.REDO_ALL,
         })
         record.currentIndex = DEFAULT_INDEX
       },
     )(record),
+    delete: (ids: string[]) => {
+      record.items = record.items.filter((item, index) => {
+        const deleted = ids.includes(item.id)
+        if (deleted && index < record.currentIndex) {
+          record.currentIndex -= 1
+        }
+        return !deleted
+      })
+    },
   }
   return ref.current
 }

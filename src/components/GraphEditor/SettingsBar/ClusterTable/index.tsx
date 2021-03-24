@@ -10,6 +10,7 @@ import {
   TextField,
   DialogTitle,
   Button,
+  Card,
 } from '@material-ui/core'
 import {
   Cluster,
@@ -37,24 +38,25 @@ export type ClusterTableProps = {
   onEvent: OnEventLite;
   selectedClusterIds: string[]
   clusters: Cluster[];
-  onSelectAllClusters: (checked: boolean) => void
-  onSelectCluster: (cluster: Cluster, checked: boolean) => void
+  // onSelectAllClusters: (checked: boolean) => void
+  // onSelectCluster: (cluster: Cluster, checked: boolean) => void
   createClusterForm: FormProps<any>;
   editorMode: EditorMode;
   graphEditorLocalDataRef: any;
 }
 export const ClusterTable = (props: ClusterTableProps) => {
   const {
-    onSelectAllClusters,
-    onSelectCluster,
+    // onSelectAllClusters,
+    // onSelectCluster,
     onEvent,
     clusters,
-    selectedClusterIds = [],
     createClusterForm,
     editorMode,
     graphEditorLocalDataRef,
   } = props
   const [state, updateState] = useImmer({
+    expanded: false,
+    selectedClusterIds: [] as string[],
     currentTab: 0,
     formData: {},
     createClusterDialog: {
@@ -62,76 +64,110 @@ export const ClusterTable = (props: ClusterTableProps) => {
       visible: false,
     },
   })
-  const hasSelected = selectedClusterIds.length > 0
+  const hasSelected = state.selectedClusterIds.length > 0
   return (
     <>
-      <Accordion>
+      <Accordion
+        expanded={state.expanded}
+        onChange={(e, expanded) => updateState((draft) => {
+          draft.expanded = expanded
+        })}
+      >
         <AccordionSummary
           aria-controls="panel1a-content"
         >
           <View
             style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
               width: '100%',
             }}
           >
             <View
               style={{
                 flexDirection: 'row',
+                justifyContent: 'space-between',
                 alignItems: 'center',
+                width: '100%',
               }}
             >
-              {
-              hasSelected && (
-                <Checkbox
-                  onClick={(e) => e.stopPropagation()}
-                  checked={!R.isEmpty(selectedClusterIds)
-               && selectedClusterIds.length === clusters.length}
-                  onChange={(_, checked) => onSelectAllClusters(checked)}
-                  inputProps={{ 'aria-label': 'primary checkbox' }}
-                />
-              )
-            }
-              <Typography
-                variant="h6"
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}
               >
-                Clusters
-              </Typography>
-            </View>
-            {
-            hasSelected && (
+                <Typography
+                  variant="h6"
+                >
+                  Clusters
+                </Typography>
+              </View>
               <IconButton
                 onClick={(e) => {
                   e.stopPropagation()
+                  updateState((draft) => {
+                    draft.currentTab = (state.currentTab + 1) % 2
+                  })
                 }}
               >
                 <Icon
-                  name="delete_rounded"
+                  color={state.currentTab === 0 ? 'inherit' : 'secondary'}
+                  name={state.currentTab === 0 ? 'add_circle' : 'close'}
                 />
               </IconButton>
+            </View>
+            {
+            state.expanded && hasSelected && (
+              <Card
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  height: 32,
+                  width: '100%',
+                }}
+              >
+                <ListItem>
+                  <Checkbox
+                    onClick={(e) => e.stopPropagation()}
+                    checked={!R.isEmpty(state.selectedClusterIds)
+               && state.selectedClusterIds.length === clusters.length}
+                    onChange={(_, checked) => {
+                      updateState((draft) => {
+                        if (checked) {
+                          draft.selectedClusterIds = clusters.map((cluster) => cluster.id)
+                        } else {
+                          draft.selectedClusterIds = []
+                        }
+                      })
+                    }}
+                    inputProps={{ 'aria-label': 'primary checkbox' }}
+                  />
+                  <IconButton
+                    onClick={(e) => {
+                      e.stopPropagation()
+                    }}
+                  >
+                    <Icon
+                      name="delete_rounded"
+                    />
+                  </IconButton>
+                </ListItem>
+              </Card>
             )
           }
-            <IconButton
-              onClick={(e) => {
-                e.stopPropagation()
-                updateState((draft) => {
-                  draft.currentTab = (state.currentTab + 1) % 2
-                })
-              }}
-            >
-              <Icon
-                color={state.currentTab === 0 ? 'inherit' : 'secondary'}
-                name={state.currentTab === 0 ? 'add_circle' : 'close'}
-              />
-            </IconButton>
           </View>
+
         </AccordionSummary>
         <AccordionDetails>
           <TabPanel
             value={state.currentTab}
             index={0}
+            style={{
+              padding: 0,
+              paddingLeft: 0,
+              paddingTop: 0,
+              paddingRight: 0,
+              paddingBottom: 0,
+            }}
           >
             {
           clusters.length === 0 && (
@@ -167,9 +203,19 @@ export const ClusterTable = (props: ClusterTableProps) => {
                       >
                         <Checkbox
                           onClick={(e) => e.stopPropagation()}
-                          checked={!R.isEmpty(selectedClusterIds)
-                          && selectedClusterIds.length === clusters.length}
-                          onChange={(_, checked) => onSelectAllClusters(checked)}
+                          checked={!R.isEmpty(state.selectedClusterIds)
+                          && state.selectedClusterIds.length === clusters.length}
+                          onChange={(_, checked) => {
+                            updateState((draft) => {
+                              if (checked) {
+                                draft.selectedClusterIds.push(cluster.id)
+                              } else {
+                                draft.selectedClusterIds = draft.selectedClusterIds.filter(
+                                  (id) => id !== cluster.id,
+                                )
+                              }
+                            })
+                          }}
                           inputProps={{ 'aria-label': 'primary checkbox' }}
                         />
                         <Typography

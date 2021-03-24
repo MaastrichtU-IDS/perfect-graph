@@ -10,6 +10,7 @@ import {
   Dialog,
   DialogTitle,
   TextField, Button,
+  Card,
 } from '@material-ui/core'
 import {
   EventHistory,
@@ -42,6 +43,7 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
     eventHistory,
   } = props
   const [state, updateState] = useImmer({
+    expanded: false,
     selectedEventIds: [] as string[],
     selectedPlaylistIds: [] as string[],
     playlists: [
@@ -73,102 +75,121 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
         width: '100%',
       }}
     >
-      <Accordion>
+      <Accordion
+        expanded={state.expanded}
+        onChange={(e, expanded) => updateState((draft) => {
+          draft.expanded = expanded
+        })}
+      >
         <AccordionSummary
           aria-controls="panel1a-content"
         >
           <View
             style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
               width: '100%',
             }}
           >
             <View
               style={{
                 flexDirection: 'row',
+                justifyContent: 'space-between',
                 alignItems: 'center',
+                width: '100%',
               }}
             >
-              {
-                hasSelected && (
-                <Checkbox
-                  checked={!R.isEmpty(state.selectedEventIds)
-             && state.selectedEventIds.length === eventHistory.events.length}
-                  onChange={(_, checked) => updateState((draft) => {
-                    if (checked) {
-                      draft.selectedEventIds = eventHistory.events.map((event) => event.id)
-                    } else {
-                      draft.selectedEventIds = []
-                    }
-                  })}
-                  onClick={(e) => e.stopPropagation()}
-                  inputProps={{ 'aria-label': 'primary checkbox' }}
-                />
-                )
-}
-              <Typography
-                variant="h6"
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}
               >
-                History
-              </Typography>
-            </View>
-            <View
-              style={{
+                <Typography
+                  variant="h6"
+                >
+                  History
+                </Typography>
+              </View>
+              <View
+                style={{
                 // alignItems: 'space-between',
-                flexDirection: 'row',
-              }}
-            >
-              {
-                hasSelected && (
-                  <IconButton
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      updateState((draft) => {
-                        draft.createPlaylistDialog.name = ''
-                        draft.createPlaylistDialog.visible = true
-                      })
-                    }}
-                  >
-                    <Icon
-                      name="playlist_add"
-                    />
-                  </IconButton>
-                )
-              }
-              <IconButton
-                onClick={(e) => {
-                  e.stopPropagation()
-                  onEvent({
-                    type: EVENT.UNDO_EVENT,
-                    avoidEventRecording: true,
-                    avoidHistoryRecording: true,
-                  })
+                  flexDirection: 'row',
                 }}
               >
-                <Icon
-                  name="keyboard_arrow_down"
-                />
-              </IconButton>
-              <IconButton
-                onClick={(e) => {
-                  e.stopPropagation()
-                  onEvent({
-                    type: EVENT.REDO_EVENT,
-                    avoidEventRecording: true,
-                    avoidHistoryRecording: true,
-                  })
-                }}
-              >
-                <Icon
-                  name="keyboard_arrow_up"
-                />
-              </IconButton>
+                <IconButton
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onEvent({
+                      type: EVENT.UNDO_EVENT,
+                      avoidEventRecording: true,
+                      avoidHistoryRecording: true,
+                    })
+                  }}
+                >
+                  <Icon
+                    name="keyboard_arrow_down"
+                  />
+                </IconButton>
+                <IconButton
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onEvent({
+                      type: EVENT.REDO_EVENT,
+                      avoidEventRecording: true,
+                      avoidHistoryRecording: true,
+                    })
+                  }}
+                >
+                  <Icon
+                    name="keyboard_arrow_up"
+                  />
+                </IconButton>
+              </View>
             </View>
+            {
+              state.expanded && hasSelected && (
+                <Card
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    height: 32,
+                    width: '100%',
+                  }}
+                >
+                  <ListItem>
+                    <Checkbox
+                      checked={!R.isEmpty(state.selectedEventIds)
+             && state.selectedEventIds.length === eventHistory.events.length}
+                      onChange={(_, checked) => updateState((draft) => {
+                        if (checked) {
+                          draft.selectedEventIds = eventHistory.events.map((event) => event.id)
+                        } else {
+                          draft.selectedEventIds = []
+                        }
+                      })}
+                      onClick={(e) => e.stopPropagation()}
+                      inputProps={{ 'aria-label': 'primary checkbox' }}
+                    />
+                    <IconButton
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        updateState((draft) => {
+                          draft.createPlaylistDialog.name = ''
+                          draft.createPlaylistDialog.visible = true
+                        })
+                      }}
+                    >
+                      <Icon
+                        name="playlist_add"
+                      />
+                    </IconButton>
+                  </ListItem>
+                </Card>
+              )
+            }
           </View>
         </AccordionSummary>
         <AccordionDetails>
+
           {
           eventHistory.events.length === 0 && (
             <Typography>
@@ -235,7 +256,7 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
                   <IconButton
                     edge="end"
                     onClick={() => onEvent({
-                      type: EVENT.DELETE_HISTORY_EVENT,
+                      type: EVENT.DELETE_HISTORY_ITEM,
                       payload: {
                         event,
                         avoidEventRecording: true,
@@ -269,7 +290,7 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
               draft.selectedPlaylistIds.push(playlist.id)
             } else {
               draft.selectedPlaylistIds = draft.selectedPlaylistIds.filter(
-                (id) => id !== playlist.id
+                (id) => id !== playlist.id,
               )
             }
           })

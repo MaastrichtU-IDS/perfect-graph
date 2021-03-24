@@ -60,12 +60,10 @@ export const useController = (
     ]) as UseControllerData, [], // useControllerData
   )
   const eventHistory = React.useMemo(() => createHistory({
-    onAction: (action) => {
+    onEvent: (event) => {
       const {
         actions,
-        name,
-        type,
-      } = action
+      } = event
       actions.map(onEvent)
     },
   }), [])
@@ -103,7 +101,7 @@ export const useController = (
           } = getUndoEvents([eventInfo], { graphEditor, draft })
           if (addHistory) {
             eventHistory.add({
-              doActions: [
+              do: [
                 {
                   ...eventInfo,
                   event,
@@ -111,7 +109,7 @@ export const useController = (
                   avoidHistoryRecording: true,
                 },
               ],
-              undoActions: undoEvents.map((e) => ({
+              undo: undoEvents.map((e) => ({
                 ...e,
                 avoidEventRecording: true,
                 avoidHistoryRecording: true,
@@ -419,17 +417,7 @@ export const useController = (
             draft.graphConfig.layout = oldLayout
             break
           }
-          case EVENT.DELETE_HISTORY_EVENT: {
-            // const {
-            //   positions,
-            //   oldLayout,
-            // } = payload
-            // positions.forEach((positionItem) => {
-            //   graphEditor?.cy.$id(positionItem.elementId).position(positionItem.position)
-            // })
-            // draft.graphConfig.layout = oldLayout
-            break
-          }
+          
           case EVENT.SET_NODE_LOCAL_LABEL: {
             const {
               value,
@@ -519,6 +507,17 @@ export const useController = (
             selectedCluster.visible = value
             break
           }
+          case EVENT.DELETE_HISTORY_ITEM: {
+            // const {
+            //   positions,
+            //   oldLayout,
+            // } = payload
+            // positions.forEach((positionItem) => {
+            //   graphEditor?.cy.$id(positionItem.elementId).position(positionItem.position)
+            // })
+            // draft.graphConfig.layout = oldLayout
+            break
+          }
           default:
             break
         }
@@ -538,8 +537,12 @@ export const useController = (
       ),
       eventHistory: {
         currentIndex: eventHistory.record.currentIndex - 1,
-        events: R.unnest(eventHistory.record.doActionsList),
-        undoEvents: R.unnest(eventHistory.record.undoActionsList),
+        events: R.unnest(
+          R.map((item) => item.do, eventHistory.record.items),
+        ),
+        undoEvents: R.unnest(
+          R.map((item) => item.undo, eventHistory.record.items),
+        ),
       },
       onEvent,
     } as Pick<GraphEditorProps, 'nodes' | 'edges' | 'onEvent' | 'graphConfig' | 'eventHistory'>,
