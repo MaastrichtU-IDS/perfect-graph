@@ -1,37 +1,31 @@
+import { TabPanel } from '@components/TabPanel'
 import {
-  IconButton, Typography,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemSecondaryAction,
-  ListItemAvatar,
-  Checkbox,
-  Dialog,
-  TextField,
-  DialogTitle,
   Button,
-  Card,
+  Card, Checkbox,
+  Dialog, DialogTitle, IconButton, List,
+  ListItem, ListItemAvatar, ListItemSecondaryAction,
+  ListItemText, TextField, Typography,
+  Menu,
+  MenuItem,
 } from '@material-ui/core'
+import Accordion from '@material-ui/core/Accordion'
+import AccordionDetails from '@material-ui/core/AccordionDetails'
+import AccordionSummary from '@material-ui/core/AccordionSummary'
+import { FormProps } from '@rjsf/core'
+import Form from '@rjsf/material-ui'
 import {
-  Cluster,
-  OnEventLite,
-  EditorMode,
+  Cluster, EditorMode, OnEventLite,
 } from '@type'
+import { EDITOR_MODE, EVENT } from '@utils/constants'
 import {
   View,
-  wrapComponent,
+  useDisclosure,
 } from 'colay-ui'
 import { useImmer } from 'colay-ui/hooks/useImmer'
-import React from 'react'
-import { EVENT, EDITOR_MODE } from '@utils/constants'
 import * as R from 'colay/ramda'
-import Accordion from '@material-ui/core/Accordion'
-import Form from '@rjsf/material-ui'
-import AccordionSummary from '@material-ui/core/AccordionSummary'
-import AccordionDetails from '@material-ui/core/AccordionDetails'
-import { TabPanel } from '@components/TabPanel'
-import { FormProps } from '@rjsf/core'
+import React from 'react'
 import { Icon } from '../../../Icon'
+import { CreateClusterByAlgorithm } from './CreateClusterByAlgorithm'
 
 export type ClusterTableProps = {
   opened?: boolean;
@@ -65,6 +59,12 @@ export const ClusterTable = (props: ClusterTableProps) => {
     },
   })
   const hasSelected = state.selectedClusterIds.length > 0
+  const {
+    anchorEl,
+    isOpen,
+    onClose,
+    onOpen,
+  } = useDisclosure({})
   return (
     <>
       <Accordion
@@ -104,9 +104,10 @@ export const ClusterTable = (props: ClusterTableProps) => {
               <IconButton
                 onClick={(e) => {
                   e.stopPropagation()
-                  updateState((draft) => {
-                    draft.currentTab = (state.currentTab + 1) % 2
-                  })
+                  // updateState((draft) => {
+                  //   draft.currentTab = (state.currentTab + 1) % 2
+                  // })
+                  onOpen(e)
                 }}
               >
                 <Icon
@@ -114,6 +115,58 @@ export const ClusterTable = (props: ClusterTableProps) => {
                   name={state.currentTab === 0 ? 'add_circle' : 'close'}
                 />
               </IconButton>
+              <Menu
+                anchorEl={anchorEl}
+                open={isOpen}
+                onClose={onClose}
+                // style={{ width: 400 }}
+              >
+                {
+                  state.currentTab !== 0 && (
+                    <MenuItem
+                      // key="Close"
+                    // selected={index === selectedIndex}
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        updateState((draft) => {
+                          draft.currentTab = 0
+                        })
+                        onClose()
+                      }}
+                    >
+                      Close
+                    </MenuItem>
+                  )
+                }
+                <MenuItem
+                  // key="By Filter"
+                  selected={state.currentTab === 1}
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    updateState((draft) => {
+                      draft.currentTab = 1
+                      draft.expanded = true
+                    })
+                    onClose()
+                  }}
+                >
+                  By Filter
+                </MenuItem>
+                <MenuItem
+                  // key="By Algorithm"
+                  selected={state.currentTab === 2}
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    updateState((draft) => {
+                      draft.currentTab = 2
+                      draft.expanded = true
+                    })
+                    onClose()
+                  }}
+                >
+                  By Algorithm
+                </MenuItem>
+              </Menu>
             </View>
             {
             state.expanded && hasSelected && (
@@ -373,7 +426,19 @@ export const ClusterTable = (props: ClusterTableProps) => {
               {...createClusterForm}
             />
           </TabPanel>
-
+          <TabPanel
+            value={state.currentTab}
+            index={2}
+          >
+            <CreateClusterByAlgorithm
+              onEvent={onEvent}
+              onSubmit={() => {
+                updateState((draft) => {
+                  draft.currentTab = 0
+                })
+              }}
+            />
+          </TabPanel>
         </AccordionDetails>
       </Accordion>
       <Dialog

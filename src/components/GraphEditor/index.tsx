@@ -1,3 +1,4 @@
+import React from 'react'
 import {
   DefaultRenderEdge,
   DefaultRenderNode, Graph, GraphProps,
@@ -27,7 +28,8 @@ import { calculateStatistics } from '@utils/networkStatistics'
 import { useForwardRef, wrapComponent } from 'colay-ui'
 import { PropsWithRef } from 'colay-ui/type'
 import * as R from 'colay/ramda'
-import React from 'react'
+
+import {Clusters} from '@core/clusters'
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import { ContextMenu } from '@components/ContextMenu'
 import { ActionBar, ActionBarProps } from './ActionBar'
@@ -153,15 +155,50 @@ const GraphEditorElement = (
   const selectedElementIsNode = selectedElement && selectedElement.isNode()
   const targetPath = selectedElementIsNode ? 'nodes' : 'edges'
   const onEventCallback = React.useCallback((eventInfo: EventInfo) => {
-    // const {
-    //   props:{
-    //     nodes
-    //   }
-    // } = localDataRef.current
+    const {
+      props:{
+        nodes,
+        edges,
+      }
+    } = localDataRef.current
     switch (eventInfo.type) {
       case EVENT.PRESS_ADD_CLUSTER_ELEMENT:
         localDataRef.current.issuedClusterId = eventInfo.payload.clusterId
         break
+      case EVENT.CREATE_CLUSTER_BY_ALGORITHM_FORM_SUBMIT:{
+        const {
+          config = {},
+          name,
+        } = eventInfo.payload
+        const clusterCollections = Clusters[name].getByItem({
+          cy: graphEditorRef.current?.cy,
+          nodes: nodes,
+          edges: edges,
+          ...config,
+        })
+        let clusterLength = (graphConfig?.clusters?.length ?? 0) - 1
+        const clusters = clusterCollections.map((collection) => {
+          const elementIds = collection.map((el) => el.id())
+          clusterLength += 1
+          return {
+            name: `Cluster-${clusterLength}`,
+            elementIds,
+
+          }
+        })
+        if (clusters.length === 0){
+          alert('There is no clusters with this configuration!')
+        } else {
+          onEvent({
+            type: EVENT.CREATE_CLUSTER,
+            payload: {
+              clusters,
+            },
+          })
+        }
+        
+        return
+      }
 
       default:
         break
@@ -469,10 +506,10 @@ const GraphEditorElement = (
               case 'CreateCluster':
                 onEvent({
                   type: EVENT.CREATE_CLUSTER,
-                  payload: {
+                  payload: [{
                     name: `Cluster-${graphConfig?.clusters?.length ?? 0}`,
                     elementIds: localDataRef.current.newClusterBoxSelection.elementIds,
-                  },
+                  }],
                 })
                 break
               case 'Delete':

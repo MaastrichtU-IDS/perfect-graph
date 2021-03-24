@@ -1,10 +1,25 @@
 // @ts-nocheck
+import * as R from 'colay/ramda'
 // configSchema: {
 //   required: [],
 //   properties: {
 
 //   },
 // },
+const getAttribute = (params: {
+  pathText: string;
+  nodes: any[];
+  edges: any[];
+}) => (element: any) => {
+  const {
+    pathText,
+    nodes = [],
+    edges = [],
+  } = params
+  const id = element.id()
+  const item = (element.isNode() ? nodes : edges).find((item) => item.id === id)
+  return R.path(pathText.split('.'), item)
+}
 export const Clusters = {
   markov: {
     /**
@@ -16,6 +31,18 @@ export const Clusters = {
       ...options,
       attributes: [
         (edge) => edge.data(attributes),
+      ],
+    }),
+    getByItem: ({
+      cy, nodes, edges, attributes, ...options
+    }) => cy.elements().markovClustering({
+      ...options,
+      attributes: [
+        getAttribute({
+          edges,
+          nodes,
+          pathText: attributes,
+        }),
       ],
     }),
     configSchema: {
@@ -87,6 +114,18 @@ export const Clusters = {
       ...options,
       attributes: [
         (node) => node.data(attributes),
+      ],
+    }),
+    getByItem: ({
+      cy, nodes, edges, attributes, ...options
+    }) => cy.elements().kMeans({
+      ...options,
+      attributes: [
+        getAttribute({
+          edges,
+          nodes,
+          pathText: attributes,
+        }),
       ],
     }),
     configSchema: {
@@ -164,6 +203,18 @@ export const Clusters = {
         (node) => node.data(attributes),
       ],
     }),
+    getByItem: ({
+      cy, nodes, edges, attributes, ...options
+    }) => cy.elements().kMedoids({
+      ...options,
+      attributes: [
+        getAttribute({
+          edges,
+          nodes,
+          pathText: attributes,
+        }),
+      ],
+    }),
     configSchema: {
       required: ['attributes', 'k', 'distance'],
       properties: {
@@ -227,6 +278,18 @@ export const Clusters = {
       ...options,
       attributes: [
         (node) => node.data(attributes),
+      ],
+    }),
+    getByItem: ({
+      cy, nodes, edges, attributes, ...options
+    }) => cy.elements().fuzzyCMeans({
+      ...options,
+      attributes: [
+        getAttribute({
+          edges,
+          nodes,
+          pathText: attributes,
+        }),
       ],
     }),
     configSchema: {
@@ -306,6 +369,18 @@ export const Clusters = {
       ...options,
       attributes: [
         (node) => node.data(attributes),
+      ],
+    }),
+    getByItem: ({
+      cy, nodes, edges, attributes, ...options
+    }) => cy.elements().hierarchicalClustering({
+      ...options,
+      attributes: [
+        getAttribute({
+          edges,
+          nodes,
+          pathText: attributes,
+        }),
       ],
     }),
     configSchema: {
@@ -406,6 +481,18 @@ export const Clusters = {
       ...options,
       attributes: [
         (node) => node.data(attributes),
+      ],
+    }),
+    getByItem: ({
+      cy, nodes, edges, attributes, ...options
+    }) => cy.elements().affinityPropagation({
+      ...options,
+      attributes: [
+        getAttribute({
+          edges,
+          nodes,
+          pathText: attributes,
+        }),
       ],
     }),
     configSchema: {

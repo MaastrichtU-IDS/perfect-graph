@@ -17,6 +17,7 @@ import {
   getSelectedItemByElement, getUndoEvents, cyUnselectAll,
   getElementsCollectionByIds,
 } from '@utils'
+import { Clusters } from '@core/clusters'
 import { download } from 'colay-ui/utils'
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import * as R from 'colay/ramda'
@@ -417,7 +418,7 @@ export const useController = (
             draft.graphConfig.layout = oldLayout
             break
           }
-          
+
           case EVENT.SET_NODE_LOCAL_LABEL: {
             const {
               value,
@@ -470,14 +471,18 @@ export const useController = (
           }
           case EVENT.CREATE_CLUSTER: {
             const {
+              clusters = [],
+            } = payload
+            clusters.forEach(({
               name,
               elementIds,
-            } = payload
-            draft.graphConfig?.clusters?.push({
-              id: R.uuid(),
-              name,
-              ids: elementIds,
-              childClusterIds: [],
+            }) => {
+              draft.graphConfig?.clusters?.push({
+                id: R.uuid(),
+                name,
+                ids: elementIds,
+                childClusterIds: [],
+              })
             })
             break
           }
@@ -518,6 +523,21 @@ export const useController = (
             // draft.graphConfig.layout = oldLayout
             break
           }
+          // case EVENT.CREATE_CLUSTER_BY_ALGORITHM: {
+            // const {
+            //   config = {},
+            //   name,
+            // } = payload
+            // const clusterResult = Clusters[name].getByItem({
+            //   cy: graphEditor?.cy,
+            //   nodes: draft.nodes,
+            //   edges: draft.edges,
+            //   ...config,
+            // })
+            // console.log('a', clusterResult)
+          //   // draft.graphConfig.layout = oldLayout
+          //   break
+          // }
           default:
             break
         }
