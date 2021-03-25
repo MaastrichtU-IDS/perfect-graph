@@ -324,6 +324,7 @@ const GraphEditorElement = (
                 items: [{
                   id: R.uuid(),
                   position,
+                  data: {}
                 }],
               },
             })
