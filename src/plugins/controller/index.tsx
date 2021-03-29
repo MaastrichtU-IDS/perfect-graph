@@ -524,20 +524,32 @@ export const useController = (
             break
           }
           // case EVENT.CREATE_CLUSTER_BY_ALGORITHM: {
-            // const {
-            //   config = {},
-            //   name,
-            // } = payload
-            // const clusterResult = Clusters[name].getByItem({
-            //   cy: graphEditor?.cy,
-            //   nodes: draft.nodes,
-            //   edges: draft.edges,
-            //   ...config,
-            // })
-            // console.log('a', clusterResult)
+          // const {
+          //   config = {},
+          //   name,
+          // } = payload
+          // const clusterResult = Clusters[name].getByItem({
+          //   cy: graphEditor?.cy,
+          //   nodes: draft.nodes,
+          //   edges: draft.edges,
+          //   ...config,
+          // })
+          // console.log('a', clusterResult)
           //   // draft.graphConfig.layout = oldLayout
           //   break
           // }
+          case EVENT.CLUSTER_REORDER: {
+            const {
+              fromIndex,
+              toIndex,
+            } = payload
+            draft.graphConfig!.clusters = R.reorder(
+              fromIndex,
+              toIndex,
+              draft.graphConfig?.clusters,
+            )
+            break
+          }
           default:
             break
         }

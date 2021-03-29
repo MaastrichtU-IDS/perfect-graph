@@ -10,6 +10,7 @@ import {
 } from '@material-ui/core'
 import {
   Playlist,
+  OnEventLite,
 } from '@type'
 import {
   View,
@@ -25,29 +26,14 @@ import { Icon } from '../../../Icon'
 
 export type EventHistoryTableProps = {
   opened?: boolean;
-  // onEvent: OnEventLite;
+  onEvent: OnEventLite;
   selectedPlaylistIds: string[]
   playlists: Playlist[];
   onSelectAllPlaylist: (checked: boolean) => void
   onSelectPlaylist: (playlist: Playlist, checked: boolean) => void
   onPlay: (playlist: Playlist) => void
 }
-// const onDragEnd = (result) => {
-//   // dropped outside the list
-//   if (!result.destination) {
-//     return
-//   }
 
-//   const items = reorder(
-//     state.items,
-//     result.source.index,
-//     result.destination.index,
-//   )
-
-//   setState({
-//     items,
-//   })
-// }
 export const PlaylistTable = (props: EventHistoryTableProps) => {
   const {
     onSelectAllPlaylist,
@@ -56,6 +42,7 @@ export const PlaylistTable = (props: EventHistoryTableProps) => {
     selectedPlaylistIds,
     onPlay,
     onReorder,
+    onEvent,
   } = props
   const hasSelected = selectedPlaylistIds.length > 0
   const [state, updateState] = useImmer({

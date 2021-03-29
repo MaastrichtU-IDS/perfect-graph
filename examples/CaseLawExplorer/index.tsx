@@ -176,6 +176,16 @@ const AppContainer = ({
             'http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2014:3519'
           ],
           childClusterIds: []
+        },
+        {
+          id: '1234',
+          name: 'SimpleCluster2',
+          ids: [
+            'http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2015:3019',
+            'http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2015:644',
+            'http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2014:3519'
+          ],
+          childClusterIds: []
         }
       ]
     },

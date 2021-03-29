@@ -7,6 +7,9 @@ import {
   ListItemText, TextField, Typography,
   Menu,
   MenuItem,
+  SpeedDial,
+  SpeedDialIcon,
+  SpeedDialAction,
 } from '@material-ui/core'
 import Accordion from '@material-ui/core/Accordion'
 import AccordionDetails from '@material-ui/core/AccordionDetails'
@@ -24,6 +27,7 @@ import {
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import * as R from 'colay/ramda'
 import React from 'react'
+import { SortableList } from '@components/SortableList'
 import { Icon } from '../../../Icon'
 import { CreateClusterByAlgorithm } from './CreateClusterByAlgorithm'
 
@@ -230,130 +234,158 @@ export const ClusterTable = (props: ClusterTableProps) => {
           )
         }
             <List dense>
-              {
-            clusters.map((cluster, index) => {
-              const { ids: elementIds, id, name } = cluster
-              return (
-                <Accordion
-                  key={id}
-                >
-                  <AccordionSummary
-                    aria-controls="panel1a-content"
-                  >
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        width: '100%',
-                      }}
+              <SortableList
+                onDragEnd={(result) => {
+                  if (!result.destination && (result.destination.index === result.source.index)) {
+                    return
+                  }
+                  onEvent({
+                    type: EVENT.CLUSTER_REORDER,
+                    payload: {
+                      fromIndex: result.source.index,
+                      toIndex: result.destination.index,
+                    },
+                  })
+                }}
+                data={clusters}
+                renderItem={({
+                  provided,
+                  item: cluster,
+                  index,
+                }) => {
+                  const { ids: elementIds, id, name } = cluster
+                  return (
+                    <Accordion
+                      key={id}
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
                     >
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                        }}
+                      <AccordionSummary
+                        aria-controls="panel1a-content"
                       >
-                        <Checkbox
-                          onClick={(e) => e.stopPropagation()}
-                          checked={!R.isEmpty(state.selectedClusterIds)
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            width: '100%',
+                          }}
+                        >
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                            }}
+                          >
+                            <Checkbox
+                              onClick={(e) => e.stopPropagation()}
+                              checked={!R.isEmpty(state.selectedClusterIds)
                           && state.selectedClusterIds.length === clusters.length}
-                          onChange={(_, checked) => {
-                            updateState((draft) => {
-                              if (checked) {
-                                draft.selectedClusterIds.push(cluster.id)
-                              } else {
-                                draft.selectedClusterIds = draft.selectedClusterIds.filter(
-                                  (id) => id !== cluster.id,
-                                )
-                              }
-                            })
-                          }}
-                          inputProps={{ 'aria-label': 'primary checkbox' }}
-                        />
-                        <Typography
-                          variant="h6"
-                        >
-                          {name}
-                        </Typography>
-                      </View>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                        }}
-                      >
-                        <IconButton
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            onEvent({
-                              type: EVENT.PRESS_ADD_CLUSTER_ELEMENT,
-                              payload: {
-                                clusterId: cluster.id,
-                              },
-                            })
-                          }}
-                        >
-                          <Icon
-                            color={
+                              onChange={(_, checked) => {
+                                updateState((draft) => {
+                                  if (checked) {
+                                    draft.selectedClusterIds.push(cluster.id)
+                                  } else {
+                                    draft.selectedClusterIds = draft.selectedClusterIds.filter(
+                                      (id) => id !== cluster.id,
+                                    )
+                                  }
+                                })
+                              }}
+                              inputProps={{ 'aria-label': 'primary checkbox' }}
+                            />
+                            <Typography
+                              variant="h6"
+                            >
+                              {name}
+                            </Typography>
+                          </View>
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                            }}
+                          >
+                            <IconButton
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                onEvent({
+                                  type: EVENT.PRESS_ADD_CLUSTER_ELEMENT,
+                                  payload: {
+                                    clusterId: cluster.id,
+                                  },
+                                })
+                              }}
+                            >
+                              <Icon
+                                color={
                               editorMode === EDITOR_MODE.ADD_CLUSTER_ELEMENT
                                 && graphEditorLocalDataRef.current.issuedClusterId === cluster.id
                                 ? 'primary' : 'inherit'
                             }
-                            name="add_circle"
-                          />
-                        </IconButton>
-                        <IconButton
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            onEvent({
-                              type: EVENT.DELETE_CLUSTER,
-                              payload: {
-                                clusterId: cluster.id,
-                              },
-                            })
-                          }}
-                        >
-                          <Icon
-                            name="delete_rounded"
-                          />
-                        </IconButton>
-                        <IconButton
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            onEvent({
-                              type: EVENT.CHANGE_CLUSTER_VISIBILITY,
-                              payload: {
-                                clusterId: cluster.id,
-                                value: cluster.visible === false,
-                              },
-                            })
-                          }}
-                        >
-                          <Icon
-                            name={cluster.visible === false ? 'unfold_more' : 'unfold_less'}
-                          />
-                        </IconButton>
-                        <IconButton
-                          edge="end"
-                          aria-label="beenhere"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            onEvent({
-                              type: EVENT.SELECT_CLUSTER,
-                              payload: {
-                                clusterId: cluster.id,
-                              },
-                            })
-                            // onPlay(cluster)
-                          }}
-                        >
-                          <Icon name="beenhere" />
-                        </IconButton>
-                      </View>
-                    </View>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    {
+                                name="add_circle"
+                              />
+                            </IconButton>
+                            <IconButton
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                onEvent({
+                                  type: EVENT.DELETE_CLUSTER,
+                                  payload: {
+                                    clusterId: cluster.id,
+                                  },
+                                })
+                              }}
+                            >
+                              <Icon
+                                name="delete_rounded"
+                              />
+                            </IconButton>
+                            <IconButton
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                onEvent({
+                                  type: EVENT.CHANGE_CLUSTER_VISIBILITY,
+                                  payload: {
+                                    clusterId: cluster.id,
+                                    value: cluster.visible === false,
+                                  },
+                                })
+                              }}
+                            >
+                              <Icon
+                                name={cluster.visible === false ? 'unfold_more' : 'unfold_less'}
+                              />
+                            </IconButton>
+                            <IconButton
+                              edge="end"
+                              aria-label="beenhere"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                onEvent({
+                                  type: EVENT.SELECT_CLUSTER,
+                                  payload: {
+                                    clusterId: cluster.id,
+                                  },
+                                })
+                                // onPlay(cluster)
+                              }}
+                            >
+                              <Icon name="beenhere" />
+                            </IconButton>
+                            <IconButton
+                              edge="end"
+                              disableFocusRipple
+                              disableRipple
+                              disableTouchRipple
+                              {...provided.dragHandleProps}
+                            >
+                              <Icon name="drag_handle" />
+                            </IconButton>
+                          </View>
+                        </View>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        {
                         elementIds.map((elementId) => (
                           <ListItem
                             key={elementId}
@@ -405,11 +437,11 @@ export const ClusterTable = (props: ClusterTableProps) => {
                           </ListItem>
                         ))
                       }
-                  </AccordionDetails>
-                </Accordion>
-              )
-            })
-          }
+                      </AccordionDetails>
+                    </Accordion>
+                  )
+                }}
+              />
             </List>
           </TabPanel>
           <TabPanel
@@ -492,3 +524,116 @@ export const ClusterTable = (props: ClusterTableProps) => {
     </>
   )
 }
+
+/* <View
+                            style={{
+                              width: 24,
+                              height: 24
+                            }}
+                          >
+                          <SpeedDial
+                            ariaLabel="SpeedDial basic example"
+                            icon={<SpeedDialIcon />}
+                            style={{ position: 'absolute', left: 0, top: 0}}
+                            direction="left"
+                          >
+                            <SpeedDialAction
+                              icon={
+                                <IconButton
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  onEvent({
+                                    type: EVENT.PRESS_ADD_CLUSTER_ELEMENT,
+                                    payload: {
+                                      clusterId: cluster.id,
+                                    },
+                                  })
+                                }}
+                              >
+                                <Icon
+                                  color={
+                              editorMode === EDITOR_MODE.ADD_CLUSTER_ELEMENT
+                                && graphEditorLocalDataRef.current.issuedClusterId === cluster.id
+                                ? 'primary' : 'inherit'
+                            }
+                                  name="add_circle"
+                                />
+                              </IconButton>
+                              }
+                            />
+                            <SpeedDialAction
+                            icon={
+                              <IconButton
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  onEvent({
+                                    type: EVENT.DELETE_CLUSTER,
+                                    payload: {
+                                      clusterId: cluster.id,
+                                    },
+                                  })
+                                }}
+                              >
+                                <Icon
+                                  name="delete_rounded"
+                                />
+                              </IconButton>
+                            }
+                            />
+
+                            <SpeedDialAction
+                              icon={
+                                <IconButton
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  onEvent({
+                                    type: EVENT.CHANGE_CLUSTER_VISIBILITY,
+                                    payload: {
+                                      clusterId: cluster.id,
+                                      value: cluster.visible === false,
+                                    },
+                                  })
+                                }}
+                              >
+                                <Icon
+                                  name={cluster.visible === false ? 'unfold_more' : 'unfold_less'}
+                                />
+                              </IconButton>
+                              }
+                            />
+
+                            <SpeedDialAction
+                            icon={
+                              <IconButton
+                                edge="end"
+                                aria-label="beenhere"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  onEvent({
+                                    type: EVENT.SELECT_CLUSTER,
+                                    payload: {
+                                      clusterId: cluster.id,
+                                    },
+                                  })
+                                // onPlay(cluster)
+                                }}
+                              >
+                                <Icon name="beenhere" />
+                              </IconButton>
+                            }
+                           />
+                            <SpeedDialAction
+                              icon={(
+                                <IconButton
+                                  edge="end"
+                                  disableFocusRipple
+                                  disableRipple
+                                  disableTouchRipple
+                                  {...provided.dragHandleProps}
+                                >
+                                  <Icon name="drag_handle" />
+                                </IconButton>
+)}
+                            />
+                          </SpeedDial>
+                          </View> */

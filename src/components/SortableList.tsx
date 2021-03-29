@@ -11,13 +11,6 @@ import {
   DroppableStateSnapshot,
 } from 'react-beautiful-dnd'
 
-// a little function to help us with reordering the result
-export const reorder = (startIndex: number, endIndex: number, list: any[]) => {
-  const result = Array.from(list)
-  const [removed] = result.splice(startIndex, 1)
-  result.splice(endIndex, 0, removed)
-  return result
-}
 
 const grid = 8
 
@@ -61,22 +54,6 @@ export const SortableList = <T extends any>(props: SortableListProps<T>) => {
     data = [],
     renderItem,
   } = props
-  // const onDragEnd = (result) => {
-  //   // dropped outside the list
-  //   if (!result.destination) {
-  //     return
-  //   }
-
-  //   const items = reorder(
-  //     state.items,
-  //     result.source.index,
-  //     result.destination.index,
-  //   )
-
-  //   setState({
-  //     items,
-  //   })
-  // }
   const droppableId = React.useMemo(() => R.uuid(), [])
   return (
     <DragDropContext onDragEnd={onDragEnd}>
