@@ -576,6 +576,8 @@ export const useController = (
 const getValueByType = (type: RDFType, value: string) => value
 
 const DEFAULT_CONTROLLER_CONFIG: UseControllerData = {
+  nodes: [],
+  edges: [],
   label: {
     global: { nodes: ['id'], edges: ['id'] },
     nodes: {},

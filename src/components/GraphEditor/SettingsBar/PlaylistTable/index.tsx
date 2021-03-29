@@ -55,7 +55,7 @@ export const PlaylistTable = (props: EventHistoryTableProps) => {
     playlists,
     selectedPlaylistIds,
     onPlay,
-    onReorder
+    onReorder,
   } = props
   const hasSelected = selectedPlaylistIds.length > 0
   const [state, updateState] = useImmer({
@@ -143,14 +143,17 @@ export const PlaylistTable = (props: EventHistoryTableProps) => {
         <List dense>
           <SortableList
             onDragEnd={onReorder}
-          >
-            {
-            playlists.map((playlist, index) => {
+            data={playlists}
+            renderItem={({
+              provided,
+              item: playlist,
+            }) => {
               const { events, id, name } = playlist
               return (
                 <Accordion
                   key={id}
-                  id={id}
+                  ref={provided.innerRef}
+                  {...provided.draggableProps}
                 >
                   <AccordionSummary
                     aria-controls="panel1a-content"
@@ -206,6 +209,15 @@ export const PlaylistTable = (props: EventHistoryTableProps) => {
                         >
                           <Icon name="play_arrow" />
                         </IconButton>
+                        <IconButton
+                          edge="end"
+                          disableFocusRipple
+                          disableRipple
+                          disableTouchRipple
+                          {...provided.dragHandleProps}
+                        >
+                          <Icon name="drag_handle" />
+                        </IconButton>
                       </View>
                     </View>
                   </AccordionSummary>
@@ -245,9 +257,8 @@ export const PlaylistTable = (props: EventHistoryTableProps) => {
                   </AccordionDetails>
                 </Accordion>
               )
-            })
-          }
-          </SortableList>
+            }}
+          />
         </List>
       </AccordionDetails>
     </Accordion>

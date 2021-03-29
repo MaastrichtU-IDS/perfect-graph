@@ -1,8 +1,14 @@
 import React from 'react'
+import * as R from 'colay/ramda'
 import {
   DragDropContext,
   Droppable, Draggable,
   DropResult,
+  DraggableProvided,
+  DraggableStateSnapshot,
+  DraggableRubric,
+  DroppableProvided,
+  DroppableStateSnapshot,
 } from 'react-beautiful-dnd'
 
 // a little function to help us with reordering the result
@@ -34,15 +40,26 @@ const getListStyle = (isDraggingOver: boolean) => ({
   width: 250,
 })
 
-export type SortableListProps = {
+export type SortableListProps<T> = {
   onDragEnd: (result: DropResult) => void
-  children: React.ReactChildren;
+  data: T[]
+  renderItem: (props: {
+    item: T;
+    index: number;
+    provided: DraggableProvided;
+    snapshot: DraggableStateSnapshot;
+    rubric: DraggableRubric;
+    droppableProvided: DroppableProvided;
+    droppableSnapshot: DroppableStateSnapshot
+  }) => React.ReactNode;
+  // renderContainer: (props: {})
 }
 
-export const SortableList = (props: SortableListProps) => {
+export const SortableList = <T extends any>(props: SortableListProps<T>) => {
   const {
     onDragEnd,
-    children,
+    data = [],
+    renderItem,
   } = props
   // const onDragEnd = (result) => {
   //   // dropped outside the list
@@ -60,40 +77,44 @@ export const SortableList = (props: SortableListProps) => {
   //     items,
   //   })
   // }
-
+  const droppableId = React.useMemo(() => R.uuid(), [])
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <Droppable droppableId="droppable">
-        {(provided, snapshot) => (
+      <Droppable droppableId={droppableId}>
+        {(droppableProvided, droppableSnapshot) => (
           <div
-            {...provided.droppableProps}
-            ref={provided.innerRef}
-            // style={getListStyle(snapshot.isDraggingOver)}
+            {...droppableProvided.droppableProps}
+            ref={droppableProvided.innerRef}
           >
             {
-              React.Children.map(children, (child, index) => (
+              data.map((item, index) => (
                 <Draggable
-                  key={child.props.id}
-                  draggableId={child.props.id}
+                  key={item.id}
+                  draggableId={item.id}
                   index={index}
                 >
-                  {(provided, snapshot) => (
+                  {(provided, snapshot, rubric) => renderItem({
+                    item,
+                    index,
+                    provided,
+                    snapshot,
+                    rubric,
+                    droppableProvided,
+                    droppableSnapshot,
+                  })}
+                  {/* {(provided, snapshot) => (
                     <div
                       ref={provided.innerRef}
                       {...provided.draggableProps}
                       {...provided.dragHandleProps}
-                      // style={getItemStyle(
-                      //   snapshot.isDragging,
-                      //   provided.draggableProps.style,
-                      // )}
                     >
                       {child}
                     </div>
-                  )}
+                  )} */}
                 </Draggable>
               ))
             }
-            {provided.placeholder}
+            {droppableProvided.placeholder}
           </div>
         )}
       </Droppable>
