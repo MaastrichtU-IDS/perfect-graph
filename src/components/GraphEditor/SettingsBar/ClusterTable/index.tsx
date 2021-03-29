@@ -31,7 +31,6 @@ import { CreateClusterByAlgorithm } from './CreateClusterByAlgorithm'
 export type ClusterTableProps = {
   opened?: boolean;
   onEvent: OnEventLite;
-  selectedClusterIds: string[]
   clusters: Cluster[];
   // onSelectAllClusters: (checked: boolean) => void
   // onSelectCluster: (cluster: Cluster, checked: boolean) => void
@@ -106,9 +105,6 @@ export const ClusterTable = (props: ClusterTableProps) => {
               <IconButton
                 onClick={(e) => {
                   e.stopPropagation()
-                  // updateState((draft) => {
-                  //   draft.currentTab = (state.currentTab + 1) % 2
-                  // })
                   onOpen(e)
                 }}
               >
@@ -199,6 +195,15 @@ export const ClusterTable = (props: ClusterTableProps) => {
                   <IconButton
                     onClick={(e) => {
                       e.stopPropagation()
+                      onEvent({
+                        type: EVENT.DELETE_CLUSTER,
+                        payload: {
+                          itemIds: state.selectedClusterIds,
+                        }
+                      })
+                      updateState((draft) => {
+                        draft.selectedClusterIds = []
+                      })
                     }}
                   >
                     <Icon
@@ -235,7 +240,7 @@ export const ClusterTable = (props: ClusterTableProps) => {
               <SortableList
                 onReorder={(result) => {
                   onEvent({
-                    type: EVENT.CLUSTER_REORDER,
+                    type: EVENT.REORDER_CLUSTER,
                     payload: {
                       fromIndex: result.source.index,
                       toIndex: result.destination.index,
@@ -274,8 +279,7 @@ export const ClusterTable = (props: ClusterTableProps) => {
                           >
                             <Checkbox
                               onClick={(e) => e.stopPropagation()}
-                              checked={!R.isEmpty(state.selectedClusterIds)
-                          && state.selectedClusterIds.length === clusters.length}
+                              checked={state.selectedClusterIds.includes(cluster.id)}
                               onChange={(_, checked) => {
                                 updateState((draft) => {
                                   if (checked) {
@@ -359,7 +363,7 @@ export const ClusterTable = (props: ClusterTableProps) => {
                                   onEvent({
                                     type: EVENT.DELETE_CLUSTER_ELEMENT,
                                     payload: {
-                                      elementId,
+                                      elementIds: [elementId],
                                       clusterId: cluster.id,
                                     },
                                   })
@@ -477,7 +481,7 @@ const SpeedDialActionsView = (props: ClusterTableProps) => {
         onEvent({
           type: EVENT.DELETE_CLUSTER,
           payload: {
-            clusterId: cluster.id,
+            itemIds: [cluster.id],
           },
         })
       },
@@ -492,7 +496,7 @@ const SpeedDialActionsView = (props: ClusterTableProps) => {
         onEvent({
           type: EVENT.SELECT_CLUSTER,
           payload: {
-            clusterId: cluster.id,
+            itemIds: [cluster.id],
           },
         })
       },
@@ -523,86 +527,3 @@ const SpeedDialActionsView = (props: ClusterTableProps) => {
     />
   )
 }
-
-/* <View
-                            style={{
-                              flexDirection: 'row',
-                            }}
-                          >
-                            <IconButton
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                onEvent({
-                                  type: EVENT.PRESS_ADD_CLUSTER_ELEMENT,
-                                  payload: {
-                                    clusterId: cluster.id,
-                                  },
-                                })
-                              }}
-                            >
-                              <Icon
-                                color={
-                              editorMode === EDITOR_MODE.ADD_CLUSTER_ELEMENT
-                                && graphEditorLocalDataRef.current.issuedClusterId === cluster.id
-                                ? 'primary' : 'inherit'
-                            }
-                                name="add_circle"
-                              />
-                            </IconButton>
-                            <IconButton
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                onEvent({
-                                  type: EVENT.DELETE_CLUSTER,
-                                  payload: {
-                                    clusterId: cluster.id,
-                                  },
-                                })
-                              }}
-                            >
-                              <Icon
-                                name="delete_rounded"
-                              />
-                            </IconButton>
-                            <IconButton
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                onEvent({
-                                  type: EVENT.CHANGE_CLUSTER_VISIBILITY,
-                                  payload: {
-                                    clusterId: cluster.id,
-                                    value: cluster.visible === false,
-                                  },
-                                })
-                              }}
-                            >
-                              <Icon
-                                name={cluster.visible === false ? 'unfold_more' : 'unfold_less'}
-                              />
-                            </IconButton>
-                            <IconButton
-                              edge="end"
-                              aria-label="beenhere"
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                onEvent({
-                                  type: EVENT.SELECT_CLUSTER,
-                                  payload: {
-                                    clusterId: cluster.id,
-                                  },
-                                })
-                                // onPlay(cluster)
-                              }}
-                            >
-                              <Icon name="beenhere" />
-                            </IconButton>
-                            <IconButton
-                              edge="end"
-                              disableFocusRipple
-                              disableRipple
-                              disableTouchRipple
-                              {...provided.dragHandleProps}
-                            >
-                              <Icon name="drag_handle" />
-                            </IconButton>
-                          </View> */

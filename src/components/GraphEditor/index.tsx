@@ -15,6 +15,7 @@ import {
   OnEvent,
   GraphEditorConfig,
   NodeElement,
+  Playlist,
 } from '@type'
 import {
   getLabel, getSelectedItemByElement,
@@ -57,6 +58,7 @@ export type GraphEditorProps = {
   renderNode?: RenderNode<RenderElementAdditionalInfo>;
   events?: RecordedEvent[]
   eventHistory?: EventHistory;
+  playlists?: Playlist[];
 } & Omit<
 GraphProps,
 'config'|'onPress' | 'renderNode' | 'renderEdge'
@@ -100,6 +102,7 @@ const GraphEditorElement = (
     events,
     eventHistory,
     config = DEFAULT_GRAPH_EDITOR_CONFIG,
+    playlists,
     ...rest
   } = props
   const localDataRef = React.useRef({
@@ -181,9 +184,10 @@ const GraphEditorElement = (
           const elementIds = collection.map((el) => el.id())
           clusterLength += 1
           return {
+            id: R.uuid(),
             name: `Cluster-${clusterLength}`,
-            elementIds,
-
+            ids: elementIds,
+            childClusterIds: [],
           }
         })
         if (clusters.length === 0){
@@ -192,7 +196,7 @@ const GraphEditorElement = (
           onEvent({
             type: EVENT.CREATE_CLUSTER,
             payload: {
-              clusters,
+              items: clusters,
             },
           })
         }
@@ -507,10 +511,14 @@ const GraphEditorElement = (
               case 'CreateCluster':
                 onEvent({
                   type: EVENT.CREATE_CLUSTER,
-                  payload: [{
-                    name: `Cluster-${graphConfig?.clusters?.length ?? 0}`,
-                    elementIds: localDataRef.current.newClusterBoxSelection.elementIds,
-                  }],
+                  payload: {
+                    items: [{
+                      id: R.uuid(),
+                      name: `Cluster-${graphConfig?.clusters?.length ?? 0}`,
+                      ids: localDataRef.current.newClusterBoxSelection.elementIds,
+                    childClusterIds: [],
+                    }]
+                  },
                 })
                 break
               case 'Delete':
@@ -537,6 +545,7 @@ const GraphEditorElement = (
             {...settingsBar}
             onEvent={onEventCallback}
             eventHistory={eventHistory}
+            playlists={playlists}
             clusters={graphConfig?.clusters}
             editorMode={mode}
             graphEditorLocalDataRef={localDataRef}

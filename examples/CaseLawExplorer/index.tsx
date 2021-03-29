@@ -160,7 +160,7 @@ const AppContainer = ({
     }
   })
   const [controllerProps, controller] = useController({
-    // ...data,
+    ...data,
     // events: RECORDED_EVENTS,
     graphConfig: {
       layout: Graph.Layouts.cose,

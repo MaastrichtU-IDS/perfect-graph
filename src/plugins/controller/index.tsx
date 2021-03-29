@@ -10,7 +10,7 @@ import {
 import { GraphEditorProps } from '@components/GraphEditor'
 import { Graph } from '@components'
 import {
-  EVENT, ELEMENT_DATA_FIELDS, EDITOR_MODE,
+  EVENT, ELEMENT_DATA_FIELDS, EDITOR_MODE, MOCK_DATA,
 } from '@utils/constants'
 import GraphLayouts from '@core/layouts'
 import {
@@ -31,7 +31,7 @@ type UseControllerData = Pick<
 GraphEditorProps,
 'nodes'| 'edges' | 'mode'
 | 'actionBar' | 'dataBar' | 'settingsBar'
-| 'graphConfig' | 'events' | 'label'
+| 'graphConfig' | 'events' | 'label' | 'playlists'
 > & {
   onEvent?: (info: EventInfo & {
     graphEditor: GraphEditorRef;
@@ -447,43 +447,35 @@ export const useController = (
           }
           case EVENT.SELECT_CLUSTER: {
             const {
-              clusterId,
+              itemIds = [],
             } = payload
-            const selectedCluster = draft.graphConfig?.clusters?.find((cluster) => cluster.id === clusterId)
-            draft.selectedElementIds = selectedCluster.ids
+            const selectedClusters = draft.graphConfig?.clusters?.filter((cluster) => itemIds.includes(cluster.id))
+            draft.selectedElementIds = R.mergeAll(
+              selectedClusters?.map((cluster) => cluster.ids),
+            )
             break
           }
           case EVENT.DELETE_CLUSTER: {
             const {
-              clusterId,
+              itemIds = [],
             } = payload
-            draft.graphConfig.clusters = draft.graphConfig?.clusters?.filter((cluster) => cluster.id !== clusterId)
+            draft.graphConfig.clusters = draft.graphConfig?.clusters?.filter((cluster) => !itemIds.includes(cluster.id))
             break
           }
           case EVENT.DELETE_CLUSTER_ELEMENT: {
             const {
               clusterId,
-              elementId,
+              elementIds = [],
             } = payload
             const selectedCluster = draft.graphConfig?.clusters?.find((cluster) => cluster.id === clusterId)
-            selectedCluster.ids = selectedCluster?.ids.filter((id) => id !== elementId)
+            selectedCluster.ids = selectedCluster?.ids.filter((id) => !elementIds.includes(id))
             break
           }
           case EVENT.CREATE_CLUSTER: {
             const {
-              clusters = [],
+              items = [],
             } = payload
-            clusters.forEach(({
-              name,
-              elementIds,
-            }) => {
-              draft.graphConfig?.clusters?.push({
-                id: R.uuid(),
-                name,
-                ids: elementIds,
-                childClusterIds: [],
-              })
-            })
+            draft.graphConfig.clusters  = draft.graphConfig?.clusters?.concat(items)
             break
           }
           case EVENT.PRESS_ADD_CLUSTER_ELEMENT: {
@@ -538,7 +530,7 @@ export const useController = (
           //   // draft.graphConfig.layout = oldLayout
           //   break
           // }
-          case EVENT.CLUSTER_REORDER: {
+          case EVENT.REORDER_CLUSTER: {
             const {
               fromIndex,
               toIndex,
@@ -548,6 +540,32 @@ export const useController = (
               toIndex,
               draft.graphConfig?.clusters,
             )
+            break
+          }
+          case EVENT.CREATE_PLAYLIST: {
+            const {
+              items = [],
+            } = payload
+            draft.playlists = draft.playlists.concat(items)
+            break
+          }
+          case EVENT.REORDER_PLAYLIST: {
+            const {
+              fromIndex,
+              toIndex,
+            } = payload
+            draft.playlists = R.reorder(
+              fromIndex,
+              toIndex,
+              draft.playlists,
+            )
+            break
+          }
+          case EVENT.DELETE_PLAYLIST: {
+            const {
+              itemIds = [],
+            } = payload
+            draft.playlists = draft.playlists.filter((playlist) => !itemIds.includes(playlist.id))
             break
           }
           default:
@@ -610,4 +628,16 @@ const DEFAULT_CONTROLLER_CONFIG: UseControllerData = {
   graphConfig: {
     clusters: [],
   },
+  playlists: [
+    {
+      id: R.uuid(),
+      name: 'My playlist',
+      events: MOCK_DATA.events,
+    },
+    {
+      id: R.uuid(),
+      name: 'My playlist2',
+      events: MOCK_DATA.events,
+    },
+  ],
 }

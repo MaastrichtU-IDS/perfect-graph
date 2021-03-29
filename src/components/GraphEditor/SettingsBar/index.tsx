@@ -1,28 +1,26 @@
-import React from 'react'
-import * as R from 'colay/ramda'
-import {
-  wrapComponent,
-  useAnimation,
-  View,
-} from 'colay-ui'
-import { useImmer } from 'colay-ui/hooks/useImmer'
-import {
-  Paper,
-  Divider,
-  IconButton,
-  Button,
-  Typography,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-} from '@material-ui/core'
 import { Icon } from '@components/Icon'
-import { EVENT } from '@utils/constants'
-import { OnEventLite, EventHistory, Cluster, EditorMode } from '@type'
-import Form from '@rjsf/material-ui'
+import {
+  Accordion, AccordionDetails, AccordionSummary, Button, Dialog,
+  DialogTitle, Divider,
+  IconButton, Paper, TextField, Typography,
+} from '@material-ui/core'
 import { FormProps } from '@rjsf/core'
-import { EventHistoryTable } from './EventHistoryTable'
+import Form from '@rjsf/material-ui'
+import {
+  Cluster, EditorMode, EventHistory, OnEventLite,
+  Playlist,
+} from '@type'
+import { EVENT } from '@utils/constants'
+import {
+  useAnimation,
+  View, wrapComponent,
+} from 'colay-ui'
+import * as R from 'colay/ramda'
+import React from 'react'
+import { useImmer } from 'colay-ui/hooks/useImmer'
 import { ClusterTable } from './ClusterTable'
+import { EventHistoryTable } from './EventHistoryTable'
+import { PlaylistTable } from './PlaylistTable'
 
 type SettingsForm = {
   schema: FormProps<any>['schema'];
@@ -38,6 +36,7 @@ export type SettingsBarProps = {
   forms?: SettingsForm[];
   eventHistory?: EventHistory;
   clusters?: Cluster[];
+  playlists?: Playlist[];
   createClusterForm?: FormProps<any>;
   editorMode: EditorMode;
   graphEditorLocalDataRef: any;
@@ -55,6 +54,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
     createClusterForm,
     graphEditorLocalDataRef,
     editorMode,
+    playlists,
     // children,
     // ...formProps
   } = props
@@ -74,6 +74,12 @@ const SettingsBarElement = (props: SettingsBarProps) => {
   React.useEffect(() => {
     animationRef.current.play(opened)
   }, [animationRef, opened])
+  const [state, updateState] = useImmer({
+    createPlaylistDialog: {
+      visible: false,
+    },
+    selectedEventIds: [] as string[]
+  })
   return (
     <Paper
       style={{
@@ -145,12 +151,51 @@ const SettingsBarElement = (props: SettingsBarProps) => {
             <EventHistoryTable
               onEvent={onEvent}
               eventHistory={eventHistory}
+              onCreatePlaylistClick={(selectedEventIds) => updateState((draft) => {
+                draft.createPlaylistDialog.visible = true
+                draft.selectedEventIds = selectedEventIds
+              })}
             />
           </View>
           <Divider style={{ marginTop: 5, marginBottom: 5 }} />
         </>
         )
       }
+        <Divider />
+        {
+          playlists && (
+          <PlaylistTable
+            createPlaylistDialog={{
+              ...state.createPlaylistDialog,
+              onClose: () => updateState((draft) => {
+                draft.createPlaylistDialog.visible = false
+              }),
+            }}
+            onEvent={onEvent}
+            playlists={playlists}
+            onCreatePlaylist={(playlistWithoutEvents) => {
+              const playlistEvents = state.selectedEventIds.map(
+                (eventId) => eventHistory.events.find((event) => event.id === eventId)!,
+              ).sort((item, other) => (item.date > other.date ? 1 : -1))
+              updateState((draft) => {
+                draft.createPlaylistDialog.visible = false
+              })
+              onEvent({
+                type: EVENT.CREATE_PLAYLIST,
+                payload: {
+                  items: [
+                    {
+                      ...playlistWithoutEvents,
+                      events: playlistEvents,
+                    },
+                  ],
+                },
+              })
+            }}
+          />
+
+          )
+        }
         <Divider />
         {
         clusters && (

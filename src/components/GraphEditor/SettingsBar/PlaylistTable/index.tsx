@@ -1,55 +1,73 @@
-import {
-  IconButton, Typography,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemSecondaryAction,
-  ListItemAvatar,
-  Checkbox,
-  Card,
-} from '@material-ui/core'
-import {
-  Playlist,
-  OnEventLite,
-} from '@type'
-import {
-  View,
-} from 'colay-ui'
-import { useImmer } from 'colay-ui/hooks/useImmer'
-import React from 'react'
-import * as R from 'colay/ramda'
-import Accordion from '@material-ui/core/Accordion'
-import AccordionSummary from '@material-ui/core/AccordionSummary'
-import AccordionDetails from '@material-ui/core/AccordionDetails'
+import { Icon } from '@components/Icon'
 import { SortableList } from '@components/SortableList'
 import { SpeedDialCreator } from '@components/SpeedDialCreator'
-import { Icon } from '../../../Icon'
+import {
+  Button,
+  Card, Checkbox,
+  Dialog,
+  DialogTitle, IconButton, List,
+  ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText, TextField, Typography
+} from '@material-ui/core'
+import Accordion from '@material-ui/core/Accordion'
+import AccordionDetails from '@material-ui/core/AccordionDetails'
+import AccordionSummary from '@material-ui/core/AccordionSummary'
+import {
+  OnEventLite,
+  Playlist
+} from '@type'
+import { 
+  EVENT
+} from '@utils/constants'
+import {
+  View
+} from 'colay-ui'
+import { useImmer } from 'colay-ui/hooks/useImmer'
+import * as R from 'colay/ramda'
+import React from 'react'
 
 export type EventHistoryTableProps = {
   opened?: boolean;
   onEvent: OnEventLite;
-  selectedPlaylistIds: string[]
   playlists: Playlist[];
-  onSelectAllPlaylist: (checked: boolean) => void
-  onSelectPlaylist: (playlist: Playlist, checked: boolean) => void
   onPlay: (playlist: Playlist) => void
+  createPlaylistDialog: {
+    visible: boolean;
+    onClose: () => void;
+  }
 }
+
+
+// onSelectPlaylist={(playlist, checked) => {
+//   updateState((draft) => {
+//     if (checked) {
+//       draft.selectedPlaylistIds.push(playlist.id)
+//     } else {
+//       draft.selectedPlaylistIds = draft.selectedPlaylistIds.filter(
+//         (id) => id !== playlist.id,
+//       )
+//     }
+//   })
+// }}
+// selectedPlaylistIds={state.selectedPlaylistIds}
 
 export const PlaylistTable = (props: EventHistoryTableProps) => {
   const {
-    onSelectAllPlaylist,
-    onSelectPlaylist,
     playlists,
-    selectedPlaylistIds,
-    onPlay,
-    onReorder,
     onEvent,
+    createPlaylistDialog,
+    onCreatePlaylist,
   } = props
-  const hasSelected = selectedPlaylistIds.length > 0
+  
   const [state, updateState] = useImmer({
     expanded: false,
+    createPlaylistDialog: {
+      name: '',
+    },
+    selectedPlaylistIds: [] as string[],
   })
+  const hasSelected = state.selectedPlaylistIds.length > 0
   return (
+    <>
     <Accordion
       expanded={state.expanded}
       onChange={(e, expanded) => updateState((draft) => {
@@ -99,14 +117,29 @@ export const PlaylistTable = (props: EventHistoryTableProps) => {
                 <ListItem>
                   <Checkbox
                     onClick={(e) => e.stopPropagation()}
-                    checked={!R.isEmpty(selectedPlaylistIds)
-               && selectedPlaylistIds.length === playlists.length}
-                    onChange={(_, checked) => onSelectAllPlaylist(checked)}
+                    checked={!R.isEmpty(state.selectedPlaylistIds)
+               && state.selectedPlaylistIds.length === playlists.length}
+                    onChange={(_, checked) => updateState((draft) => {
+                      if (checked) {
+                        draft.selectedPlaylistIds = playlists.map((playlist) => playlist.id)
+                      } else {
+                        draft.selectedPlaylistIds = []
+                      }
+                    })}
                     inputProps={{ 'aria-label': 'primary checkbox' }}
                   />
                   <IconButton
                     onClick={(e) => {
                       e.stopPropagation()
+                      updateState((draft) => {
+                        draft.selectedPlaylistIds = []
+                      })
+                      onEvent({
+                        type: EVENT.DELETE_PLAYLIST,
+                        payload: {
+                          itemIds: state.selectedPlaylistIds,
+                        }
+                      })
                     }}
                   >
                     <Icon
@@ -130,7 +163,13 @@ export const PlaylistTable = (props: EventHistoryTableProps) => {
         }
         <List dense>
           <SortableList
-            onReorder={onReorder}
+            onReorder={(result) => onEvent({
+              type :EVENT.REORDER_PLAYLIST,
+              payload: {
+                fromIndex: result.source.index,
+                toIndex: result.destination.index,
+              }
+            })}
             data={playlists}
             renderItem={({
               provided,
@@ -163,8 +202,16 @@ export const PlaylistTable = (props: EventHistoryTableProps) => {
                         <Checkbox
                           onClick={(e) => e.stopPropagation()}
                           checked={hasSelected
-                          && selectedPlaylistIds.includes(playlist.id)}
-                          onChange={(_, checked) => onSelectPlaylist(playlist, checked)}
+                          && state.selectedPlaylistIds.includes(playlist.id)}
+                          onChange={(_, checked) => updateState((draft) => {
+                            if (checked) {
+                              draft.selectedPlaylistIds.push(playlist.id)
+                            } else {
+                              draft.selectedPlaylistIds = draft.selectedPlaylistIds.filter(
+                                (id) => id !== playlist.id,
+                              )
+                            }
+                          })}
                           inputProps={{ 'aria-label': 'primary checkbox' }}
                         />
                         <Typography
@@ -188,6 +235,15 @@ export const PlaylistTable = (props: EventHistoryTableProps) => {
                               },
                               onClick: (e) => {
                                 e.stopPropagation()
+                                updateState((draft) => {
+                                  draft.selectedPlaylistIds = []
+                                })
+                                onEvent({
+                                  type: EVENT.DELETE_PLAYLIST,
+                                  payload: {
+                                    itemIds: [playlist.id]
+                                  }
+                                })
                               },
                             },
                             {
@@ -197,7 +253,12 @@ export const PlaylistTable = (props: EventHistoryTableProps) => {
                               },
                               onClick: (e) => {
                                 e.stopPropagation()
-                                onPlay(playlist)
+                                onEvent({
+                                  type: EVENT.PLAY_EVENTS,
+                                  payload: {
+                                    events: playlist.events,
+                                  },
+                                })
                               },
                             },
                           ]}
@@ -222,9 +283,17 @@ export const PlaylistTable = (props: EventHistoryTableProps) => {
                           >
                             <ListItemAvatar>
                               <Checkbox
-                                // checked={selectedPlaylistIds.includes(id)}
+                                // checked={state.selectedPlaylistIds.includes(id)}
                                 // onChange={(_, checked) => {
-                                //   onSelectPlaylist(playlist, checked)
+                                //   updateState((draft) => {
+                                //     if (checked) {
+                                //       draft.selectedPlaylistIds.push(playlist.id)
+                                //     } else {
+                                //       draft.selectedPlaylistIds = draft.selectedPlaylistIds.filter(
+                                //         (id) => id !== playlist.id,
+                                //       )
+                                //     }
+                                //   })
                                 // }}
                                 inputProps={{ 'aria-label': 'primary checkbox' }}
                                 onClick={(e) => e.stopPropagation()}
@@ -255,5 +324,47 @@ export const PlaylistTable = (props: EventHistoryTableProps) => {
         </List>
       </AccordionDetails>
     </Accordion>
+    <Dialog
+    onClose={createPlaylistDialog.onClose} 
+    aria-labelledby="create-playlist-dialog-title"
+    open={createPlaylistDialog.visible}
+  >
+    <DialogTitle id="create-playlist-dialog-title">Create Playlist</DialogTitle>
+    <View
+      style={{
+        width: '50%',
+        padding: 10,
+        justifyContent: 'center',
+      }}
+    >
+      <TextField
+        style={{
+          marginBottom: 10,
+          width: '50vw',
+        }}
+        fullWidth
+        label="name"
+        value={state.createPlaylistDialog.name}
+        onChange={({ target: { value } }) => updateState((draft) => {
+          draft.createPlaylistDialog.name = value
+        })}
+      />
+      <Button
+        fullWidth
+        onClick={() => {
+          onCreatePlaylist({
+            id: R.uuid(),
+            name: state.createPlaylistDialog.name,
+          })
+        updateState((draft) => {
+          draft.createPlaylistDialog.name = ''
+        })
+        }}
+      >
+        Create
+      </Button>
+    </View>
+  </Dialog>
+    </>
   )
 }
