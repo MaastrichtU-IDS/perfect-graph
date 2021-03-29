@@ -37,6 +37,13 @@ export type EventHistoryTableProps = {
   eventHistory: EventHistory;
 }
 
+export const reorder = (startIndex: number, endIndex: number, list: any[]) => {
+  const result = Array.from(list)
+  const [removed] = result.splice(startIndex, 1)
+  result.splice(endIndex, 0, removed)
+  return result
+}
+
 const EventHistoryTableElement = (props: EventHistoryTableProps) => {
   const {
     onEvent,
@@ -284,6 +291,18 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
             draft.selectedPlaylistIds = []
           }
         })}
+        onReorder={(result) => {
+          if (!result.destination) {
+            return
+          }
+          updateState((draft) => {
+            draft.playlists = reorder(
+              result.source.index,
+              result.destination.index,
+              draft.playlists,
+            )
+          })
+        }}
         onSelectPlaylist={(playlist, checked) => {
           updateState((draft) => {
             if (checked) {

@@ -9,14 +9,10 @@ import {
   Card,
 } from '@material-ui/core'
 import {
-  EventHistory,
-  OnEventLite,
-  EventInfo,
   Playlist,
 } from '@type'
 import {
   View,
-  wrapComponent,
 } from 'colay-ui'
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import React from 'react'
@@ -24,6 +20,7 @@ import * as R from 'colay/ramda'
 import Accordion from '@material-ui/core/Accordion'
 import AccordionSummary from '@material-ui/core/AccordionSummary'
 import AccordionDetails from '@material-ui/core/AccordionDetails'
+import { SortableList } from '@components/SortableList'
 import { Icon } from '../../../Icon'
 
 export type EventHistoryTableProps = {
@@ -35,6 +32,22 @@ export type EventHistoryTableProps = {
   onSelectPlaylist: (playlist: Playlist, checked: boolean) => void
   onPlay: (playlist: Playlist) => void
 }
+// const onDragEnd = (result) => {
+//   // dropped outside the list
+//   if (!result.destination) {
+//     return
+//   }
+
+//   const items = reorder(
+//     state.items,
+//     result.source.index,
+//     result.destination.index,
+//   )
+
+//   setState({
+//     items,
+//   })
+// }
 export const PlaylistTable = (props: EventHistoryTableProps) => {
   const {
     onSelectAllPlaylist,
@@ -42,6 +55,7 @@ export const PlaylistTable = (props: EventHistoryTableProps) => {
     playlists,
     selectedPlaylistIds,
     onPlay,
+    onReorder
   } = props
   const hasSelected = selectedPlaylistIds.length > 0
   const [state, updateState] = useImmer({
@@ -57,11 +71,11 @@ export const PlaylistTable = (props: EventHistoryTableProps) => {
       <AccordionSummary
         aria-controls="panel1a-content"
       >
-        <View 
+        <View
           style={{
-            width: '100%'
+            width: '100%',
           }}
-        
+
         >
           <View
             style={{
@@ -127,12 +141,16 @@ export const PlaylistTable = (props: EventHistoryTableProps) => {
           )
         }
         <List dense>
-          {
+          <SortableList
+            onDragEnd={onReorder}
+          >
+            {
             playlists.map((playlist, index) => {
               const { events, id, name } = playlist
               return (
                 <Accordion
                   key={id}
+                  id={id}
                 >
                   <AccordionSummary
                     aria-controls="panel1a-content"
@@ -229,6 +247,7 @@ export const PlaylistTable = (props: EventHistoryTableProps) => {
               )
             })
           }
+          </SortableList>
         </List>
       </AccordionDetails>
     </Accordion>
