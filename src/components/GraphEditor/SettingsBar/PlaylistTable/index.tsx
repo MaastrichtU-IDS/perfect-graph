@@ -22,6 +22,7 @@ import Accordion from '@material-ui/core/Accordion'
 import AccordionSummary from '@material-ui/core/AccordionSummary'
 import AccordionDetails from '@material-ui/core/AccordionDetails'
 import { SortableList } from '@components/SortableList'
+import { SpeedDialCreator } from '@components/SpeedDialCreator'
 import { Icon } from '../../../Icon'
 
 export type EventHistoryTableProps = {
@@ -129,7 +130,7 @@ export const PlaylistTable = (props: EventHistoryTableProps) => {
         }
         <List dense>
           <SortableList
-            onDragEnd={onReorder}
+            onReorder={onReorder}
             data={playlists}
             renderItem={({
               provided,
@@ -175,27 +176,32 @@ export const PlaylistTable = (props: EventHistoryTableProps) => {
                       <View
                         style={{
                           flexDirection: 'row',
+                          alignItems: 'center',
                         }}
                       >
-                        <IconButton
-                          onClick={(e) => {
-                            e.stopPropagation()
-                          }}
-                        >
-                          <Icon
-                            name="delete_rounded"
-                          />
-                        </IconButton>
-                        <IconButton
-                          edge="end"
-                          aria-label="play"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            onPlay(playlist)
-                          }}
-                        >
-                          <Icon name="play_arrow" />
-                        </IconButton>
+                        <SpeedDialCreator
+                          actions={[
+                            {
+                              name: 'Delete',
+                              icon: {
+                                name: 'delete_rounded',
+                              },
+                              onClick: (e) => {
+                                e.stopPropagation()
+                              },
+                            },
+                            {
+                              name: 'Play',
+                              icon: {
+                                name: 'play_arrow',
+                              },
+                              onClick: (e) => {
+                                e.stopPropagation()
+                                onPlay(playlist)
+                              },
+                            },
+                          ]}
+                        />
                         <IconButton
                           edge="end"
                           disableFocusRipple

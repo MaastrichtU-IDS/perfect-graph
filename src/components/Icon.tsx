@@ -40,7 +40,7 @@ import {
   MyLocation,
   DragHandle,
 } from '@material-ui/icons'
-import { IconProps } from '@material-ui/core'
+import { MUIIconProps } from '@material-ui/core'
 
 const ICONS = {
   assessment: Assessment,
@@ -86,7 +86,11 @@ const ICONS = {
 
 type IconName = keyof typeof ICONS
 
-export const Icon = (props: IconProps & { name: IconName;}) => {
+export type IconProps = MUIIconProps & {
+  name: IconName;
+}
+
+export const Icon = (props: IconProps) => {
   const {
     name,
     ...rest

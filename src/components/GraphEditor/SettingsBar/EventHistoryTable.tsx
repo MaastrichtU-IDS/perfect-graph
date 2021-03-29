@@ -29,6 +29,8 @@ import * as R from 'colay/ramda'
 import Accordion from '@material-ui/core/Accordion'
 import AccordionSummary from '@material-ui/core/AccordionSummary'
 import AccordionDetails from '@material-ui/core/AccordionDetails'
+import {SpeedDialCreator} from '@components/SpeedDialCreator'
+import {SortableList} from '@components/SortableList'
 import { PlaylistTable } from './PlaylistTable'
 
 export type EventHistoryTableProps = {
@@ -198,81 +200,108 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
           )
         }
           <List dense>
-            {
-          R.reverse(eventHistory.events).map((event, index) => {
-            const { length } = eventHistory.events
-            return (
-              <ListItem
-                key={event.id}
-                selected={eventHistory.currentIndex === (length - 1) - index}
-              >
-                <ListItemAvatar>
-                  <Checkbox
-                    checked={state.selectedEventIds.includes(event.id)}
-                    onChange={(_, checked) => updateState((draft) => {
-                      if (checked) {
-                        draft.selectedEventIds.push(event.id)
-                      } else {
-                        draft.selectedEventIds = draft.selectedEventIds.filter((id) => id !== event.id)
-                      }
-                    })}
-                    inputProps={{ 'aria-label': 'primary checkbox' }}
-                  />
-                </ListItemAvatar>
-                <ListItemText
-                  primary={event.type}
-                />
-                <ListItemSecondaryAction>
-                  <IconButton
-                    edge="end"
-                    onClick={() => onEvent({
-                      type: EVENT.APPLY_EVENTS,
-                      payload: {
-                        events: [{
-                          ...eventHistory.undoEvents[index],
-                          avoidEventRecording: true,
-                          avoidHistoryRecording: true,
-                        }],
-                      },
-                    })}
-                  >
-                    <Icon name="navigate_before" />
-                  </IconButton>
-                  <IconButton
-                    edge="end"
-                    onClick={() => onEvent({
-                      type: EVENT.APPLY_EVENTS,
-                      payload: {
-                        events: [{
-                          ...event,
-                          avoidEventRecording: true,
-                          avoidHistoryRecording: true,
-                        }],
-                      },
-                    })}
-                  >
-                    <Icon name="navigate_next" />
-                  </IconButton>
-                  <IconButton
-                    edge="end"
-                    onClick={() => onEvent({
-                      type: EVENT.DELETE_HISTORY_ITEM,
-                      payload: {
-                        event,
-                        avoidEventRecording: true,
-                        avoidHistoryRecording: true,
-                      },
-                    })}
-                  >
-                    <Icon
-                      name="delete_rounded"
+          <SortableList
+            onReorder={(result) => onEvent({
+              type: EVENT.HISTORY_ITEM_REORDER,
+              payload: {
+                fromIndex:result.source.index,
+                toIndex: result.destination?.index,
+              }
+            })}
+            data={R.reverse(eventHistory.events)}
+            renderItem={({
+              provided,
+              item: event,
+            }) => {
+              const { length } = eventHistory.events
+              return (
+                <ListItem
+                  key={event.id}
+                  selected={eventHistory.currentIndex === (length - 1) - index}
+                  ref={provided.innerRef}
+                  {...provided.draggableProps}
+                >
+                  <ListItemAvatar>
+                    <Checkbox
+                      checked={state.selectedEventIds.includes(event.id)}
+                      onChange={(_, checked) => updateState((draft) => {
+                        if (checked) {
+                          draft.selectedEventIds.push(event.id)
+                        } else {
+                          draft.selectedEventIds = draft.selectedEventIds.filter((id) => id !== event.id)
+                        }
+                      })}
+                      inputProps={{ 'aria-label': 'primary checkbox' }}
                     />
-                  </IconButton>
-                </ListItemSecondaryAction>
-              </ListItem>
-            )
-          })
-        }
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={event.type}
+                  />
+                  <ListItemSecondaryAction>
+                    <SpeedDialCreator
+                      actions={[
+                        {
+                          name: 'Redo',
+                          icon: {
+                            name: 'navigate_next',
+                          },
+                          onClick: (e) => onEvent({
+                            type: EVENT.APPLY_EVENTS,
+                            payload: {
+                              events: [{
+                                ...event,
+                                avoidEventRecording: true,
+                                avoidHistoryRecording: true,
+                              }],
+                            },
+                          }),
+                        },
+                        {
+                          name: 'Undo',
+                          icon: {
+                            name: 'navigate_before',
+                          },
+                          onClick: (e) => onEvent({
+                            type: EVENT.APPLY_EVENTS,
+                            payload: {
+                              events: [{
+                                ...eventHistory.undoEvents[index],
+                                avoidEventRecording: true,
+                                avoidHistoryRecording: true,
+                              }],
+                            },
+                          }),
+                        },
+                        {
+                          name: 'Delete',
+                          icon: {
+                            name: 'delete_rounded',
+                          },
+                          onClick: () => onEvent({
+                            type: EVENT.DELETE_HISTORY_ITEM,
+                            payload: {
+                              event,
+                              avoidEventRecording: true,
+                              avoidHistoryRecording: true,
+                            },
+                          }),
+                        },
+                      ]}
+                    />
+                    <IconButton
+                              edge="end"
+                              disableFocusRipple
+                              disableRipple
+                              disableTouchRipple
+                              {...provided.dragHandleProps}
+                            >
+                              <Icon name="drag_handle" />
+                            </IconButton>
+                  </ListItemSecondaryAction>
+                </ListItem>
+              )
+            }}
+            />
           </List>
         </AccordionDetails>
       </Accordion>

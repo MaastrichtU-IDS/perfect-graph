@@ -34,7 +34,8 @@ const getListStyle = (isDraggingOver: boolean) => ({
 })
 
 export type SortableListProps<T> = {
-  onDragEnd: (result: DropResult) => void
+  onReorder?: (result: DropResult) => void
+  onDragEnd?: (result: DropResult) => void
   data: T[]
   renderItem: (props: {
     item: T;
@@ -50,13 +51,20 @@ export type SortableListProps<T> = {
 
 export const SortableList = <T extends any>(props: SortableListProps<T>) => {
   const {
+    onReorder,
     onDragEnd,
     data = [],
     renderItem,
   } = props
   const droppableId = React.useMemo(() => R.uuid(), [])
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
+    <DragDropContext onDragEnd={(result) => {
+      onDragEnd?.(result)
+      if (!result.destination && (result.destination.index === result.source.index)) {
+        return
+      }
+      onReorder?.(result)
+    }}>
       <Droppable droppableId={droppableId}>
         {(droppableProvided, droppableSnapshot) => (
           <div

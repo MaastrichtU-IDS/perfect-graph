@@ -1,16 +1,15 @@
+import React from 'react'
+import { Icon } from '@components/Icon'
+import { SortableList } from '@components/SortableList'
+import { SpeedDialCreator } from '@components/SpeedDialCreator'
 import { TabPanel } from '@components/TabPanel'
 import {
   Button,
   Card, Checkbox,
   Dialog, DialogTitle, IconButton, List,
   ListItem, ListItemAvatar, ListItemSecondaryAction,
-  ListItemText, TextField, Typography,
-  Menu,
-  MenuItem,
-  SpeedDial,
-  SpeedDialIcon,
-  SpeedDialAction,
-  Backdrop,
+  ListItemText, Menu,
+  MenuItem, TextField, Typography
 } from '@material-ui/core'
 import Accordion from '@material-ui/core/Accordion'
 import AccordionDetails from '@material-ui/core/AccordionDetails'
@@ -18,18 +17,15 @@ import AccordionSummary from '@material-ui/core/AccordionSummary'
 import { FormProps } from '@rjsf/core'
 import Form from '@rjsf/material-ui'
 import {
-  Cluster, EditorMode, OnEventLite,
+  Cluster, EditorMode, OnEventLite
 } from '@type'
 import { EDITOR_MODE, EVENT } from '@utils/constants'
 import {
-  View,
-  useDisclosure,
+  useDisclosure, View
 } from 'colay-ui'
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import * as R from 'colay/ramda'
-import React from 'react'
-import { SortableList } from '@components/SortableList'
-import { Icon } from '../../../Icon'
+
 import { CreateClusterByAlgorithm } from './CreateClusterByAlgorithm'
 
 export type ClusterTableProps = {
@@ -43,13 +39,7 @@ export type ClusterTableProps = {
   editorMode: EditorMode;
   graphEditorLocalDataRef: any;
 }
-const ICON_SIZE = 24
 
-const SPEED_ACTIONS = [
-  {
-    name: '',
-  },
-]
 export const ClusterTable = (props: ClusterTableProps) => {
   const {
     // onSelectAllClusters,
@@ -243,10 +233,7 @@ export const ClusterTable = (props: ClusterTableProps) => {
         }
             <List dense>
               <SortableList
-                onDragEnd={(result) => {
-                  if (!result.destination && (result.destination.index === result.source.index)) {
-                    return
-                  }
+                onReorder={(result) => {
                   onEvent({
                     type: EVENT.CLUSTER_REORDER,
                     payload: {
@@ -312,15 +299,12 @@ export const ClusterTable = (props: ClusterTableProps) => {
                           <View
                             style={{
                               flexDirection: 'row',
-                              alignItems: 'center'
+                              alignItems: 'center',
                             }}
                           >
                             <SpeedDialActionsView
                               {...props}
                               item={cluster}
-                              draggable={{
-                                provided,
-                              }}
                             />
                             <IconButton
                               edge="end"
@@ -480,35 +464,9 @@ const SpeedDialActionsView = (props: ClusterTableProps) => {
     item: cluster,
     editorMode,
     onEvent,
-    draggable: {
-      provided,
-    },
     graphEditorLocalDataRef,
   } = props
   const ACTIONS = [
-    // {
-    //   name: 'Sort',
-    //   icon: {
-    //     name: 'drag_handle',
-    //     ...provided.dragHandleProps,
-    //   },
-    // },
-    // {
-    //   name: cluster.visible === false ? 'Visible' : 'Invisible',
-    //   icon: {
-    //     name: cluster.visible === false ? 'unfold_more' : 'unfold_less',
-    //   },
-    //   onClick: (e) => {
-    //     e.stopPropagation()
-    //     onEvent({
-    //       type: EVENT.CHANGE_CLUSTER_VISIBILITY,
-    //       payload: {
-    //         clusterId: cluster.id,
-    //         value: cluster.visible === false,
-    //       },
-    //     })
-    //   },
-    // },
     {
       name: 'Delete',
       icon: {
@@ -560,60 +518,9 @@ const SpeedDialActionsView = (props: ClusterTableProps) => {
 
   ]
   return (
-    <View
-      style={{
-        width: ICON_SIZE,
-        height: ICON_SIZE,
-      }}
-    >
-      <SpeedDial
-        ariaLabel="SpeedDial basic example"
-        icon={<SpeedDialIcon />}
-        FabProps={{
-          style: {
-            width: ICON_SIZE,
-            height: ICON_SIZE,
-            minWidth: ICON_SIZE,
-            minHeight: ICON_SIZE,
-          },
-        }}
-        sx={{
-          // position: 'absolute',
-          // left: 0,
-          // top: 0,
-          width: ICON_SIZE,
-          height: ICON_SIZE,
-        }}
-        direction="left"
-      >
-        {
-                                ACTIONS.map((action) => {
-                                  const {
-                                    icon,
-                                    name,
-                                    onClick,
-                                  } = action
-                                  return (
-                                    <SpeedDialAction
-                                      tooltipTitle={name}
-                                      tooltipPlacement="bottom"
-                                      icon={(
-                                        <IconButton
-                                          onClick={(e) => {
-                                            e.stopPropagation()
-                                            onClick?.(e)
-                                          }}
-                                          {...icon}
-                                        >
-                                          <Icon {...icon} />
-                                        </IconButton>
-  )}
-                                    />
-                                  )
-                                })
-                              }
-      </SpeedDial>
-    </View>
+    <SpeedDialCreator
+      actions={ACTIONS}
+    />
   )
 }
 
