@@ -86,7 +86,7 @@ const ICONS = {
 
 type IconName = keyof typeof ICONS
 
-export type IconProps = MUIIconProps & {
+export type IconProps = Omit<MUIIconProps, 'name'> & {
   name: IconName;
 }
 

@@ -168,6 +168,24 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
                         name="playlist_add"
                       />
                     </IconButton>
+                    <IconButton
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onEvent({
+                          type: EVENT.DELETE_HISTORY_ITEM,
+                          payload: {
+                            itemIds: state.selectedEventIds,
+                          },
+                        })
+                        updateState((draft) => {
+                          draft.selectedEventIds = []
+                        })
+                      }}
+                    >
+                      <Icon
+                        name="delete_rounded"
+                      />
+                    </IconButton>
                   </ListItem>
                 </Card>
               )

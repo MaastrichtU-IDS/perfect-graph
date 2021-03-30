@@ -202,7 +202,8 @@ export const createHistory = (options: CreateHistoryOptions) => {
     },
     getEventIdsByDoItemIds: (ids: string[]) => {
       const events = record.items.filter((item) => {
-        const intersection = R.intersection(item.do, ids)
+        const doItems = item.do.map((doItem) => doItem.id)
+        const intersection = R.intersection(doItems, ids)
         return intersection.length > 0
       })
       return events.map((event) => event.id)
