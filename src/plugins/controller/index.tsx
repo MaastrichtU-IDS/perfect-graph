@@ -450,9 +450,8 @@ export const useController = (
               itemIds = [],
             } = payload
             const selectedClusters = draft.graphConfig?.clusters?.filter((cluster) => itemIds.includes(cluster.id))
-            const concatAll = R.reduce(R.concat, [])
-            draft.selectedElementIds = concatAll(
-              selectedClusters?.map((cluster) => cluster.ids),
+            draft.selectedElementIds = R.concatAll(
+              selectedClusters!.map((cluster) => cluster.ids),
             )
             break
           }
