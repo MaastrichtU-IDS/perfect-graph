@@ -61,19 +61,17 @@ export const SpeedDialCreator = (props: SpeedDialCreatorProps) => {
            } = action
            return (
              <SpeedDialAction
+               key={name}
                tooltipTitle={name}
                tooltipPlacement="bottom"
+               onClick={(e) => {
+                 e.stopPropagation()
+                 onClick?.(e)
+               }}
+               {...icon}
                icon={(
-                 <IconButton
-                   onClick={(e) => {
-                     e.stopPropagation()
-                     onClick?.(e)
-                   }}
-                   {...icon}
-                 >
-                   <Icon {...icon} />
-                 </IconButton>
-  )}
+                 <Icon {...icon} />
+                )}
              />
            )
          })

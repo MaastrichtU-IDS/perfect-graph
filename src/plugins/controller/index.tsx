@@ -450,7 +450,8 @@ export const useController = (
               itemIds = [],
             } = payload
             const selectedClusters = draft.graphConfig?.clusters?.filter((cluster) => itemIds.includes(cluster.id))
-            draft.selectedElementIds = R.mergeAll(
+            const concatAll = R.reduce(R.concat, [])
+            draft.selectedElementIds = concatAll(
               selectedClusters?.map((cluster) => cluster.ids),
             )
             break
@@ -505,14 +506,21 @@ export const useController = (
             break
           }
           case EVENT.DELETE_HISTORY_ITEM: {
-            // const {
-            //   positions,
-            //   oldLayout,
-            // } = payload
-            // positions.forEach((positionItem) => {
-            //   graphEditor?.cy.$id(positionItem.elementId).position(positionItem.position)
-            // })
-            // draft.graphConfig.layout = oldLayout
+            const {
+              itemIds = [],
+            } = payload
+            eventHistory.delete(eventHistory.getEventIdsByDoItemIds(itemIds))
+            break
+          }
+          case EVENT.REORDER_HISTORY_ITEM: {
+            const {
+              fromIndex,
+              toIndex,
+            } = payload
+            eventHistory.reorder(
+              fromIndex,
+              toIndex,
+            )
             break
           }
           // case EVENT.CREATE_CLUSTER_BY_ALGORITHM: {

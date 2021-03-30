@@ -184,13 +184,16 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
         }
           <List dense>
             <SortableList
-              onReorder={(result) => onEvent({
-                type: EVENT.HISTORY_ITEM_REORDER,
-                payload: {
-                  fromIndex: result.source.index,
-                  toIndex: result.destination?.index,
-                },
-              })}
+              onReorder={(result) => {
+                const { length } = eventHistory.events
+                onEvent({
+                  type: EVENT.REORDER_HISTORY_ITEM,
+                  payload: {
+                    fromIndex: length - result.source.index - 1,
+                    toIndex: length - result.destination?.index - 1,
+                  },
+                })
+              }}
               data={R.reverse(eventHistory.events)}
               renderItem={({
                 provided,
@@ -271,10 +274,10 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
                             onClick: () => onEvent({
                               type: EVENT.DELETE_HISTORY_ITEM,
                               payload: {
-                                event,
-                                avoidEventRecording: true,
-                                avoidHistoryRecording: true,
+                                itemIds: [event.id],
                               },
+                              avoidEventRecording: true,
+                              avoidHistoryRecording: true,
                             }),
                           },
                         ]}

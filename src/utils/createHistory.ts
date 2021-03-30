@@ -67,7 +67,8 @@ export const createHistory = (options: CreateHistoryOptions) => {
     current: null as unknown as History,
   }
   const record: HistoryRecord = R.clone(DEFAULT_HISTORY_DATA_ITEM)
-  ref.current = {
+
+  const history = {
     record,
     add: (item: HistoryItemOptionalId) => {
       const { currentIndex, items } = record
@@ -199,6 +200,17 @@ export const createHistory = (options: CreateHistoryOptions) => {
         return !deleted
       })
     },
+    getEventIdsByDoItemIds: (ids: string[]) => {
+      const events = record.items.filter((item) => {
+        const intersection = R.intersection(item.do, ids)
+        return intersection.length > 0
+      })
+      return events.map((event) => event.id)
+    },
+    reorder: (fromIndex: number, toIndex: number) => {
+      record.items = R.reorder(fromIndex, toIndex)(record.items)
+    },
   }
-  return ref.current
+  ref.current = history
+  return history
 }
