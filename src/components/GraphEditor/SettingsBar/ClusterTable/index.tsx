@@ -9,7 +9,7 @@ import {
   Dialog, DialogTitle, IconButton, List,
   ListItem, ListItemAvatar, ListItemSecondaryAction,
   ListItemText, Menu,
-  MenuItem, TextField, Typography
+  MenuItem, TextField, Typography,
 } from '@material-ui/core'
 import Accordion from '@material-ui/core/Accordion'
 import AccordionDetails from '@material-ui/core/AccordionDetails'
@@ -17,11 +17,11 @@ import AccordionSummary from '@material-ui/core/AccordionSummary'
 import { FormProps } from '@rjsf/core'
 import Form from '@rjsf/material-ui'
 import {
-  Cluster, EditorMode, OnEventLite
+  Cluster, EditorMode, OnEventLite,
 } from '@type'
 import { EDITOR_MODE, EVENT } from '@utils/constants'
 import {
-  useDisclosure, View
+  useDisclosure, View,
 } from 'colay-ui'
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import * as R from 'colay/ramda'
@@ -199,7 +199,7 @@ export const ClusterTable = (props: ClusterTableProps) => {
                         type: EVENT.DELETE_CLUSTER,
                         payload: {
                           itemIds: state.selectedClusterIds,
-                        }
+                        },
                       })
                       updateState((draft) => {
                         draft.selectedClusterIds = []
@@ -487,6 +487,22 @@ const SpeedDialActionsView = (props: ClusterTableProps) => {
       },
     },
     {
+      name: cluster.visible === false ? 'Visible' : 'Invisible',
+      icon: {
+        name: cluster.visible === false ? 'unfold_more' : 'unfold_less',
+      },
+      onClick: (e) => {
+        e.stopPropagation()
+        onEvent({
+          type: EVENT.CHANGE_CLUSTER_VISIBILITY,
+          payload: {
+            clusterId: cluster.id,
+            value: cluster.visible === false,
+          },
+        })
+      },
+    },
+    {
       name: 'Select',
       icon: {
         name: 'beenhere',
@@ -519,7 +535,6 @@ const SpeedDialActionsView = (props: ClusterTableProps) => {
         })
       },
     },
-
   ]
   return (
     <SpeedDialCreator
