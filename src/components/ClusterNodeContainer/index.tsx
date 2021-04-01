@@ -53,7 +53,6 @@ const ClusterNodeContainerElement = (
         x: positionAcc.x / length,
         y: positionAcc.y / length,
       }
-      console.log('ab',calculatedPosition)
       element.position(calculatedPosition)
     }
   }, [item.ids])

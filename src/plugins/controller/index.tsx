@@ -533,7 +533,6 @@ export const useController = (
           //   edges: draft.edges,
           //   ...config,
           // })
-          // console.log('a', clusterResult)
           //   // draft.graphConfig.layout = oldLayout
           //   break
           // }

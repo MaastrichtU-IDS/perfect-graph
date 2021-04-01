@@ -125,7 +125,6 @@ const perc2color = (
   return '#' + ('000000' + h.toString(16)).slice(-6);
 }
 
-// console.log('a', )
 const AUTO_CREATED_SCHEMA = {
   schema: createSchema(data.nodes)
 }
