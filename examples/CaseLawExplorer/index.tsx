@@ -25,6 +25,7 @@ import * as C from 'colay/color'
 import { getFilterSchema, getFetchSchema, VIEW_CONFIG_SCHEMA, RECORDED_EVENTS  } from './constants'
 import { EVENT } from '../../src/utils/constants'
 import {useController} from '../../src/plugins/controller'
+import { createSchema } from '../../src/plugins/createSchema'
 import {calculateStatistics} from './utils/networkStatistics'
 import {RenderNode} from './RenderNode'
 import {RenderEdge} from './RenderEdge'
@@ -124,6 +125,11 @@ const perc2color = (
   return '#' + ('000000' + h.toString(16)).slice(-6);
 }
 
+// console.log('a', )
+const AUTO_CREATED_SCHEMA = {
+  schema: createSchema(data.nodes)
+}
+console.log('a', AUTO_CREATED_SCHEMA.schema)
 const AppContainer = ({
   changeMUITheme,
   ...rest
@@ -191,6 +197,7 @@ const AppContainer = ({
     },
     settingsBar: {
       opened: true,
+      // forms: [AUTO_CREATED_SCHEMA,FETCH_SCHEMA, VIEW_CONFIG_SCHEMA, {...FILTER_SCHEMA,  formData: configRef.current.filtering}, ],
       forms: [FETCH_SCHEMA, VIEW_CONFIG_SCHEMA, {...FILTER_SCHEMA,  formData: configRef.current.filtering}, ],
       createClusterForm: {
         ...FILTER_SCHEMA,

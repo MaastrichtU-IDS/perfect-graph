@@ -100,43 +100,45 @@ const SettingsBarElement = (props: SettingsBarProps) => {
         }}
       >
         {
-        forms.map((form, index) => (
-          <React.Fragment key={form.schema.title}>
-            <Accordion>
-              <AccordionSummary>
-                <Typography
-                  variant="h6"
-                >
-                  {form.schema.title}
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Form
-                  key={form.schema.title ?? `${index}`}
-            // schema={schema}
-            // {...formProps}
-                  {...form}
-                  schema={R.omit(['title'])(form.schema)}
-                  onSubmit={(
-                    e,
-                  ) => onEvent({
-                    type: EVENT.SETTINGS_FORM_CHANGED,
-                    payload: { form, value: e.formData, index },
-                  })}
-                >
-                  <Button
-                    type="submit"
-                    fullWidth
-                    variant="contained"
+        forms.map((form, index) => {
+          const title = form.schema?.title ?? `Form-${index}`
+          return (
+            <React.Fragment key={title}>
+              <Accordion>
+                <AccordionSummary>
+                  <Typography
+                    variant="h6"
                   >
-                    Apply
-                  </Button>
-                </Form>
-              </AccordionDetails>
-            </Accordion>
-            <View style={{ marginTop: 5, marginBottom: 5 }} />
-          </React.Fragment>
-        ))
+                    {title}
+                  </Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Form
+              // schema={schema}
+              // {...formProps}
+                    {...form}
+                    schema={R.omit(['title'])(form.schema)}
+                    onSubmit={(
+                      e,
+                    ) => onEvent({
+                      type: EVENT.SETTINGS_FORM_CHANGED,
+                      payload: { form, value: e.formData, index },
+                    })}
+                  >
+                    <Button
+                      type="submit"
+                      fullWidth
+                      variant="contained"
+                    >
+                      Apply
+                    </Button>
+                  </Form>
+                </AccordionDetails>
+              </Accordion>
+              <View style={{ marginTop: 5, marginBottom: 5 }} />
+            </React.Fragment>
+          )
+        })
       }
         <Divider />
         {
