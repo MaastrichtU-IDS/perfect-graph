@@ -121,6 +121,11 @@ export type RenderNode<Additional extends Record<string, any> = {}> = (c: {
   element: NodeElement;
 } & RenderElementParams & Additional) => React.ReactElement
 
+export type RenderClusterNode<Additional extends Record<string, any> = {}> = (c: {
+  item: Cluster;
+  element: NodeElement;
+} & RenderElementParams & Additional) => React.ReactElement
+
 export type ElementType = keyof typeof ELEMENT_TYPE
 
 export type RDFValue = Enumerable<string | number>

@@ -14,6 +14,7 @@ import { useGraph } from '@hooks'
 import {
   NodeData, EdgeData, RenderEdge, RenderNode,
   GraphConfig, DrawLine, GraphRef, ViewportRef,
+  RenderCluster,
 } from '@type'
 import { PropsWithRef } from 'colay-ui/type'
 import { BoundingBox } from 'colay/type'
@@ -36,6 +37,7 @@ export type GraphProps = {
   style?: ViewProps['style'];
   renderNode?: RenderNode;
   renderEdge?: RenderEdge;
+  renderClusterNode?: RenderClusterNode;
   onPress?: ViewportProps['onPress'];
   drawLine?: DrawLine;
   config?: GraphConfig;
@@ -155,6 +157,54 @@ export const DefaultRenderEdge: RenderEdge = ({
   </GraphView>
 )
 
+export const DefaultRenderClusterNode: RenderNode = ({
+  item, element, cy, theme,
+}) => {
+  const hasSelectedEdge = element.connectedEdges(':selected').length > 0
+  return (
+    <GraphView
+      style={{
+        width: 100,
+        height: 100,
+        justifyContent: 'center',
+        alignItems: 'center',
+        display: 'flex',
+        backgroundColor: hasSelectedEdge
+          ? theme.palette.secondary.main
+          : (element.selected()
+            ? theme.palette.primary.main
+            : theme.palette.background.paper),
+        // borderRadius: 50,
+      }}
+      interactive
+      click={() => {
+        cyUnselectAll(cy)
+        element.select()
+      }}
+      // rightclick={(e) => {
+        // alert('Heyy')
+      // }}
+      // onRightPress={(e) => {
+      // }}
+      // mouseover={(e) => {
+      // }}
+      // onPressEnd={(e) => {
+      // }}
+    >
+      <GraphText
+        style={{
+          position: 'absolute',
+          top: -70,
+          color: 'black',
+        }}
+        isSprite
+      >
+        {R.last(item.id.split('/'))?.substring(0, 10)}
+      </GraphText>
+    </GraphView>
+  )
+}
+
 export type GraphType = React.FC<GraphProps>
 
 const DEFAULT_CONFIG = {
@@ -174,6 +224,7 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
     onBoxSelection,
     selectedElementIds = [],
     children,
+    renderClusterNode = DefaultRenderClusterNode,
   } = props
   const boxSelectionEnabled = !!onBoxSelection
   const config = React.useMemo(() => ({
@@ -320,7 +371,7 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
                 boundingBox,
                 elements: selectedCollection,
                 event,
-                elementIds
+                elementIds,
               })
             }}
           >
@@ -362,6 +413,52 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
                   {renderEdge}
                 </EdgeContainer>
               )}
+            />
+            <DataRender
+              extraData={[extraData]}
+              data={config.clusters ?? []}
+              accessor={['children']}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => {
+                const isVisible = !(item.visible ?? true)
+                if (!isVisible) {
+                  return null
+                }
+                let positionAvg = {
+                  x: 0,
+                  y: 0,
+                }
+                if (item.ids.length > 0) {
+                  const positionAcc = {
+                    x: 0,
+                    y: 0,
+                  }
+                  item.ids.forEach((id) => {
+                    const clusterElement = cy.$id(id)
+                    const clusterElementPos = clusterElement.position()
+                    positionAcc.x += clusterElementPos.x
+                    positionAcc.y += clusterElementPos.y
+                  })
+                  const { length } = item.ids
+                  positionAvg = {
+                    x: positionAcc.x / length,
+                    y: positionAcc.y / length,
+                  }
+                }
+                return (
+                  <NodeContainer
+                    graphID={graphID}
+                    item={{ ...item, position: positionAvg }}
+                    graphRef={graphRef}
+                    config={{
+                      ...(globalNodeConfig ?? {}),
+                      ...(nodeConfigIds?.[item.id] ?? {}),
+                    }}
+                  >
+                    {renderClusterNode}
+                  </NodeContainer>
+                )
+              }}
             />
             {children}
           </Viewport>
