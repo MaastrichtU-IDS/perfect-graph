@@ -10,6 +10,7 @@ import {
 } from '@type'
 import { getClusterVisibility, calculateVisibilityByContext, contextUtils } from '@utils'
 import { CYTOSCAPE_EVENT, ELEMENT_DATA_FIELDS } from '@utils/constants'
+import { useInitializedRef } from 'colay-ui/hooks/useInitializedRef'
 import { mutableGraphMap } from './useGraph'
 import { useElement } from './useElement'
 
@@ -47,6 +48,7 @@ export default (props: Props): Result => {
     item,
     isCluster = false,
   } = props
+  const initializedRef = useInitializedRef()
   const { cy, clustersByNodeId, clustersByChildClusterId } = mutableGraphMap[graphID]
   const clusters = isCluster
     ? clustersByChildClusterId[id]
@@ -94,8 +96,10 @@ export default (props: Props): Result => {
     }, // destroy
     [cy, id],
   )
-  React.useEffect(() => {
-    element.position(position)
+  React.useMemo(() => {
+    if (initializedRef.current) {
+      element.position(position)
+    }
   }, [position.x, position.y])
 
   // Update Visibility

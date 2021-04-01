@@ -25,6 +25,7 @@ import { isPositionInBox, cyUnselectAll, contextUtils } from '@utils'
 import { Viewport, ViewportProps } from '../Viewport'
 import { NodeContainer } from '../NodeContainer'
 import { EdgeContainer } from '../EdgeContainer'
+import { ClusterNodeContainer } from '../ClusterNodeContainer'
 // import { Pressable } from '../Pressable'
 import { Text as GraphText } from '../Text'
 import { View as GraphView } from '../View'
@@ -164,8 +165,8 @@ export const DefaultRenderClusterNode: RenderNode = ({
   return (
     <GraphView
       style={{
-        width: 100,
-        height: 100,
+        width: 150,
+        height: 150,
         justifyContent: 'center',
         alignItems: 'center',
         display: 'flex',
@@ -173,8 +174,8 @@ export const DefaultRenderClusterNode: RenderNode = ({
           ? theme.palette.secondary.main
           : (element.selected()
             ? theme.palette.primary.main
-            : theme.palette.background.paper),
-        // borderRadius: 50,
+            : theme.palette.warning.main),
+        borderRadius: 20,
       }}
       interactive
       click={() => {
@@ -194,7 +195,7 @@ export const DefaultRenderClusterNode: RenderNode = ({
       <GraphText
         style={{
           position: 'absolute',
-          top: -70,
+          top: -90,
           color: 'black',
         }}
         isSprite
@@ -420,35 +421,10 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
               accessor={['children']}
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => {
-                const isVisible = !(item.visible ?? true)
-                if (!isVisible) {
-                  return null
-                }
-                let positionAvg = {
-                  x: 0,
-                  y: 0,
-                }
-                if (item.ids.length > 0) {
-                  const positionAcc = {
-                    x: 0,
-                    y: 0,
-                  }
-                  item.ids.forEach((id) => {
-                    const clusterElement = cy.$id(id)
-                    const clusterElementPos = clusterElement.position()
-                    positionAcc.x += clusterElementPos.x
-                    positionAcc.y += clusterElementPos.y
-                  })
-                  const { length } = item.ids
-                  positionAvg = {
-                    x: positionAcc.x / length,
-                    y: positionAcc.y / length,
-                  }
-                }
                 return (
-                  <NodeContainer
+                  <ClusterNodeContainer
                     graphID={graphID}
-                    item={{ ...item, position: positionAvg }}
+                    item={item}
                     graphRef={graphRef}
                     config={{
                       ...(globalNodeConfig ?? {}),
@@ -456,7 +432,7 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
                     }}
                   >
                     {renderClusterNode}
-                  </NodeContainer>
+                  </ClusterNodeContainer>
                 )
               }}
             />

@@ -1,8 +1,9 @@
 import React from 'react'
 import { wrapComponent } from 'colay-ui'
-import { useNode } from '@hooks'
+import { useNode, useGraph } from '@hooks'
 import {
   RenderNode, NodeConfig, GraphRef,
+  Cluster,
 } from '@type'
 import {
   calculateObjectBoundsWithoutChildren,
@@ -13,7 +14,7 @@ import { Container } from '../Container'
 
 export type ClusterNodeContainerProps = {
   children: RenderNode;
-  item: any;
+  item: Cluster;
   graphID: string;
   graphRef: React.RefObject<GraphRef>;
   config?: NodeConfig;
@@ -35,6 +36,27 @@ const ClusterNodeContainerElement = (
     graphRef,
   } = props
   const containerRef = React.useRef(null)
+  React.useEffect(() => {
+    if (item.ids.length > 0) {
+      const positionAcc = {
+        x: 0,
+        y: 0,
+      }
+      item.ids.forEach((id) => {
+        const clusterElement = cy.$id(id)
+        const clusterElementPos = clusterElement.position()
+        positionAcc.x += clusterElementPos.x
+        positionAcc.y += clusterElementPos.y
+      })
+      const { length } = item.ids
+      const calculatedPosition = {
+        x: positionAcc.x / length,
+        y: positionAcc.y / length,
+      }
+      console.log('ab',calculatedPosition)
+      element.position(calculatedPosition)
+    }
+  }, [item.ids])
   const { element, context, cy } = useNode({
     id: item.id,
     graphID,
@@ -65,7 +87,7 @@ const ClusterNodeContainerElement = (
     )
   })
   const theme = useTheme()
-  const visible = calculateVisibilityByContext(context)
+  const visible = calculateVisibilityByContext(context) && !(item.visible ?? true)
   const opacity = context.settings.filtered
     ? 1
     : (config.filter?.settings?.opacity ?? 0.2)
