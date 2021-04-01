@@ -91,7 +91,7 @@ export const ELEMENT_DATA_FIELDS = {
   POSITION: 'position',
   ID: 'id',
   DATA: 'data',
-  CONTEXT: 'context',
+  CONTEXT: '__context',
 } as const
 
 export const EDITOR_MODE = {
@@ -172,6 +172,7 @@ export const CYTOSCAPE_EVENT = {
 } as const
 export const EDGE_LINE_Z_INDEX = -100
 export const EDGE_CONTAINER_Z_INDEX = -99
+
 
 export const MOCK_DATA = {
   events: [{

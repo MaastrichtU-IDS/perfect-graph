@@ -6,7 +6,7 @@ import {
   ElementData,
 } from '@type'
 import { CYTOSCAPE_EVENT } from '@utils/constants'
-import { calculateVisibilityByContext } from '@utils'
+import { calculateVisibilityByContext, contextUtils } from '@utils'
 
 export type Props = {
   element: Element;
@@ -82,9 +82,7 @@ export const useElement = (props: Props): Result => {
     const filtered = config.filter?.test?.({ element, item }) ?? true
     contextRef.current!.settings.filtered = filtered
     if (oldFiltered !== filtered) {
-      element.data({
-        context: contextRef.current,
-      })
+      contextUtils.update(element, contextRef.current)
       if (calculateVisibilityByContext(contextRef.current)) {
         contextRef.current?.render()
       }

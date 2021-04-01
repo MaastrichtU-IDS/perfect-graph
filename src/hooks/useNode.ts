@@ -8,8 +8,8 @@ import {
   Cluster,
   NodeData,
 } from '@type'
-import { getClusterVisibility, calculateVisibilityByContext } from '@utils'
-import { CYTOSCAPE_EVENT } from '@utils/constants'
+import { getClusterVisibility, calculateVisibilityByContext, contextUtils } from '@utils'
+import { CYTOSCAPE_EVENT, ELEMENT_DATA_FIELDS } from '@utils/constants'
 import { mutableGraphMap } from './useGraph'
 import { useElement } from './useElement'
 
@@ -54,6 +54,13 @@ export default (props: Props): Result => {
   const [, setState] = useStateWithCallback({}, () => {})
   const contextRef = React.useRef<NodeContext>({
     render: (callback: () => {}) => setState({}, callback),
+    onPositionChange: () => {
+      onPositionChange?.({ element, context: contextRef.current })
+      element.connectedEdges().forEach((mutableEdge) => {
+        const edgeContext = contextUtils.get(mutableEdge)
+        edgeContext.onPositionChange()
+      })
+    },
     boundingBox: DEFAULT_BOUNDING_BOX,
     settings: {
       filtered: true,
@@ -65,7 +72,7 @@ export default (props: Props): Result => {
   const element = React.useMemo(() => cy!.add({
     data: {
       id,
-      context: contextRef.current,
+      [ELEMENT_DATA_FIELDS.CONTEXT]: contextRef.current,
     }, // ...(parentID ? { parent: parentID } : {}),
     position: { ...position },
     group: 'nodes',
@@ -73,15 +80,14 @@ export default (props: Props): Result => {
   }) as NodeSingular, [cy, id])
   React.useEffect(
     () => {
-      const positionChanged = () => {
-        onPositionChange?.({ element, context: contextRef.current })
-        element.connectedEdges().forEach((mutableEdge) => {
-          mutableEdge.data().onPositionChange()
-        })
-      }
-      element.on(CYTOSCAPE_EVENT.position, positionChanged)
+      const {
+        current: {
+          onPositionChange,
+        },
+      } = contextRef
+      element.on(CYTOSCAPE_EVENT.position, onPositionChange)
       return () => {
-        element.off(CYTOSCAPE_EVENT.position, `#${element.id()}`, positionChanged)
+        element.off(CYTOSCAPE_EVENT.position, `#${element.id()}`, onPositionChange)
         cy!.remove(element!)
       }
     }, // destroy
@@ -101,9 +107,7 @@ export default (props: Props): Result => {
       //   ...contextRef.current.settings,
       //   visibility,
       // }
-      element.data({
-        context: contextRef.current,
-      })
+      contextUtils.update(element, contextRef.current)
       if (oldVisible !== calculateVisibilityByContext(contextRef.current)) {
         contextRef.current.render()
       }

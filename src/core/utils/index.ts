@@ -23,7 +23,7 @@ export const filter = (
 export const getLabel = (
   dataList: DataItem[] = [],
 ) => R.find(R.propEq('key', 'label'))(dataList)?.value ?? ''
-// export const getContext = <T>(el: NodeSingular|EdgeSingular): Context => el.data().context
+
 
 type Info = Record<string, {
   element: NodeSingular;

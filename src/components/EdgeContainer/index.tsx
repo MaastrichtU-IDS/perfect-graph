@@ -4,7 +4,7 @@ import * as R from 'colay/ramda'
 import * as C from 'colay/color'
 import { useTheme } from '@core/theme'
 import { useEdge } from '@hooks'
-import { getNodeContextByElement, calculateVisibilityByContext } from '@utils'
+import { contextUtils, calculateVisibilityByContext } from '@utils'
 import { EDGE_CONTAINER_Z_INDEX } from '@utils/constants'
 import {
   RenderEdge,
@@ -121,8 +121,8 @@ const EdgeContainerElement = (
     } = calculateVectorInfo(sourceElement, targetElement)
     containerRef.current!.x = midpointPosition.x + sortedIndex * undirectedNormVector.x * DEFAULT_DISTANCE
     containerRef.current!.y = midpointPosition.y + sortedIndex * undirectedNormVector.y * DEFAULT_DISTANCE
-    const sourceElementContext = getNodeContextByElement(sourceElement)
-    const targetElementContext = getNodeContextByElement(targetElement)
+    const sourceElementContext = contextUtils.getNodeContext(sourceElement)
+    const targetElementContext = contextUtils.getNodeContext(targetElement)
     // calculate sortedIndex
     return drawLine({
       item,

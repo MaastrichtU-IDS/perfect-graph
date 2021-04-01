@@ -7,9 +7,8 @@ import {
   EdgeElement,
   EdgeData,
 } from '@type'
-import { CYTOSCAPE_EVENT } from '@utils/constants'
-import { calculateVisibilityByContext } from '@utils'
-import * as R from 'colay/ramda'
+import { CYTOSCAPE_EVENT, ELEMENT_DATA_FIELDS } from '@utils/constants'
+import { calculateVisibilityByContext, contextUtils } from '@utils'
 import { mutableGraphMap } from './useGraph'
 import { useElement } from './useElement'
 
@@ -47,6 +46,13 @@ export default <T>(props: Props<T>): Result<T> => {
     render: (callback: () => {}) => {
       setState({}, callback)
     },
+    onPositionChange: () => {
+      onPositionChange?.({
+      // @ts-ignore
+        element: contextRef.current.element,
+        context: contextRef.current,
+      })
+    },
     element: null as unknown as EdgeElement,
     settings: {
       filtered: true,
@@ -70,14 +76,8 @@ export default <T>(props: Props<T>): Result<T> => {
         id,
         source,
         target,
-        context: contextRef.current,
-        onPositionChange: () => {
-          onPositionChange?.({
-          // @ts-ignore
-            element: contextRef.current.element,
-            context: contextRef.current,
-          })
-        },
+        [ELEMENT_DATA_FIELDS.CONTEXT]: contextRef.current,
+        data: item?.data,
       },
       group: 'edges',
     })
@@ -91,11 +91,13 @@ export default <T>(props: Props<T>): Result<T> => {
   } = contextRef
   React.useEffect(
     () => {
-      element.data({
-        onPositionChange: () => {
-          onPositionChange?.({ element, context: contextRef.current })
-        },
-      })
+      contextRef.current.onPositionChange = () => {
+        onPositionChange?.({ element, context: contextRef.current })
+      }
+      contextUtils.update(
+        element,
+        contextRef.current,
+      )
     },
     [onPositionChange],
   )
@@ -110,30 +112,26 @@ export default <T>(props: Props<T>): Result<T> => {
       const nodeDataUpdated = (e) => {
         // Update visibility
         const oldVisible = calculateVisibilityByContext(contextRef.current)
-        const sourceData = element.source().data()
-        const targetData = element.target().data()
-        const sourceVisible = calculateVisibilityByContext(sourceData.context)
-        const targetVisible = calculateVisibilityByContext(targetData.context)
+        const sourceContext = contextUtils.get(element.source())
+        const targetContext = contextUtils.get(element.target())
+        const sourceVisible = calculateVisibilityByContext(sourceContext)
+        const targetVisible = calculateVisibilityByContext(targetContext)
         const newNodeVisible = sourceVisible && targetVisible
         let forceRender = false
         if (newNodeVisible !== contextRef.current.settings.visibility.nodeVisible) {
           contextRef.current.settings.visibility.nodeVisible = newNodeVisible
-          element.data({
-            context: contextRef.current,
-          })
+          contextUtils.update(element, contextRef.current)
           if (oldVisible !== calculateVisibilityByContext(contextRef.current)) {
             forceRender = false
           }
         }
         const oldNodeFiltered = contextRef.current.settings.nodeFiltered
-        const newNodeFiltered = sourceData.context.settings.filtered
-        && targetData.context.settings.filtered
+        const newNodeFiltered = sourceContext.settings.filtered
+        && targetContext.settings.filtered
         contextRef.current.settings.nodeFiltered = newNodeFiltered
         if (newNodeFiltered !== oldNodeFiltered) {
           forceRender = true
-          element.data({
-            context: contextRef.current,
-          })
+          contextUtils.update(element, contextRef.current)
         }
         if (forceRender) {
           contextRef.current.render()

@@ -10,7 +10,9 @@ import {
   DisplayObjectWithYoga, NodeContext, EdgeContext,
   Cluster, EventInfo, GraphEditorRef, ControllerState,
 } from '@type'
-import { ELEMENT_DATA_FIELDS, PIXI_EVENT_NAMES, EVENT } from '@utils/constants'
+import {
+  ELEMENT_DATA_FIELDS, PIXI_EVENT_NAMES, EVENT, ELEMENT_DATA_FIELDS,
+} from '@utils/constants'
 
 // type Result = {
 //   x: number;
@@ -395,12 +397,7 @@ export const getClusterVisibility = (id: string, clusters: Cluster[] = []) => {
 //     x: object.x * object.scale.x,
 //     y: object.y * object.scale.y,}
 //   }
-export const getNodeContextByElement = (element: Element): NodeContext => element.data(
-  ELEMENT_DATA_FIELDS.CONTEXT,
-)
-export const getEdgeContextByElement = (element: Element): EdgeContext => element.data(
-  ELEMENT_DATA_FIELDS.CONTEXT,
-)
+
 export const calculateVisibilityByContext = (
   context: EdgeContext | NodeContext,
 ): boolean => {
@@ -455,21 +452,21 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
           return [
             {
               type: EVENT.ADD_NODE,
-              payload
+              payload,
             },
           ]
         case EVENT.ADD_EDGE:
           return [
             {
               type: EVENT.DELETE_EDGE,
-              payload
+              payload,
             },
           ]
         case EVENT.DELETE_EDGE:
           return [
             {
               type: EVENT.ADD_EDGE,
-              payload
+              payload,
             },
           ]
 
@@ -598,4 +595,19 @@ export const getPointerPositionOnViewport = (viewport, event) => {
   position.x += viewport.left
   position.y += viewport.top
   return position
+}
+
+export const contextUtils = {
+  update: (element: Element, context: any) => {
+    element.data({
+      [ELEMENT_DATA_FIELDS.CONTEXT]: context,
+    })
+  },
+  get: (element: Element) => element.data(ELEMENT_DATA_FIELDS.CONTEXT),
+  getNodeContext: (element: Element): NodeContext => element.data(
+    ELEMENT_DATA_FIELDS.CONTEXT,
+  ),
+  getEdgeContext: (element: Element): EdgeContext => element.data(
+    ELEMENT_DATA_FIELDS.CONTEXT,
+  ),
 }

@@ -20,7 +20,7 @@ import { BoundingBox } from 'colay/type'
 import '@core/config'
 import { ThemeProvider, DefaultTheme } from '@core/theme'
 import { CYTOSCAPE_EVENT } from '@utils/constants'
-import { isPositionInBox, cyUnselectAll } from '@utils'
+import { isPositionInBox, cyUnselectAll, contextUtils } from '@utils'
 import { Viewport, ViewportProps } from '../Viewport'
 import { NodeContainer } from '../NodeContainer'
 import { EdgeContainer } from '../EdgeContainer'
@@ -235,7 +235,8 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
             graphLayoutRef.current = null
             // Fix the edge lines
             cy.edges().forEach((edge) => {
-              edge.data().onPositionChange()
+              const edgeContext = contextUtils.get(edge)
+              edgeContext.onPositionChange()
             })
           })
           graphLayoutRef.current.start()

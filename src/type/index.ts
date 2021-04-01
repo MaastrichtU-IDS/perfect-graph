@@ -24,6 +24,7 @@ export type Style = {[k: string]: any}
 // export type OnLayout = (event: LayoutChangeEvent) => void
 export type ElementContext = {
   render: (callback?: () => void) => void;
+  onPositionChange: () => void;
 }
 
 export type BoundingBox = {
