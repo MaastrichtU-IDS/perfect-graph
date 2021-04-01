@@ -12,7 +12,6 @@ import {
   CYTOSCAPE_EVENT,
 } from '@utils/constants'
 import { Viewport } from 'pixi-viewport'
-import { ViewportProps } from '@components/Viewport'
 import * as PIXI from 'pixi.js'
 import { YogaConstants } from '@utils/addFlexLayout/flex-layout/YogaContants'
 import { YogaLayout } from '@utils/addFlexLayout/flex-layout/YogaLayout'
@@ -197,8 +196,18 @@ export type ClustersByChildClusterId = Record<string, Cluster[]>
 export type GraphConfig = {
   layout?: typeof GraphLayouts['cose'];
   clusters?: Cluster[];
-  zoom?: ViewportProps['zoom'];
-  transform?: ViewportProps['transform'];
+  zoom?: number;
+  transform?: {
+    x?: number;
+    y?: number;
+    scaleX?: number;
+    scaleY?: number;
+    rotation?: number;
+    skewX?: number;
+    skewY?: number;
+    pivotX?: number;
+    pivotY?: number;
+  };
   nodes?: {
     filter?: ElementFilterOption<NodeElement>
     renderEvents?: CytoscapeEvent[];

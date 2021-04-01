@@ -11,7 +11,7 @@ import {
   Cluster, EventInfo, GraphEditorRef, ControllerState,
 } from '@type'
 import {
-  ELEMENT_DATA_FIELDS, PIXI_EVENT_NAMES, EVENT, ELEMENT_DATA_FIELDS,
+  ELEMENT_DATA_FIELDS, PIXI_EVENT_NAMES, EVENT,
 } from '@utils/constants'
 
 // type Result = {

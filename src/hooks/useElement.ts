@@ -5,8 +5,9 @@ import {
   ElementConfig,
   ElementData,
 } from '@type'
-import { CYTOSCAPE_EVENT } from '@utils/constants'
+import { CYTOSCAPE_EVENT, ELEMENT_DATA_FIELDS } from '@utils/constants'
 import { calculateVisibilityByContext, contextUtils } from '@utils'
+import { useInitializedRef } from 'colay-ui/hooks/useInitializedRef'
 
 export type Props = {
   element: Element;
@@ -31,6 +32,18 @@ export const useElement = (props: Props): Result => {
   const {
     renderEvents = [],
   } = config
+  const initializedRef = useInitializedRef()
+  // Update data
+  React.useEffect(
+    () => {
+      if (initializedRef.current) {
+        element.data({
+          [ELEMENT_DATA_FIELDS.DATA]: item?.data,
+        })
+      }
+    },
+    [item?.data],
+  )
   // EventListeners
   React.useEffect(
     () => {

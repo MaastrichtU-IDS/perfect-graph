@@ -77,7 +77,7 @@ export default <T>(props: Props<T>): Result<T> => {
         source,
         target,
         [ELEMENT_DATA_FIELDS.CONTEXT]: contextRef.current,
-        data: item?.data,
+        [ELEMENT_DATA_FIELDS.DATA]: item?.data,
       },
       group: 'edges',
     })

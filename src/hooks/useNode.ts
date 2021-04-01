@@ -73,6 +73,7 @@ export default (props: Props): Result => {
     data: {
       id,
       [ELEMENT_DATA_FIELDS.CONTEXT]: contextRef.current,
+      [ELEMENT_DATA_FIELDS.DATA]: item?.data,
     }, // ...(parentID ? { parent: parentID } : {}),
     position: { ...position },
     group: 'nodes',
