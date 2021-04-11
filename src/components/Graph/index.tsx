@@ -21,7 +21,9 @@ import { BoundingBox } from 'colay/type'
 import '@core/config'
 import { ThemeProvider, DefaultTheme } from '@core/theme'
 import { CYTOSCAPE_EVENT } from '@utils/constants'
-import { isPositionInBox, cyUnselectAll, contextUtils } from '@utils'
+import {
+  isPositionInBox, cyUnselectAll, contextUtils, calculateVisibilityByContext,
+} from '@utils'
 import { Viewport, ViewportProps } from '../Viewport'
 import { NodeContainer } from '../NodeContainer'
 import { EdgeContainer } from '../EdgeContainer'
@@ -361,7 +363,9 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
               const elementIds: string[] = []
               const selectedCollection = cy.nodes().filter((element) => {
                 const elementPosition = element.position()
-                const selected = isPositionInBox(elementPosition, boundingBox)
+                const elementContext = contextUtils.get(element)
+                const selected = calculateVisibilityByContext(elementContext)
+                  && isPositionInBox(elementPosition, boundingBox)
                 if (selected) {
                   element.select()
                   elementIds.push(element.id())
@@ -420,21 +424,19 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
               data={config.clusters ?? []}
               accessor={['children']}
               keyExtractor={(item) => item.id}
-              renderItem={({ item }) => {
-                return (
-                  <ClusterNodeContainer
-                    graphID={graphID}
-                    item={item}
-                    graphRef={graphRef}
-                    config={{
-                      ...(globalNodeConfig ?? {}),
-                      ...(nodeConfigIds?.[item.id] ?? {}),
-                    }}
-                  >
-                    {renderClusterNode}
-                  </ClusterNodeContainer>
-                )
-              }}
+              renderItem={({ item }) => (
+                <ClusterNodeContainer
+                  graphID={graphID}
+                  item={item}
+                  graphRef={graphRef}
+                  config={{
+                    ...(globalNodeConfig ?? {}),
+                    ...(nodeConfigIds?.[item.id] ?? {}),
+                  }}
+                >
+                  {renderClusterNode}
+                </ClusterNodeContainer>
+              )}
             />
             {children}
           </Viewport>

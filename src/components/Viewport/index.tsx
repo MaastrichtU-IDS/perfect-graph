@@ -98,11 +98,11 @@ const ReactViewportComp = PixiComponent('Viewport', {
         if (e.target !== viewport || metaKey) {
           if (metaKey) {
             const position = getPointerPositionOnViewport(viewport, e.data.originalEvent)
-            localDataRef.current.boxSelection.enabled = metaKey
             localDataRef.current.boxSelection.startPosition = {
               x: position.x,
               y: position.y,
             }
+            localDataRef.current.boxSelection.enabled = metaKey
             const boxElement = new PIXI.Graphics()
             viewport.addChild(boxElement!)
             localDataRef.current.boxSelection.boxElement = boxElement
