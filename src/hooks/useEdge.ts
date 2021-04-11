@@ -142,7 +142,7 @@ export default <T>(props: Props<T>): Result<T> => {
       // element.source().emit(CYTOSCAPE_EVENT.data)
       return () => {
         element.source().off(CYTOSCAPE_EVENT.data, `#${element.id()}`, nodeDataUpdated)
-        element.source().off(CYTOSCAPE_EVENT.data, `#${element.id()}`, nodeDataUpdated)
+        element.target().off(CYTOSCAPE_EVENT.data, `#${element.id()}`, nodeDataUpdated)
       }
     },
     [element],

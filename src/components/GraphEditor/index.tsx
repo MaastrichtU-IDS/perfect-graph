@@ -194,6 +194,8 @@ const GraphEditorElement = (
           alert('There is no clusters with this configuration!')
         } else {
           onEvent({
+            id: R.uuid(),
+      date: new Date().toString(),
             type: EVENT.CREATE_CLUSTER,
             payload: {
               items: clusters,
@@ -509,7 +511,7 @@ const GraphEditorElement = (
             })
             switch (value) {
               case 'CreateCluster':
-                onEvent({
+                onEventCallback({
                   type: EVENT.CREATE_CLUSTER,
                   payload: {
                     items: [{
@@ -522,7 +524,7 @@ const GraphEditorElement = (
                 })
                 break
               case 'Delete':
-                onEvent({
+                onEventCallback({
                   type: EVENT.DELETE_NODE,
                   payload: {
                     items: nodes.filter(
