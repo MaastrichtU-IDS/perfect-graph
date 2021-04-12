@@ -1,6 +1,6 @@
 import React from 'react'
 import { wrapComponent } from 'colay-ui'
-import { useNode, useGraph } from '@hooks'
+import { useNode } from '@hooks'
 import {
   RenderNode, NodeConfig, GraphRef,
   Cluster,
@@ -10,7 +10,7 @@ import {
   calculateVisibilityByContext,
 } from '@utils'
 import { useTheme } from '@core/theme'
-import { Container } from '../Container'
+import { Container, ContainerRef } from '../Container'
 
 export type ClusterNodeContainerProps = {
   children: RenderNode;
@@ -35,7 +35,7 @@ const ClusterNodeContainerElement = (
     config = {} as NodeConfig,
     graphRef,
   } = props
-  const containerRef = React.useRef(null)
+  const containerRef = React.useRef<ContainerRef>(null)
   React.useEffect(() => {
     if (item.ids.length > 0) {
       const positionAcc = {
@@ -62,11 +62,10 @@ const ClusterNodeContainerElement = (
     config,
     position: config.position ?? item.position ?? DEFAULT_POSITION,
     onPositionChange: ({ element }) => {
+      const container = containerRef.current!
       const { x, y } = element.position()
-      // @ts-ignore
-      containerRef.current.x = x
-      // @ts-ignore
-      containerRef.current.y = y
+      container.x = x
+      container.y = y
       context.boundingBox.x = x
       context.boundingBox.y = y
     },
@@ -80,9 +79,9 @@ const ClusterNodeContainerElement = (
     [element],
   )
   React.useEffect(() => {
-    // @ts-ignore
+    const container = containerRef.current!
     context.boundingBox = calculateObjectBoundsWithoutChildren(
-      containerRef.current,
+      container,
     )
   })
   const theme = useTheme()

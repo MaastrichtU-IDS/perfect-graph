@@ -506,14 +506,6 @@ const AppContainer = ({
   )
 }
 
-export const mergeDeepAll = (list: Record<string, any>[]) => R.reduce(
-  R.mergeDeepRight,
-  // @ts-ignore
-  {},
-)(list)
-
-
-
 
 const MUI_THEMES = {
   Dark: MUIDarkTheme,
