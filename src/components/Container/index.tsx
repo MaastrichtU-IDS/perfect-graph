@@ -12,7 +12,7 @@ import {
   PIXIFlexStyle,
   PIXIBasicStyle,
   PIXIDisplayObjectProps,
-  PIXIBasicProps
+  PIXIBasicProps,
 } from '@type'
 import { Position, PropsWithRef } from 'colay-ui/type'
 import { Enumerable } from 'colay/type'
@@ -54,14 +54,12 @@ export const Container = PixiComponent<ContainerProps, PIXI.Container>(
         instance
           .on('mousedown', (e: PIXI.InteractionEvent) => {
             const { originalEvent } = e.data
-            // @ts-ignore
-            const { x, y } = originalEvent
+            const { x, y } = originalEvent as MouseEvent
             onDown({ x, y })
           })
           .on('mousemove', (e: PIXI.InteractionEvent) => {
             const { originalEvent } = e.data
-            // @ts-ignore
-            const { x, y } = originalEvent
+            const { x, y } = originalEvent as MouseEvent
             onMove({ x, y })
           })
       }

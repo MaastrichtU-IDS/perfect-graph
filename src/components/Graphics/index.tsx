@@ -100,13 +100,18 @@ const drawArrowHead = ({
 }
 export const drawLine = (
   config: {
+    graphics: PIXI.Graphics;
     sourceElement: NodeElement;
     targetElement: NodeElement;
     from: BoundingBox;
     to: BoundingBox;
+    unitVector: Position;
+    distanceVector: Position;
+    normVector: Position;
+    undirectedUnitVector:Position;
+    undirectedNormVector:Position;
     fill?: number;
     directed?: boolean;
-    graphics: PIXI.Graphics;
     type?: 'bezier' | 'segments' | 'straight';
     width?: number;
     alpha?: number;
@@ -115,11 +120,6 @@ export const drawLine = (
     };
     distance?: number;
     margin?: Position;
-    unitVector: Position;
-    distanceVector: Position;
-    normVector: Position;
-    undirectedUnitVector:Position;
-    undirectedNormVector:Position;
   },
 ) => {
   const {

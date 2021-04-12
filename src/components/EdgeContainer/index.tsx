@@ -2,6 +2,7 @@ import React from 'react'
 import { wrapComponent } from 'colay-ui'
 import * as R from 'colay/ramda'
 import * as C from 'colay/color'
+import * as PIXI from 'pixi.js'
 import { useTheme } from '@core/theme'
 import { useEdge } from '@hooks'
 import { contextUtils, calculateVisibilityByContext } from '@utils'
@@ -64,11 +65,13 @@ export const calculateVectorInfo = (
 ) => {
   const fromPosition = source.position()
   const toPosition = to.position()
-  const distanceVector = R.pipe(
-    V.subtract(fromPosition),
-  )(toPosition)
+  const distanceVector = V.subtract(fromPosition)(toPosition)
+  // const distanceVector = R.pipe(
+  //   V.subtract(fromPosition),
+  // )(toPosition)
   const unitVector = V.normalize(distanceVector)
-  const normVector = V.rotate(Math.PI / 2)(unitVector)// V.multiplyScalar(sortedIndex > 0 ? 1 : -1)(V.rotate(Math.PI / 2)(unitVector))
+  const normVector = V.rotate(Math.PI / 2)(unitVector)
+  // V.multiplyScalar(sortedIndex > 0 ? 1 : -1)(V.rotate(Math.PI / 2)(unitVector))
   const midpointPosition = V.midpoint(fromPosition)(toPosition)
   const sign = source.id() > to.id() ? 1 : -1
   return {
@@ -106,9 +109,7 @@ const EdgeContainerElement = (
   const drawLineCallback = React.useCallback((element: EdgeElement) => {
     const targetElement = element.target()
     const sourceElement = element.source()
-    const {
-      sortedIndex,
-    } = calculateEdgeGroupInfo(element)
+    const edgeGroupInfo = calculateEdgeGroupInfo(element)
     const {
       distanceVector,
       // fromPosition,
@@ -119,13 +120,21 @@ const EdgeContainerElement = (
       undirectedUnitVector,
       undirectedNormVector,
     } = calculateVectorInfo(sourceElement, targetElement)
-    containerRef.current!.x = midpointPosition.x + sortedIndex * undirectedNormVector.x * DEFAULT_DISTANCE
-    containerRef.current!.y = midpointPosition.y + sortedIndex * undirectedNormVector.y * DEFAULT_DISTANCE
+    containerRef.current!.x = midpointPosition.x + (
+      edgeGroupInfo.sortedIndex * undirectedNormVector.x * DEFAULT_DISTANCE
+    )
+    containerRef.current!.y = midpointPosition.y + (
+      edgeGroupInfo.sortedIndex * undirectedNormVector.y * DEFAULT_DISTANCE
+    )
     const sourceElementContext = contextUtils.getNodeContext(sourceElement)
     const targetElementContext = contextUtils.getNodeContext(targetElement)
     // calculate sortedIndex
     return drawLine({
       item,
+      element,
+      cy,
+      graphRef,
+      theme,
       sourceElement,
       targetElement,
       fill: C.rgbNumber(
@@ -141,14 +150,15 @@ const EdgeContainerElement = (
       directed: true,
       distance: sortedIndex * DEFAULT_DISTANCE,
       margin: {
-        x: sortedIndex * DEFAULT_MARGIN,
-        y: sortedIndex * DEFAULT_MARGIN,
+        x: edgeGroupInfo.sortedIndex * DEFAULT_MARGIN,
+        y: edgeGroupInfo.sortedIndex * DEFAULT_MARGIN,
       },
       distanceVector,
       unitVector,
       normVector,
       undirectedUnitVector,
       undirectedNormVector,
+      ...edgeGroupInfo,
     })
   }, [containerRef, graphicsRef])
   const onPositionChange = React.useCallback(({ element }) => {

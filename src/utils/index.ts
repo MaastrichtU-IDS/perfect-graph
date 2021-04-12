@@ -204,7 +204,7 @@ export const preprocessProps = <T extends Record<string, any>>(props: T): T => (
 })
 
 export const applyDefaultProps = <P extends Record<string, any> >(
-  instance: PIXI.Graphics | PIXI.DisplayObject,
+  instance: PIXI.Graphics | PIXI.DisplayObject | PIXI.Container,
   oldProps: P,
   // @ts-ignore
   newProps: P = {},
