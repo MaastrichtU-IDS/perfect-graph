@@ -101,9 +101,15 @@ type RenderElementParams = {
   cy: Core;
   graphRef: React.RefObject<GraphRef>;
   theme: Theme;
-  labelPath?: string[]
-  label: string
 }
+
+type GraphEditorRenderElementExtraParams = {
+  labelPath: string[];
+  label: string;
+}
+
+type ExtendParams<T extends (a: any) => any, E> = (c: Parameters<T>[0] & E) => ReturnType<T>
+
 export type RenderEdge<Additional extends Record<string, any> = {}> = (c: {
   item: EdgeData;
   element: EdgeElement;
@@ -126,6 +132,23 @@ export type RenderClusterNode<Additional extends Record<string, any> = {}> = (c:
   element: NodeElement;
 } & RenderElementParams & Additional) => React.ReactElement
 
+export type GraphEditorRenderEdge<Additional extends Record<string, any> = {}> = ExtendParams<
+RenderEdge,
+GraphEditorRenderElementExtraParams & Additional
+>
+
+export type GraphEditorRenderNode<Additional extends Record<string, any> = {}> = ExtendParams<
+RenderNode,
+GraphEditorRenderElementExtraParams & Additional
+>
+
+export type GraphEditorRenderClusterNode<
+Additional extends Record<string, any> = {},
+> = ExtendParams<
+RenderNode,
+GraphEditorRenderElementExtraParams & Additional
+>
+
 export type ElementType = keyof typeof ELEMENT_TYPE
 
 export type RDFValue = Enumerable<string | number>
@@ -144,13 +167,14 @@ export type PIXIBasicStyle = {
   top?: number;
   width?: number;
   height?: number;
+  zIndex?: number;
 } & PIXIFlexStyle
 
 export type PIXIBasicProps = {
   interactive?: boolean;
   buttonMode?: boolean;
 } & {
-  [k in PIXIType.InteractionEventTypes]: (e: PIXI.InteractionEvent) => void
+  [k in PIXIType.InteractionEventTypes]?: (e: PIXI.InteractionEvent) => void
 }
 
 export type PIXIShapeStyle = {
@@ -262,7 +286,7 @@ export type EventInfo = {
   payload?: any;
   dataItem?: DataItem;
   index?: number;
-  event?: PIXI.InteractionEvent;
+  event?: Partial<PIXI.InteractionEvent>;
   avoidEventRecording?: boolean;
   avoidHistoryRecording?: boolean;
 }

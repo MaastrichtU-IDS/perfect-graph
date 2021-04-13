@@ -19,7 +19,7 @@ export type Props<T> = {
   source: string;
   target: string;
   graphID: string;
-  onPositionChange?: (c: {element: EdgeSingular; context: EdgeContext }) => void;
+  onPositionChange?: (c: {element: EdgeSingular; context: EdgeContext; cy: Core }) => void;
   config?: ElementConfig;
 }
 
@@ -51,6 +51,7 @@ export default <T>(props: Props<T>): Result<T> => {
       // @ts-ignore
         element: contextRef.current.element,
         context: contextRef.current,
+        cy,
       })
     },
     element: null as unknown as EdgeElement,

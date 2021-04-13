@@ -106,7 +106,13 @@ const EdgeContainerElement = (
   //   ..._item,
   //   id: edgeID,
   // }
-  const drawLineCallback = React.useCallback((element: EdgeElement) => {
+  const drawLineCallback = React.useCallback(({
+    element,
+    cy,
+  }: {
+    cy: cytoscape.Core,
+    element: EdgeElement,
+  }) => {
     const targetElement = element.target()
     const sourceElement = element.source()
     const edgeGroupInfo = calculateEdgeGroupInfo(element)
@@ -132,7 +138,7 @@ const EdgeContainerElement = (
     return drawLine({
       item,
       element,
-      cy,
+      // cy,
       graphRef,
       theme,
       sourceElement,
@@ -148,7 +154,7 @@ const EdgeContainerElement = (
       to: targetElementContext.boundingBox,
       from: sourceElementContext.boundingBox,
       directed: true,
-      distance: sortedIndex * DEFAULT_DISTANCE,
+      distance: edgeGroupInfo.sortedIndex * DEFAULT_DISTANCE,
       margin: {
         x: edgeGroupInfo.sortedIndex * DEFAULT_MARGIN,
         y: edgeGroupInfo.sortedIndex * DEFAULT_MARGIN,
@@ -159,6 +165,7 @@ const EdgeContainerElement = (
       undirectedUnitVector,
       undirectedNormVector,
       ...edgeGroupInfo,
+      cy,
     })
   }, [containerRef, graphicsRef])
   const onPositionChange = React.useCallback(({ element }) => {
@@ -175,7 +182,10 @@ const EdgeContainerElement = (
   })
   React.useEffect(
     () => {
-      drawLineCallback(element)
+      drawLineCallback({
+        cy,
+        element,
+      })
     },
   )
   React.useEffect(
@@ -184,11 +194,9 @@ const EdgeContainerElement = (
     },
     [],
   )
+  const edgeGroupInfo = calculateEdgeGroupInfo(element)
   const {
-    sortedIndex,
-  } = calculateEdgeGroupInfo(element)
-  const {
-    normVector,
+    // normVector,
     midpointPosition,
     toPosition,
     fromPosition,
@@ -198,8 +206,10 @@ const EdgeContainerElement = (
   const filtered = context.settings.filtered && context.settings.nodeFiltered
   const opacity = filtered
     ? 1
-    : (config.filter?.settings?.opacity ?? 0.2)
+    : (config?.filter?.settings?.opacity ?? 0.2)
 
+  const targetElement = element.target()
+  const sourceElement = element.source()
   return (
     <>
       <Container
@@ -207,8 +217,12 @@ const EdgeContainerElement = (
         alpha={opacity}
         visible={visible}
         style={{
-          left: midpointPosition.x + sortedIndex * undirectedNormVector.x * DEFAULT_DISTANCE,
-          top: midpointPosition.y + sortedIndex * undirectedNormVector.y * DEFAULT_DISTANCE,
+          left: midpointPosition.x + (
+            edgeGroupInfo.sortedIndex * undirectedNormVector.x * DEFAULT_DISTANCE
+          ),
+          top: midpointPosition.y + (
+            edgeGroupInfo.sortedIndex * undirectedNormVector.y * DEFAULT_DISTANCE
+          ),
           zIndex: EDGE_CONTAINER_Z_INDEX,
         }}
       >
@@ -221,7 +235,9 @@ const EdgeContainerElement = (
             cy,
             theme,
             graphRef,
-            // ...edgeGroupInfo,
+            ...edgeGroupInfo,
+            targetElement,
+            sourceElement,
           })
         }
       </Container>

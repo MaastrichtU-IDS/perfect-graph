@@ -10,8 +10,8 @@ import {
   EditorMode, EventInfo,
   GraphConfig,
   GraphEditorRef, GraphLabelData,
-  RecordedEvent, RenderEdge,
-  RenderNode, EventHistory,
+  RecordedEvent, GraphEditorRenderEdge,
+  GraphEditorRenderNode, EventHistory,
   OnEvent,
   GraphEditorConfig,
   NodeElement,
@@ -22,15 +22,13 @@ import {
   throttle, cyUnselectAll,
   getPointerPositionOnViewport,
 } from '@utils'
-// import { useGraph } from '@hooks'
 import { EDITOR_MODE, EVENT } from '@utils/constants'
 import { useTimeoutManager } from '@utils/useTimeoutManager'
 import { calculateStatistics } from '@utils/networkStatistics'
 import { useForwardRef, wrapComponent } from 'colay-ui'
 import { PropsWithRef } from 'colay-ui/type'
 import * as R from 'colay/ramda'
-
-import {Clusters} from '@core/clusters'
+import { Clusters } from '@core/clusters'
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import { ContextMenu } from '@components/ContextMenu'
 import { ActionBar, ActionBarProps } from './ActionBar'
@@ -40,7 +38,7 @@ import { SettingsBar, SettingsBarProps } from './SettingsBar'
 import { RecordedEventsModal } from './RecordedEventsModal'
 
 type RenderElementAdditionalInfo = {
-  label: string;
+  // label: string;
 }
 
 export type GraphEditorProps = {
@@ -54,8 +52,8 @@ export type GraphEditorProps = {
   actionBar?: Pick<ActionBarProps, 'renderMoreAction' | 'opened' | 'recording' |'eventRecording' | 'autoOpen'>;
   selectedElementIds?: string[] | null;
   mode?: EditorMode;
-  renderEdge?: RenderEdge<RenderElementAdditionalInfo>;
-  renderNode?: RenderNode<RenderElementAdditionalInfo>;
+  renderEdge?: GraphEditorRenderEdge<RenderElementAdditionalInfo>;
+  renderNode?: GraphEditorRenderNode<RenderElementAdditionalInfo>;
   events?: RecordedEvent[]
   eventHistory?: EventHistory;
   playlists?: Playlist[];
@@ -136,7 +134,8 @@ const GraphEditorElement = (
   )
   const graphEditorRef = useForwardRef(ref)
   const selectedElement = React.useMemo(
-    () => graphEditorRef.current?.cy?.$id(R.last(selectedElementIds)!), // if (!localDataRef.current.initialized) {
+    () => graphEditorRef.current?.cy?.$id(R.last(selectedElementIds)!),
+    // if (!localDataRef.current.initialized) {
     //   const callback = () => {
     //     setTimeout(() => {
     //       if (graphEditorRef.current.cy) {
@@ -159,26 +158,27 @@ const GraphEditorElement = (
   const targetPath = selectedElementIsNode ? 'nodes' : 'edges'
   const onEventCallback = React.useCallback((eventInfo: EventInfo) => {
     const {
-      props:{
+      props: {
         nodes,
         edges,
-      }
+      },
     } = localDataRef.current
     switch (eventInfo.type) {
       case EVENT.PRESS_ADD_CLUSTER_ELEMENT:
         localDataRef.current.issuedClusterId = eventInfo.payload.clusterId
         break
-      case EVENT.CREATE_CLUSTER_BY_ALGORITHM_FORM_SUBMIT:{
+      case EVENT.CREATE_CLUSTER_BY_ALGORITHM_FORM_SUBMIT: {
         const {
           config = {},
           name,
         } = eventInfo.payload
-        const clusterCollections = Clusters[name].getByItem({
-          cy: graphEditorRef.current?.cy,
-          nodes: nodes,
-          edges: edges,
-          ...config,
-        })
+        const clusterCollections: cytoscape.Collection[] = Clusters[name as keyof typeof Clusters]
+          .getByItem({
+            cy: graphEditorRef.current?.cy,
+            nodes,
+            edges,
+            ...config,
+          })
         let clusterLength = (graphConfig?.clusters?.length ?? 0) - 1
         const clusters = clusterCollections.map((collection) => {
           const elementIds = collection.map((el) => el.id())
@@ -190,19 +190,19 @@ const GraphEditorElement = (
             childClusterIds: [],
           }
         })
-        if (clusters.length === 0){
+        if (clusters.length === 0) {
           alert('There is no clusters with this configuration!')
         } else {
           onEvent({
             id: R.uuid(),
-      date: new Date().toString(),
+            date: new Date().toString(),
             type: EVENT.CREATE_CLUSTER,
             payload: {
               items: clusters,
             },
           })
         }
-        
+
         return
       }
 
@@ -226,10 +226,12 @@ const GraphEditorElement = (
     })
   }, [onEvent, selectedItem?.id])
   const eventTimeoutsManager = useTimeoutManager(
-    events?.map((event, index) => ({
+    (events ?? []).map((event, index) => ({
       ...event,
-      after: events[index - 1]
-        ? new Date(event.date) - new Date(events[index - 1].date)
+      after: events?.[index - 1]
+        ? new Date(
+          event.date,
+        ).getMilliseconds() - new Date(events[index - 1].date).getMilliseconds()
         : 0,
     })),
     (event) => {
@@ -330,7 +332,7 @@ const GraphEditorElement = (
                 items: [{
                   id: R.uuid(),
                   position,
-                  data: {}
+                  data: {},
                 }],
               },
             })
@@ -518,8 +520,8 @@ const GraphEditorElement = (
                       id: R.uuid(),
                       name: `Cluster-${graphConfig?.clusters?.length ?? 0}`,
                       ids: localDataRef.current.newClusterBoxSelection.elementIds,
-                    childClusterIds: [],
-                    }]
+                      childClusterIds: [],
+                    }],
                   },
                 })
                 break
@@ -632,7 +634,6 @@ const extractGraphEditorData = (props: GraphEditorProps) => ({
   nodes: props.nodes,
   edges: props.edges,
 })
-
 
 export const GraphEditor = wrapComponent<
 PropsWithRef<GraphEditorRef, GraphEditorProps>

@@ -122,6 +122,7 @@
 		],
 		"@typescript-eslint/explicit-module-boundary-types": 0,
 		"react/jsx-props-no-spreading": 0,
+		"react/destructuring-assignment": 0,
 		"react/sort-comp": [
 			2,
 			{
