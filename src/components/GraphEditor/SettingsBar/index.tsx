@@ -1,8 +1,7 @@
 import { Icon } from '@components/Icon'
 import {
-  Accordion, AccordionDetails, AccordionSummary, Button, Dialog,
-  DialogTitle, Divider,
-  IconButton, Paper, TextField, Typography,
+  Accordion, AccordionDetails, AccordionSummary, Button, Divider,
+  IconButton, Paper, Typography,
 } from '@material-ui/core'
 import { FormProps } from '@rjsf/core'
 import Form from '@rjsf/material-ui'
@@ -15,9 +14,10 @@ import {
   useAnimation,
   View, wrapComponent,
 } from 'colay-ui'
+import { useImmer } from 'colay-ui/hooks/useImmer'
 import * as R from 'colay/ramda'
 import React from 'react'
-import { useImmer } from 'colay-ui/hooks/useImmer'
+import { useGraphEditor } from '@hooks'
 import { ClusterTable } from './ClusterTable'
 import { EventHistoryTable } from './EventHistoryTable'
 import { PlaylistTable } from './PlaylistTable'
@@ -58,6 +58,14 @@ const SettingsBarElement = (props: SettingsBarProps) => {
     // children,
     // ...formProps
   } = props
+  // const {
+  //   onEvent={onEventCallback}
+  //   eventHistory={eventHistory}
+  //   playlists={playlists}
+  //   clusters={graphConfig?.clusters}
+  //   editorMode={mode}
+  //   graphEditorLocalDataRef={localDataRef}
+  // } = useGraphEditor()
   const {
     style: animationStyle,
     ref: animationRef,
@@ -78,7 +86,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
     createPlaylistDialog: {
       visible: false,
     },
-    selectedEventIds: [] as string[]
+    selectedEventIds: [] as string[],
   })
   return (
     <Paper

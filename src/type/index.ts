@@ -338,3 +338,7 @@ GraphEditorProps,
 export type GraphEditorConfig = {
   enableNetworkStatistics?: boolean;
 }
+
+export type {
+  GraphEditorProps,
+} from '@components/GraphEditor'

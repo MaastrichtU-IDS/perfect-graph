@@ -31,6 +31,7 @@ import * as R from 'colay/ramda'
 import { Clusters } from '@core/clusters'
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import { ContextMenu } from '@components/ContextMenu'
+import { GraphEditorProvider } from '@hooks/useGraphEditor'
 import { ActionBar, ActionBarProps } from './ActionBar'
 import { DataBar, DataBarProps } from './DataBar'
 import { MouseIcon } from './MouseIcon'
@@ -261,225 +262,238 @@ const GraphEditorElement = (
     localDataRef.current.targetNode = null
   }, [mode])
   return (
-    <Box
-      style={{
-        ...style,
-        overflow: 'hidden',
-        position: 'relative',
-      }}
-      onMouseMove={(e) => {
-        throttle(
-          () => {
-            const {
-              pageY,
-            } = e.nativeEvent
-            const {
-              offsetHeight,
-              offsetTop,
-            } = e.currentTarget
-            if (props.actionBar && props.actionBar.autoOpen) {
-              if (pageY + 25 >= offsetTop + offsetHeight
-                && !props.actionBar?.opened) {
-                return onEventCallback({
-                  type: EVENT.TOGGLE_ACTION_BAR,
-                  avoidHistoryRecording: true,
-                })
-              }
-              if (pageY + 50 <= offsetTop + offsetHeight && props.actionBar?.opened) {
-                return onEventCallback({
-                  type: EVENT.TOGGLE_ACTION_BAR,
-                  avoidHistoryRecording: true,
-                })
-              }
-            }
-          },
-          1000,
-          'GraphEditorOnMouseMove',
-        )
+    <GraphEditorProvider
+      value={{
+        config,
+        eventHistory,
+        events,
+        graphConfig,
+        label,
+        mode,
+        onEvent: onEventCallback,
+        playlists,
+        selectedElementIds,
       }}
     >
-      <Graph
-        // @ts-ignore
-        ref={graphEditorRef}
+      <Box
         style={{
-          width: '100%',
-          height: '100%',
+          ...style,
+          overflow: 'hidden',
+          position: 'relative',
         }}
-        nodes={nodes}
-        edges={edges}
-        {...rest}
-        extraData={{
-          label,
-          extraData: rest.extraData,
+        onMouseMove={(e) => {
+          throttle(
+            () => {
+              const {
+                pageY,
+              } = e.nativeEvent
+              const {
+                offsetHeight,
+                offsetTop,
+              } = e.currentTarget
+              if (props.actionBar && props.actionBar.autoOpen) {
+                if (pageY + 25 >= offsetTop + offsetHeight
+                && !props.actionBar?.opened) {
+                  return onEventCallback({
+                    type: EVENT.TOGGLE_ACTION_BAR,
+                    avoidHistoryRecording: true,
+                  })
+                }
+                if (pageY + 50 <= offsetTop + offsetHeight && props.actionBar?.opened) {
+                  return onEventCallback({
+                    type: EVENT.TOGGLE_ACTION_BAR,
+                    avoidHistoryRecording: true,
+                  })
+                }
+              }
+            },
+            1000,
+            'GraphEditorOnMouseMove',
+          )
         }}
-        config={{
-          ...graphConfig,
-          graphId,
-        }}
-        selectedElementIds={selectedElementIds}
-        onPress={({ position }) => {
-          updateState((draft) => {
-            draft.contextMenu.visible = false
-          })
-          const { mode } = localDataRef.current.props
-          if (
-            // @ts-ignore
-            [EDITOR_MODE.ADD, EDITOR_MODE.CONTINUES_ADD].includes(mode)
-          ) {
-            onEventCallback({
-              type: EVENT.ADD_NODE,
-              payload: {
-                items: [{
-                  id: R.uuid(),
-                  position,
-                  data: {},
-                }],
-              },
+      >
+        <Graph
+        // @ts-ignore
+          ref={graphEditorRef}
+          style={{
+            width: '100%',
+            height: '100%',
+          }}
+          nodes={nodes}
+          edges={edges}
+          {...rest}
+          extraData={{
+            label,
+            extraData: rest.extraData,
+          }}
+          config={{
+            ...graphConfig,
+            graphId,
+          }}
+          selectedElementIds={selectedElementIds}
+          onPress={({ position }) => {
+            updateState((draft) => {
+              draft.contextMenu.visible = false
             })
-            return
-          }
-          onEventCallback({
-            type: EVENT.PRESS_BACKGROUND,
-            payload: { position },
-          })
-        }}
-        onBoxSelection={(event) => {
-          const { mode } = localDataRef.current.props
-          const {
-            elementIds,
-          } = event
-          if (EDITOR_MODE.ADD_CLUSTER_ELEMENT === mode) {
+            const { mode } = localDataRef.current.props
+            if (
+            // @ts-ignore
+              [EDITOR_MODE.ADD, EDITOR_MODE.CONTINUES_ADD].includes(mode)
+            ) {
+              onEventCallback({
+                type: EVENT.ADD_NODE,
+                payload: {
+                  items: [{
+                    id: R.uuid(),
+                    position,
+                    data: {},
+                  }],
+                },
+              })
+              return
+            }
             onEventCallback({
-              type: EVENT.ADD_CLUSTER_ELEMENTS,
+              type: EVENT.PRESS_BACKGROUND,
+              payload: { position },
+            })
+          }}
+          onBoxSelection={(event) => {
+            const { mode } = localDataRef.current.props
+            const {
+              elementIds,
+            } = event
+            if (EDITOR_MODE.ADD_CLUSTER_ELEMENT === mode) {
+              onEventCallback({
+                type: EVENT.ADD_CLUSTER_ELEMENTS,
+                payload: {
+                  clusterId: localDataRef.current.issuedClusterId,
+                  elementIds,
+                },
+              })
+              return
+            }
+            // TODO: DANGER**
+            localDataRef.current.newClusterBoxSelection.elementIds = elementIds
+            updateState((draft) => {
+              draft.contextMenu.visible = true
+              draft.contextMenu.position = getPointerPositionOnViewport(
+                graphEditorRef.current.viewport,
+                event.event.data.originalEvent,
+              )
+            })
+            // TODO: **DANGER
+            onEventCallback({
+              type: EVENT.BOX_SELECTION,
               payload: {
-                clusterId: localDataRef.current.issuedClusterId,
                 elementIds,
               },
             })
-            return
-          }
-          // TODO: DANGER**
-          localDataRef.current.newClusterBoxSelection.elementIds = elementIds
-          updateState((draft) => {
-            draft.contextMenu.visible = true
-            draft.contextMenu.position = getPointerPositionOnViewport(
-              graphEditorRef.current.viewport,
-              event.event.data.originalEvent,
-            )
-          })
-          // TODO: **DANGER
-          onEventCallback({
-            type: EVENT.BOX_SELECTION,
-            payload: {
-              elementIds,
-            },
-          })
-        }}
-        renderNode={({ item, element, ...rest }) => (
-          <Graph.Pressable
-            onPress={(event) => {
-              const { mode } = localDataRef.current.props
-              const elementId = element.id()
-              if (
+          }}
+          renderNode={({ item, element, ...rest }) => (
+            <Graph.Pressable
+              onPress={(event) => {
+                const { mode } = localDataRef.current.props
+                const elementId = element.id()
+                if (
                 // @ts-ignore
-                [
-                  EDITOR_MODE.DELETE,
-                  EDITOR_MODE.CONTINUES_DELETE].includes(mode)
-              ) {
-                onEventCallback({
-                  type: EVENT.DELETE_NODE,
-                  payload: {
-                    items: [item],
-                  },
-                  event,
-                })
-                return
-              }
-              if (
-                [EDITOR_MODE.ADD, EDITOR_MODE.CONTINUES_ADD].includes(mode)
-              ) {
-                if (localDataRef.current.targetNode) {
+                  [
+                    EDITOR_MODE.DELETE,
+                    EDITOR_MODE.CONTINUES_DELETE].includes(mode)
+                ) {
                   onEventCallback({
-                    type: EVENT.ADD_EDGE,
+                    type: EVENT.DELETE_NODE,
                     payload: {
-                      items: [{
-                        id: R.uuid(),
-                        source: localDataRef.current.targetNode.id(),
-                        target: elementId,
-                      }],
+                      items: [item],
                     },
                     event,
                   })
-                  localDataRef.current.targetNode = null
-                } else {
-                  localDataRef.current.targetNode = element
+                  return
                 }
-                return
-              }
-              if (EDITOR_MODE.ADD_CLUSTER_ELEMENT === mode) {
+                if (
+                  [EDITOR_MODE.ADD, EDITOR_MODE.CONTINUES_ADD].includes(mode)
+                ) {
+                  if (localDataRef.current.targetNode) {
+                    onEventCallback({
+                      type: EVENT.ADD_EDGE,
+                      payload: {
+                        items: [{
+                          id: R.uuid(),
+                          source: localDataRef.current.targetNode.id(),
+                          target: elementId,
+                        }],
+                      },
+                      event,
+                    })
+                    localDataRef.current.targetNode = null
+                  } else {
+                    localDataRef.current.targetNode = element
+                  }
+                  return
+                }
+                if (EDITOR_MODE.ADD_CLUSTER_ELEMENT === mode) {
+                  onEventCallback({
+                    type: EVENT.ADD_CLUSTER_ELEMENTS,
+                    payload: {
+                      clusterId: localDataRef.current.issuedClusterId,
+                      elementIds: [elementId],
+                    },
+                  })
+                  return
+                }
+                cyUnselectAll(graphEditorRef.current.cy)
+                element.select()
                 onEventCallback({
-                  type: EVENT.ADD_CLUSTER_ELEMENTS,
-                  payload: {
-                    clusterId: localDataRef.current.issuedClusterId,
-                    elementIds: [elementId],
-                  },
-                })
-                return
-              }
-              cyUnselectAll(graphEditorRef.current.cy)
-              element.select()
-              onEventCallback({
-                type: EVENT.ELEMENT_SELECTED,
-                elementId: element.id(),
-                event,
-              })
-            }}
-          >
-            {(renderNode ?? DefaultRenderNode)({
-              item,
-              element,
-              // @ts-ignore
-              label: getLabel(
-                label?.isGlobalFirst
-                  ? (label?.global.nodes ?? label?.nodes?.[item.id])
-                  : (label?.nodes?.[item.id] ?? label?.global.nodes),
-                item,
-              ),
-              labelPath: label?.isGlobalFirst
-                ? (label?.global.nodes ?? label?.nodes?.[item.id])
-                : (label?.nodes?.[item.id] ?? label?.global.nodes),
-              ...rest,
-            })}
-          </Graph.Pressable>
-        )}
-        renderEdge={({ item, element, ...rest }) => (
-          <Graph.Pressable
-            onPress={(event) => {
-              const { mode } = localDataRef.current.props
-              if (
-                // @ts-ignore
-                [
-                  EDITOR_MODE.DELETE,
-                  EDITOR_MODE.CONTINUES_DELETE].includes(mode)
-              ) {
-                onEventCallback({
-                  type: EVENT.DELETE_EDGE,
-                  payload: {
-                    items: [item],
-                  },
+                  type: EVENT.ELEMENT_SELECTED,
+                  elementId: element.id(),
                   event,
                 })
-                return
-              }
-              cyUnselectAll(graphEditorRef.current.cy)
-              element.select()
-              onEventCallback({
-                type: EVENT.ELEMENT_SELECTED,
-                elementId: element.id(),
-              })
-            }}
-          >
-            {
+              }}
+            >
+              {(renderNode ?? DefaultRenderNode)({
+                item,
+                element,
+                // @ts-ignore
+                label: getLabel(
+                  label?.isGlobalFirst
+                    ? (label?.global.nodes ?? label?.nodes?.[item.id])
+                    : (label?.nodes?.[item.id] ?? label?.global.nodes),
+                  item,
+                ),
+                labelPath: label?.isGlobalFirst
+                  ? (label?.global.nodes ?? label?.nodes?.[item.id])
+                  : (label?.nodes?.[item.id] ?? label?.global.nodes),
+                ...rest,
+              })}
+            </Graph.Pressable>
+          )}
+          renderEdge={({ item, element, ...rest }) => (
+            <Graph.Pressable
+              onPress={(event) => {
+                const { mode } = localDataRef.current.props
+                if (
+                // @ts-ignore
+                  [
+                    EDITOR_MODE.DELETE,
+                    EDITOR_MODE.CONTINUES_DELETE].includes(mode)
+                ) {
+                  onEventCallback({
+                    type: EVENT.DELETE_EDGE,
+                    payload: {
+                      items: [item],
+                    },
+                    event,
+                  })
+                  return
+                }
+                cyUnselectAll(graphEditorRef.current.cy)
+                element.select()
+                onEventCallback({
+                  type: EVENT.ELEMENT_SELECTED,
+                  elementId: element.id(),
+                })
+              }}
+            >
+              {
                // @ts-ignore
             (renderEdge ?? DefaultRenderEdge)({
               item,
@@ -497,80 +511,74 @@ const GraphEditorElement = (
               ...rest,
             })
 }
-          </Graph.Pressable>
-        )}
-      >
-        <ContextMenu
-          graphEditorRef={graphEditorRef}
-          items={[
-            { value: 'CreateCluster', label: 'Create Cluster' },
-            { value: 'Delete', label: 'Delete' },
-            { value: 'Settings', label: 'Settings' },
-          ]}
-          onSelect={(value) => {
-            updateState((draft) => {
-              draft.contextMenu.visible = false
-            })
-            switch (value) {
-              case 'CreateCluster':
-                onEventCallback({
-                  type: EVENT.CREATE_CLUSTER,
-                  payload: {
-                    items: [{
-                      id: R.uuid(),
-                      name: `Cluster-${graphConfig?.clusters?.length ?? 0}`,
-                      ids: localDataRef.current.newClusterBoxSelection.elementIds,
-                      childClusterIds: [],
-                    }],
-                  },
-                })
-                break
-              case 'Delete':
-                onEventCallback({
-                  type: EVENT.DELETE_NODE,
-                  payload: {
-                    items: nodes.filter(
-                      (nodeItem) => localDataRef.current.newClusterBoxSelection.elementIds
-                        .includes(nodeItem.id),
-                    ),
-                  },
-                })
-                break
-            }
-            localDataRef.current.newClusterBoxSelection.elementIds = []
-          }}
-          position={state.contextMenu.position}
-          open={state.contextMenu.visible}
-        />
-      </Graph>
-      {
+            </Graph.Pressable>
+          )}
+        >
+          <ContextMenu
+            graphEditorRef={graphEditorRef}
+            items={[
+              { value: 'CreateCluster', label: 'Create Cluster' },
+              { value: 'Delete', label: 'Delete' },
+              { value: 'Settings', label: 'Settings' },
+            ]}
+            onSelect={(value) => {
+              updateState((draft) => {
+                draft.contextMenu.visible = false
+              })
+              switch (value) {
+                case 'CreateCluster':
+                  onEventCallback({
+                    type: EVENT.CREATE_CLUSTER,
+                    payload: {
+                      items: [{
+                        id: R.uuid(),
+                        name: `Cluster-${graphConfig?.clusters?.length ?? 0}`,
+                        ids: localDataRef.current.newClusterBoxSelection.elementIds,
+                        childClusterIds: [],
+                      }],
+                    },
+                  })
+                  break
+                case 'Delete':
+                  onEventCallback({
+                    type: EVENT.DELETE_NODE,
+                    payload: {
+                      items: nodes.filter(
+                        (nodeItem) => localDataRef.current.newClusterBoxSelection.elementIds
+                          .includes(nodeItem.id),
+                      ),
+                    },
+                  })
+                  break
+              }
+              localDataRef.current.newClusterBoxSelection.elementIds = []
+            }}
+            position={state.contextMenu.position}
+            open={state.contextMenu.visible}
+          />
+        </Graph>
+        {
         settingsBar && (
           <SettingsBar
             {...settingsBar}
-            onEvent={onEventCallback}
-            eventHistory={eventHistory}
-            playlists={playlists}
-            clusters={graphConfig?.clusters}
-            editorMode={mode}
-            graphEditorLocalDataRef={localDataRef}
           />
         )
       }
-      <DataBar
-        {...dataBar}
-        graphEditorConfig={config}
-        item={selectedItem}
-        localLabel={selectedElement && (label?.[targetPath][selectedItem?.id!])}
-        globalLabel={label?.global?.[targetPath]}
-        isGlobalLabelFirst={label?.isGlobalFirst?.[targetPath]}
-        onEvent={onEventCallback}
-        statistics={{
-          localNetworkStatistics: localNetworkStatisticsRef.current?.[selectedItem?.id],
-          // globalNetworkStatistics: localNetworkStatisticsRef.current?.[selectedItem?.id],
-        }}
-      />
+        <DataBar
+          {...dataBar}
+          graphEditorConfig={config}
+          item={selectedItem}
+          localLabel={selectedElement && (label?.[targetPath][selectedItem?.id!])}
+          globalLabel={label?.global?.[targetPath]}
+          isGlobalLabelFirst={label?.isGlobalFirst?.[targetPath]}
+          onEvent={onEventCallback}
+          statistics={{
+            localNetworkStatistics: localNetworkStatisticsRef.current?.[selectedItem?.id],
+            // globalNetworkStatistics: localNetworkStatisticsRef.current?.[selectedItem?.id],
+          }}
+        />
 
-      {
+        {
         actionBar && (
         <ActionBar
           onEvent={onEventCallback}
@@ -608,19 +616,21 @@ const GraphEditorElement = (
         />
         )
 }
-      <MouseIcon
+        <MouseIcon
         // name={MODE_ICON_MAP[mode]}
-        name={MODE_ICON_MAP_BY_URL[mode]}
-        cursor
-      />
-      <RecordedEventsModal
-        timeoutManager={eventTimeoutsManager}
-        onClose={() => {
-          updateState(() => {})
-          eventTimeoutsManager.clear()
-        }}
-      />
-    </Box>
+          name={MODE_ICON_MAP_BY_URL[mode]}
+          cursor
+        />
+        <RecordedEventsModal
+          timeoutManager={eventTimeoutsManager}
+          onClose={() => {
+            updateState(() => {})
+            eventTimeoutsManager.clear()
+          }}
+        />
+      </Box>
+    </GraphEditorProvider>
+
   )
 }
 
