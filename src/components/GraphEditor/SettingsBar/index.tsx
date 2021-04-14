@@ -46,26 +46,31 @@ const WIDTH_PROPORTION = 30
 const SettingsBarElement = (props: SettingsBarProps) => {
   const {
     opened = false,
-    onEvent,
     // schema = {},
     forms = [],
-    eventHistory,
-    clusters,
     createClusterForm,
-    graphEditorLocalDataRef,
-    editorMode,
-    playlists,
     // children,
     // ...formProps
   } = props
-  // const {
-  //   onEvent={onEventCallback}
-  //   eventHistory={eventHistory}
-  //   playlists={playlists}
-  //   clusters={graphConfig?.clusters}
-  //   editorMode={mode}
-  //   graphEditorLocalDataRef={localDataRef}
-  // } = useGraphEditor()
+  const [
+    a,
+  ] = useGraphEditor(
+    (editor) => ({
+      onEvent: editor.onEvent,
+      eventHistory: editor.eventHistory,
+      playlists: editor.playlists,
+      clusters: editor.graphConfig?.clusters,
+      // editorMode: editor.mode,
+      // graphEditorLocalDataRef: editor.localDataRef,
+    }),
+  )
+  const {
+    onEvent,
+    eventHistory,
+    clusters,
+    playlists,
+  } = a
+  console.log('a', a)
   const {
     style: animationStyle,
     ref: animationRef,
@@ -181,8 +186,6 @@ const SettingsBarElement = (props: SettingsBarProps) => {
                 draft.createPlaylistDialog.visible = false
               }),
             }}
-            onEvent={onEvent}
-            playlists={playlists}
             onCreatePlaylist={(playlistWithoutEvents) => {
               const playlistEvents = state.selectedEventIds.map(
                 (eventId) => eventHistory.events.find((event) => event.id === eventId)!,
@@ -217,11 +220,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
             }}
           >
             <ClusterTable
-              clusters={clusters}
-              onEvent={onEvent}
               createClusterForm={createClusterForm}
-              graphEditorLocalDataRef={graphEditorLocalDataRef}
-              editorMode={editorMode}
             />
           </View>
           <Divider style={{ marginTop: 5, marginBottom: 5 }} />

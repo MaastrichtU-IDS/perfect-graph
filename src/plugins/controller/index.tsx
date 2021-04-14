@@ -475,7 +475,7 @@ export const useController = (
             const {
               items = [],
             } = payload
-            draft.graphConfig.clusters  = draft.graphConfig?.clusters?.concat(items)
+            draft.graphConfig.clusters = draft.graphConfig?.clusters?.concat(items)
             break
           }
           case EVENT.PRESS_ADD_CLUSTER_ELEMENT: {

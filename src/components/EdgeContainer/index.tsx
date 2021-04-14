@@ -169,7 +169,10 @@ const EdgeContainerElement = (
     })
   }, [containerRef, graphicsRef])
   const onPositionChange = React.useCallback(({ element }) => {
-    drawLineCallback(element)
+    drawLineCallback({
+      cy,
+      element,
+    })
   }, [drawLineCallback])
   const { element, cy, context } = useEdge({
     id: item.id,

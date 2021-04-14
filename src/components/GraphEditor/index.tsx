@@ -134,6 +134,13 @@ const GraphEditorElement = (
     [graphConfig?.graphId],
   )
   const graphEditorRef = useForwardRef(ref)
+  // @TODO: DANGER
+  React.useEffect(() => {
+    setTimeout(() => {
+      ref.current = graphEditorRef.current
+    }, 1000)
+  }, [graphEditorRef.current])
+  // @TODO: DANGER
   const selectedElement = React.useMemo(
     () => graphEditorRef.current?.cy?.$id(R.last(selectedElementIds)!),
     // if (!localDataRef.current.initialized) {
@@ -261,19 +268,32 @@ const GraphEditorElement = (
   React.useEffect(() => {
     localDataRef.current.targetNode = null
   }, [mode])
+  const graphEditorValue = React.useMemo(() => ({
+    config,
+    eventHistory,
+    events,
+    graphConfig,
+    label,
+    mode,
+    onEvent: onEventCallback,
+    playlists,
+    selectedElementIds,
+    localDataRef,
+  }),
+  [
+    config,
+    eventHistory,
+    events,
+    graphConfig,
+    label,
+    mode,
+    onEventCallback,
+    playlists,
+    selectedElementIds,
+  ])
   return (
     <GraphEditorProvider
-      value={{
-        config,
-        eventHistory,
-        events,
-        graphConfig,
-        label,
-        mode,
-        onEvent: onEventCallback,
-        playlists,
-        selectedElementIds,
-      }}
+      value={graphEditorValue}
     >
       <Box
         style={{

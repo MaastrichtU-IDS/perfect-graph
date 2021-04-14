@@ -1,6 +1,7 @@
-import { createProvider } from 'colay-ui'
+// import { createStoreProvider } from 'colay-ui'
+import { createStoreProvider } from '@root/components/GraphEditor/createStoreProviderWithoutImmer'
 import {
-  OnEvent,
+  OnEventLite,
   GraphConfig,
   GraphEditorConfig,
   GraphLabelData,
@@ -13,7 +14,7 @@ import {
 } from '@type'
 
 export type GraphEditor = {
-  onEvent?: OnEvent;
+  onEvent: OnEventLite;
   graphConfig?: GraphConfig;
   config?: GraphEditorConfig;
   label?: GraphLabelData;
@@ -35,17 +36,12 @@ export type GraphEditor = {
 }
 
 const {
+  // store,
   Context,
+  useSelector,
   Provider,
-  useProvider,
-} = createProvider<GraphEditor>({
-  // @ts-ignore
-  value: {},
-})
+} = createStoreProvider<GraphEditor>({} as unknown as GraphEditor)
 
 export const GraphEditorContext = Context
 export const GraphEditorProvider = Provider
-export const useGraphEditor = () => {
-  const [value] = useProvider()
-  return value
-}
+export const useGraphEditor = useSelector

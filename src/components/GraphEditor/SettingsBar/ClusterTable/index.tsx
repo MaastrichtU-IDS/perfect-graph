@@ -25,6 +25,7 @@ import {
 } from 'colay-ui'
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import * as R from 'colay/ramda'
+import { useGraphEditor } from '@hooks'
 
 import { CreateClusterByAlgorithm } from './CreateClusterByAlgorithm'
 
@@ -43,12 +44,23 @@ export const ClusterTable = (props: ClusterTableProps) => {
   const {
     // onSelectAllClusters,
     // onSelectCluster,
-    onEvent,
-    clusters,
     createClusterForm,
-    editorMode,
-    graphEditorLocalDataRef,
   } = props
+  const [
+    {
+      onEvent,
+      clusters,
+      editorMode,
+      graphEditorLocalDataRef,
+    },
+  ] = useGraphEditor(
+    (editor) => ({
+      clusters: editor.graphConfig?.clusters,
+      onEvent: editor.onEvent,
+      graphEditorLocalDataRef: editor.localDataRef,
+      editorMode: editor.mode,
+    }),
+  )
   const [state, updateState] = useImmer({
     expanded: true,
     selectedClusterIds: [] as string[],
@@ -307,7 +319,9 @@ export const ClusterTable = (props: ClusterTableProps) => {
                             }}
                           >
                             <SpeedDialActionsView
-                              {...props}
+                              graphEditorLocalDataRef={graphEditorLocalDataRef}
+                              editorMode={editorMode}
+                              onEvent={onEvent}
                               item={cluster}
                             />
                             <IconButton
