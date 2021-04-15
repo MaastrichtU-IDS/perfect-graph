@@ -19,6 +19,7 @@ import {
 } from '@material-ui/core'
 import { Icon } from '@components/Icon'
 import * as R from 'colay/ramda'
+import { useGraphEditor } from '@hooks'
 import { DataEditor, DataEditorProps } from '../DataEditor'
 import { LocalNetworkStatistics } from './LocalNetworkStatistics'
 import { GlobalNetworkStatistics } from './GlobalNetworkStatistics'
@@ -41,16 +42,43 @@ const ICON_SIZE = 16
 export const DataBar = (props: DataBarProps) => {
   const {
     editable = true,
-    item,
-    onEvent,
     opened = false,
-    // graphEditorConfig,
-    statistics,
-    globalLabel,
-    localLabel,
-    isGlobalLabelFirst,
     ...rest
   } = props
+
+  const [
+    {
+      item,
+      onEvent,
+      statistics,
+      globalLabel,
+      localLabel,
+      isGlobalLabelFirst,
+    },
+  ] = useGraphEditor(
+    (editor) => {
+      const {
+        selectedElement,
+        selectedItem,
+        label,
+        localDataRef,
+      } = editor
+      const targetPath = selectedElement?.isNode() ? 'nodes' : 'edges'
+      return {
+        graphEditorConfig: editor.config,
+        item: editor.selectedItem,
+        localLabel: selectedElement && (label?.[targetPath][selectedItem?.id!]),
+        globalLabel: label?.global?.[targetPath],
+        isGlobalLabelFirst: label?.isGlobalFirst?.[targetPath],
+        onEvent: editor.onEvent,
+        statistics: {
+          localNetworkStatistics: localDataRef.current.localNetworkStatistics?.[selectedItem?.id],
+          globalNetworkStatistics: localDataRef.current.localNetworkStatistics?.[selectedItem?.id],
+        },
+      }
+    },
+  )
+
   const {
     style: animationStyle,
     ref: animationRef,

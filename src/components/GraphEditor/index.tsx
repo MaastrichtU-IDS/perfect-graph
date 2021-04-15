@@ -16,6 +16,7 @@ import {
   GraphEditorConfig,
   NodeElement,
   Playlist,
+  OnEventLite,
 } from '@type'
 import {
   getLabel, getSelectedItemByElement,
@@ -58,6 +59,7 @@ export type GraphEditorProps = {
   events?: RecordedEvent[]
   eventHistory?: EventHistory;
   playlists?: Playlist[];
+  globalNetworkStatistics?: any;
 } & Omit<
 GraphProps,
 'config'|'onPress' | 'renderNode' | 'renderEdge'
@@ -85,7 +87,7 @@ const GraphEditorElement = (
   ref: React.ForwardedRef<GraphEditorRef>,
 ) => {
   const {
-    onEvent = DEFAULT_HANDLER,
+    onEvent: onEventCallback = DEFAULT_HANDLER,
     renderEdge,
     renderNode,
     graphConfig,
@@ -102,6 +104,7 @@ const GraphEditorElement = (
     eventHistory,
     config = DEFAULT_GRAPH_EDITOR_CONFIG,
     playlists,
+    globalNetworkStatistics,
     ...rest
   } = props
   const localDataRef = React.useRef({
@@ -112,6 +115,7 @@ const GraphEditorElement = (
     newClusterBoxSelection: {
       elementIds: [] as string[],
     },
+    localNetworkStatistics: null,
   })
   const [state, updateState] = useImmer({
     eventsModal: {
@@ -164,7 +168,7 @@ const GraphEditorElement = (
   ).item
   const selectedElementIsNode = selectedElement && selectedElement.isNode()
   const targetPath = selectedElementIsNode ? 'nodes' : 'edges'
-  const onEventCallback = React.useCallback((eventInfo: EventInfo) => {
+  const onEvent: OnEventLite = React.useCallback((eventInfo) => {
     const {
       props: {
         nodes,
@@ -201,7 +205,7 @@ const GraphEditorElement = (
         if (clusters.length === 0) {
           alert('There is no clusters with this configuration!')
         } else {
-          onEvent({
+          onEventCallback({
             id: R.uuid(),
             date: new Date().toString(),
             type: EVENT.CREATE_CLUSTER,
@@ -217,7 +221,7 @@ const GraphEditorElement = (
       default:
         break
     }
-    onEvent({
+    onEventCallback({
       ...(selectedElement ? { elementId: selectedElement.id() } : {}),
       ...eventInfo,
       id: R.uuid(),
@@ -232,7 +236,7 @@ const GraphEditorElement = (
           : {}
       ),
     })
-  }, [onEvent, selectedItem?.id])
+  }, [onEventCallback, selectedItem?.id])
   const eventTimeoutsManager = useTimeoutManager(
     (events ?? []).map((event, index) => ({
       ...event,
@@ -243,7 +247,7 @@ const GraphEditorElement = (
         : 0,
     })),
     (event) => {
-      onEvent(event)
+      onEventCallback(event)
     },
     {
       deps: [events],
@@ -252,17 +256,29 @@ const GraphEditorElement = (
       autostart: false,
     },
   )
-  const localNetworkStatisticsRef = React.useRef(null)
+  // const localNetworkStatisticsRef = React.useRef(null)
+  // React.useEffect(() => {
+  //   if (!config.enableNetworkStatistics) {
+  //     localNetworkStatisticsRef.current = null
+  //   } else {
+  //     localNetworkStatisticsRef.current = calculateStatistics({ nodes, edges })
+  //   }
+  // }, [])
+  // React.useMemo(() => {
+  //   if (localDataRef.current.initialized) {
+  //     localNetworkStatisticsRef.current = calculateStatistics({ nodes, edges })
+  //   }
+  // }, [nodes, edges, config.enableNetworkStatistics])
   React.useEffect(() => {
     if (!config.enableNetworkStatistics) {
-      localNetworkStatisticsRef.current = null
+      localDataRef.current.localNetworkStatistics = null
     } else {
-      localNetworkStatisticsRef.current = calculateStatistics({ nodes, edges })
+      localDataRef.current.localNetworkStatistics = calculateStatistics({ nodes, edges })
     }
   }, [])
   React.useMemo(() => {
     if (localDataRef.current.initialized) {
-      localNetworkStatisticsRef.current = calculateStatistics({ nodes, edges })
+      localDataRef.current.localNetworkStatistics = calculateStatistics({ nodes, edges })
     }
   }, [nodes, edges, config.enableNetworkStatistics])
   React.useEffect(() => {
@@ -275,10 +291,14 @@ const GraphEditorElement = (
     graphConfig,
     label,
     mode,
-    onEvent: onEventCallback,
+    onEvent,
     playlists,
     selectedElementIds,
     localDataRef,
+    selectedItem,
+    selectedElement,
+    globalNetworkStatistics,
+    graphEditorRef,
   }),
   [
     config,
@@ -287,9 +307,13 @@ const GraphEditorElement = (
     graphConfig,
     label,
     mode,
-    onEventCallback,
+    onEvent,
     playlists,
     selectedElementIds,
+    selectedItem,
+    selectedElement,
+    globalNetworkStatistics,
+    graphEditorRef,
   ])
   return (
     <GraphEditorProvider
@@ -314,13 +338,13 @@ const GraphEditorElement = (
               if (props.actionBar && props.actionBar.autoOpen) {
                 if (pageY + 25 >= offsetTop + offsetHeight
                 && !props.actionBar?.opened) {
-                  return onEventCallback({
+                  return onEvent({
                     type: EVENT.TOGGLE_ACTION_BAR,
                     avoidHistoryRecording: true,
                   })
                 }
                 if (pageY + 50 <= offsetTop + offsetHeight && props.actionBar?.opened) {
-                  return onEventCallback({
+                  return onEvent({
                     type: EVENT.TOGGLE_ACTION_BAR,
                     avoidHistoryRecording: true,
                   })
@@ -360,7 +384,7 @@ const GraphEditorElement = (
             // @ts-ignore
               [EDITOR_MODE.ADD, EDITOR_MODE.CONTINUES_ADD].includes(mode)
             ) {
-              onEventCallback({
+              onEvent({
                 type: EVENT.ADD_NODE,
                 payload: {
                   items: [{
@@ -372,7 +396,7 @@ const GraphEditorElement = (
               })
               return
             }
-            onEventCallback({
+            onEvent({
               type: EVENT.PRESS_BACKGROUND,
               payload: { position },
             })
@@ -383,7 +407,7 @@ const GraphEditorElement = (
               elementIds,
             } = event
             if (EDITOR_MODE.ADD_CLUSTER_ELEMENT === mode) {
-              onEventCallback({
+              onEvent({
                 type: EVENT.ADD_CLUSTER_ELEMENTS,
                 payload: {
                   clusterId: localDataRef.current.issuedClusterId,
@@ -402,7 +426,7 @@ const GraphEditorElement = (
               )
             })
             // TODO: **DANGER
-            onEventCallback({
+            onEvent({
               type: EVENT.BOX_SELECTION,
               payload: {
                 elementIds,
@@ -420,7 +444,7 @@ const GraphEditorElement = (
                     EDITOR_MODE.DELETE,
                     EDITOR_MODE.CONTINUES_DELETE].includes(mode)
                 ) {
-                  onEventCallback({
+                  onEvent({
                     type: EVENT.DELETE_NODE,
                     payload: {
                       items: [item],
@@ -433,7 +457,7 @@ const GraphEditorElement = (
                   [EDITOR_MODE.ADD, EDITOR_MODE.CONTINUES_ADD].includes(mode)
                 ) {
                   if (localDataRef.current.targetNode) {
-                    onEventCallback({
+                    onEvent({
                       type: EVENT.ADD_EDGE,
                       payload: {
                         items: [{
@@ -451,7 +475,7 @@ const GraphEditorElement = (
                   return
                 }
                 if (EDITOR_MODE.ADD_CLUSTER_ELEMENT === mode) {
-                  onEventCallback({
+                  onEvent({
                     type: EVENT.ADD_CLUSTER_ELEMENTS,
                     payload: {
                       clusterId: localDataRef.current.issuedClusterId,
@@ -462,7 +486,7 @@ const GraphEditorElement = (
                 }
                 cyUnselectAll(graphEditorRef.current.cy)
                 element.select()
-                onEventCallback({
+                onEvent({
                   type: EVENT.ELEMENT_SELECTED,
                   elementId: element.id(),
                   event,
@@ -496,7 +520,7 @@ const GraphEditorElement = (
                     EDITOR_MODE.DELETE,
                     EDITOR_MODE.CONTINUES_DELETE].includes(mode)
                 ) {
-                  onEventCallback({
+                  onEvent({
                     type: EVENT.DELETE_EDGE,
                     payload: {
                       items: [item],
@@ -507,7 +531,7 @@ const GraphEditorElement = (
                 }
                 cyUnselectAll(graphEditorRef.current.cy)
                 element.select()
-                onEventCallback({
+                onEvent({
                   type: EVENT.ELEMENT_SELECTED,
                   elementId: element.id(),
                 })
@@ -547,7 +571,7 @@ const GraphEditorElement = (
               })
               switch (value) {
                 case 'CreateCluster':
-                  onEventCallback({
+                  onEvent({
                     type: EVENT.CREATE_CLUSTER,
                     payload: {
                       items: [{
@@ -560,7 +584,7 @@ const GraphEditorElement = (
                   })
                   break
                 case 'Delete':
-                  onEventCallback({
+                  onEvent({
                     type: EVENT.DELETE_NODE,
                     payload: {
                       items: nodes.filter(
@@ -569,6 +593,8 @@ const GraphEditorElement = (
                       ),
                     },
                   })
+                  break
+                default:
                   break
               }
               localDataRef.current.newClusterBoxSelection.elementIds = []
@@ -586,29 +612,15 @@ const GraphEditorElement = (
       }
         <DataBar
           {...dataBar}
-          graphEditorConfig={config}
-          item={selectedItem}
-          localLabel={selectedElement && (label?.[targetPath][selectedItem?.id!])}
-          globalLabel={label?.global?.[targetPath]}
-          isGlobalLabelFirst={label?.isGlobalFirst?.[targetPath]}
-          onEvent={onEventCallback}
-          statistics={{
-            localNetworkStatistics: localNetworkStatisticsRef.current?.[selectedItem?.id],
-            // globalNetworkStatistics: localNetworkStatisticsRef.current?.[selectedItem?.id],
-          }}
         />
 
         {
         actionBar && (
         <ActionBar
-          onEvent={onEventCallback}
-          graphEditorRef={graphEditorRef}
-          mode={mode}
-          graphConfig={graphConfig}
           onAction={({ type, value }) => {
             switch (type) {
               case EVENT.EXPORT_DATA:
-                onEventCallback({
+                onEvent({
                   type: EVENT.EXPORT_DATA,
                   payload: {
                     value: extractGraphEditorData(props),
@@ -616,7 +628,7 @@ const GraphEditorElement = (
                 })
                 break
               case EVENT.CHANGE_THEME:
-                onEventCallback({
+                onEvent({
                   type: EVENT.CHANGE_THEME,
                   payload: {
                     value,
@@ -625,7 +637,7 @@ const GraphEditorElement = (
                 break
 
               default:
-                onEventCallback({
+                onEvent({
                   type,
                   payload: value,
                 })

@@ -1,6 +1,7 @@
 import React from 'react'
 import { Text } from 'colay-ui'
 import * as R from 'colay/ramda'
+import { useImmer } from 'colay-ui/hooks/useImmer'
 import { BehaviorSubject } from 'colay-ui/utils/BehaviorSubject'
 import createPersistor, { PersistorOptions } from 'colay-ui/utils/createPersistor'
 
@@ -19,7 +20,8 @@ export type Logger<T> = (input: { name: string; state: T }) => void
 type Options<T> ={
   fallback?: React.ReactNode;
   logger?: Logger<T>;
-  init: (state: T) => Promise<T> | T;
+  init?: (state: T) => Promise<T> | T;
+  immer?: boolean;
 } & Partial<PersistorOptions<T>>
 
 export const createStoreProvider = <T extends any>(
@@ -34,6 +36,7 @@ export const createStoreProvider = <T extends any>(
     migrations,
     logger,
     init = R.identity,
+    immer = true,
   } = options ?? {}
   const persistor = persist
     ? createPersistor({
@@ -136,14 +139,27 @@ export const createStoreProvider = <T extends any>(
       const { children, value: _value } = props
       const value = _value ?? defaultState
       const [
-        nextState,
-        update,
+        immerNextState,
+        immerUpdate,
+        immerUpdateSettings,
+      ] = useImmer<T, UpdateConfig>(value, { logger })
+      const [
+        mutableNextState,
+        setState,
       ] = React.useState<T>(value)
-      const updateSettings = {
-        set: (val:T) => update(val),
-        clear: () => update(defaultState),
+      const mutableUpdateSettings = {
+        set: (val:T) => setState(val),
+        clear: () => setState(defaultState),
       }
+      const mutableUpdate = React.useCallback((updateCallback) => {
+        updateCallback(storeRef.current.state)
+        setState(storeRef.current.state)
+      }, [])
+      const nextState = immer ? immerNextState : mutableNextState
+      const update = immer ? immerUpdate : mutableUpdate
+      const updateSettings = immer ? immerUpdateSettings : mutableUpdateSettings
       storeRef.current.state = nextState
+      // @ts-ignore
       storeRef.current.update = update
       storeRef.current.set = updateSettings.set
       storeRef.current.clear = updateSettings.clear

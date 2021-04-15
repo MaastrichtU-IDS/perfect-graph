@@ -1,5 +1,6 @@
 // import { createStoreProvider } from 'colay-ui'
-import { createStoreProvider } from '@root/components/GraphEditor/createStoreProviderWithoutImmer'
+// import { createStoreProvider } from '@root/components/GraphEditor/createStoreProviderWithoutImmer'
+import { createStoreProvider } from '@root/components/GraphEditor/createStoreProvider'
 import {
   OnEventLite,
   GraphConfig,
@@ -11,6 +12,9 @@ import {
   Playlist,
   NodeElement,
   GraphEditorProps,
+  ElementData,
+  Element,
+  GraphEditorRef,
 } from '@type'
 
 export type GraphEditor = {
@@ -23,7 +27,7 @@ export type GraphEditor = {
   events?: RecordedEvent[]
   eventHistory?: EventHistory;
   playlists?: Playlist[];
-  localDataRef: {
+  localDataRef: React.Ref<{
     initialized: false;
     targetNode: NodeElement | null;
     props: GraphEditorProps;
@@ -31,8 +35,12 @@ export type GraphEditor = {
     newClusterBoxSelection: {
       elementIds: string[];
     };
-  };
-  localNetworkStatistics?: any;
+    localNetworkStatistics?: any;
+  }>;
+  globalNetworkStatistics?: any;
+  selectedItem?: ElementData;
+  selectedElement?: Element;
+  graphEditorRef: React.RefObject<GraphEditorRef>
 }
 
 const {
@@ -40,7 +48,7 @@ const {
   Context,
   useSelector,
   Provider,
-} = createStoreProvider<GraphEditor>({} as unknown as GraphEditor)
+} = createStoreProvider<GraphEditor>({} as unknown as GraphEditor, { immer: false })
 
 export const GraphEditorContext = Context
 export const GraphEditorProvider = Provider

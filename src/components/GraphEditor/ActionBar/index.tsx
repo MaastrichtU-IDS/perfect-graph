@@ -21,7 +21,7 @@ import { Recorder } from 'colay-ui/components/Recorder'
 import * as R from 'colay/ramda'
 import React from 'react'
 import { LayoutOptions } from './LayoutOptions'
-
+import { useGraphEditor } from '@hooks'
 // export const ACTION = {
 //   EXPORT_DATA: 'EXPORT_DATA',
 // }
@@ -33,7 +33,6 @@ export type ActionBarProps = {
   renderMoreAction?: () => React.ReactElement;
   opened?: boolean;
   autoOpen?: boolean;
-  onEvent: OnEventLite;
   mode?: EditorMode;
   layoutName?: string;
   theming?: {
@@ -45,9 +44,6 @@ export type ActionBarProps = {
   }
   recording?: boolean;
   eventRecording?: boolean;
-  graphEditorRef: React.MutableRefObject<GraphEditorRef>;
-  // layout?: LayoutOptionsValue;
-  graphConfig?: GraphConfig;
   actions?: {
     add: ActionOption;
     recordEvents: ActionOption;
@@ -82,16 +78,12 @@ const HEIGHT = 40
 
 const ActionBarElement = (props: ActionBarProps) => {
   const {
-    onEvent,
     renderMoreAction,
-    mode,
     opened = false,
     autoOpen= false,
     recording = false,
     eventRecording = false,
     // recordingActions = false,
-    graphEditorRef,
-    graphConfig,
     onAction,
     theming = {
       options: [
@@ -100,8 +92,22 @@ const ActionBarElement = (props: ActionBarProps) => {
       ],
       value: 'Default',
     },
-
   } = props
+  const [
+    {
+      onEvent,
+      graphEditorRef,
+      mode,
+      graphConfig,
+    }
+  ] = useGraphEditor(
+    (editor) => ({
+      onEvent: editor.onEvent,
+      graphEditorRef: editor.graphEditorRef,
+      mode: editor.mode,
+      graphConfig: editor.graphConfig,
+    })
+  )
   const {
     style: animationStyle,
     ref: animationRef,

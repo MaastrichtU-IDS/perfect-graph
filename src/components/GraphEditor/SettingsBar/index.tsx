@@ -70,7 +70,6 @@ const SettingsBarElement = (props: SettingsBarProps) => {
     clusters,
     playlists,
   } = a
-  console.log('a', a)
   const {
     style: animationStyle,
     ref: animationRef,
