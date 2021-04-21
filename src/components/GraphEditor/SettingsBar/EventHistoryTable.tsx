@@ -1,36 +1,26 @@
 import { Icon } from '@components/Icon'
+import { SortableList } from '@components/SortableList'
+import { SpeedDialCreator } from '@components/SpeedDialCreator'
 import {
-  IconButton, Typography,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemSecondaryAction,
-  ListItemAvatar,
-  Checkbox,
-  Dialog,
-  DialogTitle,
-  TextField, Button,
-  Card,
+  Card, Checkbox, IconButton, List,
+  ListItem, ListItemAvatar, ListItemText, Typography,
 } from '@material-ui/core'
+import Accordion from '@material-ui/core/Accordion'
+import AccordionDetails from '@material-ui/core/AccordionDetails'
+import AccordionSummary from '@material-ui/core/AccordionSummary'
 import {
   EventHistory,
   OnEventLite,
-  Playlist,
 } from '@type'
-import { EVENT, MOCK_DATA } from '@utils/constants'
+import { EVENT } from '@utils/constants'
+import { useGraphEditor } from '@hooks'
 import {
   View,
   wrapComponent,
 } from 'colay-ui'
 import { useImmer } from 'colay-ui/hooks/useImmer'
-import React from 'react'
 import * as R from 'colay/ramda'
-import Accordion from '@material-ui/core/Accordion'
-import AccordionSummary from '@material-ui/core/AccordionSummary'
-import AccordionDetails from '@material-ui/core/AccordionDetails'
-import { SpeedDialCreator } from '@components/SpeedDialCreator'
-import { SortableList } from '@components/SortableList'
-import { PlaylistTable } from './PlaylistTable'
+import React from 'react'
 
 export type EventHistoryTableProps = {
   opened?: boolean;
@@ -41,8 +31,6 @@ export type EventHistoryTableProps = {
 
 const EventHistoryTableElement = (props: EventHistoryTableProps) => {
   const {
-    onEvent,
-    eventHistory,
     onCreatePlaylistClick,
   } = props
   const [state, updateState] = useImmer({
@@ -50,6 +38,17 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
     selectedEventIds: [] as string[],
   })
   const hasSelected = state.selectedEventIds.length > 0
+  const [
+    {
+      onEvent,
+      eventHistory,
+    },
+  ] = useGraphEditor(
+    (editor) => ({
+      onEvent: editor.onEvent,
+      eventHistory: editor.eventHistory,
+    }),
+  )
   return (
     <View
       style={{

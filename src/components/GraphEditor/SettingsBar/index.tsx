@@ -53,7 +53,12 @@ const SettingsBarElement = (props: SettingsBarProps) => {
     // ...formProps
   } = props
   const [
-    a,
+    {
+      onEvent,
+      eventHistory,
+      clusters,
+      playlists,
+    },
   ] = useGraphEditor(
     (editor) => ({
       onEvent: editor.onEvent,
@@ -64,12 +69,6 @@ const SettingsBarElement = (props: SettingsBarProps) => {
       // graphEditorLocalDataRef: editor.localDataRef,
     }),
   )
-  const {
-    onEvent,
-    eventHistory,
-    clusters,
-    playlists,
-  } = a
   const {
     style: animationStyle,
     ref: animationRef,
@@ -163,8 +162,6 @@ const SettingsBarElement = (props: SettingsBarProps) => {
             }}
           >
             <EventHistoryTable
-              onEvent={onEvent}
-              eventHistory={eventHistory}
               onCreatePlaylistClick={(selectedEventIds) => updateState((draft) => {
                 draft.createPlaylistDialog.visible = true
                 draft.selectedEventIds = selectedEventIds
