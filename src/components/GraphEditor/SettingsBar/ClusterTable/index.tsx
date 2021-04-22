@@ -30,14 +30,9 @@ import { useGraphEditor } from '@hooks'
 import { CreateClusterByAlgorithm } from './CreateClusterByAlgorithm'
 
 export type ClusterTableProps = {
-  opened?: boolean;
-  onEvent: OnEventLite;
-  clusters: Cluster[];
   // onSelectAllClusters: (checked: boolean) => void
   // onSelectCluster: (cluster: Cluster, checked: boolean) => void
   createClusterForm: FormProps<any>;
-  editorMode: EditorMode;
-  graphEditorLocalDataRef: any;
 }
 
 export const ClusterTable = (props: ClusterTableProps) => {
@@ -415,7 +410,6 @@ export const ClusterTable = (props: ClusterTableProps) => {
             index={2}
           >
             <CreateClusterByAlgorithm
-              onEvent={onEvent}
               onSubmit={() => {
                 updateState((draft) => {
                   draft.currentTab = 0

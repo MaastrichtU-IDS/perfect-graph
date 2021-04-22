@@ -23,9 +23,6 @@ import * as R from 'colay/ramda'
 import React from 'react'
 
 export type EventHistoryTableProps = {
-  opened?: boolean;
-  onEvent: OnEventLite;
-  eventHistory: EventHistory;
   onCreatePlaylistClick: (selectedEventIds: string[]) => void;
 }
 

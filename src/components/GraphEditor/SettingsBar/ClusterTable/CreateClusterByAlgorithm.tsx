@@ -10,18 +10,26 @@ import { useImmer } from 'colay-ui/hooks/useImmer'
 import { OnEventLite } from '@type'
 import { Clusters } from '@core/clusters'
 import { EVENT } from '@utils/constants'
+import { useGraphEditor } from '@hooks'
 
 export type CreateClusterByAlgorithmProps = {
-  onEvent: OnEventLite;
   onSubmit: () => void
 }
 const CLUSTER_ALGORITHM_NAMES = Object.keys(Clusters)
 
 export const CreateClusterByAlgorithm = (props: CreateClusterByAlgorithmProps) => {
   const {
-    onEvent,
-    onSubmit
+    onSubmit,
   } = props
+  const [
+    {
+      onEvent,
+    },
+  ] = useGraphEditor(
+    (editor) => ({
+      onEvent: editor.onEvent,
+    }),
+  )
   const [state, updateState] = useImmer({
     selectedClusterName: CLUSTER_ALGORITHM_NAMES[0],
   })
@@ -41,7 +49,12 @@ export const CreateClusterByAlgorithm = (props: CreateClusterByAlgorithmProps) =
         })}
       >
         {CLUSTER_ALGORITHM_NAMES.map((clusterName) => (
-          <MenuItem key={clusterName} value={clusterName}>{clusterName}</MenuItem>
+          <MenuItem
+            key={clusterName}
+            value={clusterName}
+          >
+            {clusterName}
+          </MenuItem>
         ))}
       </Select>
       <Form
