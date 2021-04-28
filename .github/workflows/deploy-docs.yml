@@ -53,4 +53,8 @@ jobs:
           else
           npm i
           fi
-          npm run deploy
+          expo build:web
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GH_PAGES_DEPLOY }}
