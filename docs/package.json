@@ -29,6 +29,7 @@
     "immer": "9.0.2",
     "perfect-graph": "0.0.75",
     "react": "^17.0.1",
+    "react-beautiful-dnd": "13.1.0",
     "react-dom": "^17.0.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-41.0.0.tar.gz",
     "react-native-gesture-handler": "~1.10.2",
