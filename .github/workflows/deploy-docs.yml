@@ -45,6 +45,7 @@ jobs:
           cd docs
           git config --global user.email "actions@github.com"
           git config --global user.name "gh-actions"
+          npm install --silent --global expo-cli
           if [ -e yarn.lock ]; then
           yarn install --frozen-lockfile
           elif [ -e package-lock.json ]; then
@@ -52,5 +53,4 @@ jobs:
           else
           npm i
           fi
-          yarn global add expo-cli
           npm run deploy
