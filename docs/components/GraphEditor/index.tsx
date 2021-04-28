@@ -18,7 +18,7 @@ const INITIAL_DATA = {
     { id: `edge:${index}`, source: `${index}`,  target: `${index+1}`,  data: { 'foaf:name': `edge-${index}`} }
   )),
 }
-// "[{ \"name\": \"foaf:name\", \"value\": [\"ts\",\"saba\"], \"additional\": []}]"
+
 export default function Default() {
   const [controllerProps, controller] = useController({
     ...INITIAL_DATA,
