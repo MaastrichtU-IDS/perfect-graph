@@ -26,6 +26,7 @@
     "colay-ui": "0.0.88",
     "expo": "~41.0.1",
     "expo-cli": "4.4.3",
+    "expo-linking": "2.2.3",
     "immer": "9.0.2",
     "perfect-graph": "0.0.75",
     "react": "^17.0.1",
