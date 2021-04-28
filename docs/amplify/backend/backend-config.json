@@ -1,0 +1,28 @@
+{
+  "auth": {
+    "perfectgraphdce98bb9": {
+      "service": "Cognito",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "customAuth": false
+    }
+  },
+  "api": {
+    "perfectgraph": {
+      "service": "AppSync",
+      "providerPlugin": "awscloudformation",
+      "output": {
+        "authConfig": {
+          "defaultAuthentication": {
+            "authenticationType": "API_KEY",
+            "apiKeyConfig": {
+              "apiKeyExpirationDays": 7,
+              "description": "perfectgraph"
+            }
+          },
+          "additionalAuthenticationProviders": []
+        }
+      }
+    }
+  }
+}

@@ -1,7 +1,8 @@
 // @ts-nocheck
 import Amplify, { API }  from "aws-amplify";
 import  { Position }  from "colay/type";
-import awsExports from "../../../aws-exports";
+// import awsExports from "../../../aws-exports";
+const awsExports = {}
 
 const API_AUTH_MODE = {
   API_KEY: 'API_KEY'

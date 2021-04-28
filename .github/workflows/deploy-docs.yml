@@ -47,6 +47,7 @@ jobs:
           git config --global user.name "gh-actions"
           if [ -e yarn.lock ]; then
           yarn install --frozen-lockfile
+          yarn global add expo-cli
           elif [ -e package-lock.json ]; then
           npm ci
           else
