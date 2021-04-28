@@ -1,43 +1,43 @@
-import React from 'react';
-import './App.css';
+import React from "react";
+import { View } from "colay-ui";
+import "./App.css";
 
-import { 
+import {
   Animation,
   ConvertRDF,
   GraphDefault,
   GraphEditorDefault,
   GraphEditorOnline
-} from './components'
+} from "./components";
 
 const Tabs = {
-  'Animation': Animation,
-  'ConvertRDF': ConvertRDF,
-  'GraphDefault': GraphDefault,
-  'GraphEditorDefault': GraphEditorDefault,
-  'GraphEditorOnline': GraphEditorOnline,
-}
+  Animation: Animation,
+  ConvertRDF: ConvertRDF,
+  GraphDefault: GraphDefault,
+  GraphEditorDefault: GraphEditorDefault,
+  GraphEditorOnline: GraphEditorOnline
+};
 function App() {
-  const [selectedTab, setSelectedTab] = React.useState('GraphDefault') 
+  const [selectedTab, setSelectedTab] = React.useState("GraphDefault");
+  const Element = Tabs[selectedTab];
   return (
     <div className="App">
-      <header className="App-header">
-        {
-          Object.keys(Tabs).map((title) => (
-            <button
-              onClick={() => setSelectedTab(title)}
-            >{title}</button>
-          ))
-        }
-      </header>
-      <div
+      <View
         style={{
-          width: '100vw',
-          height: '95vh'
+          flexDirection: "row"
         }}
       >
-        {
-          Tabs[selectedTab]
-        }
+        {Object.keys(Tabs).map((title) => (
+          <button onClick={() => setSelectedTab(title)}>{title}</button>
+        ))}
+      </View>
+      <div
+        style={{
+          width: "100vw",
+          height: "95vh"
+        }}
+      >
+        {<Element />}
       </div>
     </div>
   );
