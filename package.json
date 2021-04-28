@@ -12,6 +12,7 @@
   "license": "MIT",
   "keywords": [],
   "scripts": {
+    "web": "expo web",
     "dev": "next dev",
     "docs": "start-storybook -p 9009",
     "build-docs": "build-storybook -o docs-build",
