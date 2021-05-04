@@ -1,5 +1,5 @@
 import * as R from 'colay/ramda'
-import mergeAllOf from 'json-schema-merge-allof'
+// import mergeAllOf from 'json-schema-merge-allof'
 import toJSONSchema from 'to-json-schema'
 
 export const createSchema = (itemList: any[]) => {

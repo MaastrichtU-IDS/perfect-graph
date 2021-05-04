@@ -83,7 +83,6 @@ export const useController = (
       dataItem = {} as DataItem,
       event,
       elementId,
-      item,
       avoidEventRecording,
       avoidHistoryRecording,
     } = eventInfo
@@ -131,6 +130,7 @@ export const useController = (
         const isAllowedToProcess = controllerConfig.onEvent?.({
           ...eventInfo,
           graphEditor,
+          update,
         }, draft)
         if (isAllowedToProcess === false) {
           return
