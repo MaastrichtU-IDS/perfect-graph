@@ -5,6 +5,8 @@ import {
 } from '@components'
 import {
   Box,
+  Backdrop,
+  CircularProgress,
 } from '@material-ui/core'
 import {
   EditorMode, EventInfo,
@@ -60,6 +62,7 @@ export type GraphEditorProps = {
   eventHistory?: EventHistory;
   playlists?: Playlist[];
   globalNetworkStatistics?: any;
+  loading?: boolean;
 } & Omit<
 GraphProps,
 'config'|'onPress' | 'renderNode' | 'renderEdge'
@@ -105,6 +108,7 @@ const GraphEditorElement = (
     config = DEFAULT_GRAPH_EDITOR_CONFIG,
     playlists,
     globalNetworkStatistics,
+    loading = false,
     ...rest
   } = props
   const localDataRef = React.useRef({
@@ -661,6 +665,12 @@ const GraphEditorElement = (
           }}
         />
       </Box>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </GraphEditorProvider>
 
   )
