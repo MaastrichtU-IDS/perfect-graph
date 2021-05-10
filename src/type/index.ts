@@ -56,7 +56,7 @@ export type EdgeContext = ElementContext & {
   settings: EdgeElementSettings
 }
 
-export type Event = keyof typeof EVENT
+export type EventType = keyof typeof EVENT
 export type EditorMode = keyof typeof EDITOR_MODE
 
 export type AdditionalDataItem = {
@@ -280,7 +280,7 @@ export type GraphLabelData = {
 export type EventInfo = {
   id: string;
   date: string;
-  type: Event;
+  type: EventType;
   item?: ElementData;
   elementId?: string;
   payload?: any;

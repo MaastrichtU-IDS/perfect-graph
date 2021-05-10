@@ -7,7 +7,7 @@ import {
 } from '@material-ui/core'
 import {
   EditorMode,
-  Event,
+  EventType,
   GraphConfig,
   GraphEditorRef,
   OnEventLite,
@@ -354,7 +354,7 @@ const MoreOptions = (props: MoreOptionsProps) => {
     onClose,
     onOpen,
   } = useDisclosure({})
-  const handleMenuItemClick = async (event: Event, index: number) => {
+  const handleMenuItemClick = async (event: EventType, index: number) => {
     onClose()
     const action = Object.values(OPTIONS)[index]
     switch (action) {
@@ -389,7 +389,7 @@ const MoreOptions = (props: MoreOptionsProps) => {
     }
   }
 
-  const handleThemeChange = (e: Event) => {
+  const handleThemeChange = (e: EventType) => {
     onAction({ type: EVENT.CHANGE_THEME, value: e.target.value })
     onClose()
   }

@@ -26,10 +26,11 @@ import { getFilterSchema, getFetchSchema, VIEW_CONFIG_SCHEMA, RECORDED_EVENTS  }
 import { EVENT } from '../../src/utils/constants'
 import {useController} from '../../src/plugins/controller'
 import { createSchema } from '../../src/plugins/createSchema'
+import { getSelectedItemByElement } from '../../src/utils'
 import {calculateStatistics} from './utils/networkStatistics'
 import {RenderNode} from './RenderNode'
 import {RenderEdge} from './RenderEdge'
-// import * as API from './API'
+import * as API from './API'
 import {QueryBuilder} from './QueryBuilder'
 // import { Data } from '../../components/Graph/Default'
 
@@ -230,17 +231,49 @@ const AppContainer = ({
         value: 'Default'
       },
     },
-    onEvent: ({
+    onEvent: async ({
       type,
       payload,
       elementId,
       graphRef,
-      graphEditor
+      graphEditor,
+      update,
     },draft) => {
       const {
         cy,
       } = graphEditor
+      const element = cy.$id(elementId)
+      const {
+        item: selectedItem,
+        index: selectedItemIndex,
+      } = (element && getSelectedItemByElement(element, draft)) ?? {}
       switch (type) {
+        case EVENT.ELEMENT_SELECTED: {
+          // draft.loading = true
+          let elementData = null
+          try {
+            elementData = await API.getElementData({ id: selectedItem.data.ecli });
+          } catch (error) {
+            console.error(error)
+          }
+          if (elementData) {
+            update((draft) => {
+              const {
+                item: selectedItem,
+                index: selectedItemIndex,
+              } = (element && getSelectedItemByElement(element, draft)) ?? {}
+              const elementList = element.isNode() ? draft.nodes : draft.edges
+              const itemDraft = elementList.find((elementItem) => elementItem.id === selectedItem.id)
+              itemDraft.data = elementData
+              draft.loading = false
+            })
+          } else {
+            update((draft) => {
+              draft.loading = false
+            })
+          }
+          break
+        }
         case EVENT.CREATE_CLUSTER_FORM_SUBMIT: {
           const {
             name,

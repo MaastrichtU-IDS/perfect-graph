@@ -32,14 +32,8 @@ FormProps<any>,
 >
 export type SettingsBarProps = {
   opened?: boolean;
-  onEvent: OnEventLite;
   forms?: SettingsForm[];
-  eventHistory?: EventHistory;
-  clusters?: Cluster[];
-  playlists?: Playlist[];
   createClusterForm?: FormProps<any>;
-  editorMode: EditorMode;
-  graphEditorLocalDataRef: any;
 }
 
 const WIDTH_PROPORTION = 30

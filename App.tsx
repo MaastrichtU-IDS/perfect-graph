@@ -1,5 +1,5 @@
 import React from 'react'
-import App from './examples/CaseLawExplorer'
+import App from './_examples/CaseLawExplorer'
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core'
 const theme = createMuiTheme()
 

@@ -1,6 +1,6 @@
 import React from 'react'
 import { PixiComponent } from '@inlet/react-pixi'
-import { Position, PropsWithRef } from 'colay-ui/type'
+import {  PropsWithRef } from 'colay-ui/type'
 import { wrapComponent } from 'colay-ui'
 import { useTheme } from '@core/theme'
 import * as PIXI from 'pixi.js'
@@ -9,14 +9,12 @@ import {
   applyDefaultProps, preprocessProps,
 } from '@utils'
 import {
-  PIXIBasicStyle, PIXIShapeStyle, Theme, PIXIBasicProps,
+  PIXIBasicStyle, PIXIShapeStyle, PIXIBasicProps,
 } from '@type'
 
 export type ViewProps = PIXIBasicProps & {
   style?: PIXIBasicStyle & PIXIShapeStyle;
-  onDrag?: (pos: Position) => void;
   children?: React.ReactNode;
-  theme?: Theme;
 }
 
 export type ViewType = React.FC<ViewProps>
