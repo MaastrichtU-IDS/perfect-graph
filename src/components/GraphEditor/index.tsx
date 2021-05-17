@@ -443,9 +443,9 @@ const GraphEditorElement = (
                 const { mode } = localDataRef.current.props
                 const elementId = element.id()
                 if (
-                // @ts-ignore
                   [
                     EDITOR_MODE.DELETE,
+                    // @ts-ignore
                     EDITOR_MODE.CONTINUES_DELETE].includes(mode)
                 ) {
                   onEvent({
@@ -519,9 +519,9 @@ const GraphEditorElement = (
               onPress={(event) => {
                 const { mode } = localDataRef.current.props
                 if (
-                // @ts-ignore
                   [
                     EDITOR_MODE.DELETE,
+                    // @ts-ignore
                     EDITOR_MODE.CONTINUES_DELETE].includes(mode)
                 ) {
                   onEvent({

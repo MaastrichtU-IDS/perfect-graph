@@ -16,7 +16,7 @@ export type Options = {
   onPlayChanged?: () => void;
   autostart?: boolean
 }
-export const createTimeoutManager = <T extends Timer<any>>(
+export const createTimeoutManager = <T extends Timer<Record<string, any>>>(
   timers: T[] = [],
   callback: (timer: T, index: number, timeout: TimeoutInstance) => void,
   options: Options = {},
@@ -38,13 +38,14 @@ export const createTimeoutManager = <T extends Timer<any>>(
     if (started) {
       controller.durationCounter = createDurationCounter()
     } else {
+      // @ts-ignore
       controller.durationCounter && clearInterval(controller.durationCounter)
     }
     controller.paused = !started
     onPlayChangedCallback?.()
   }
   let totalDuration = 0
-  timers.forEach(({ after }) => {
+  timers.forEach(({ after }: T) => {
     totalDuration += after
   })
   const createDurationCounter = () => setInterval(() => {
@@ -54,7 +55,7 @@ export const createTimeoutManager = <T extends Timer<any>>(
     currentIndex: 0,
     totalDuration,
     duration: 0,
-    durationCounter: null,
+    durationCounter: null as null | Timeout,
     timers,
     timeoutInstances,
     finished: isEmpty,
@@ -79,6 +80,7 @@ export const createTimeoutManager = <T extends Timer<any>>(
       timeoutInstances.forEach((timeoutInstance) => {
         timeoutInstance.clear()
       })
+      // @ts-ignore
       controller.durationCounter && clearInterval(controller.durationCounter)
       onFinish()
     },

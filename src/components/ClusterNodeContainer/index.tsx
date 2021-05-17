@@ -2,7 +2,7 @@ import React from 'react'
 import { wrapComponent } from 'colay-ui'
 import { useNode } from '@hooks'
 import {
-  RenderNode, NodeConfig, GraphRef,
+  RenderClusterNode, NodeConfig, GraphRef,
   Cluster,
 } from '@type'
 import {
@@ -13,7 +13,7 @@ import { useTheme } from '@core/theme'
 import { Container, ContainerRef } from '../Container'
 
 export type ClusterNodeContainerProps = {
-  children: RenderNode;
+  children: RenderClusterNode;
   item: Cluster;
   graphID: string;
   graphRef: React.RefObject<GraphRef>;
@@ -60,7 +60,7 @@ const ClusterNodeContainerElement = (
     id: item.id,
     graphID,
     config,
-    position: config.position ?? item.position ?? DEFAULT_POSITION,
+    position: config.position ?? DEFAULT_POSITION,
     onPositionChange: ({ element }) => {
       const container = containerRef.current!
       const { x, y } = element.position()

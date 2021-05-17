@@ -1,7 +1,7 @@
 import * as R from 'colay/ramda'
 import * as PIXI from 'pixi.js'
 import { applyDefaultProps as nativeApplyDefaultProps } from '@inlet/react-pixi'
-import { NativeEventMap } from 'colay-ui/type'
+// import { EventMap } from 'colay-ui/type'
 import { BoundingBox, Position } from 'colay/type'
 // import { Properties } from 'csstype'
 // import * as C from 'colay/color'
@@ -9,6 +9,7 @@ import {
   Element, NodeData, EdgeData, ElementData,
   DisplayObjectWithYoga, NodeContext, EdgeContext,
   Cluster, EventInfo, GraphEditorRef, ControllerState,
+  ViewportRef, LightEventInfo,
 } from '@type'
 import {
   ELEMENT_DATA_FIELDS, PIXI_EVENT_NAMES, EVENT,
@@ -425,8 +426,8 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
     graphEditor,
   } = settings
   const addHistory = true
-  const undoEvents: EventInfo[] = R.unnest(
-    events.map((event): EventInfo[] => {
+  const undoEvents: LightEventInfo[] = R.unnest(
+    events.map((event): LightEventInfo[] => {
       const {
         elementId,
         type,
@@ -499,9 +500,9 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
           return oldSelectedElementId
             ? [
               {
+                ...event,
                 type: EVENT.ELEMENT_SELECTED,
                 elementId: oldSelectedElementId,
-                ...event,
               },
             ]
             : [
@@ -582,12 +583,17 @@ export const getElementsCollectionByIds = (cy: cytoscape.Core, ids: string[]) =>
   return collection
 }
 
-export const getPointerPositionOnViewport = (viewport, event) => {
+export const getPointerPositionOnViewport = (
+  viewport: ViewportRef,
+  event: MouseEvent,
+) => {
   const position = {
     x: event.clientX,
     y: event.clientY,
   }
+  // @ts-ignore
   if (viewport.options.interaction) {
+    // @ts-ignore
     viewport.options.interaction.mapPositionToPoint(position, event.clientX, event.clientY)
   }
   position.x /= viewport.scale.x

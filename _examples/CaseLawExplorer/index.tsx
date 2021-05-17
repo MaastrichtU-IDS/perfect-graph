@@ -1,37 +1,26 @@
-/* eslint-disable */
-// @ts-nocheck
-import React from 'react'
-import * as R from 'colay/ramda'
-import { 
-  useTheme as useMuiTheme,
-   ThemeProvider as MuiThemeProvider,
-   createMuiTheme
+import {
+  createMuiTheme, ThemeProvider as MuiThemeProvider
 } from '@material-ui/core'
-import { View, } from 'colay-ui'
+import { View } from 'colay-ui'
 import { useImmer } from 'colay-ui/hooks/useImmer'
-import { 
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-  useTheme
-} from '../../src/core/theme'
-import { GraphRef } from '../../src/type'
-import  { GraphEditorProps,GraphEditor } from '../../src/components/GraphEditor'
+import * as R from 'colay/ramda'
+import React from 'react'
 import { Graph } from '../../src/components'
-import { UseEffect } from '../../src/components/UseEffect'
-import {drawLine} from '../../src/components/Graphics'
-import defaultData from './data'
-import * as C from 'colay/color'
-import { getFilterSchema, getFetchSchema, VIEW_CONFIG_SCHEMA, RECORDED_EVENTS  } from './constants'
-import { EVENT } from '../../src/utils/constants'
-import {useController} from '../../src/plugins/controller'
+import { GraphEditor, GraphEditorProps } from '../../src/components/GraphEditor'
+import {
+  DarkTheme,
+  DefaultTheme
+} from '../../src/core/theme'
+import { useController } from '../../src/plugins/controller'
 import { createSchema } from '../../src/plugins/createSchema'
 import { getSelectedItemByElement } from '../../src/utils'
-import {calculateStatistics} from './utils/networkStatistics'
-import {RenderNode} from './RenderNode'
-import {RenderEdge} from './RenderEdge'
+import { EVENT } from '../../src/utils/constants'
 import * as API from './API'
-import {QueryBuilder} from './QueryBuilder'
+import { getFetchSchema, getFilterSchema, VIEW_CONFIG_SCHEMA } from './constants'
+import defaultData from './data'
+import { QueryBuilder } from './QueryBuilder'
+import { RenderEdge } from './RenderEdge'
+import { RenderNode } from './RenderNode'
 // import { Data } from '../../components/Graph/Default'
 
 const MUIDarkTheme = createMuiTheme({

@@ -27,7 +27,6 @@ const ViewPIXI = PixiComponent<ViewProps, PIXI.Graphics>('View', {
     // contextMenu
     // instance.contextMenu = createContextMenu({ items: contextMenu })
     // instance.on('rightclick', (e: PIXI.interaction.InteractionEvent) => {
-    //   // @ts-ignore
     //   instance.contextMenu.onContextMenu(e.data.originalEvent)
     // })
     return instance

@@ -1,36 +1,35 @@
-import React from 'react'
-import { Stage } from '@inlet/react-pixi'
-import * as R from 'colay/ramda'
-import {
-  wrapComponent,
-  useForwardRef,
-  useMeasure,
-  View,
-  ViewProps,
-  DataRender,
-} from 'colay-ui'
-import * as C from 'colay/color'
-import { useGraph } from '@hooks'
-import {
-  NodeData, EdgeData, RenderEdge, RenderNode,
-  GraphConfig, DrawLine, GraphRef, ViewportRef,
-  RenderCluster,
-} from '@type'
-import { PropsWithRef } from 'colay-ui/type'
-import { BoundingBox } from 'colay/type'
 import '@core/config'
-import { ThemeProvider, DefaultTheme } from '@core/theme'
+import { DefaultTheme, ThemeProvider } from '@core/theme'
+import { useGraph } from '@hooks'
+import { Stage } from '@inlet/react-pixi'
+import {
+  DrawLine, EdgeData, GraphConfig,
+  GraphRef, NodeData, RenderEdge, RenderNode, ViewportRef,
+  RenderClusterNode,
+} from '@type'
+import {
+  calculateVisibilityByContext, contextUtils, cyUnselectAll, isPositionInBox,
+} from '@utils'
 import { CYTOSCAPE_EVENT } from '@utils/constants'
 import {
-  isPositionInBox, cyUnselectAll, contextUtils, calculateVisibilityByContext,
-} from '@utils'
-import { Viewport, ViewportProps } from '../Viewport'
-import { NodeContainer } from '../NodeContainer'
-import { EdgeContainer } from '../EdgeContainer'
+  DataRender, useForwardRef,
+  useMeasure,
+  View,
+  ViewProps, wrapComponent,
+} from 'colay-ui'
+import { PropsWithRef } from 'colay-ui/type'
+import * as C from 'colay/color'
+import * as R from 'colay/ramda'
+import { BoundingBox } from 'colay/type'
+import React from 'react'
+import * as PIXI from 'pixi.js'
 import { ClusterNodeContainer } from '../ClusterNodeContainer'
+import { EdgeContainer } from '../EdgeContainer'
+import { NodeContainer } from '../NodeContainer'
 // import { Pressable } from '../Pressable'
 import { Text as GraphText } from '../Text'
 import { View as GraphView } from '../View'
+import { Viewport, ViewportProps } from '../Viewport'
 
 export type GraphProps = {
   children?: React.ReactNode;
@@ -113,13 +112,12 @@ export const DefaultRenderNode: RenderNode = ({
         }}
         isSprite
       >
-        {R.last(item.id.split('/'))?.substring(0, 10)}
+        {R.last(item.id.split('/'))?.substring(0, 10) ?? item.id}
       </GraphText>
     </GraphView>
   )
 }
 
-// @ts-ignore
 export const DefaultRenderEdge: RenderEdge = ({
   cy,
   item,
@@ -155,7 +153,7 @@ export const DefaultRenderEdge: RenderEdge = ({
       }}
       isSprite
     >
-      {R.last(item.id.split('/'))?.substring(0, 10)}
+      {R.last(item.id.split('/'))?.substring(0, 10) ?? item.id}
     </GraphText>
   </GraphView>
 )
@@ -202,18 +200,17 @@ export const DefaultRenderClusterNode: RenderNode = ({
         }}
         isSprite
       >
-        {R.last(item.id.split('/'))?.substring(0, 10)}
+        {R.last(item.id.split('/'))?.substring(0, 10) ?? item.id}
       </GraphText>
     </GraphView>
   )
 }
 
-export type GraphType = React.FC<GraphProps>
-
 const DEFAULT_CONFIG = {
   theme: DefaultTheme,
 }
-const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => {
+
+const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
   const {
     style,
     nodes = [],
@@ -223,17 +220,17 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
     renderEdge = DefaultRenderEdge,
     drawLine,
     extraData,
-    config: _config = {} as Partial<GraphConfig>,
+    config: configProp = {} as Partial<GraphConfig>,
     onBoxSelection,
     selectedElementIds = [],
     children,
     renderClusterNode = DefaultRenderClusterNode,
   } = props
-  const boxSelectionEnabled = !!onBoxSelection
+  // const boxSelectionEnabled = !!onBoxSelection
   const config = React.useMemo(() => ({
     ...DEFAULT_CONFIG,
-    ..._config,
-  }), [_config])
+    ...configProp,
+  }), [configProp])
   const { theme } = config
   const graphID = React.useMemo<string>(() => config.graphId ?? R.uuid(), [config.graphId])
   const stageRef = React.useRef<{ app: PIXI.Application }>(null)
@@ -267,11 +264,10 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
   }, [selectedElementIds, cy])
   React.useEffect(() => {
     R.when(
-      () => stageRef.current && config.layout && initialized,
+      () => !!(stageRef.current && config.layout && initialized),
       () => {
         setTimeout(() => {
-          // @ts-ignore
-          const { hitArea } = viewportRef.current
+          const { hitArea } = viewportRef.current!
           const boundingBox = {
             x1: hitArea.x,
             y1: hitArea.y,
@@ -329,6 +325,7 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphType>) => 
   }, [cy, onPress])
   return (
     <View
+    // @ts-ignore
       ref={containerRef}
       style={style}
     >

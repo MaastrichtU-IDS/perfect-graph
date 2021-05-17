@@ -73,8 +73,7 @@
       "@root/*": [
         "./src/*"
       ]
-    },
-    "noEmit": true
+    }
   },
   "include": [
     "src/**/*"

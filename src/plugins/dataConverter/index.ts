@@ -59,7 +59,6 @@ export const convertToJSONLD = async (text: string): Promise<Record<string, any>
 
   const resultList: Record<string, any>[] = await R.mapAsync(
     async (jsonLDItem) =>
-      // // @ts-ignore
       // const itemResult = await jsonld.compact(jsonLDItem, {})// result.prefixes)
       // return itemResult
       jsonLDItem

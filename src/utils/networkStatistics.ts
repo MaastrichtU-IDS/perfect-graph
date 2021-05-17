@@ -1,3 +1,4 @@
+// @ts-nocheck
 import cytoscape from 'cytoscape'
 import * as R from 'colay/ramda'
 
@@ -19,6 +20,7 @@ export const calculateStatistics = (props: Props) => {
     edges = [],
   } = props
   const cy = cytoscape({
+    // @ts-ignore
     elements: R.concat(
       nodes.map((n) => ({
         data: n,
@@ -34,7 +36,7 @@ export const calculateStatistics = (props: Props) => {
   const {
     indegree: indegreeCentralityCalc,
     outdegree: outdegreeCentralityCalc,
-  } = cy.$().degreeCentralityNormalized({
+  } = cy.elements().degreeCentralityNormalized({
     // weight: (edge) => {
     //   return edge.connectedNodes().length
     // },
@@ -43,7 +45,7 @@ export const calculateStatistics = (props: Props) => {
   })
   const {
     degree: degreeCentralityCalc,
-  } = cy.$().degreeCentralityNormalized({
+  } = cy.elements().degreeCentralityNormalized({
     // weight: (edge) => {
     //   return edge.connectedNodes().length
     // },
@@ -51,17 +53,18 @@ export const calculateStatistics = (props: Props) => {
   })
   const {
     closeness: closenessCentralityCalc,
-  } = cy.$().closenessCentralityNormalized({
+  } = cy.elements().closenessCentralityNormalized({
   })
   const {
     betweenness: betweennessCentralityCalc,
-  } = cy.$().betweennessCentrality({})
+  } = cy.elements().betweennessCentrality({})
   const {
     rank: pageRankCalc,
-  } = cy.$().pageRank({
+  } = cy.elements().pageRank({
   })
-  const nodeStatisticsMap = {}
-  const nodesStatistics = cy.nodes().map((node) => {
+  const nodeStatisticsMap: Record<string, any> = {}
+  // const nodesStatistics =
+  cy.nodes().map((node) => {
     const nodeId = node.id()
     nodeStatisticsMap[nodeId] = {
       degree: degreeCentralityCalc(node),

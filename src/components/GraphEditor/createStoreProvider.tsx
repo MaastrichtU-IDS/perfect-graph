@@ -136,8 +136,8 @@ export const createStoreProvider = <T extends any>(
   return {
     Context,
     Provider: (props: { children: React.ReactNode; value: T }) => {
-      const { children, value: _value } = props
-      const value = _value ?? defaultState
+      const { children, value: valueProp } = props
+      const value = valueProp ?? defaultState
       const [
         immerNextState,
         immerUpdate,

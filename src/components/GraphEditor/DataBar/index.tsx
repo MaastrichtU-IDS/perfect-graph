@@ -20,21 +20,17 @@ import {
 import { Icon } from '@components/Icon'
 import * as R from 'colay/ramda'
 import { useGraphEditor } from '@hooks'
-import { DataEditor, DataEditorProps } from '../DataEditor'
+import {
+  DataEditor,
+  // DataEditorProps,
+} from '../DataEditor'
 import { LocalNetworkStatistics } from './LocalNetworkStatistics'
 import { GlobalNetworkStatistics } from './GlobalNetworkStatistics'
 
 export type DataBarProps = {
   editable?: boolean;
-  item?: ElementData|null;
   opened?: boolean;
-  onEvent: OnEventLite;
-  graphEditorConfig: GraphEditorConfig;
-  statistics?: {
-    globalNetworkStatistics?: any;
-    localNetworkStatistics?: any;
-  }
-} & Omit<DataEditorProps, 'data'>
+} // & Omit<DataEditorProps, 'data'>
 
 const WIDTH_PROPORTION = 40
 const ICON_SIZE = 16
@@ -230,9 +226,6 @@ export const DataBar = (props: DataBarProps) => {
                   </>
                 )
               }}
-              // right={(props) => {
-
-              // }}
               renderItem={({ item: { key, value } }) => (
                 <View
                   style={{

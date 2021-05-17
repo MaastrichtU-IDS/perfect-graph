@@ -1,6 +1,7 @@
-// import { createStoreProvider } from 'colay-ui'
+import { createStoreProvider } from 'colay-ui'
 // import { createStoreProvider } from '@root/components/GraphEditor/createStoreProviderWithoutImmer'
-import { createStoreProvider } from '@root/components/GraphEditor/createStoreProvider'
+// import { createStoreProvider } from '@root/components/GraphEditor/createStoreProvider'
+
 import {
   OnEventLite,
   GraphConfig,

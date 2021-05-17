@@ -1,3 +1,4 @@
+// @ts-nocheck
 type Callback = (...params: any[]) => void
 
 type Checker = () => boolean

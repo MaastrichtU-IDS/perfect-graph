@@ -13,6 +13,8 @@ type Options = {
   onFinish?: () => void
   autostart?: boolean;
 }
+
+// @ts-ignore
 export const useTimeoutManager = <T extends Timer<T>>(
   timers: T[],
   callback: (timer: T, index: number, timeout: TimeoutInstance) => void,

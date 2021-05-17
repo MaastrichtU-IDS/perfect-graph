@@ -1,11 +1,18 @@
-// @ts-nocheck
 import * as R from 'colay/ramda'
+import {
+  Core,
+  EdgeSingular,
+  NodeSingular,
+  Collection,
+} from 'cytoscape'
+
 // configSchema: {
 //   required: [],
 //   properties: {
 
 //   },
 // },
+
 const getAttribute = (params: {
   pathText: string;
   nodes: any[];
@@ -20,21 +27,37 @@ const getAttribute = (params: {
   const item = (element.isNode() ? nodes : edges).find((item) => item.id === id)
   return R.path(pathText.split('.'), item)
 }
-export const Clusters = {
+
+type ClusterAlgorithm = {
+  get: (arg: { cy: cytoscape.Core; attributes: string}) => Collection[];
+  getByItem: (
+    arg: {
+      cy: Core;
+      attributes: string;
+      nodes: NodeSingular[];
+      edges: EdgeSingular[];
+    }
+  ) => cytoscape.Collection[];
+  configSchema: any;
+  configForm: any;
+}
+export const Clusters: Record<string, ClusterAlgorithm> = {
   markov: {
     /**
                  * @function
                  * @param {{ cy: cytoscape.Core, attributes: [string] | string}} options
                 *  @return {}
                  */
+    // @ts-ignore
     get: ({ cy, attributes, ...options }) => cy.elements().markovClustering({
       ...options,
       attributes: [
-        (edge) => edge.data(attributes),
+        (edge: EdgeSingular) => edge.data(attributes),
       ],
     }),
     getByItem: ({
       cy, nodes, edges, attributes, ...options
+      // @ts-ignore
     }) => cy.elements().markovClustering({
       ...options,
       attributes: [
@@ -110,14 +133,16 @@ export const Clusters = {
                  * @param {{ cy: cytoscape,attributes: [string] | string, k: number}} options
                 *  @return {function}
                  */
+    // @ts-ignore
     get: ({ cy, attributes, ...options }) => cy.nodes().kMeans({
       ...options,
       attributes: [
-        (node) => node.data(attributes),
+        (node: NodeSingular) => node.data(attributes),
       ],
     }),
     getByItem: ({
       cy, nodes, edges, attributes, ...options
+      // @ts-ignore
     }) => cy.elements().kMeans({
       ...options,
       attributes: [
@@ -197,10 +222,11 @@ export const Clusters = {
                  * @param {{ cy: cytoscape,attributes: [string] | string, k: number}} options
                 *  @return {function}
                  */
+    // @ts-ignore
     get: ({ cy, attributes, ...options }) => cy.nodes().kMedoids({
       ...options,
       attributes: [
-        (node) => node.data(attributes),
+        (node: NodeSingular) => node.data(attributes),
       ],
     }),
     getByItem: ({
@@ -277,11 +303,12 @@ export const Clusters = {
     get: ({ cy, attributes, ...options }) => cy.nodes().fuzzyCMeans({
       ...options,
       attributes: [
-        (node) => node.data(attributes),
+        (node: NodeSingular) => node.data(attributes),
       ],
     }),
     getByItem: ({
       cy, nodes, edges, attributes, ...options
+      // @ts-ignore
     }) => cy.elements().fuzzyCMeans({
       ...options,
       attributes: [
@@ -365,10 +392,11 @@ export const Clusters = {
                  * @param {{ cy: cytoscape,mode: 'threshold', threshold: number, attributes: [string] | string}} param_name
                 *  @return {function}
                  */
+    // @ts-ignore
     get: ({ cy, attributes, ...options }) => cy.nodes().hierarchicalClustering({
       ...options,
       attributes: [
-        (node) => node.data(attributes),
+        (node: NodeSingular) => node.data(attributes),
       ],
     }),
     getByItem: ({
@@ -477,14 +505,16 @@ export const Clusters = {
                  * @param {{ cy: cytoscape,attributes: [string] | string}} options
                 *  @return {function}
                  */
+    // @ts-ignore
     get: ({ cy, attributes, ...options }) => cy.nodes().affinityPropagation({
       ...options,
       attributes: [
-        (node) => node.data(attributes),
+        (node: NodeSingular) => node.data(attributes),
       ],
     }),
     getByItem: ({
       cy, nodes, edges, attributes, ...options
+      // @ts-ignore
     }) => cy.elements().affinityPropagation({
       ...options,
       attributes: [

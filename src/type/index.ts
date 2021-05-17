@@ -199,7 +199,6 @@ type ElementFilterOption<E> = {
 }
 export type ElementConfig = {
   renderEvents?: CytoscapeEvent[];
-  filter?: ElementFilterOption<NodeElement|EdgeElement>
 }
 export type NodeConfig = {
   position?: Position;
@@ -291,6 +290,18 @@ export type EventInfo = {
   avoidHistoryRecording?: boolean;
 }
 
+export type LightEventInfo = {
+  type: EventType;
+  item?: ElementData;
+  elementId?: string;
+  payload?: any;
+  dataItem?: DataItem;
+  index?: number;
+  event?: Partial<PIXI.InteractionEvent>;
+  avoidEventRecording?: boolean;
+  avoidHistoryRecording?: boolean;
+}
+
 export type OnEvent = (eventInfo: EventInfo) => void
 export type OnEventLite = (eventInfo: Omit<EventInfo, 'id' | 'date'>) => void
 
@@ -301,7 +312,9 @@ export type DrawLine = (
     from: Position;
   }) => void
 
-export type ViewportRef = Viewport
+export type ViewportRef = Viewport & {
+  hitArea: BoundingBox
+}
 
 export type GraphRef = {
   cy: Core;

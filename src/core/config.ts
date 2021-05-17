@@ -5,11 +5,17 @@ import * as PIXI from 'pixi.js'
 import euler from 'cytoscape-euler'
 // @ts-ignore
 import cise from 'cytoscape-cise'
+// @ts-ignore
 import d3Force from 'cytoscape-d3-force'
+// @ts-ignore
 import cola from 'cytoscape-cola'
+// @ts-ignore
 import avsdf from 'cytoscape-avsdf'
+// @ts-ignore
 import dagre from 'cytoscape-dagre'
+// @ts-ignore
 import spread from 'cytoscape-spread'
+// @ts-ignore
 import klay from 'cytoscape-klay'
 
 cytoscape.use(klay)
