@@ -3,7 +3,7 @@ import { EdgeSingular, Core } from 'cytoscape'
 import React from 'react'
 import {
   EdgeContext,
-  ElementConfig,
+  EdgeConfig,
   EdgeElement,
   EdgeData,
 } from '@type'
@@ -14,13 +14,10 @@ import { useElement } from './useElement'
 
 export type Props<T> = {
   children?: React.ReactNode;
-  item?: EdgeData;
-  id: string;
-  source: string;
-  target: string;
+  item: EdgeData;
   graphID: string;
   onPositionChange?: (c: {element: EdgeSingular; context: EdgeContext; cy: Core }) => void;
-  config?: ElementConfig;
+  config?: EdgeConfig;
 }
 
 type Result<T> = {
@@ -31,14 +28,16 @@ type Result<T> = {
 
 export default <T>(props: Props<T>): Result<T> => {
   const {
-    id, // : givenID,
-    source,
-    target,
     onPositionChange,
     graphID,
     config = {},
     item,
   } = props
+  const {
+    id,
+    source,
+    target,
+  } = item
   const { cy } = mutableGraphMap[graphID]
   const [, setState] = useStateWithCallback({}, () => {
   })
@@ -93,7 +92,7 @@ export default <T>(props: Props<T>): Result<T> => {
   React.useEffect(
     () => {
       contextRef.current.onPositionChange = () => {
-        onPositionChange?.({ element, context: contextRef.current })
+        onPositionChange?.({ cy, element, context: contextRef.current })
       }
       contextUtils.update(
         element,
@@ -110,7 +109,7 @@ export default <T>(props: Props<T>): Result<T> => {
   // EventListeners
   React.useEffect(
     () => {
-      const nodeDataUpdated = (e) => {
+      const nodeDataUpdated = () => {
         // Update visibility
         const oldVisible = calculateVisibilityByContext(contextRef.current)
         const sourceContext = contextUtils.get(element.source())

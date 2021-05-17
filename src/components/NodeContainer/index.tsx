@@ -35,7 +35,6 @@ const NodeContainerElement = (
   } = props
   const containerRef = React.useRef(null)
   const { element, context, cy } = useNode({
-    id: item.id,
     graphID,
     config,
     position: config.position ?? item.position ?? DEFAULT_POSITION,

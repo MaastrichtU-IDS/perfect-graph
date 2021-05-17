@@ -2,8 +2,10 @@ import React from 'react'
 import { Core, NodeSingular, EdgeSingular } from 'cytoscape'
 import {
   ElementContext, Element,
-  ElementConfig,
+  NodeConfig,
+  EdgeConfig,
   ElementData,
+  ElementFilterOption,
 } from '@type'
 import { CYTOSCAPE_EVENT, ELEMENT_DATA_FIELDS } from '@utils/constants'
 import { calculateVisibilityByContext, contextUtils } from '@utils'
@@ -11,10 +13,11 @@ import { useInitializedRef } from 'colay-ui/hooks/useInitializedRef'
 
 export type Props = {
   element: Element;
-  item?: ElementData
+  item: ElementData
   cy: Core;
   contextRef: React.RefObject<ElementContext>;
-  config?: ElementConfig;
+  config: NodeConfig | EdgeConfig;
+  filter?: ElementFilterOption<Element>
 }
 
 type Result = {
@@ -26,7 +29,7 @@ export const useElement = (props: Props): Result => {
     // cy,
     element,
     contextRef,
-    config = {},
+    config,
     item,
   } = props
   const {
@@ -92,11 +95,13 @@ export const useElement = (props: Props): Result => {
   // Filter
   React.useEffect(() => {
     const oldFiltered = contextRef.current!.settings.filtered
+    // @ts-ignore
     const filtered = config.filter?.test?.({ element, item }) ?? true
     contextRef.current!.settings.filtered = filtered
     if (oldFiltered !== filtered) {
       contextUtils.update(element, contextRef.current)
-      if (calculateVisibilityByContext(contextRef.current)) {
+      // @ts-ignore
+      if (calculateVisibilityByContext(contextRef.current!)) {
         contextRef.current?.render()
       }
     }

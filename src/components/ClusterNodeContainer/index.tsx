@@ -57,7 +57,6 @@ const ClusterNodeContainerElement = (
     }
   }, [item.ids])
   const { element, context, cy } = useNode({
-    id: item.id,
     graphID,
     config,
     position: config.position ?? DEFAULT_POSITION,

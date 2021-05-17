@@ -86,7 +86,7 @@ const ReactViewportComp = PixiComponent('Viewport', {
           enabled: false,
           startPosition: null as Position | null,
           currentPosition: null as Position | null,
-          boxElement: null as PIXI.DisplayObject | null,
+          boxElement: null as PIXI.Graphics | null,
         },
       },
     }
@@ -151,8 +151,9 @@ const ReactViewportComp = PixiComponent('Viewport', {
         const {
           startPosition,
           currentPosition,
-          boxElement,
+          boxElement: pBoxElement,
         } = localDataRef.current.boxSelection
+        const boxElement = pBoxElement!
         const boundingBox = getBoundingBox(startPosition!, currentPosition!)
         onBoxSelection({
           event: e,
@@ -276,5 +277,3 @@ export const Viewport = wrapComponent<ViewportProps>(
     isForwardRef: true,
   },
 )
-
-

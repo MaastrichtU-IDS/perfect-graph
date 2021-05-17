@@ -21,9 +21,10 @@ import type * as PIXIType from './pixi'
 
 export type Style = {[k: string]: any}
 // export type OnLayout = (event: LayoutChangeEvent) => void
-export type ElementContext = {
+export type ElementContext<T = (NodeElementSettings | EdgeElementSettings)> = {
   render: (callback?: () => void) => void;
   onPositionChange: () => void;
+  settings: T
 }
 
 export type BoundingBox = {
@@ -45,15 +46,13 @@ export type NodeElementSettings = {
     cluster: boolean;
   }
 }
-export type NodeContext = ElementContext & {
+export type NodeContext = ElementContext<NodeElementSettings> & {
   boundingBox: BoundingBox;
   element: NodeElement;
-  settings: NodeElementSettings;
 }
 
-export type EdgeContext = ElementContext & {
+export type EdgeContext = ElementContext<EdgeElementSettings> & {
   element: EdgeElement;
-  settings: EdgeElementSettings
 }
 
 export type EventType = keyof typeof EVENT
@@ -191,23 +190,24 @@ export type {
 
 export type CytoscapeEvent = keyof typeof CYTOSCAPE_EVENT
 
-type ElementFilterOption<E> = {
-  test:(params: {element: E}) => boolean
+export type ElementFilterOption<E> = {
+  test:(
+    params: {element: E; item: (NodeData | EdgeData) }
+  ) => boolean
   settings?: {
     opacity?: number
   }
 }
-export type ElementConfig = {
+export type ElementConfig<T = (NodeElement| EdgeElement)> = {
   renderEvents?: CytoscapeEvent[];
+  filter?: ElementFilterOption<T>
 }
 export type NodeConfig = {
   position?: Position;
-  filter?: ElementFilterOption<NodeElement>
-} & ElementConfig
+} & ElementConfig<NodeElement>
 
 export type EdgeConfig = {
-  filter?: ElementFilterOption<EdgeElement>
-} & ElementConfig
+} & ElementConfig<EdgeElement>
 
 export type Cluster = {
   id: string;

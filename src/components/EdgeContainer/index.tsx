@@ -95,7 +95,7 @@ const EdgeContainerElement = (
     graphID,
     children,
     drawLine = defaultDrawLine,
-    config,
+    config = {},
     graphRef,
   } = props
   const theme = useTheme()
@@ -175,9 +175,6 @@ const EdgeContainerElement = (
     })
   }, [drawLineCallback])
   const { element, cy, context } = useEdge({
-    id: item.id,
-    source: item.source,
-    target: item.target,
     graphID,
     onPositionChange,
     config,

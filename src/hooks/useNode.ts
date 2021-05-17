@@ -15,13 +15,12 @@ import { mutableGraphMap } from './useGraph'
 import { useElement } from './useElement'
 
 export type Props = {
-  id: string;
   graphID: string;
   position: Position;
   isCluster?: boolean;
   onPositionChange?: (c: {element: NodeSingular; context: NodeContext }) => void|any;
   config?: NodeConfig;
-  item?: NodeData;
+  item: NodeData;
 }
 
 type Result = {
@@ -40,14 +39,16 @@ const DEFAULT_BOUNDING_BOX = {
 
 export default (props: Props): Result => {
   const {
-    id,
     position,
     onPositionChange,
     graphID,
-    config,
+    config = {},
     item,
     isCluster = false,
   } = props
+  const {
+    id,
+  } = item
   const initializedRef = useInitializedRef()
   const { cy, clustersByNodeId, clustersByChildClusterId } = mutableGraphMap[graphID]
   const clusters = isCluster

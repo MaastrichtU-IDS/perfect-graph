@@ -4,7 +4,6 @@ import {
   DataItem,
 } from '@type'
 import { Position } from 'colay-ui/type'
-// import { dataListToObject } from '@core/utils'
 import { Pressable } from '@components/Pressable'
 import { Image } from '@components/Image'
 import { Text } from '@components/Text'

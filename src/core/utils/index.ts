@@ -15,15 +15,18 @@ export const filter = (
   () => R.reduce(
     (accCollection: Collection, id: string) => accCollection.union(
       cy.getElementById(id),
-    ), cy.collection(), predicate,
+    ),
+    cy.collection(),
+    // @ts-ignore
+    predicate,
   ),
   cy.elements().filter,
 )(predicate)
 
 export const getLabel = (
   dataList: DataItem[] = [],
-) => R.find(R.propEq('key', 'label'))(dataList)?.value ?? ''
-
+  // @ts-ignore
+) => R.find(R.propEq('key', 'label'), dataList)?.value ?? ''
 
 type Info = Record<string, {
   element: NodeSingular;
@@ -40,18 +43,6 @@ export type Props = {
   onStop?: (c: {layout: Layouts;info: Info}) => void;
   predicate?: (cy: EdgeSingular|NodeSingular) => boolean | string[];
 }
-
-// {
-//   name: 'T',
-//   surname: 'S'
-// }
-
-export const dataListToObject = (data: DataItem[]) => R.pipe(
-  R.map(
-    ({ value, name }: DataItem) => ([name, value]),
-  ),
-  R.fromPairs,
-)(data)
 
 // export const layoutCreator = (props: Props) => {
 //   const {

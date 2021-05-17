@@ -1,5 +1,6 @@
 // import { Icon, Text, TouchableOpacity } from 'unitx-ui'
 import Layouts from '@core/layouts'
+import { EventInfo } from '@type'
 
 export const THEME = {
   backgroundColor: '#3287a8',
@@ -183,5 +184,5 @@ export const MOCK_DATA = {
     type: 'PRESS_BACKGROUND', payload: { x: 2928.828125, y: 1769.6484375 }, id: '83ea6691-70c5-4f6a-b389-bbdc46181c6c', date: '2021-03-05T12:24:27.643Z', event: {},
   }, {
     type: 'ELEMENT_SELECTED', elementId: 'http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2011:BR5215', event: { data: { originalEvent: { metaKey: false } } }, id: 'f522d845-000a-4583-9355-16c56cbd0d66', date: '2021-03-05T12:24:28.695Z',
-  }],
+  }] as EventInfo[],
 }
