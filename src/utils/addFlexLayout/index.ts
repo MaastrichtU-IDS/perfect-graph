@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js'
 import { initializeYogaLayout, yogaSetRenderer } from './flex-layout'
 
 initializeYogaLayout()
+// @ts-ignore
 yogaSetRenderer(PIXI.autoDetectRenderer())
 
 // const containerStyle = {

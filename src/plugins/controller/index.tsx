@@ -1,27 +1,21 @@
-import React from 'react'
-import {
-  EditorMode,
-  GraphLabelData, RDFType,
-  DataItem, EventInfo,
-  GraphEditorRef,
-  RecordedEvent,
-  ControllerState,
-} from '@type'
-import { GraphEditorProps } from '@components/GraphEditor'
 import { Graph } from '@components'
-import {
-  EVENT, ELEMENT_DATA_FIELDS, EDITOR_MODE, MOCK_DATA,
-} from '@utils/constants'
+import { GraphEditorProps } from '@components/GraphEditor'
 import GraphLayouts from '@core/layouts'
 import {
-  getSelectedItemByElement, getUndoEvents, cyUnselectAll,
-  getElementsCollectionByIds,
+  ControllerState, DataItem, EditorMode, EventInfo,
+  GraphEditorRef, GraphLabelData, RDFType, RecordedEvent,
+} from '@type'
+import {
+  getSelectedItemByElement, getUndoEvents,
 } from '@utils'
-import { Clusters } from '@core/clusters'
-import { download } from 'colay-ui/utils'
-import { useImmer } from 'colay-ui/hooks/useImmer'
-import * as R from 'colay/ramda'
+import {
+  EDITOR_MODE, ELEMENT_DATA_FIELDS, EVENT, MOCK_DATA,
+} from '@utils/constants'
 import { createHistory } from '@utils/createHistory'
+import { useImmer } from 'colay-ui/hooks/useImmer'
+import { download } from 'colay-ui/utils'
+import * as R from 'colay/ramda'
+import React from 'react'
 
 type ControllerOptions = {
   // onEvent?: (info: EventInfo, draft: ControllerState) => boolean;
@@ -31,7 +25,7 @@ type UseControllerData = Pick<
 GraphEditorProps,
 'nodes'| 'edges' | 'mode'
 | 'actionBar' | 'dataBar' | 'settingsBar'
-| 'graphConfig' | 'events' | 'label' | 'playlists'
+| 'graphConfig' | 'events' | 'label' | 'playlists' | 'selectedElementIds'
 > & {
   onEvent?: (info: EventInfo & {
     graphEditor: GraphEditorRef;
@@ -52,7 +46,7 @@ const closeAllBars = (draft:UseControllerData) => {
 export const useController = (
   useControllerData: UseControllerData,
   _graphEditorRef?: React.MutableRefObject<GraphEditorRef>,
-  options: ControllerOptions = {},
+  // options: ControllerOptions = {},
 ) => {
   const controllerConfig: UseControllerData = React.useMemo<UseControllerData>(
     () => R.mergeDeepAll([
@@ -86,7 +80,7 @@ export const useController = (
       avoidEventRecording,
       avoidHistoryRecording,
     } = eventInfo
-    const graphEditor = graphEditorRef.current
+    const graphEditor = graphEditorRef.current!
     const element = elementId
       ? graphEditor.cy.$id(`${elementId}`)
       : null
@@ -137,7 +131,7 @@ export const useController = (
         }
         const {
           item: selectedItem,
-          index: selectedItemIndex,
+          // index: selectedItemIndex,
         } = (element && getSelectedItemByElement(element, draft)) ?? {}
         const targetDataList = selectedItem?.data!// getSelectedItemByElement(element, draft).data
         switch (type) {
@@ -148,7 +142,7 @@ export const useController = (
             eventHistory.undo()
             break
           case EVENT.UPDATE_DATA:
-            selectedItem.data = payload.value
+            selectedItem!.data = payload.value
             break
           case EVENT.ADD_DATA:
             targetDataList.push({
@@ -173,12 +167,12 @@ export const useController = (
           }
           case EVENT.MAKE_GLOBAL_DATA_LABEL: {
             const newLabel = [ELEMENT_DATA_FIELDS.DATA, dataItem.name]
-            const isSame = R.equals(draft.label.global[targetPath], newLabel)
-            draft.label.global[targetPath] = isSame ? [ELEMENT_DATA_FIELDS.ID] : newLabel
+            const isSame = R.equals(draft.label?.global[targetPath], newLabel)
+            draft.label!.global[targetPath] = isSame ? [ELEMENT_DATA_FIELDS.ID] : newLabel
             break
           }
           case EVENT.MAKE_GLOBAL_DATA_LABEL_FIRST: {
-            draft.label.isGlobalFirst = true
+            draft.label!.isGlobalFirst = true
             break
           }
           case EVENT.ADD_NODE: {

@@ -1,4 +1,3 @@
-import React from 'react'
 // import { Icon, Text, TouchableOpacity } from 'unitx-ui'
 import Layouts from '@core/layouts'
 
@@ -172,7 +171,6 @@ export const CYTOSCAPE_EVENT = {
 } as const
 export const EDGE_LINE_Z_INDEX = -100
 export const EDGE_CONTAINER_Z_INDEX = -99
-
 
 export const MOCK_DATA = {
   events: [{

@@ -14,8 +14,7 @@ type Options = {
   autostart?: boolean;
 }
 
-// @ts-ignore
-export const useTimeoutManager = <T extends Timer<T>>(
+export const useTimeoutManager = <T extends Timer<Record<string, any>>>(
   timers: T[],
   callback: (timer: T, index: number, timeout: TimeoutInstance) => void,
   options: Options = {},

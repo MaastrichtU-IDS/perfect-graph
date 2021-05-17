@@ -1,7 +1,7 @@
 import * as R from 'colay/ramda'
 import * as PIXI from 'pixi.js'
 import { applyDefaultProps as nativeApplyDefaultProps } from '@inlet/react-pixi'
-// import { EventMap } from 'colay-ui/type'
+import { EventMap } from 'colay-ui/type'
 import { BoundingBox, Position } from 'colay/type'
 // import { Properties } from 'csstype'
 // import * as C from 'colay/color'
@@ -99,9 +99,10 @@ export const processTextStyle = (style: {
   } = style
 
   return new PIXI.TextStyle({
+    // @ts-ignore
     align: JUSTIFY_CONTENT[justifyContent ?? 'flex-start'],
     ...(fontFamily ? { fontFamily } : {}),
-    ...(fontSize ? { fontSize: parseFloat(R.replace(fontSize, '%', '')) * width! } : {}),
+    ...(fontSize ? { fontSize: parseFloat(R.replace(`${fontSize}`, '%', '')) * width! } : {}),
     ...(fontWeight ? { fontWeight: `${parseFloat(fontWeight)}` } : {}),
     fill: color, // gradient
     stroke: color,
@@ -147,7 +148,7 @@ export const processTextStyle = (style: {
 // }
 
 export type EventType = (e: PIXI.InteractionEvent) => void
-export type Events = NativeEventMap
+export type Events = EventMap
 
 // export const processEventProps = (props: Record<string, any>) => {
 //   const newProps = { ...props }
@@ -175,6 +176,7 @@ export const applyEvents = (
       const domEventName = PIXI_EVENT_NAMES[eventName]
       const callback = props[eventName]
       if (callback) {
+        // @ts-ignore
         instance.on(domEventName, callback)
       }
     })
@@ -317,18 +319,16 @@ export const getSelectedItemByElement = (
   }
 }
 
-export const getLabel = (path: string[] = [], item: ElementData): string => {
-  return R.isEmpty(path)
-    ? item.id
-    : R.path([ELEMENT_DATA_FIELDS.DATA, ...path])(item) ?? item.id
-  const firstKey = path[0]
-  if (firstKey === ELEMENT_DATA_FIELDS.DATA) {
-    const name = path[1]
-    const foundDataItem = item.data?.find((dataItem) => dataItem.name === name)
-    return foundDataItem?.value[0] ?? ''
-  }
-  return R.path(path)(item)
-}
+export const getLabel = (path: string[] = [], item: ElementData): string => (R.isEmpty(path)
+  ? item.id
+  : (R.path([ELEMENT_DATA_FIELDS.DATA, ...path], item) ?? item.id))
+// const firstKey = path[0]
+// if (firstKey === ELEMENT_DATA_FIELDS.DATA) {
+//   const name = path[1]
+//   const foundDataItem = item.data?.find((dataItem) => dataItem.name === name)
+//   return foundDataItem?.value[0] ?? ''
+// }
+// return R.path(path)(item)
 
 export const readTextFile = async (blob: Blob, encoding?: string) => new Promise<string>(
   (res, rej) => {
@@ -345,7 +345,9 @@ export const readTextFile = async (blob: Blob, encoding?: string) => new Promise
   },
 )
 
-export const calculateObjectBoundsWithoutChildren = (container: PIXI.Container) => {
+export const calculateObjectBoundsWithoutChildren = (
+  container: PIXI.Container,
+): BoundingBox => {
   const position = {
     x: container.x * container.scale.x,
     y: container.y * container.scale.y,
@@ -357,7 +359,7 @@ export const calculateObjectBoundsWithoutChildren = (container: PIXI.Container) 
       height: 0,
     }
   }
-  const object = container.getChildAt(0)
+  const object = container.getChildAt(0) as PIXI.Container
   const children = object.removeChildren()
   if (object.width === 0) {
     children.forEach((child) => {
@@ -366,9 +368,9 @@ export const calculateObjectBoundsWithoutChildren = (container: PIXI.Container) 
     return {
       ...calculateObjectBoundsWithoutChildren(object),
       ...position,
-    }
+    } as BoundingBox
   }
-  const box = {
+  const box: BoundingBox = {
     ...position,
     width: object.width * object.scale.x,
     height: object.height * object.scale.y,
@@ -407,13 +409,16 @@ export const calculateVisibilityByContext = (
 }
 
 // @ts-ignore
-export const filterEdges = (nodes: {id: string}[]) => (
-  edges: {source:string;target:string}[],
+export const filterEdges = (nodes: NodeData[]) => (
+  edges: EdgeData[],
 ) => {
-  const nodeMap = R.groupBy(R.prop('id'))(nodes)
+  const nodeMap = R.groupBy(R.prop('id'), nodes)
   return R.filter(
-    (edge) => nodeMap[edge.source] && nodeMap[edge.target],
-  )(edges)
+    (
+      edge: EdgeData,
+    ) => !!(nodeMap[edge.source] && nodeMap[edge.target]),
+    edges,
+  )
 }
 
 type GetUndoActionsSettings = {
@@ -425,22 +430,22 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
     draft,
     graphEditor,
   } = settings
-  const addHistory = true
+  // const addHistory = true
   const undoEvents: LightEventInfo[] = R.unnest(
     events.map((event): LightEventInfo[] => {
       const {
-        elementId,
+        // elementId,
         type,
         payload,
       } = event
-      const oldSelectedElementId = R.last(draft.selectedElementIds)
-      const element = elementId
-        ? graphEditor.cy.$id(`${elementId}`)
-        : null
-      const {
-        item,
-        index: itemIndex,
-      } = (element && getSelectedItemByElement(element, draft)) ?? {}
+      const oldSelectedElementId = R.last(draft.selectedElementIds ?? [])
+      // const element = elementId
+      //   ? graphEditor.cy.$id(`${elementId}`)
+      //   : null
+      // const {
+      //   item,
+      //   index: itemIndex,
+      // } = (element && getSelectedItemByElement(element, draft)) ?? {}
       switch (type) {
         case EVENT.ADD_NODE:
           return [
@@ -492,7 +497,7 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
             {
               type: EVENT.CHANGE_THEME,
               payload: {
-                value: draft.actionBar.theming.value,
+                value: draft.actionBar?.theming?.value,
               },
             },
           ]
@@ -515,6 +520,7 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
               },
             ]
         case EVENT.PRESS_BACKGROUND:
+          // @ts-ignore
           return oldSelectedElementId
             ? [
               {

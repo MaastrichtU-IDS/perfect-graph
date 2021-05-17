@@ -53,7 +53,7 @@ export type GraphEditorProps = {
   label?: GraphLabelData;
   settingsBar?: SettingsBarProps;
   dataBar?: Pick<DataBarProps, 'editable'| 'opened'>;
-  actionBar?: Pick<ActionBarProps, 'renderMoreAction' | 'opened' | 'recording' |'eventRecording' | 'autoOpen'>;
+  actionBar?: Pick<ActionBarProps, 'renderMoreAction' | 'opened' | 'recording' |'eventRecording' | 'autoOpen' | 'theming'>;
   selectedElementIds?: string[] | null;
   mode?: EditorMode;
   renderEdge?: GraphEditorRenderEdge<RenderElementAdditionalInfo>;

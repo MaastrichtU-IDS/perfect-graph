@@ -1,5 +1,6 @@
 import * as R from 'colay/ramda'
 // import mergeAllOf from 'json-schema-merge-allof'
+// @ts-ignore
 import toJSONSchema from 'to-json-schema'
 
 export const createSchema = (itemList: any[]) => {
@@ -9,28 +10,28 @@ export const createSchema = (itemList: any[]) => {
   }
   return {
     ...toJSONSchema(R.mergeAll(itemList), options),
-    title: 'Filter'
-  }
-  const allOf = itemList.map((item) => {
-    console.log('b', item)
-    let baseSchema
-    try {
-      baseSchema = toJSONSchema(item, options)
-    } catch (error) {
-      baseSchema = null
-    }
-    return baseSchema
-  }).filter((item) => item !== null)
-  const schema = {
-    type: ['object'],
-    // additionalProperties: {
-    //   type: 'string',
-    //   minLength: 5
-    // },
     title: 'Filter',
-    allOf,
   }
-  return mergeAllOf(schema)
+  // const allOf = itemList.map((item) => {
+  //   console.log('b', item)
+  //   let baseSchema
+  //   try {
+  //     baseSchema = toJSONSchema(item, options)
+  //   } catch (error) {
+  //     baseSchema = null
+  //   }
+  //   return baseSchema
+  // }).filter((item) => item !== null)
+  // const schema = {
+  //   type: ['object'],
+  //   // additionalProperties: {
+  //   //   type: 'string',
+  //   //   minLength: 5
+  //   // },
+  //   title: 'Filter',
+  //   allOf,
+  // }
+  // return mergeAllOf(schema)
 }
 // export const createSchema = (itemList: object[]) => {
 //   let required: string[] = []

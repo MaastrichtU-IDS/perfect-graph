@@ -1,7 +1,8 @@
+// @ts-nocheck
 import { Parser, Quad } from 'n3'
 import * as jsonld from 'jsonld'
 import * as R from 'colay/ramda'
-import { data, data2 } from './example'
+import {  data2 } from './example'
 
 type ToNquadResult = {
   quadList: Quad[];

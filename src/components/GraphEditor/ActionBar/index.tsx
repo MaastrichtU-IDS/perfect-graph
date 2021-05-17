@@ -331,9 +331,7 @@ const ActionBarElement = (props: ActionBarProps) => {
   )
 }
 type MoreOptionsProps = {
-  onEvent: (
-    params: any
-  ) => () => void;
+  onEvent: OnEventLite;
 } & Pick<ActionBarProps, 'renderMoreAction' | 'onAction' | 'theming'>
 
 const OPTIONS = {
