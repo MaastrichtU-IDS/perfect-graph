@@ -1,27 +1,39 @@
-import {
-  createMuiTheme, ThemeProvider as MuiThemeProvider
-} from '@material-ui/core'
-import { View } from 'colay-ui'
-import { useImmer } from 'colay-ui/hooks/useImmer'
-import * as R from 'colay/ramda'
+/* eslint-disable */
+// @ts-nocheck
 import React from 'react'
-import { Graph } from '../../src/components'
-import { GraphEditor, GraphEditorProps } from '../../src/components/GraphEditor'
+import * as R from 'colay/ramda'
+import {
+  useTheme as useMuiTheme,
+  ThemeProvider as MuiThemeProvider,
+  createMuiTheme
+} from '@material-ui/core'
+import { View, } from 'colay-ui'
+import { useImmer } from 'colay-ui/hooks/useImmer'
 import {
   DarkTheme,
-  DefaultTheme
+  DefaultTheme,
+  ThemeProvider,
+  useTheme
 } from '../../src/core/theme'
+import { GraphRef } from '../../src/type'
+import { GraphEditorProps, GraphEditor } from '../../src/components/GraphEditor'
+import { Graph } from '../../src/components'
+import { UseEffect } from '../../src/components/UseEffect'
+import { drawLine } from '../../src/components/Graphics'
+import defaultData from './data'
+import * as C from 'colay/color'
+import { getFilterSchema, getFetchSchema, VIEW_CONFIG_SCHEMA, RECORDED_EVENTS } from './constants'
+import { EVENT } from '../../src/constants'
 import { useController } from '../../src/plugins/controller'
 import { createSchema } from '../../src/plugins/createSchema'
 import { getSelectedItemByElement } from '../../src/utils'
-import { EVENT } from '../../src/utils/constants'
-import * as API from './API'
-import { getFetchSchema, getFilterSchema, VIEW_CONFIG_SCHEMA } from './constants'
-import defaultData from './data'
-import { QueryBuilder } from './QueryBuilder'
-import { RenderEdge } from './RenderEdge'
+import { calculateStatistics } from './utils/networkStatistics'
 import { RenderNode } from './RenderNode'
+import { RenderEdge } from './RenderEdge'
+import * as API from './API'
+import { QueryBuilder } from './QueryBuilder'
 // import { Data } from '../../components/Graph/Default'
+
 
 const MUIDarkTheme = createMuiTheme({
   palette: {
@@ -33,19 +45,19 @@ const MUILightTheme = createMuiTheme({
     mode: 'light',
   },
 });
-const filterEdges = (nodes: {id: string}[]) => (edges: {source:string;target:string}[]) => {
+const filterEdges = (nodes: { id: string }[]) => (edges: { source: string; target: string }[]) => {
   const nodeMap = R.groupBy(R.prop('id'))(nodes)
   return R.filter(
     (edge) => nodeMap[edge.source] && nodeMap[edge.target]
   )(edges)
 }
 const CHUNK_COUNT = 3
-const prepareData = (data) =>  {
+const prepareData = (data) => {
   const {
     nodes,
     edges
   } = data
-  const preNodes = R.splitEvery(Math.ceil(nodes.length/CHUNK_COUNT))(nodes)[0]
+  const preNodes = R.splitEvery(Math.ceil(nodes.length / CHUNK_COUNT))(nodes)[0]
   const preEdges = filterEdges(preNodes)(edges)
   return {
     nodes: preNodes,
@@ -79,7 +91,7 @@ const calculateNodeSize = (data: object, fieldName?: keyof typeof NODE_SIZE_RANG
   const sizeRangeGap = NODE_SIZE_RANGE_MAP.size[1] - NODE_SIZE_RANGE_MAP.size[0]
   const fieldRangeGap = fieldRange[1] - fieldRange[0]
   const fieldRangeValue = (data[fieldName] ?? fieldRange[0]) - fieldRange[0]
-  return  ((fieldRangeValue / fieldRangeGap) * sizeRangeGap) + NODE_SIZE_RANGE_MAP.size[0]
+  return ((fieldRangeValue / fieldRangeGap) * sizeRangeGap) + NODE_SIZE_RANGE_MAP.size[0]
 }
 const calculateColor = (data: object, fieldName?: keyof typeof NODE_SIZE_RANGE_MAP) => {
   if (!fieldName) {
@@ -89,27 +101,27 @@ const calculateColor = (data: object, fieldName?: keyof typeof NODE_SIZE_RANGE_M
   const sizeRangeGap = NODE_SIZE_RANGE_MAP.size[1] - NODE_SIZE_RANGE_MAP.size[0]
   const fieldRangeGap = fieldRange[1] - fieldRange[0]
   const fieldRangeValue = (data[fieldName] ?? fieldRange[0]) - fieldRange[0]
-  return  perc2color((fieldRangeValue / fieldRangeGap) * 100)
+  return perc2color((fieldRangeValue / fieldRangeGap) * 100)
 }
 const perc2color = (
   perc: number,
-  min = 20, 
+  min = 20,
   max = 80
 ) => {
   var base = (max - min);
 
   if (base === 0) { perc = 100; }
   else {
-      perc = (perc - min) / base * 100; 
+    perc = (perc - min) / base * 100;
   }
   var r, g, b = 0;
   if (perc < 50) {
-      r = 255;
-      g = Math.round(5.1 * perc);
+    r = 255;
+    g = Math.round(5.1 * perc);
   }
   else {
-      g = 255;
-      r = Math.round(510 - 5.10 * perc);
+    g = 255;
+    r = Math.round(510 - 5.10 * perc);
   }
   var h = r * 0x10000 + g * 0x100 + b * 0x1;
   return '#' + ('000000' + h.toString(16)).slice(-6);
@@ -128,6 +140,36 @@ const AppContainer = ({
       nodeSize: null,
       nodeColor: null
     },
+    fetching: {
+      source: [
+        "Rechtspraak"
+      ],
+      year: [
+        1969,
+        2015
+      ],
+      instances: [
+        "Hoge Raad",
+        "Raad van State",
+        "Centrale Raad van Beroep",
+        "College van Beroep voor het bedrijfsleven",
+        "Gerechtshof Arnhem-Leeuwarden"
+      ],
+      domains: [
+        "Not"
+      ],
+      doctypes: [
+        "DEC",
+        "OPI"
+      ],
+      degreesSources: 3,
+      popup: false,
+      liPermission: false,
+      keywords: "test",
+      degreesTargets: 3,
+      eclis: "",
+      articles: ""
+    },
     filtering: {
       year: [1960, 2021],
       degree: [0, 100],
@@ -135,12 +177,14 @@ const AppContainer = ({
       outdegree: [0, 100]
     }
   })
-  
+
   const FILTER_SCHEMA = React.useMemo(() => getFilterSchema(), [])
   const FETCH_SCHEMA = React.useMemo(() => getFetchSchema({
-    onPopupPress: () => updateState((draft) => {
-      draft.queryBuilder.visible = true
-    })
+    onPopupPress: async () => {
+      updateState((draft) => {
+        draft.queryBuilder.visible = true
+      })
+    }
   }), [])
   const THEMES = {
     Dark: DarkTheme,
@@ -151,7 +195,36 @@ const AppContainer = ({
   const [state, updateState] = useImmer({
     queryBuilder: {
       visible: false,
-      query: {},
+      query: {
+        DataSources: [
+          "RS"
+        ],
+        Date: [
+          1969,
+          2015
+        ],
+        Instances: [
+          "Hoge Raad",
+          "Raad van State",
+          "Centrale Raad van Beroep",
+          "College van Beroep voor het bedrijfsleven",
+          "Gerechtshof Arnhem-Leeuwarden"
+        ],
+        Domains: [
+          "Not"
+        ],
+        Doctypes: [
+          "DEC",
+          "OPI"
+        ],
+        DegreesSources: 3,
+        popup: false,
+        LiPermission: false,
+        Keywords: "test",
+        DegreesTargets: 3,
+        Eclis: "",
+        Articles: ""
+      },
     }
   })
   const [controllerProps, controller] = useController({
@@ -184,22 +257,25 @@ const AppContainer = ({
         }
       ]
     },
-    settingsBar: {
+    preferencesModal: {
       isOpen: true,
+    },
+    settingsBar: {
+      opened: true,
       // forms: [AUTO_CREATED_SCHEMA,FETCH_SCHEMA, VIEW_CONFIG_SCHEMA, {...FILTER_SCHEMA,  formData: configRef.current.filtering}, ],
-      forms: [FETCH_SCHEMA, VIEW_CONFIG_SCHEMA, {...FILTER_SCHEMA,  formData: configRef.current.filtering}, ],
+      forms: [{ ...FETCH_SCHEMA, formData: configRef.current.fetching }, VIEW_CONFIG_SCHEMA, { ...FILTER_SCHEMA, formData: configRef.current.filtering },],
       createClusterForm: {
         ...FILTER_SCHEMA,
-        schema: {...FILTER_SCHEMA.schema, title: 'Create Cluster', },
+        schema: { ...FILTER_SCHEMA.schema, title: 'Create Cluster', },
         formData: configRef.current.filtering
       },
     },
     dataBar: {
-      // isOpen: true,
+      // opened: true,
       editable: false,
     },
     actionBar: {
-      // isOpen: true,
+      // opened: true,
       // autoOpen: true,
       eventRecording: false,
       actions: {
@@ -227,7 +303,7 @@ const AppContainer = ({
       graphRef,
       graphEditor,
       update,
-    },draft) => {
+    }, draft) => {
       const {
         cy,
       } = graphEditor
@@ -273,16 +349,16 @@ const AppContainer = ({
             degree,
             indegree,
             outdegree
-           }= formData
+          } = formData
           const clusterItemIds = draft.nodes.filter((item) => {
             const element = cy.$id(item.id)
             return (
               R.inBetween(year[0], year[1])(item.data.year)
-                && R.inBetween(degree[0], degree[1])(element.degree())
-                && R.inBetween(indegree[0], indegree[1])(element.indegree())
-                && R.inBetween(outdegree[0], outdegree[1])(element.outdegree())
-                
-              )
+              && R.inBetween(degree[0], degree[1])(element.degree())
+              && R.inBetween(indegree[0], indegree[1])(element.indegree())
+              && R.inBetween(outdegree[0], outdegree[1])(element.outdegree())
+
+            )
           }).map((item) => item.id)
           draft.graphConfig.clusters.push({
             id: R.uuid(),
@@ -292,32 +368,32 @@ const AppContainer = ({
           })
           return false
         }
-        case EVENT.SETTINGS_FORM_CHANGED:{
+        case EVENT.SETTINGS_FORM_CHANGED: {
           draft.settingsBar.forms[payload.index].formData = payload.value
           if (payload.form.schema.title === FILTER_SCHEMA.schema.title) {
             configRef.current = {
               ...configRef.current,
               filtering: payload.value
             }
-            draft.graphConfig.nodes.filter =  {
-              test: ({ element,item }) => {
+            draft.graphConfig.nodes.filter = {
+              test: ({ element, item }) => {
                 const {
                   year,
                   degree,
                   indegree,
                   outdegree
-                 }= payload.value
-                  return (
-                    R.inBetween(year[0], year[1])(item.data.year)
-                      && R.inBetween(degree[0], degree[1])(element.degree())
-                      && R.inBetween(indegree[0], indegree[1])(element.indegree())
-                      && R.inBetween(outdegree[0], outdegree[1])(element.outdegree())
-                      
-                    )
-                },
-                settings: {
-                  opacity: 0.2
-                }
+                } = payload.value
+                return (
+                  R.inBetween(year[0], year[1])(item.data.year)
+                  && R.inBetween(degree[0], degree[1])(element.degree())
+                  && R.inBetween(indegree[0], indegree[1])(element.indegree())
+                  && R.inBetween(outdegree[0], outdegree[1])(element.outdegree())
+
+                )
+              },
+              settings: {
+                opacity: 0.2
+              }
             }
 
           } else {
@@ -329,7 +405,7 @@ const AppContainer = ({
           return false
           break
         }
-      
+
         case EVENT.CHANGE_THEME: {
           const {
             value
@@ -374,13 +450,13 @@ const AppContainer = ({
         //   // return false
         //   break
         // }
-      
+
         default:
           break;
       }
       return null
     }
-  },)
+  })
   // React.useEffect(() => {
   //   const call = async () =>{
   //     const results = await listCases()
@@ -411,7 +487,7 @@ const AppContainer = ({
   // }, [])
   const graphEditorRef = React.useRef(null)
   return (
-      <View style={{ display: 'flex', flexDirection: 'column',width: '100%', height: '100%'}}>
+    <View style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%' }}>
       <GraphEditor
         ref={graphEditorRef}
         {...controllerProps}
@@ -424,107 +500,43 @@ const AppContainer = ({
             {...configRef.current}
           />
         )}
-        // renderNode={({ item, element, cy, theme }) => {
-        //   const size = calculateNodeSize(item.data, configRef.current.visualization.nodeSize)
-        //   const color = configRef.current.visualization.nodeColor ? calculateColor(
-        //     item.data,
-        //     configRef.current.visualization.nodeColor
-        //   ) : theme.palette.background.paper
-        //   const hasSelectedEdge = element.connectedEdges(':selected').length > 0
-        //   return (
-        //           <Graph.Pressable
-        //       style={{
-        //         width: size,
-        //         height: size,
-        //         justifyContent: 'center',
-        //         alignItems: 'center',
-        //         display: 'flex',
-        //         backgroundColor: hasSelectedEdge
-        //         ? theme.palette.secondary.main
-        //         : (element.selected()
-        //           ? theme.palette.primary.main
-        //           : color),
-        //         // hasSelectedEdge
-        //         //   ? theme.palette.secondary.main
-        //         //   : (element.selected()
-        //         //     ? theme.palette.primary.main
-        //         //     : theme.palette.background.paper),
-        //         borderRadius: size,
-        //       }}
-        //       onPress={() => {
-        //         cy.$(':selected').unselect()
-        //         element.select()
-        //       }}
-        //     >
-        //       <Graph.Text
-        //         style={{
-        //           position: 'absolute',
-        //           top: -size/1.5,
-        //           left: 20,
-        //         }}
-        //         isSprite
-        //       >
-        //         {R.takeLast(6, item.id)}
-        //       </Graph.Text>
-        //     </Graph.Pressable>
-        //   )
-        // }}
         renderEdge={RenderEdge}
-        // renderNode={({ item: { id, data } }) => {
-          // const size = calculateNodeSize(data, configRef.current.visualization.nodeSize)
-          // const color = calculateColor(data, configRef.current.visualization.nodeColor)
-        //   return (
-        //     <Graph.HoverContainer
-        //       style={{
-        //         width: size,
-        //         height: size,
-        //         alignItems: 'center',
-        //         justifyContent: 'center',
-        //         borderRadius: 25,//(size/2 )+10,
-        //         backgroundColor: color
-        //         }}
-        //         renderHoverElement={() => (
-        //           <Graph.View
-        //             style={{
-        //               width: size,
-        //               height: 20,
-        //               position: 'absolute',
-        //               left: 0,
-        //               backgroundColor: color
-        //             }}
-        //           >
-        //             <Graph.Text style={{
-        //               fontSize: 20,
-        //                textAlign: 'center',
-        //               }}>
-        //               {R.replace('ECLI:NL:', '')(data.ecli)}
-        //             </Graph.Text>
-        //           </Graph.View>
-        //         )}
-        //     >
-        //       <Graph.Text style={{fontSize: 10}}>
-        //         {R.replace('ECLI:NL:', '')(data.ecli)}
-        //       </Graph.Text>
-        //     </Graph.HoverContainer>
-        //   )
-        // }}
         {...rest}
       />
-      <QueryBuilder 
+      <QueryBuilder
         isOpen={state.queryBuilder.visible}
         query={state.queryBuilder.query}
         onClose={() => updateState((draft) => {
           draft.queryBuilder.visible = false
         })}
-        onCreate={(query) => updateState((draft) => {
-          draft.queryBuilder.visible = false
-          draft.queryBuilder.query = query
-          alert(JSON.stringify(query))
-          // const data = API.complexQuery(query)
-          // QueryCallback(query)
-        })}
+        onCreate={async (query) => {
+          console.log(query)
+
+          let cases = await API.listCases(query)
+
+          let casesData = prepareData(cases)
+          console.log(casesData)
+          
+          controller.update((draft) => {
+            draft.nodes = casesData.nodes
+            draft.edges = casesData.edges
+          })
+
+          // console.log(controllerProps)
+          // console.log(defaultData)
+          // console.log(prepareData(defaultData))
+
+          updateState((draft) => {
+            draft.queryBuilder.visible = false
+            draft.queryBuilder.query = query
+
+            // alert(JSON.stringify(query))
+            // const data = API.complexQuery(query)
+            // QueryCallback(query)
+          })
+        }}
       />
-      </View>
+    </View>
   )
 }
 
@@ -538,7 +550,7 @@ export default (props: Props) => {
   return (
     <MuiThemeProvider theme={theme}>
       <AppContainer
-        changeMUITheme={(name)=> setTheme(MUI_THEMES[name])}
+        changeMUITheme={(name) => setTheme(MUI_THEMES[name])}
         {...props}
       />
     </MuiThemeProvider>

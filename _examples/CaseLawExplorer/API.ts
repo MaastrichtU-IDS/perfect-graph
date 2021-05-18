@@ -1,28 +1,55 @@
-import Amplify, { API }  from "aws-amplify";
+import Amplify, { API } from "aws-amplify";
 // import awsExports from "./aws-exports";
-
-Amplify.configure({
-  "aws_project_region": "eu-central-1",
-  "aws_appsync_graphqlEndpoint": "https://culpdi4smbeqtjyiqaqxusuv3q.appsync-api.eu-central-1.amazonaws.com/graphql",
-  "aws_appsync_region": "eu-central-1",
-  "aws_appsync_authenticationType": "API_KEY",
-  "aws_appsync_apiKey": "da2-l7smc55gkvgbdftblcbfra4d5y"
-});
 
 const API_AUTH_MODE = {
   API_KEY: 'API_KEY'
 } as const
 
-const LIST_CASES = `query ListCases {
-  listCaselaws {
-    items {
-      abstract
-      country
-      court
-      date
-      doctype
+const convertJSONStringFields = (item) => {
+  return {
+    ...item,
+    ...(item.position ? { position: JSON.parse(item.position) } : {}),
+    data: JSON.parse(item.data)
+  }
+}
+
+const LIST_CASES = `query QueryNetworkByUserInput(
+  $DataSources: [String]
+  $Keywords: String
+  $Articles: String
+  $Eclis: String
+  $DegreesSources: Int
+  $DegreesTargets: Int
+  $DateStart: AWSDate
+  $DateEnd: AWSDate
+  $Instances: [String]
+  $Domains: [String]
+  $Doctypes: [String]
+  $LiPermission: Boolean
+) {
+  queryNetworkByUserInput(
+    DataSources: $DataSources
+    Keywords: $Keywords
+    Articles: $Articles
+    Eclis: $Eclis
+    DegreesSources: $DegreesSources
+    DegreesTargets: $DegreesTargets
+    DateStart: $DateStart
+    DateEnd: $DateEnd
+    Instances: $Instances
+    Domains: $Domains
+    Doctypes: $Doctypes
+    LiPermission: $LiPermission
+  ) {
+    nodes {
       id
-      subject
+      data
+    }
+    edges {
+      id
+      source
+      target
+      data
     }
   }
 }`
@@ -34,15 +61,35 @@ const GET_ELEMENT_DATA = `query GetElementData($id: String) {
   }
 }`
 
-export async function listCases() {
+const TEST_AUTH = `query TestAuth($id: String) {
+  testAuth(Ecli: $id, LiPermission: true) {
+    data
+    id
+  }
+}`
+
+type listCasesVariables = {
+  DataSources: string[];
+}
+
+export async function listCases(variables: listCasesVariables) {
   try {
+    console.log(variables)
     const listCasesResult = await API.graphql({
       query: LIST_CASES,
       authMode: API_AUTH_MODE.API_KEY,
-      // variables
+      variables
     })
-    const caseResults = listCasesResult.data.listCaselaws.items
-    return caseResults
+
+    const caseResults = listCasesResult.data.queryNetworkByUserInput
+    console.log(caseResults)
+
+    return {
+      nodes: caseResults.nodes.map(convertJSONStringFields),
+      edges: caseResults.edges.map(convertJSONStringFields),
+      // edges: project.edges.items.map(convertJSONStringFields),
+    }
+
     // return caseResults.map(project => ({
     //   // ...project,
     //   nodes: project.nodes.items.map(convertJSONStringFields),
@@ -86,8 +133,6 @@ export async function complexQuery(query: any) {
   }
 }
 
-
-
 type GetElementDataVariables = {
   id: string;
 }
@@ -100,7 +145,7 @@ export async function getElementData(variables: GetElementDataVariables) {
       variables
     })
     const result = elementDataResult.data.fetchNodeData.data
-    return result ? JSON.parse(result)  : {}
+    return result ? JSON.parse(result) : {}
     // return caseResults.map(project => ({
     //   // ...project,
     //   nodes: project.nodes.items.map(convertJSONStringFields),
@@ -108,5 +153,20 @@ export async function getElementData(variables: GetElementDataVariables) {
     // }))
   } catch (err) {
     console.log('error getElementData node:', err)
+  }
+}
+
+
+export async function testAuth(variables: GetElementDataVariables) {
+  try {
+    const elementDataResult = await API.graphql({
+      query: TEST_AUTH,
+      // authMode: API_AUTH_MODE.API_KEY,
+      variables
+    })
+    const result = elementDataResult.data.testAuth.data
+    return result ? JSON.parse(result) : {}
+  } catch (err) {
+    console.log('error testAuth:', err)
   }
 }

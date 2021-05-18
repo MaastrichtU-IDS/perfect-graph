@@ -1,5 +1,7 @@
 import React from 'react'
-import { Modal, Button, Box, Typography, TextField, Paper} from '@material-ui/core'
+import Form from '@rjsf/material-ui'
+import { getFetchSchema } from './constants'
+import { Modal, Button, Box, Typography, TextField, Paper } from '@material-ui/core'
 
 export type QueryBuilderProps = {
   query: any;
@@ -17,10 +19,10 @@ export const QueryBuilder = (props: QueryBuilderProps) => {
   } = props
 
   const [state, setState] = React.useState(query)
-    return (
-      <Modal
+  return (
+    <Modal
       open={isOpen}
-    // onClose={onClose}
+      // onClose={onClose}
       style={{
         display: 'flex',
         // flexDirection: 'column-reverse',
@@ -40,10 +42,11 @@ export const QueryBuilder = (props: QueryBuilderProps) => {
         flexDirection: 'column',
         width: '80%',
         height: '80%',
-        padding: 10
+        padding: 10,
+        overflow: 'scroll'
       }}
       >
-        <Box 
+        <Box
           style={{
             display: 'flex',
             flexDirection: 'row',
@@ -56,25 +59,14 @@ export const QueryBuilder = (props: QueryBuilderProps) => {
         <Box
           style={{
             display: 'flex',
-            flexDirection: 'column',
-            width: '100%',
-            height: '80%',
+            flexDirection: 'column'
           }}
         >
-          <TextField 
-            label="QueryType"
-            onChange={(e)=> setState({...state, type: e.target.value})}
-            value={state.type}
-          />
-          <TextField 
-            label="QueryValue"
-            onChange={(e)=> setState({...state, value: e.target.value})}
-            value={state.value}
-          />
-          <TextField 
-            label="QueryMode"
-            onChange={(e)=> setState({...state, mode: e.target.value})}
-            value={state.mode}
+          <Form
+            schema={getFetchSchema({ onPopupPress: () => console.log('eyyyy') }).schema}
+            uiSchema={getFetchSchema({ onPopupPress: () => console.log('eyyyy') }).uiSchema}
+            onChange={e => setState(e.formData)}
+            formData={state}
           />
         </Box>
         <Box
@@ -85,9 +77,11 @@ export const QueryBuilder = (props: QueryBuilderProps) => {
             alignItems: 'center',
           }}
         >
-          <Paper style={{ display: 'flex', 
-          
-          flexDirection: 'row', justifyContent: 'space-around' , width: '40%'}}>
+          <Paper style={{
+            display: 'flex',
+
+            flexDirection: 'row', justifyContent: 'space-around', width: '40%'
+          }}>
             <Button
               onClick={() => {
                 onCreate(state)
@@ -107,7 +101,7 @@ export const QueryBuilder = (props: QueryBuilderProps) => {
         </Box>
       </Paper>
     </Modal>
- 
-    )
+
+  )
 
 }

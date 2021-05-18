@@ -1,26 +1,27 @@
 import React from 'react'
-import {Button, Slider, Typography} from '@material-ui/core'
+import { Button, Slider, Typography } from '@material-ui/core'
 
-const SliderUIField = ({ formData, schema, onChange, name}) => {
+const SliderUIField = ({ formData, schema, onChange, name }) => {
+
   return (
     <>
-    <Typography id={`${schema.title}-continuous-slider`} gutterBottom>
+      <Typography id={`${schema.title}-continuous-slider`} gutterBottom>
         {schema.title ?? name}
-    </Typography>
-    <Slider
-      value={formData ?? [schema.minimum, schema.maximum ]}
-      onChange={(e) => {
-        onChange(e.target.value)
-      }}
-      valueLabelDisplay="auto"
-      aria-labelledby={`${schema.title}-continuous-slider`}
-      min={schema.minimum}
-      max={schema.maximum}
-    />
+      </Typography>
+      <Slider
+        value={formData ?? [schema.minimum, schema.maximum]}
+        onChange={(e) => {
+          onChange(e.target.value)
+        }}
+        valueLabelDisplay="auto"
+        aria-labelledby={`${schema.title}-continuous-slider`}
+        min={schema.minimum}
+        max={schema.maximum}
+      />
     </>
   )
 }
-export const getFilterSchema  = (props: {} = {}) => {
+export const getFilterSchema = (props: {} = {}) => {
   const {
   } = props
   return {
@@ -89,11 +90,12 @@ export const getFilterSchema  = (props: {} = {}) => {
   }
 }
 
-export const getFetchSchema  = (props: {onPopupPress: () => void}) => {
+export const getFetchSchema = (props: { onPopupPress: () => void }) => {
   const {
-     onPopupPress
+    onPopupPress
   } = props
   return {
+    children: <div></div>,
     schema: {
       title: 'Fetch Data',
       type: 'object',
@@ -105,29 +107,125 @@ export const getFetchSchema  = (props: {onPopupPress: () => void}) => {
       ],
       additionalProperties: false,
       properties: {
-        label: {
-          type: 'string',
-        },
-        year: {
-          type: 'array',
-          items: {
-            type: 'number',
-          },
-          minimum: 1969,
-          maximum: 2015,
-        },
+        // DataSources: {
+        //   type: 'array',
+        //   title: 'Data sources',
+        //   uniqueItems: true,
+        //   items: {
+        //     enum: [
+        //       'RS',
+        //       'ECHR',
+        //       'Eurlex'
+        //     ],
+        //     enumNames: [
+        //       'Rechtspraak',
+        //       'European Court of Human Rights',
+        //       'Eurlex'
+        //     ],
+        //     type: 'string'
+        //   },
+        // },
+        // Eclis: {
+        //   type: 'string',
+        //   title: 'ECLIs'
+        // },
+        // Keywords: {
+        //   type: 'string',
+        //   title: 'Keywords'
+        // },
+        // Articles: {
+        //   type: 'string',
+        //   title: 'Articles'
+        // },
+        // Date: {
+        //   type: 'array',
+        //   title: 'Date',
+        //   items: {
+        //     type: 'number',
+        //   },
+        //   minimum: 1969,
+        //   maximum: 2015,
+        // },
+        // DegreesSources: {
+        //   type: 'integer',
+        //   title: 'Degrees Sources',
+        //   minimum: 1,
+        //   maximum: 5,
+        // },
+        // DegreesTargets: {
+        //   type: 'integer',
+        //   title: 'Degrees Targets',
+        //   minimum: 1,
+        //   maximum: 5,
+        // },
+        // Instances: {
+        //   type: 'array',
+        //   title: 'Instances',
+        //   uniqueItems: true,
+        //   items: {
+        //     enum: [
+        //       'Hoge Raad',
+        //       'Raad van State',
+        //       'Centrale Raad van Beroep',
+        //       'College van Beroep voor het bedrijfsleven',
+        //       'Gerechtshof Arnhem-Leeuwarden'
+        //     ],
+        //     type: 'string'
+        //   },
+        // },
+        // Domains: {
+        //   type: 'array',
+        //   title: 'Domains',
+        //   uniqueItems: true,
+        //   items: {
+        //     enum: [
+        //       'Not',
+        //       'Sure',
+        //       'What'
+        //     ],
+        //     type: 'string'
+        //   },
+        // },
+        // Doctypes: {
+        //   type: 'array',
+        //   title: 'Document types',
+        //   uniqueItems: true,
+        //   items: {
+        //     enum: [
+        //       'DEC',
+        //       'OPI'
+        //     ],
+        //     type: 'string'
+        //   },
+        // },
+        // LiPermission: {
+        //   type: 'boolean',
+        //   title: 'LI Permission',
+        // },
         popup: {
-          title: 'More Settings',
+          title: 'Build Query',
           type: 'boolean',
         },
       },
     },
     uiSchema: {
-      'year': {
+      'Date': {
         'ui:field': SliderUIField,
       },
+      // 'degreesSources': {
+      //   'ui:field': SliderUIField,
+      // },
+      // 'degreesTargets': {
+      //   'ui:field': SliderUIField,
+      // },
+      // 'source':{
+      //   'ui:widget': 'checkboxes'
+      // },
+      // 'liPermission':{
+      //   'ui:widget': 'select'
+      // },
       'popup': {
-        'ui:field': ({ formData, schema, onChange}) => {
+        'ui:field': ({ formData, schema, onChange }) => {
           return (
             <Button onClick={onPopupPress}>Open Query Builder</Button>
           )
@@ -170,75 +268,75 @@ export const VIEW_CONFIG_SCHEMA = {
 
 export const RECORDED_EVENTS = [
   {
-      "type": "@",
-      "data": {
-          "type": "PRESS_BACKGROUND",
-          "payload": {
-              "x": 1552.63671875,
-              "y": 2627.20703125
-          },
-          "event": {}
+    "type": "@",
+    "data": {
+      "type": "PRESS_BACKGROUND",
+      "payload": {
+        "x": 1552.63671875,
+        "y": 2627.20703125
       },
-      "date": "2021-02-26T07:59:37.065Z",
+      "event": {}
+    },
+    "date": "2021-02-26T07:59:37.065Z",
   },
   {
-      "type": "@",
-      "data": {
-          "type": "ELEMENT_SELECTED",
-          "elementId": "http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2009:BF8875",
-          "event": {
-              "data": {
-                  "originalEvent": {
-                      "metaKey": false
-                  }
-              }
+    "type": "@",
+    "data": {
+      "type": "ELEMENT_SELECTED",
+      "elementId": "http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2009:BF8875",
+      "event": {
+        "data": {
+          "originalEvent": {
+            "metaKey": false
           }
-      },
-      "date": "2021-02-26T07:59:37.992Z",
+        }
+      }
+    },
+    "date": "2021-02-26T07:59:37.992Z",
   },
   {
-      "type": "@",
-      "data": {
-          "type": "ELEMENT_SELECTED",
-          "elementId": "http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2009:BJ7832",
-          "event": {
-              "data": {
-                  "originalEvent": {
-                      "metaKey": false
-                  }
-              }
+    "type": "@",
+    "data": {
+      "type": "ELEMENT_SELECTED",
+      "elementId": "http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2009:BJ7832",
+      "event": {
+        "data": {
+          "originalEvent": {
+            "metaKey": false
           }
-      },
-      "date": "2021-02-26T07:59:39.640Z",
+        }
+      }
+    },
+    "date": "2021-02-26T07:59:39.640Z",
   },
   {
-      "type": "@",
-      "data": {
-          "type": "ELEMENT_SELECTED",
-          "elementId": "http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2011:BR5223",
-          "event": {
-              "data": {
-                  "originalEvent": {
-                      "metaKey": false
-                  }
-              }
+    "type": "@",
+    "data": {
+      "type": "ELEMENT_SELECTED",
+      "elementId": "http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2011:BR5223",
+      "event": {
+        "data": {
+          "originalEvent": {
+            "metaKey": false
           }
-      },
-      "date": "2021-02-26T07:59:41.945Z",
+        }
+      }
+    },
+    "date": "2021-02-26T07:59:41.945Z",
   },
   {
-      "type": "@",
-      "data": {
-          "type": "ELEMENT_SELECTED",
-          "elementId": "http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2012:BV1295",
-          "event": {
-              "data": {
-                  "originalEvent": {
-                      "metaKey": false
-                  }
-              }
+    "type": "@",
+    "data": {
+      "type": "ELEMENT_SELECTED",
+      "elementId": "http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2012:BV1295",
+      "event": {
+        "data": {
+          "originalEvent": {
+            "metaKey": false
           }
-      },
-      "date": "2021-02-26T07:59:44.725Z",
+        }
+      }
+    },
+    "date": "2021-02-26T07:59:44.725Z",
   }
 ]

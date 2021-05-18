@@ -40,6 +40,7 @@ import { DataBar, DataBarProps } from './DataBar'
 import { MouseIcon } from './MouseIcon'
 import { SettingsBar, SettingsBarProps } from './SettingsBar'
 import { RecordedEventsModal } from './RecordedEventsModal'
+import { PreferencesModal, PreferencesModalProps } from './PreferencesModal'
 
 type RenderElementAdditionalInfo = {
   // label: string;
@@ -54,6 +55,7 @@ export type GraphEditorProps = {
   settingsBar?: SettingsBarProps;
   dataBar?: Pick<DataBarProps, 'editable'| 'isOpen'>;
   actionBar?: Pick<ActionBarProps, 'renderMoreAction' | 'isOpen' | 'recording' |'eventRecording' | 'autoOpen' | 'theming'>;
+  preferencesModal?: PreferencesModalProps;
   selectedElementIds?: string[] | null;
   mode?: EditorMode;
   renderEdge?: GraphEditorRenderEdge<RenderElementAdditionalInfo>;
@@ -98,6 +100,7 @@ const GraphEditorElement = (
     settingsBar,
     actionBar,
     dataBar = {},
+    preferencesModal = {},
     nodes,
     edges,
     selectedElementIds = [],
@@ -665,6 +668,9 @@ const GraphEditorElement = (
           }}
         />
       </Box>
+      <PreferencesModal
+        {...preferencesModal}
+      />
       <Backdrop
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={loading}

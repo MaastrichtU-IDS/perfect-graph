@@ -78,7 +78,7 @@
   "include": [
     "src/**/*"
   ],
-, "old/_useGraph.tsx"  "exclude": [
+ "exclude": [
     "node_modules"
   ]
 }
