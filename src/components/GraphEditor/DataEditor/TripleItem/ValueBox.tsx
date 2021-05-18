@@ -2,7 +2,7 @@ import React from 'react'
 import { Box, IconButton } from '@material-ui/core'
 import { Icon } from '@components/Icon'
 import * as R from 'colay/ramda'
-import { EVENT } from '@utils/constants'
+import { EVENT } from '@constants'
 import { TripleItemProps, ICON_SIZE } from './index'
 import { TripleInput } from '../TripleInput'
 

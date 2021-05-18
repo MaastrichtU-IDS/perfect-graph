@@ -13,7 +13,7 @@ import {
   OnEventLite,
 } from '@type'
 import { readTextFile } from '@utils'
-import { EDITOR_MODE, EVENT } from '@utils/constants'
+import { EDITOR_MODE, EVENT } from '@constants'
 import DocumentPicker from '@utils/DocumentPicker'
 import { useAnimation, useDisclosure, wrapComponent } from 'colay-ui'
 import { Recorder } from 'colay-ui/components/Recorder'
@@ -31,7 +31,7 @@ type ActionOption = {
 
 export type ActionBarProps = {
   renderMoreAction?: () => React.ReactElement;
-  opened?: boolean;
+  isOpen?: boolean;
   autoOpen?: boolean;
   mode?: EditorMode;
   layoutName?: string;
@@ -79,7 +79,7 @@ const HEIGHT = 40
 const ActionBarElement = (props: ActionBarProps) => {
   const {
     renderMoreAction,
-    opened = false,
+    isOpen = false,
     autoOpen= false,
     recording = false,
     eventRecording = false,
@@ -122,8 +122,8 @@ const ActionBarElement = (props: ActionBarProps) => {
   })
   // const initialized = React.useRef(false)
   React.useEffect(() => {
-    animationRef.current.play(opened)
-  }, [animationRef.current, opened])
+    animationRef.current.play(isOpen)
+  }, [animationRef.current, isOpen])
   const theme = useTheme()
   const recordingRef = React.useRef(
     RECORDING_STATUS_MAP.IDLE,

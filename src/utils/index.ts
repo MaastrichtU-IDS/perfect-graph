@@ -13,7 +13,7 @@ import {
 } from '@type'
 import {
   ELEMENT_DATA_FIELDS, PIXI_EVENT_NAMES, EVENT,
-} from '@utils/constants'
+} from '@constants'
 
 // type Result = {
 //   x: number;

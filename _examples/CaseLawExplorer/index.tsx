@@ -185,7 +185,7 @@ const AppContainer = ({
       ]
     },
     settingsBar: {
-      opened: true,
+      isOpen: true,
       // forms: [AUTO_CREATED_SCHEMA,FETCH_SCHEMA, VIEW_CONFIG_SCHEMA, {...FILTER_SCHEMA,  formData: configRef.current.filtering}, ],
       forms: [FETCH_SCHEMA, VIEW_CONFIG_SCHEMA, {...FILTER_SCHEMA,  formData: configRef.current.filtering}, ],
       createClusterForm: {
@@ -195,11 +195,11 @@ const AppContainer = ({
       },
     },
     dataBar: {
-      // opened: true,
+      // isOpen: true,
       editable: false,
     },
     actionBar: {
-      // opened: true,
+      // isOpen: true,
       // autoOpen: true,
       eventRecording: false,
       actions: {

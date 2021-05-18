@@ -10,7 +10,7 @@ import {
 import {
   calculateVisibilityByContext, contextUtils, cyUnselectAll, isPositionInBox,
 } from '@utils'
-import { CYTOSCAPE_EVENT } from '@utils/constants'
+import { CYTOSCAPE_EVENT } from '@constants'
 import {
   DataRender, useForwardRef,
   useMeasure,

@@ -1,5 +1,5 @@
 import { DataItem, RDFType } from '@type'
-import { DATA_TYPE_BY_INDEX } from '@utils/constants'
+import { DATA_TYPE_BY_INDEX } from '@constants'
 import { TYPE_ICONS } from '@components/GraphEditor/constants'
 import React from 'react'
 import {

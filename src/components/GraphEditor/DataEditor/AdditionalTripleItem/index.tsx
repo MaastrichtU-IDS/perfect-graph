@@ -2,7 +2,7 @@ import {
   Box,
 } from '@material-ui/core'
 import { DataItem, EventInfo } from '@type'
-import { DATA_TYPE, EVENT } from '@utils/constants'
+import { DATA_TYPE, EVENT } from '@constants'
 import * as R from 'colay/ramda'
 import React from 'react'
 import { TripleInput } from '../TripleInput'

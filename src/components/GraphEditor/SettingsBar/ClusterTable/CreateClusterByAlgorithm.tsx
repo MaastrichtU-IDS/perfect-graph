@@ -9,7 +9,7 @@ import {
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import { OnEventLite } from '@type'
 import { Clusters } from '@core/clusters'
-import { EVENT } from '@utils/constants'
+import { EVENT } from '@constants'
 import { useGraphEditor } from '@hooks'
 
 export type CreateClusterByAlgorithmProps = {

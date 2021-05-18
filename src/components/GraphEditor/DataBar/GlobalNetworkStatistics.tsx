@@ -6,7 +6,7 @@ import {
   AccordionDetails,
   AccordionSummary,
 } from '@material-ui/core'
-import { EVENT } from '@utils/constants'
+import { EVENT } from '@constants'
 import {
   JSONViewer,
 } from 'colay-ui'

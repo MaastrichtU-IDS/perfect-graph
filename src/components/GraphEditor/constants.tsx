@@ -1,7 +1,7 @@
 import React from 'react'
 import { IconButton, Typography } from '@material-ui/core'
 import { Icon } from '@components/Icon'
-import { DATA_TYPE } from '@utils/constants'
+import { DATA_TYPE } from '@constants'
 
 export const TYPE_ICONS = {
   [DATA_TYPE.number]: (props: any) => (

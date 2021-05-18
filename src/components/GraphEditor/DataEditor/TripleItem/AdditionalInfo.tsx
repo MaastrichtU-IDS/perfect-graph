@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box, Collapse, Divider } from '@material-ui/core'
 import { DataItem, EventInfo } from '@type'
-import { EVENT } from '@utils/constants'
+import { EVENT } from '@constants'
 import { AdditionalTripleItem, EventType } from '../AdditionalTripleItem'
 import { NewTripleItem } from '../NewTripleItem'
 

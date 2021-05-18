@@ -2,7 +2,7 @@ import React from 'react'
 import Form from '@rjsf/semantic-ui'
 // import Form from '@rjsf/semantic-ui'
 import { Box } from '@material-ui/core'
-import { EVENT } from '@utils/constants'
+import { EVENT } from '@constants'
 import { OnEventLite } from '@type'
 
 export type DataEditorProps = {

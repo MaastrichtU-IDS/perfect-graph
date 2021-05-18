@@ -19,7 +19,7 @@ import Form from '@rjsf/material-ui'
 import {
   Cluster, EditorMode, OnEventLite,
 } from '@type'
-import { EDITOR_MODE, EVENT } from '@utils/constants'
+import { EDITOR_MODE, EVENT } from '@constants'
 import {
   useDisclosure, View,
 } from 'colay-ui'

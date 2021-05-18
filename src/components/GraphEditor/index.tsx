@@ -25,7 +25,7 @@ import {
   throttle, cyUnselectAll,
   getPointerPositionOnViewport,
 } from '@utils'
-import { EDITOR_MODE, EVENT } from '@utils/constants'
+import { EDITOR_MODE, EVENT } from '@constants'
 import { useTimeoutManager } from '@utils/useTimeoutManager'
 import { calculateStatistics } from '@utils/networkStatistics'
 import { useForwardRef, wrapComponent } from 'colay-ui'
@@ -52,8 +52,8 @@ export type GraphEditorProps = {
   renderMoreAction?: () => React.ReactElement;
   label?: GraphLabelData;
   settingsBar?: SettingsBarProps;
-  dataBar?: Pick<DataBarProps, 'editable'| 'opened'>;
-  actionBar?: Pick<ActionBarProps, 'renderMoreAction' | 'opened' | 'recording' |'eventRecording' | 'autoOpen' | 'theming'>;
+  dataBar?: Pick<DataBarProps, 'editable'| 'isOpen'>;
+  actionBar?: Pick<ActionBarProps, 'renderMoreAction' | 'isOpen' | 'recording' |'eventRecording' | 'autoOpen' | 'theming'>;
   selectedElementIds?: string[] | null;
   mode?: EditorMode;
   renderEdge?: GraphEditorRenderEdge<RenderElementAdditionalInfo>;
@@ -341,13 +341,13 @@ const GraphEditorElement = (
               } = e.currentTarget
               if (props.actionBar && props.actionBar.autoOpen) {
                 if (pageY + 25 >= offsetTop + offsetHeight
-                && !props.actionBar?.opened) {
+                && !props.actionBar?.isOpen) {
                   return onEvent({
                     type: EVENT.TOGGLE_ACTION_BAR,
                     avoidHistoryRecording: true,
                   })
                 }
-                if (pageY + 50 <= offsetTop + offsetHeight && props.actionBar?.opened) {
+                if (pageY + 50 <= offsetTop + offsetHeight && props.actionBar?.isOpen) {
                   return onEvent({
                     type: EVENT.TOGGLE_ACTION_BAR,
                     avoidHistoryRecording: true,

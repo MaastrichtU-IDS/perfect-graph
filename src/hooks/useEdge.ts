@@ -7,7 +7,7 @@ import {
   EdgeElement,
   EdgeData,
 } from '@type'
-import { CYTOSCAPE_EVENT, ELEMENT_DATA_FIELDS } from '@utils/constants'
+import { CYTOSCAPE_EVENT, ELEMENT_DATA_FIELDS } from '@constants'
 import { calculateVisibilityByContext, contextUtils } from '@utils'
 import { mutableGraphMap } from './useGraph'
 import { useElement } from './useElement'

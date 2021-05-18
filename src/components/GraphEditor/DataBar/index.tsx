@@ -1,35 +1,25 @@
-import React from 'react'
-import { EVENT } from '@utils/constants'
-import {
-  OnEventLite, ElementData, GraphEditorConfig,
-} from '@type'
-import {
-  JSONViewer,
-  useAnimation,
-} from 'colay-ui'
-import { View } from 'colay-ui/components/View'
-import {
-  IconButton,
-  Typography,
-  Paper,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Divider,
-} from '@material-ui/core'
 import { Icon } from '@components/Icon'
-import * as R from 'colay/ramda'
 import { useGraphEditor } from '@hooks'
 import {
-  DataEditor,
-  // DataEditorProps,
+  Accordion, AccordionDetails, AccordionSummary, Divider, IconButton, Paper, Typography
+} from '@material-ui/core'
+import { EVENT } from '@constants'
+import {
+  JSONViewer,
+  useAnimation
+} from 'colay-ui'
+import { View } from 'colay-ui/components/View'
+import * as R from 'colay/ramda'
+import React from 'react'
+import {
+  DataEditor
 } from '../DataEditor'
-import { LocalNetworkStatistics } from './LocalNetworkStatistics'
 import { GlobalNetworkStatistics } from './GlobalNetworkStatistics'
+import { LocalNetworkStatistics } from './LocalNetworkStatistics'
 
 export type DataBarProps = {
   editable?: boolean;
-  opened?: boolean;
+  isOpen?: boolean;
 } // & Omit<DataEditorProps, 'data'>
 
 const WIDTH_PROPORTION = 40
@@ -38,7 +28,7 @@ const ICON_SIZE = 16
 export const DataBar = (props: DataBarProps) => {
   const {
     editable = true,
-    opened = false,
+    isOpen = false,
     ...rest
   } = props
 
@@ -88,8 +78,8 @@ export const DataBar = (props: DataBarProps) => {
     autoPlay: false,
   })
   React.useEffect(() => {
-    animationRef.current?.play?.(opened)
-  }, [animationRef, opened])
+    animationRef.current?.play?.(isOpen)
+  }, [animationRef, isOpen])
   const hasStatistics = Object.values(statistics).find((val) => val)
   return (
     <Paper

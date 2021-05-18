@@ -10,7 +10,7 @@ import {
   EDITOR_MODE,
   PIXI_EVENT_NAMES,
   CYTOSCAPE_EVENT,
-} from '@utils/constants'
+} from '@constants'
 import { Viewport } from 'pixi-viewport'
 import * as PIXI from 'pixi.js'
 import { YogaConstants } from '@utils/addFlexLayout/flex-layout/YogaContants'

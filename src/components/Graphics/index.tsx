@@ -5,7 +5,7 @@ import * as R from 'colay/ramda'
 import * as V from 'colay/vector'
 import * as C from 'colay/color'
 import { DefaultTheme } from '@core/theme'
-import { EDGE_LINE_Z_INDEX } from '@utils/constants'
+import { EDGE_LINE_Z_INDEX } from '@constants'
 
 export type GraphicsProps = {
 

@@ -17,7 +17,7 @@ import {
 } from '@type'
 import {
   EVENT,
-} from '@utils/constants'
+} from '@constants'
 import {
   View,
 } from 'colay-ui'
@@ -29,7 +29,7 @@ import {
 } from '@hooks'
 
 export type EventHistoryTableProps = {
-  opened?: boolean;
+  isOpen?: boolean;
   onPlay: (playlist: Playlist) => void
   createPlaylistDialog: {
     visible: boolean;

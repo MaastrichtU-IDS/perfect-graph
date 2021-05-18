@@ -28,15 +28,15 @@ export const WithEditElement = () => {
     //   zoom: 0.2
     // },
     // settingsBar: {
-    //   // opened: true,
+    //   // isOpen: true,
     //   forms: [FILTER_SCHEMA, VIEW_CONFIG_SCHEMA]
     // },
     dataBar: {
       // editable: false,
-      opened: true,
+      isOpen: true,
     },
     actionBar: {
-      opened: true,
+      isOpen: true,
     },
     onEvent: ({
       type,

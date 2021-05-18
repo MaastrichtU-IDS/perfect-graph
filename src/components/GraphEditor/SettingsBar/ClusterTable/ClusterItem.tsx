@@ -25,7 +25,7 @@
 // import AccordionDetails from '@material-ui/core/AccordionDetails'
 
 // export type EventHistoryTableProps = {
-//   opened?: boolean;
+//   isOpen?: boolean;
 //   // onEvent: OnEventLite;
 //   selectedPlaylistIds: string[]
 //   playlists: Playlist[];

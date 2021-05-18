@@ -6,7 +6,7 @@ import * as PIXI from 'pixi.js'
 import { useTheme } from '@core/theme'
 import { useEdge } from '@hooks'
 import { contextUtils, calculateVisibilityByContext } from '@utils'
-import { EDGE_CONTAINER_Z_INDEX } from '@utils/constants'
+import { EDGE_CONTAINER_Z_INDEX } from '@constants'
 import {
   RenderEdge,
   EdgeConfig,

@@ -11,7 +11,7 @@ import {
   CardContent,
 } from '@material-ui/core'
 import { utils, WidgetProps } from '@rjsf/core'
-import { LAYOUT_NAMES } from '@utils/constants'
+import { LAYOUT_NAMES } from '@constants'
 import { useDisclosure, View } from 'colay-ui'
 import React from 'react'
 import { LAYOUT_INFO } from './layoutInfo'

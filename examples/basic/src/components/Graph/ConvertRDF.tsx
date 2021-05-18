@@ -14,7 +14,7 @@ export default function Animation() {
     },
     dataBar: {
       editable: true,
-      opened: true
+      isOpen: true
     },
   })
   React.useEffect(() => {

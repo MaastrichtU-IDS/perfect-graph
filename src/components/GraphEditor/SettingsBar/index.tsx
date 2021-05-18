@@ -9,7 +9,7 @@ import {
   Cluster, EditorMode, EventHistory, OnEventLite,
   Playlist,
 } from '@type'
-import { EVENT } from '@utils/constants'
+import { EVENT } from '@constants'
 import {
   useAnimation,
   View, wrapComponent,
@@ -31,7 +31,7 @@ FormProps<any>,
 >
 >
 export type SettingsBarProps = {
-  opened?: boolean;
+  isOpen?: boolean;
   forms?: SettingsForm[];
   createClusterForm?: FormProps<any>;
 }
@@ -39,7 +39,7 @@ export type SettingsBarProps = {
 const WIDTH_PROPORTION = 30
 const SettingsBarElement = (props: SettingsBarProps) => {
   const {
-    opened = false,
+    isOpen = false,
     // schema = {},
     forms = [],
     createClusterForm,
@@ -77,8 +77,8 @@ const SettingsBarElement = (props: SettingsBarProps) => {
   })
   // const initialized = React.useRef(false)
   React.useEffect(() => {
-    animationRef.current.play(opened)
-  }, [animationRef, opened])
+    animationRef.current.play(isOpen)
+  }, [animationRef, isOpen])
   const [state, updateState] = useImmer({
     createPlaylistDialog: {
       visible: false,

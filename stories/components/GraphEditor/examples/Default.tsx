@@ -19,7 +19,7 @@ export const DefaultElement = () => {
     //   zoom: 0.2
     // },
     // settingsBar: {
-    //   // opened: true,
+    //   // isOpen: true,
     //   forms: [FILTER_SCHEMA, VIEW_CONFIG_SCHEMA]
     // },
     dataBar: {

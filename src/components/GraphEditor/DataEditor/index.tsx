@@ -4,7 +4,7 @@ import {
   Container, List, ListItem, Divider, BoxProps,
 } from '@material-ui/core'
 import * as R from 'colay/ramda'
-import { EVENT, ELEMENT_DATA_FIELDS } from '@utils/constants'
+import { EVENT, ELEMENT_DATA_FIELDS } from '@constants'
 import { NewTripleItem } from './NewTripleItem'
 import {
   TripleItem, EventType,

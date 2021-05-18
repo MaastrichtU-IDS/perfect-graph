@@ -9,7 +9,7 @@ import {
   NodeData,
 } from '@type'
 import { getClusterVisibility, calculateVisibilityByContext, contextUtils } from '@utils'
-import { CYTOSCAPE_EVENT, ELEMENT_DATA_FIELDS } from '@utils/constants'
+import { CYTOSCAPE_EVENT, ELEMENT_DATA_FIELDS } from '@constants'
 import { useInitializedRef } from 'colay-ui/hooks/useInitializedRef'
 import { mutableGraphMap } from './useGraph'
 import { useElement } from './useElement'

@@ -12,7 +12,7 @@ import {
   EventHistory,
   OnEventLite,
 } from '@type'
-import { EVENT } from '@utils/constants'
+import { EVENT } from '@constants'
 import { useGraphEditor } from '@hooks'
 import {
   View,

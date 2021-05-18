@@ -10,7 +10,7 @@ import {
 } from '@utils'
 import {
   EDITOR_MODE, EVENT, MOCK_DATA
-} from '@utils/constants'
+} from '@constants'
 import { createHistory } from '@utils/createHistory'
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import { Position } from 'colay-ui/type'
@@ -41,9 +41,9 @@ GraphEditorProps,
 // ]
 
 const closeAllBars = (draft:UseControllerData) => {
-  draft.actionBar!.opened = false
-  draft.dataBar!.opened = false
-  draft.settingsBar!.opened = false
+  draft.actionBar!.isOpen = false
+  draft.dataBar!.isOpen = false
+  draft.settingsBar!.isOpen = false
 }
 
 export const useController = (
@@ -253,7 +253,7 @@ export const useController = (
           case EVENT.ELEMENT_SELECTED: {
             draft.selectedElementIds = [selectedItem!.id]
             if (event && event.data!.originalEvent.metaKey && element?.isNode()) {
-              draft.dataBar!.opened = true
+              draft.dataBar!.isOpen = true
               const {
                 viewport,
               } = graphEditor
@@ -357,13 +357,13 @@ export const useController = (
             targetDataList[index]!.additional!.splice(payload.index, 1)
             break
           case EVENT.TOGGLE_FILTER_BAR:
-            draft.settingsBar!.opened = !draft.settingsBar?.opened
+            draft.settingsBar!.isOpen = !draft.settingsBar?.isOpen
             break
           case EVENT.TOGGLE_DATA_BAR:
-            draft.dataBar!.opened = !draft.dataBar?.opened
+            draft.dataBar!.isOpen = !draft.dataBar?.isOpen
             break
           case EVENT.TOGGLE_ACTION_BAR:
-            draft.actionBar!.opened = !draft.actionBar?.opened
+            draft.actionBar!.isOpen = !draft.actionBar?.isOpen
             break
           case EVENT.IMPORT_DATA:
             R.mapObjIndexed((value, key) => {
@@ -643,13 +643,13 @@ const DEFAULT_CONTROLLER_CONFIG: UseControllerData = {
     },
   } as GraphLabelData,
   actionBar: {
-    opened: false,
+    isOpen: false,
   },
   dataBar: {
-    opened: false,
+    isOpen: false,
   },
   settingsBar: {
-    opened: false,
+    isOpen: false,
   },
   mode: EDITOR_MODE.DEFAULT as EditorMode,
   selectedElementIds: [] as string[] | undefined,
