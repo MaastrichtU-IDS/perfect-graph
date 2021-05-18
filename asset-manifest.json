@@ -1,7 +1,7 @@
 {
   "files": {
-    "app.js": "/perfect-graph/static/js/app.15511f17.chunk.js",
-    "app.js.map": "/perfect-graph/static/js/app.15511f17.chunk.js.map",
+    "app.js": "/perfect-graph/static/js/app.c151a52a.chunk.js",
+    "app.js.map": "/perfect-graph/static/js/app.c151a52a.chunk.js.map",
     "runtime~app.js": "/perfect-graph/static/js/runtime~app.2d1b4fbc.js",
     "runtime~app.js.map": "/perfect-graph/static/js/runtime~app.2d1b4fbc.js.map",
     "static/js/2.94e76a70.chunk.js": "/perfect-graph/static/js/2.94e76a70.chunk.js",
@@ -16,6 +16,6 @@
   "entrypoints": [
     "static/js/runtime~app.2d1b4fbc.js",
     "static/js/2.94e76a70.chunk.js",
-    "static/js/app.15511f17.chunk.js"
+    "static/js/app.c151a52a.chunk.js"
   ]
 }
