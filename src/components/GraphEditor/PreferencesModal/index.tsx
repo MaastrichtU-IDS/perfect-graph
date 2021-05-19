@@ -9,11 +9,11 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
-  Toolbar,
+  Link,
+  Breadcrumbs,
   Collapse,
 } from '@material-ui/core'
-import MailIcon from '@material-ui/icons/Mail'
-import InboxIcon from '@material-ui/icons/MoveToInbox'
+import { Icon } from '@components/Icon'
 import { useGraphEditor } from '@hooks'
 import { EVENT } from '@constants'
 import { View, DataRender } from 'colay-ui'
@@ -37,33 +37,7 @@ export type PreferencesModalProps = {
 export const PreferencesModal = (props: PreferencesModalProps) => {
   const {
     isOpen = false,
-    sidebar = [
-      {
-        icon: <MailIcon />,
-        label: 'Perfect Graph',
-        items: [
-          'perfect-graph/introduction',
-          'perfect-graph/design-principles',
-          'perfect-graph/contributing',
-        ],
-      },
-      {
-        icon: <InboxIcon />,
-        label: 'Getting Started',
-        items: [
-          {
-            icon: <MailIcon />,
-            label: 'Perfect Graph',
-            items: [
-              'perfect-graph/introduction',
-              'perfect-graph/design-principles',
-              'perfect-graph/contributing',
-            ],
-          },
-          'Email',
-        ],
-      },
-    ],
+    sidebar = MOCK_SIDEBAR_DATA,
     components = {},
   } = props
   const [
@@ -105,40 +79,37 @@ export const PreferencesModal = (props: PreferencesModalProps) => {
           }}
         >
           <View
-            style={{ width: '30%'}}
+            style={{
+              // width: '30%',
+              marginRight: 4,
+              flexDirection: 'row',
+            }}
           >
             <Slide
               in
             >
               {drawer}
             </Slide>
+            <Divider
+              orientation="vertical"
+              flexItem
+            />
           </View>
           <View>
-            <Toolbar />
+            <Breadcrumbs aria-label="breadcrumb">
+              <Link
+                color="inherit"
+                href="/"
+              >
+                General
+              </Link>
+              <Typography color="text.primary">UI</Typography>
+            </Breadcrumbs>
             <Form
-              schema={{
-                title: 'A registration form',
-                description: 'A simple form example.',
-                type: 'object',
-                required: [
-                  'firstName',
-                  'lastName',
-                ],
-                properties: {
-                  firstName: {
-                    type: 'string',
-                    title: 'First name',
-                    default: 'Chuck',
-                  },
-                  lastName: {
-                    type: 'string',
-                    title: 'Last name',
-                  },
-                  telephone: {
-                    type: 'string',
-                    title: 'Telephone',
-                    minLength: 10,
-                  },
+              schema={MOCK_SCHEMA}
+              uiSchema={{
+                'ui:options': {
+                  label: false,
                 },
               }}
               // onSubmit={onSubmitCallback}
@@ -152,7 +123,7 @@ export const PreferencesModal = (props: PreferencesModalProps) => {
 
 const createDrawer = (sidebar: SidebarItemData[]) => (
   <div>
-    <Toolbar />
+    {/* <Toolbar /> */}
     <Divider />
     <List>
       <DataRender
@@ -186,18 +157,19 @@ const SidebarItem = (props: SidebarItemProps) => {
   const item = R.is(String)(propItem) ? {
     label: propItem,
   } : propItem
+  const hasChildren = !!item.items
   return (
     <>
       <ListItem
         button
-        sx={{ pl: 4 }}
         onClick={handleClick}
+        selected={!hasChildren && open}
       >
         <ListItemIcon>
           {item.icon}
         </ListItemIcon>
         <ListItemText primary={item.label} />
-        {item.items ? (open ? <ExpandLess /> : <ExpandMore />) : null}
+        {hasChildren ? (open ? <ExpandLess /> : <ExpandMore />) : null}
       </ListItem>
       <Collapse
         in={open}
@@ -207,10 +179,62 @@ const SidebarItem = (props: SidebarItemProps) => {
         <List
           component="div"
           disablePadding
+          sx={{ ml: 2 }}
         >
           {children}
         </List>
       </Collapse>
     </>
   )
+}
+
+const MOCK_SIDEBAR_DATA = [
+  {
+    icon: <Icon name="settings" />,
+    label: 'General',
+    items: [
+      'UI',
+    ],
+  },
+  {
+    icon: <Icon name="bookmark" />,
+    label: 'Bookmarks',
+    items: [
+      {
+        icon: <Icon name="filter" />,
+        label: 'Filter',
+        items: [
+          'History',
+        ],
+      },
+      'Text',
+    ],
+  },
+]
+
+const MOCK_COMPONENTS = {
+
+}
+const MOCK_SCHEMA = {
+  // title: 'A registration form',
+  // description: 'A simple form example.',
+  type: 'object',
+  required: [
+    'historyTabVisible',
+    'playlistTabVisible',
+  ],
+  properties: {
+    labelTextSize: {
+      type: 'number',
+      title: 'Label Text Size',
+    },
+    historyTabVisible: {
+      type: 'boolean',
+      title: 'History Tab Visible',
+    },
+    playlistTabVisible: {
+      type: 'boolean',
+      title: 'Playlist Tab Visible',
+    },
+  },
 }
