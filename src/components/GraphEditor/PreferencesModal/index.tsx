@@ -17,10 +17,10 @@ import InboxIcon from '@material-ui/icons/MoveToInbox'
 import { useGraphEditor } from '@hooks'
 import { EVENT } from '@constants'
 import { View, DataRender } from 'colay-ui'
-import { useImmer } from 'colay-ui/hooks/useImmer'
 import Form from '@rjsf/material-ui'
 import ExpandLess from '@material-ui/icons/ExpandLess'
 import ExpandMore from '@material-ui/icons/ExpandMore'
+import * as R from 'colay/ramda'
 
 type SidebarItemData = {
   label: string;
@@ -39,7 +39,7 @@ export const PreferencesModal = (props: PreferencesModalProps) => {
     isOpen = false,
     sidebar = [
       {
-        icon: 'category',
+        icon: <MailIcon />,
         label: 'Perfect Graph',
         items: [
           'perfect-graph/introduction',
@@ -48,11 +48,19 @@ export const PreferencesModal = (props: PreferencesModalProps) => {
         ],
       },
       {
-        icon: 'category',
+        icon: <InboxIcon />,
         label: 'Getting Started',
         items: [
-          'getting-started/installation',
-          'getting-started/configuration',
+          {
+            icon: <MailIcon />,
+            label: 'Perfect Graph',
+            items: [
+              'perfect-graph/introduction',
+              'perfect-graph/design-principles',
+              'perfect-graph/contributing',
+            ],
+          },
+          'Email',
         ],
       },
     ],
@@ -96,7 +104,9 @@ export const PreferencesModal = (props: PreferencesModalProps) => {
             flexDirection: 'row',
           }}
         >
-          <View>
+          <View
+            style={{ width: '30%'}}
+          >
             <Slide
               in
             >
@@ -167,16 +177,20 @@ type SidebarItemProps = {
 const SidebarItem = (props: SidebarItemProps) => {
   const {
     children,
-    item,
+    item: propItem,
   } = props
   const [open, setOpen] = React.useState(false)
   const handleClick = () => {
     setOpen(!open)
   }
+  const item = R.is(String)(propItem) ? {
+    label: propItem,
+  } : propItem
   return (
     <>
       <ListItem
         button
+        sx={{ pl: 4 }}
         onClick={handleClick}
       >
         <ListItemIcon>
