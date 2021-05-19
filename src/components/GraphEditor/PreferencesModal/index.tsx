@@ -3,30 +3,60 @@ import {
   Modal,
   Paper,
   Typography,
-  Box,
   Divider,
-  Drawer,
+  Slide,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
   Toolbar,
+  Collapse,
 } from '@material-ui/core'
 import MailIcon from '@material-ui/icons/Mail'
 import InboxIcon from '@material-ui/icons/MoveToInbox'
 import { useGraphEditor } from '@hooks'
 import { EVENT } from '@constants'
-import { View } from 'colay-ui'
+import { View, DataRender } from 'colay-ui'
+import { useImmer } from 'colay-ui/hooks/useImmer'
+import Form from '@rjsf/material-ui'
+import ExpandLess from '@material-ui/icons/ExpandLess'
+import ExpandMore from '@material-ui/icons/ExpandMore'
+
+type SidebarItemData = {
+  label: string;
+  items?: SidebarItemData[];
+  icon?: string;
+} | string
 
 export type PreferencesModalProps = {
   isOpen?: boolean;
+  sidebar?: SidebarItemData[];
+  components?: Record<string, React.ReactNode>;
 }
 
 export const PreferencesModal = (props: PreferencesModalProps) => {
   const {
     isOpen = false,
-    sidebar,
-    components,
+    sidebar = [
+      {
+        icon: 'category',
+        label: 'Perfect Graph',
+        items: [
+          'perfect-graph/introduction',
+          'perfect-graph/design-principles',
+          'perfect-graph/contributing',
+        ],
+      },
+      {
+        icon: 'category',
+        label: 'Getting Started',
+        items: [
+          'getting-started/installation',
+          'getting-started/configuration',
+        ],
+      },
+    ],
+    components = {},
   } = props
   const [
     {
@@ -37,7 +67,7 @@ export const PreferencesModal = (props: PreferencesModalProps) => {
       onEvent: editor.onEvent,
     }),
   )
-  const drawer = React.useMemo(() => createDrawer(), [sidebar, components])
+  const drawer = React.useMemo(() => createDrawer(sidebar), [sidebar, components])
   return (
     <Modal
       open={isOpen}
@@ -61,92 +91,112 @@ export const PreferencesModal = (props: PreferencesModalProps) => {
         <View>
           <Typography variant="h6">Preferences</Typography>
         </View>
-        <Box sx={{ display: 'flex' }}>
-          <Box
-            // component="nav"
-        // sx={{ width: { sm: '' }, flexShrink: { sm: 0 } }}
-            // style={{ width: '20%' }}
-          >
-            <Drawer
-              variant="permanent"
-              sx={{
-                display: { sm: 'block' },
-                '& .MuiDrawer-paper': { boxSizing: 'border-box', width: '20%' },
-              }}
-              open
+        <View
+          style={{
+            flexDirection: 'row',
+          }}
+        >
+          <View>
+            <Slide
+              in
             >
               {drawer}
-            </Drawer>
-          </Box>
-          <Box
-            component="main"
-            sx={{ flexGrow: 1, p: 3 }}
-          >
+            </Slide>
+          </View>
+          <View>
             <Toolbar />
-            <Typography paragraph>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-              tempor incididunt ut labore et dolore magna aliqua. Rhoncus dolor purus non
-              enim praesent elementum facilisis leo vel. Risus at ultrices mi tempus
-              imperdiet. Semper risus in hendrerit gravida rutrum quisque non tellus.
-              Convallis convallis tellus id interdum velit laoreet id donec ultrices.
-              Odio morbi quis commodo odio aenean sed adipiscing. Amet nisl suscipit
-              adipiscing bibendum est ultricies integer quis. Cursus euismod quis viverra
-              nibh cras. Metus vulputate eu scelerisque felis imperdiet proin fermentum
-              leo. Mauris commodo quis imperdiet massa tincidunt. Cras tincidunt lobortis
-              feugiat vivamus at augue. At augue eget arcu dictum varius duis at
-              consectetur lorem. Velit sed ullamcorper morbi tincidunt. Lorem donec massa
-              sapien faucibus et molestie ac.
-            </Typography>
-            <Typography paragraph>
-              Consequat mauris nunc congue nisi vitae suscipit. Fringilla est ullamcorper
-              eget nulla facilisi etiam dignissim diam. Pulvinar elementum integer enim
-              neque volutpat ac tincidunt. Ornare suspendisse sed nisi lacus sed viverra
-              tellus. Purus sit amet volutpat consequat mauris. Elementum eu facilisis
-              sed odio morbi. Euismod lacinia at quis risus sed vulputate odio. Morbi
-              tincidunt ornare massa eget egestas purus viverra accumsan in. In hendrerit
-              gravida rutrum quisque non tellus orci ac. Pellentesque nec nam aliquam sem
-              et tortor. Habitant morbi tristique senectus et. Adipiscing elit duis
-              tristique sollicitudin nibh sit. Ornare aenean euismod elementum nisi quis
-              eleifend. Commodo viverra maecenas accumsan lacus vel facilisis. Nulla
-              posuere sollicitudin aliquam ultrices sagittis orci a.
-            </Typography>
-          </Box>
-        </Box>
+            <Form
+              schema={{
+                title: 'A registration form',
+                description: 'A simple form example.',
+                type: 'object',
+                required: [
+                  'firstName',
+                  'lastName',
+                ],
+                properties: {
+                  firstName: {
+                    type: 'string',
+                    title: 'First name',
+                    default: 'Chuck',
+                  },
+                  lastName: {
+                    type: 'string',
+                    title: 'Last name',
+                  },
+                  telephone: {
+                    type: 'string',
+                    title: 'Telephone',
+                    minLength: 10,
+                  },
+                },
+              }}
+              // onSubmit={onSubmitCallback}
+            />
+          </View>
+        </View>
       </Paper>
     </Modal>
   )
 }
 
-const createDrawer = () => (
+const createDrawer = (sidebar: SidebarItemData[]) => (
   <div>
     <Toolbar />
     <Divider />
     <List>
-      {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-        <ListItem
-          button
-          key={text}
-        >
-          <ListItemIcon>
-            {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-          </ListItemIcon>
-          <ListItemText primary={text} />
-        </ListItem>
-      ))}
-    </List>
-    <Divider />
-    <List>
-      {['All mail', 'Trash', 'Spam'].map((text, index) => (
-        <ListItem
-          button
-          key={text}
-        >
-          <ListItemIcon>
-            {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-          </ListItemIcon>
-          <ListItemText primary={text} />
-        </ListItem>
-      ))}
+      <DataRender
+        data={sidebar}
+        accessor={['items']}
+        renderItem={({ item, children }) => (
+          <SidebarItem
+            item={item}
+          >
+            {children}
+          </SidebarItem>
+        )}
+      />
     </List>
   </div>
 )
+
+type SidebarItemProps = {
+  item: SidebarItemData;
+  children: React.ReactNode;
+}
+const SidebarItem = (props: SidebarItemProps) => {
+  const {
+    children,
+    item,
+  } = props
+  const [open, setOpen] = React.useState(false)
+  const handleClick = () => {
+    setOpen(!open)
+  }
+  return (
+    <>
+      <ListItem
+        button
+        onClick={handleClick}
+      >
+        <ListItemIcon>
+          {item.icon}
+        </ListItemIcon>
+        <ListItemText primary={item.label} />
+        {item.items ? (open ? <ExpandLess /> : <ExpandMore />) : null}
+      </ListItem>
+      <Collapse
+        in={open}
+        timeout="auto"
+        unmountOnExit
+      >
+        <List
+          component="div"
+          disablePadding
+        >
+          {children}
+        </List>
+      </Collapse>
+    </>
+  )
+}
