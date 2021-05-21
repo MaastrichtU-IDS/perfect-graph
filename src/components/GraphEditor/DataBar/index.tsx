@@ -1,18 +1,18 @@
 import { Icon } from '@components/Icon'
 import { useGraphEditor } from '@hooks'
 import {
-  Accordion, AccordionDetails, AccordionSummary, Divider, IconButton, Paper, Typography
+  Accordion, AccordionDetails, AccordionSummary, Divider, IconButton, Paper, Typography,
 } from '@material-ui/core'
 import { EVENT } from '@constants'
 import {
   JSONViewer,
-  useAnimation
+  useAnimation,
 } from 'colay-ui'
 import { View } from 'colay-ui/components/View'
 import * as R from 'colay/ramda'
 import React from 'react'
 import {
-  DataEditor
+  DataEditor,
 } from '../DataEditor'
 import { GlobalNetworkStatistics } from './GlobalNetworkStatistics'
 import { LocalNetworkStatistics } from './LocalNetworkStatistics'
@@ -20,6 +20,8 @@ import { LocalNetworkStatistics } from './LocalNetworkStatistics'
 export type DataBarProps = {
   editable?: boolean;
   isOpen?: boolean;
+  header?: React.FC;
+  footer?: React.FC;
 } // & Omit<DataEditorProps, 'data'>
 
 const WIDTH_PROPORTION = 40
@@ -29,6 +31,8 @@ export const DataBar = (props: DataBarProps) => {
   const {
     editable = true,
     isOpen = false,
+    header: HeaderComponent,
+    footer: FooterComponent,
     ...rest
   } = props
 
@@ -99,6 +103,7 @@ export const DataBar = (props: DataBarProps) => {
           overflowX: 'hidden',
         }}
       >
+        {HeaderComponent && <HeaderComponent />}
         {item && (
         <Accordion
           defaultExpanded
@@ -280,6 +285,7 @@ export const DataBar = (props: DataBarProps) => {
           </View>
         )
       }
+        {FooterComponent && <FooterComponent />}
       </View>
 
       <IconButton

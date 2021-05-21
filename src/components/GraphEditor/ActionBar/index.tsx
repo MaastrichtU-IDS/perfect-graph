@@ -20,8 +20,8 @@ import { Recorder } from 'colay-ui/components/Recorder'
 // import Form from 'unitx-ui/components/Form'
 import * as R from 'colay/ramda'
 import React from 'react'
-import { LayoutOptions } from './LayoutOptions'
 import { useGraphEditor } from '@hooks'
+import { LayoutOptions } from './LayoutOptions'
 // export const ACTION = {
 //   EXPORT_DATA: 'EXPORT_DATA',
 // }
@@ -31,6 +31,8 @@ type ActionOption = {
 
 export type ActionBarProps = {
   renderMoreAction?: () => React.ReactElement;
+  left?: React.FC;
+  right?: React.FC;
   isOpen?: boolean;
   autoOpen?: boolean;
   mode?: EditorMode;
@@ -80,11 +82,13 @@ const ActionBarElement = (props: ActionBarProps) => {
   const {
     renderMoreAction,
     isOpen = false,
-    autoOpen= false,
+    autoOpen = false,
     recording = false,
     eventRecording = false,
     // recordingActions = false,
     onAction,
+    left: LeftComponent,
+    right: RightComponent,
     theming = {
       options: [
         { name: 'Default', value: 'Default' },
@@ -99,14 +103,14 @@ const ActionBarElement = (props: ActionBarProps) => {
       graphEditorRef,
       mode,
       graphConfig,
-    }
+    },
   ] = useGraphEditor(
     (editor) => ({
       onEvent: editor.onEvent,
       graphEditorRef: editor.graphEditorRef,
       mode: editor.mode,
       graphConfig: editor.graphConfig,
-    })
+    }),
   )
   const {
     style: animationStyle,
@@ -164,11 +168,13 @@ const ActionBarElement = (props: ActionBarProps) => {
         left: 0,
         flexDirection: 'row',
         display: 'flex',
+        justifyContent: 'space-between',
         // @ts-ignore
         backgroundColor: theme.palette.background.paper,
         ...animationStyle,
       }}
     >
+      {LeftComponent && <LeftComponent />}
       <Box
         style={{
           flexDirection: 'row',
@@ -309,6 +315,7 @@ const ActionBarElement = (props: ActionBarProps) => {
           onAction={onAction}
         />
       </Box>
+      {RightComponent && <RightComponent />}
       {
         !autoOpen && (
           <IconButton

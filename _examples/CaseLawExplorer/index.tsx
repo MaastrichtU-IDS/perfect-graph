@@ -5,7 +5,9 @@ import * as R from 'colay/ramda'
 import {
   useTheme as useMuiTheme,
   ThemeProvider as MuiThemeProvider,
-  createMuiTheme
+  createMuiTheme,
+  Button,
+  Typography,
 } from '@material-ui/core'
 import { View, } from 'colay-ui'
 import { useImmer } from 'colay-ui/hooks/useImmer'
@@ -131,6 +133,29 @@ const AUTO_CREATED_SCHEMA = {
   schema: createSchema(data.nodes)
 }
 console.log('a', AUTO_CREATED_SCHEMA.schema)
+
+const ActionBarRight = () => (
+  <View
+    style={{ flexDirection: 'row' }}
+  >
+    <Button>
+      Share
+    </Button>
+  </View>
+)
+
+const DataBarHeader = () => (
+  <View
+    style={{ flexDirection: 'row', justifyContent: 'space-between' }}
+  >
+    <Typography>Turgay SABA</Typography>
+    <Button
+      color="secondary"
+    >
+      Signout
+    </Button>
+  </View>
+)
 const AppContainer = ({
   changeMUITheme,
   ...rest
@@ -258,7 +283,7 @@ const AppContainer = ({
       ]
     },
     preferencesModal: {
-      isOpen: true,
+      // isOpen: true,
     },
     settingsBar: {
       opened: true,
@@ -271,11 +296,13 @@ const AppContainer = ({
       },
     },
     dataBar: {
-      // opened: true,
+      isOpen: true,
       editable: false,
+      header: DataBarHeader,
     },
     actionBar: {
-      // opened: true,
+      isOpen: true,
+      right: ActionBarRight,
       // autoOpen: true,
       eventRecording: false,
       actions: {
