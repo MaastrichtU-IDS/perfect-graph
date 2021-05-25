@@ -15,7 +15,10 @@ export const QueryBuilder = (props: QueryBuilderProps) => {
     isOpen,
     onCreate,
     query,
-    onClose
+    onClose,
+    onStart,
+    onFinish,
+    onError,
   } = props
 
   const [state, setState] = React.useState(query)

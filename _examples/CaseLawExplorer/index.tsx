@@ -133,7 +133,6 @@ const perc2color = (
 const AUTO_CREATED_SCHEMA = {
   schema: createSchema(data.nodes)
 }
-console.log('a', AUTO_CREATED_SCHEMA.schema)
 
 const ActionBarRight = () => (
   <View
@@ -152,16 +151,16 @@ const DataBarHeader = () => {
       const authUser = await Auth.currentAuthenticatedUser()
       setUser(authUser)
     }
-  })
-  console.log('user',user)
+    call()
+  }, [])
   return (
     <View
       style={{ flexDirection: 'row', justifyContent: 'space-between' }}
     >
-      <Typography>Turgay SABA</Typography>
+      <Typography>{user?.attributes?.email}</Typography>
       <Button
         color="secondary"
-        onClick={Auth.signOut}
+        onClick={() => Auth.signOut()}
       >
         Signout
       </Button>
@@ -369,11 +368,11 @@ const AppContainer = ({
               const elementList = element.isNode() ? draft.nodes : draft.edges
               const itemDraft = elementList.find((elementItem) => elementItem.id === selectedItem.id)
               itemDraft.data = elementData
-              draft.isLoading = false
+              // draft.isLoading = false
             })
           } else {
             update((draft) => {
-              draft.isLoading = false
+              // draft.isLoading = false
             })
           }
           break
@@ -565,7 +564,6 @@ const AppContainer = ({
             draft.isLoading = false
             draft.graphConfig!.layout = GraphLayouts['circle']
           })
-          
         }}
         // onCreate={async (query) => {
         //   let cases = await API.listCases(query)
