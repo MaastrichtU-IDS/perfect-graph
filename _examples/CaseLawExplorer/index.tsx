@@ -34,8 +34,9 @@ import { RenderNode } from './RenderNode'
 import { RenderEdge } from './RenderEdge'
 import * as API from './API'
 import { QueryBuilder } from './QueryBuilder'
+import GraphLayouts from '../../src/core/layouts'
 // import { Data } from '../../components/Graph/Default'
-
+import { Auth } from 'aws-amplify'
 
 const MUIDarkTheme = createMuiTheme({
   palette: {
@@ -144,18 +145,29 @@ const ActionBarRight = () => (
   </View>
 )
 
-const DataBarHeader = () => (
-  <View
-    style={{ flexDirection: 'row', justifyContent: 'space-between' }}
-  >
-    <Typography>Turgay SABA</Typography>
-    <Button
-      color="secondary"
+const DataBarHeader = () => {
+  const [user, setUser] = React.useState({})
+  React.useEffect(() => {
+    const call = async () => {
+      const authUser = await Auth.currentAuthenticatedUser()
+      setUser(authUser)
+    }
+  })
+  console.log('user',user)
+  return (
+    <View
+      style={{ flexDirection: 'row', justifyContent: 'space-between' }}
     >
-      Signout
-    </Button>
-  </View>
-)
+      <Typography>Turgay SABA</Typography>
+      <Button
+        color="secondary"
+        onClick={Auth.signOut}
+      >
+        Signout
+      </Button>
+    </View>
+  )
+}
 const AppContainer = ({
   changeMUITheme,
   ...rest
@@ -341,7 +353,7 @@ const AppContainer = ({
       } = (element && getSelectedItemByElement(element, draft)) ?? {}
       switch (type) {
         case EVENT.ELEMENT_SELECTED: {
-          // draft.loading = true
+          // draft.isLoading = true
           let elementData = null
           try {
             elementData = await API.getElementData({ id: selectedItem.data.ecli });
@@ -357,11 +369,11 @@ const AppContainer = ({
               const elementList = element.isNode() ? draft.nodes : draft.edges
               const itemDraft = elementList.find((elementItem) => elementItem.id === selectedItem.id)
               itemDraft.data = elementData
-              draft.loading = false
+              draft.isLoading = false
             })
           } else {
             update((draft) => {
-              draft.loading = false
+              draft.isLoading = false
             })
           }
           break
@@ -536,32 +548,40 @@ const AppContainer = ({
         onClose={() => updateState((draft) => {
           draft.queryBuilder.visible = false
         })}
-        onCreate={async (query) => {
-          console.log(query)
-
-          let cases = await API.listCases(query)
-
-          let casesData = prepareData(cases)
-          console.log(casesData)
-          
+        onStart={() => {
           controller.update((draft) => {
-            draft.nodes = casesData.nodes
-            draft.edges = casesData.edges
-          })
-
-          // console.log(controllerProps)
-          // console.log(defaultData)
-          // console.log(prepareData(defaultData))
-
-          updateState((draft) => {
-            draft.queryBuilder.visible = false
-            draft.queryBuilder.query = query
-
-            // alert(JSON.stringify(query))
-            // const data = API.complexQuery(query)
-            // QueryCallback(query)
+            draft.isLoading = true
           })
         }}
+        onError={() => {
+          controller.update((draft) => {
+            draft.isLoading = false
+          })
+        }}
+        onFinish={({ nodes = [], edges= []} = {}) => {
+          controller.update((draft) => {
+            draft.nodes = nodes
+            draft.edges = edges
+            draft.isLoading = false
+            draft.graphConfig!.layout = GraphLayouts['circle']
+          })
+          
+        }}
+        // onCreate={async (query) => {
+        //   let cases = await API.listCases(query)
+
+        //   let casesData = prepareData(cases)
+        //   console.log(casesData)
+          
+        //   controller.update((draft) => {
+        //     draft.nodes = casesData.nodes
+        //     draft.edges = casesData.edges
+        //   })
+        //   updateState((draft) => {
+        //     draft.queryBuilder.visible = false
+        //     draft.queryBuilder.query = query
+        //   })
+        // }}
       />
     </View>
   )
@@ -572,6 +592,7 @@ const MUI_THEMES = {
   Dark: MUIDarkTheme,
   Light: MUILightTheme,
 }
+
 export default (props: Props) => {
   const [theme, setTheme] = React.useState(MUI_THEMES.Light)
   return (
