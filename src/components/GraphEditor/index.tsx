@@ -64,7 +64,7 @@ export type GraphEditorProps = {
   eventHistory?: EventHistory;
   playlists?: Playlist[];
   globalNetworkStatistics?: any;
-  loading?: boolean;
+  isLoading?: boolean;
 } & Omit<
 GraphProps,
 'config'|'onPress' | 'renderNode' | 'renderEdge'
@@ -111,7 +111,7 @@ const GraphEditorElement = (
     config = DEFAULT_GRAPH_EDITOR_CONFIG,
     playlists,
     globalNetworkStatistics,
-    loading = false,
+    isLoading = false,
     ...rest
   } = props
   const localDataRef = React.useRef({
@@ -673,7 +673,7 @@ const GraphEditorElement = (
       />
       <Backdrop
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={loading}
+        open={isLoading}
       >
         <CircularProgress color="inherit" />
       </Backdrop>
