@@ -8,8 +8,11 @@ import {
   createMuiTheme,
   Button,
   Typography,
+  Backdrop,
+  CircularProgress,
+  Modal
 } from '@material-ui/core'
-import { View, } from 'colay-ui'
+import { View, useControllableState } from 'colay-ui'
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import {
   DarkTheme,
@@ -34,9 +37,18 @@ import { RenderNode } from './RenderNode'
 import { RenderEdge } from './RenderEdge'
 import * as API from './API'
 import { QueryBuilder } from './QueryBuilder'
-import GraphLayouts from '../../src/core/layouts'
+import { HelpModal } from './HelpModal'
+import { TermsOfService } from './TermsOfService'
 // import { Data } from '../../components/Graph/Default'
 import { Auth } from 'aws-amplify'
+import { useUser } from './useUser'
+import GraphLayouts from '../../src/core/layouts'
+
+export const ACTIONS = {
+  TEST_API: 'TEST_API',
+}
+
+const HELP_VIDEO_ID = "OrzMIhLpVps"
 
 const MUIDarkTheme = createMuiTheme({
   palette: {
@@ -134,25 +146,10 @@ const AUTO_CREATED_SCHEMA = {
   schema: createSchema(data.nodes)
 }
 
-const ActionBarRight = () => (
-  <View
-    style={{ flexDirection: 'row' }}
-  >
-    <Button>
-      Share
-    </Button>
-  </View>
-)
+
 
 const DataBarHeader = () => {
-  const [user, setUser] = React.useState({})
-  React.useEffect(() => {
-    const call = async () => {
-      const authUser = await Auth.currentAuthenticatedUser()
-      setUser(authUser)
-    }
-    call()
-  }, [])
+  const [user] = useUser()
   return (
     <View
       style={{ flexDirection: 'row', justifyContent: 'space-between' }}
@@ -167,10 +164,13 @@ const DataBarHeader = () => {
     </View>
   )
 }
+
 const AppContainer = ({
   changeMUITheme,
+  dispatch,
   ...rest
 }) => {
+  const [user] = useUser()
   const configRef = React.useRef({
     visualization: {
       nodeSize: null,
@@ -261,8 +261,31 @@ const AppContainer = ({
         Eclis: "",
         Articles: ""
       },
+    },
+    helpModal: {
+      isOpen: false,
     }
   })
+  const ActionBarRight = React.useMemo(() => () => (
+    <View
+      style={{ flexDirection: 'row' }}
+    >
+      <Button
+        onClick={() => updateState((draft) => {
+          draft.helpModal.isOpen = true
+        })}
+      >
+        Help
+      </Button>
+      <Button
+        onClick={() => dispatch({
+          type: ACTIONS.TEST_API
+        })}
+      >
+        Test the API
+      </Button>
+    </View>
+  ), [dispatch])
   const [controllerProps, controller] = useController({
     ...data,
     // events: RECORDED_EVENTS,
@@ -270,28 +293,28 @@ const AppContainer = ({
       layout: Graph.Layouts.cose,
       zoom: 0.2,
       nodes: {},
-      clusters: [
-        {
-          id: '123',
-          name: 'SimpleCluster',
-          ids: [
-            'http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2015:3019',
-            'http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2015:644',
-            'http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2014:3519'
-          ],
-          childClusterIds: []
-        },
-        {
-          id: '1234',
-          name: 'SimpleCluster2',
-          ids: [
-            'http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2015:3019',
-            'http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2015:644',
-            'http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2014:3519'
-          ],
-          childClusterIds: []
-        }
-      ]
+      // clusters: [
+      //   {
+      //     id: '123',
+      //     name: 'SimpleCluster',
+      //     ids: [
+      //       'http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2015:3019',
+      //       'http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2015:644',
+      //       'http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2014:3519'
+      //     ],
+      //     childClusterIds: []
+      //   },
+      //   {
+      //     id: '1234',
+      //     name: 'SimpleCluster2',
+      //     ids: [
+      //       'http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2015:3019',
+      //       'http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2015:644',
+      //       'http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2014:3519'
+      //     ],
+      //     childClusterIds: []
+      //   }
+      // ]
     },
     preferencesModal: {
       // isOpen: true,
@@ -307,12 +330,12 @@ const AppContainer = ({
       },
     },
     dataBar: {
-      isOpen: true,
+      // isOpen: true,
       editable: false,
       header: DataBarHeader,
     },
     actionBar: {
-      isOpen: true,
+      // isOpen: true,
       right: ActionBarRight,
       // autoOpen: true,
       eventRecording: false,
@@ -454,6 +477,34 @@ const AppContainer = ({
           return false
           break
         }
+        // case EVENT.LAYOUT_CHANGED: {
+        //   const {
+        //     value
+        //   } = payload
+        //   let layout: any
+        //     if (value.name) {
+        //       layout = R.pickBy((val) => R.isNotNil(val))({
+        //         // @ts-ignore
+        //         ...GraphLayouts[value.name],
+        //         ...value,
+        //       })
+        //     }
+        //     const { hitArea } = graphEditorRef.current.viewport
+        //     console.log(graphEditorRef.current.viewport)
+        //   const boundingBox = {
+        //     x1: hitArea.x + 300,
+        //     y1: hitArea.y + 300,
+        //     w: hitArea.width,
+        //     h: hitArea.height,
+        //   }
+        //     draft.graphConfig!.layout = {
+        //       ...layout,
+        //       boundingBox
+        //     }
+          
+        //   return false
+        //   break
+        // }
         // case EVENT.ELEMENT_SELECTED: {
         //   if (element.isNode()) {
         //     // const TARGET_SIZE = 700
@@ -496,6 +547,13 @@ const AppContainer = ({
     }
   })
   // React.useEffect(() => {
+  //    if (user){
+  //     Auth.updateUserAttributes(user, {
+  //       'custom:isOldUser': 'no'
+  //     })
+  //    }
+  // }, [user])
+  // React.useEffect(() => {
   //   const call = async () =>{
   //     const results = await listCases()
   //     const nodes = results.map(({id, ...data}) => ({
@@ -509,13 +567,7 @@ const AppContainer = ({
   //   }
   //   call()
   // }, [])
-  // React.useEffect(() => {
-  //   setTimeout(() => {
-  //     controller.update((draft) => {
-  //       draft.graphConfig.clusters[0].visible = false
-  //     })
-  //   }, 7000)
-  // }, [])
+  
   // React.useEffect(() => {
   //   setTimeout(() => {
   //     controller.update((draft) => {
@@ -523,15 +575,37 @@ const AppContainer = ({
   //     })
   //   }, 9000)
   // }, [])
-  const graphEditorRef = React.useRef(null)
+  React.useEffect(() => {
+    setTimeout(() => {
+      controller.update((draft, { graphEditorRef }) => {
+        try {
+          const { hitArea } = graphEditorRef.current.viewport
+          const margin = 500
+          const boundingBox = {
+            x1: hitArea.x + margin,
+            y1: hitArea.y + margin,
+            w: hitArea.width - 2*margin,
+            h: hitArea.height - 2*margin,
+          }
+          const layout = Graph.Layouts.cose
+            draft.graphConfig!.layout = {
+              ...layout,
+              animationDuration: 0,
+              boundingBox,
+            } 
+        } catch (error) {
+          console.log('error',error)
+        }
+      })
+    }, 1000)
+}, [])
   return (
     <View style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%' }}>
       <GraphEditor
-        ref={graphEditorRef}
         {...controllerProps}
         // {...R.omit(['eventHistory', ])(controllerProps)}
         payload={[configRef.current]}
-        style={{ width: '100%', height: 800, }}
+        style={{ width: '100%', height: 750, }}
         renderNode={(props) => (
           <RenderNode
             {...props}
@@ -564,6 +638,7 @@ const AppContainer = ({
             draft.isLoading = false
             draft.graphConfig!.layout = GraphLayouts['circle']
           })
+          
         }}
         // onCreate={async (query) => {
         //   let cases = await API.listCases(query)
@@ -581,6 +656,33 @@ const AppContainer = ({
         //   })
         // }}
       />
+      <HelpModal 
+        isOpen={state.helpModal.isOpen}
+        onClose={() => updateState((draft) => {
+          draft.helpModal.isOpen = false
+        })}
+        videoId={HELP_VIDEO_ID}
+      />
+      {/* <TermsOfService
+          user={user}
+          onAgree={async () => {
+            updateState((draft) => {
+              draft.helpModal.isOpen = true
+            })
+            await Auth.updateUserAttributes(user, {
+              'custom:isOldUser': 'yes'
+            })
+          }}
+          onDisagree={() => {
+            alert('To proceed on signin, you need to accept the Terms of Usage!')
+          }}
+        /> */}
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={controllerProps.isLoading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </View>
   )
 }

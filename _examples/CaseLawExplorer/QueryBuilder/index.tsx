@@ -1,24 +1,40 @@
+// @ts-nocheck
 import React from 'react'
 import Form from '@rjsf/material-ui'
-import { getFetchSchema } from './constants'
+import * as API from '../API'
 import { Modal, Button, Box, Typography, TextField, Paper } from '@material-ui/core'
+import { getQueryBuilderSchema } from './constants'
 
 export type QueryBuilderProps = {
   query: any;
-  onCreate: (newQuery: any) => void;
+  onStart: () => void;
+  onError: () => void;
+  onFinish: (data: any) => void;
   onClose: () => void;
   isOpen: boolean;
+}
+
+const prepareData = (data) => {
+  const {
+    nodes,
+    edges
+  } = data
+  const preNodes = R.splitEvery(Math.ceil(nodes.length / CHUNK_COUNT))(nodes)[0]
+  const preEdges = filterEdges(preNodes)(edges)
+  return {
+    nodes: preNodes,
+    edges: preEdges
+  }
 }
 
 export const QueryBuilder = (props: QueryBuilderProps) => {
   const {
     isOpen,
-    onCreate,
-    query,
-    onClose,
     onStart,
-    onFinish,
     onError,
+    onFinish,
+    query,
+    onClose
   } = props
 
   const [state, setState] = React.useState(query)
@@ -66,10 +82,26 @@ export const QueryBuilder = (props: QueryBuilderProps) => {
           }}
         >
           <Form
-            schema={getFetchSchema({ onPopupPress: () => console.log('eyyyy') }).schema}
-            uiSchema={getFetchSchema({ onPopupPress: () => console.log('eyyyy') }).uiSchema}
+            schema={getQueryBuilderSchema().schema}
+            uiSchema={getQueryBuilderSchema().uiSchema}
             onChange={e => setState(e.formData)}
             formData={state}
+            onSubmit={async e => {
+              onStart()
+              
+              try {
+                let casesData = await API.listCases(e.formData)
+                // let casesData = prepareData(cases)
+                
+                onFinish({
+                  nodes: casesData.nodes,
+                  edges: casesData.edges
+                })
+              } catch (e) {
+                console.log(e)
+                onError()
+              }
+            }}
           />
         </Box>
         <Box
@@ -108,3 +140,5 @@ export const QueryBuilder = (props: QueryBuilderProps) => {
   )
 
 }
+
+

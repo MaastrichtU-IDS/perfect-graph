@@ -277,8 +277,8 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
           graphLayoutRef.current?.stop()
           // @ts-ignore
           graphLayoutRef.current = cy.createLayout({
-            ...config.layout,
             boundingBox,
+            ...config.layout,
           })
           graphLayoutRef.current.on('layoutstop', () => {
           // @ts-ignore

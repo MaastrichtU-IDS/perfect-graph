@@ -208,7 +208,7 @@ const GraphEditorElement = (
             ids: elementIds,
             childClusterIds: [],
           }
-        })
+        }).filter((val) => !!val)
         if (clusters.length === 0) {
           alert('There is no clusters with this configuration!')
         } else {
@@ -682,12 +682,27 @@ const GraphEditorElement = (
   )
 }
 
-const extractGraphEditorData = (props: GraphEditorProps) => ({
+
+const convert = (object) => {
+  var cache = [];
+  return JSON.stringify(object, (key, value) => {
+    if (typeof value === 'object' && value !== null) {
+      // Duplicate reference found, discard key
+      if (cache.includes(value)) return;
+  
+      // Store value in our collection
+      cache.push(value);
+    }
+    return value;
+  })
+  cache = null;
+}
+const extractGraphEditorData = (props: GraphEditorProps) => convert({
   graphConfig: props.graphConfig,
   label: props.label,
-  settingsBar: props.settingsBar,
-  dataBar: props.dataBar,
-  actionBar: props.actionBar,
+  // settingsBar: R.omit(['header', 'footer'], props.settingsBar),
+  dataBar: R.omit(['header', 'footer'], props.dataBar),
+  actionBar: R.omit(['right', 'left'], props.actionBar),
   mode: props.mode,
   nodes: props.nodes,
   edges: props.edges,

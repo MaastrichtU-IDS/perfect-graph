@@ -77,7 +77,7 @@ export async function listCases(variables: listCasesVariables) {
     console.log(variables)
     const listCasesResult = await API.graphql({
       query: LIST_CASES,
-      authMode: API_AUTH_MODE.API_KEY,
+      // authMode: API_AUTH_MODE.API_KEY,
       variables
     })
 
@@ -118,7 +118,7 @@ export async function complexQuery(query: any) {
   try {
     const listCasesResult = await API.graphql({
       query: COMPLEX_QUERY,
-      authMode: API_AUTH_MODE.API_KEY,
+      // authMode: API_AUTH_MODE.API_KEY,
       variables: query
     })
     const caseResults = listCasesResult.data.listCaselaws.items
@@ -141,7 +141,7 @@ export async function getElementData(variables: GetElementDataVariables) {
   try {
     const elementDataResult = await API.graphql({
       query: GET_ELEMENT_DATA,
-      authMode: API_AUTH_MODE.API_KEY,
+      // authMode: API_AUTH_MODE.API_KEY,
       variables
     })
     const result = elementDataResult.data.fetchNodeData.data

@@ -3,13 +3,13 @@ import { GraphEditorProps } from '@components/GraphEditor'
 import GraphLayouts from '@core/layouts'
 import {
   ControllerState, DataItem, EditorMode, EventInfo,
-  GraphEditorRef, GraphLabelData, RDFType, RecordedEvent
+  GraphEditorRef, GraphLabelData, RDFType, RecordedEvent,
 } from '@type'
 import {
-  getSelectedItemByElement, getUndoEvents
+  getSelectedItemByElement, getUndoEvents,
 } from '@utils'
 import {
-  EDITOR_MODE, EVENT, MOCK_DATA
+  EDITOR_MODE, EVENT, MOCK_DATA,
 } from '@constants'
 import { createHistory } from '@utils/createHistory'
 import { useImmer } from 'colay-ui/hooks/useImmer'
@@ -18,7 +18,6 @@ import { download } from 'colay-ui/utils'
 import * as R from 'colay/ramda'
 import PIXI from 'pixi.js'
 import React from 'react'
-
 
 // type ControllerOptions = {
 //   // onEvent?: (info: EventInfo, draft: ControllerState) => boolean;
@@ -65,13 +64,18 @@ export const useController = (
       actions.map(onEvent)
     },
   }), [])
-  const [state, update] = useImmer(controllerConfig)
   const localGraphEditorRef = React.useRef(null)
   const graphEditorRef = _graphEditorRef ?? localGraphEditorRef
   const localDataRef = React.useRef({
     recordedEvents: [] as RecordedEvent[],
     // targetNode: null,
   })
+  const [state, updateState] = useImmer(controllerConfig)
+  const update = React.useCallback((updater) => {
+    updateState((draft) => {
+      updater(draft, { graphEditorRef })
+    })
+  }, [updateState, graphEditorRef])
   const onEvent = React.useCallback((eventInfo: EventInfo) => {
     const {
       type,
@@ -383,7 +387,7 @@ export const useController = (
             payload.events.map((event: EventInfo) => onEvent(event))
             break
           case EVENT.EXPORT_DATA:
-            download(JSON.stringify(payload.value), 'perfect-graph.json')
+            download(payload.value, 'perfect-graph.json')
             break
           case EVENT.TOGGLE_RECORD:
             draft.actionBar!.recording = !draft.actionBar?.recording
@@ -657,15 +661,15 @@ const DEFAULT_CONTROLLER_CONFIG: UseControllerData = {
     clusters: [],
   },
   playlists: [
-    {
-      id: R.uuid(),
-      name: 'My playlist',
-      events: MOCK_DATA.events,
-    },
-    {
-      id: R.uuid(),
-      name: 'My playlist2',
-      events: MOCK_DATA.events,
-    },
+    // {
+    //   id: R.uuid(),
+    //   name: 'My playlist',
+    //   events: MOCK_DATA.events,
+    // },
+    // {
+    //   id: R.uuid(),
+    //   name: 'My playlist2',
+    //   events: MOCK_DATA.events,
+    // },
   ],
 }

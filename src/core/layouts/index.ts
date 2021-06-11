@@ -21,7 +21,7 @@ export default {
     padding: 30,
 
     // // Constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
-    boundingBox: undefined,
+    // boundingBox: undefined,
 
     // // Excludes the label when calculating node bounding boxes for the layout algorithm
     nodeDimensionsIncludeLabels: false,
@@ -72,7 +72,7 @@ export default {
     circle: false, // put depths in concentric circles if true, put depths top down if false
     grid: false, // whether to create an even grid into which the DAG is placed (circle:false only)
     spacingFactor: 1.75, // positive spacing factor, larger => more space between nodes (N.B. n/a if causes overlap)
-    boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+    // boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
     avoidOverlap: true, // prevents node overlap, may overflow boundingBox if not enough space
     nodeDimensionsIncludeLabels: false, // Excludes the label when calculating node bounding boxes for the layout algorithm
     roots: undefined, // the roots of the trees
@@ -93,7 +93,7 @@ export default {
     clockwise: true, // whether the layout should go clockwise (true) or counterclockwise/anticlockwise (false)
     equidistant: false, // whether levels have an equal radial distance betwen them, may cause bounding box overflow
     minNodeSpacing: 10, // min spacing between outside of nodes (used for radius adjustment)
-    boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+    // boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
     avoidOverlap: true, // prevents node overlap, may overflow boundingBox if not enough space
     nodeDimensionsIncludeLabels: false, // Excludes the label when calculating node bounding boxes for the layout algorithm
     height: undefined, // height of layout area (overrides container height)
@@ -113,7 +113,7 @@ export default {
 
     fit: true, // whether to fit the viewport to the graph
     padding: 30, // the padding on fit
-    boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+    // boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
     avoidOverlap: true, // prevents node overlap, may overflow boundingBox and radius if not enough space
     nodeDimensionsIncludeLabels: false, // Excludes the label when calculating node bounding boxes for the layout algorithm
     spacingFactor: undefined, // Applies a multiplicative factor (>0) to expand or compress the overall area that the nodes take up
@@ -132,7 +132,7 @@ export default {
 
     fit: true, // whether to fit the viewport to the graph
     padding: 30, // padding used on fit
-    boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+    // boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
     avoidOverlap: true, // prevents node overlap, may overflow boundingBox if not enough space
     avoidOverlapPadding: 10, // extra spacing around nodes when avoidOverlap: true
     nodeDimensionsIncludeLabels: false, // Excludes the label when calculating node bounding boxes for the layout algorithm
@@ -168,7 +168,7 @@ export default {
 
     fit: true, // whether to fit to viewport
     padding: 30, // fit padding
-    boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+    // boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
     ready: undefined, // callback on layoutready
     stop: undefined, // callback on layoutstop
     transform: (node, position) => position, // transform a given node position. Useful for changing flow direction in discrete layouts
@@ -246,7 +246,7 @@ export default {
     // - { x1, y1, x2, y2 }
     // - { x1, y1, w, h }
     // - undefined / null : Unconstrained
-    boundingBox: undefined,
+    // boundingBox: undefined,
     avoidOverlap: true,
 
     // Layout event callbacks; equivalent to `layout.one('layoutready', callback)` for example
@@ -339,7 +339,7 @@ export default {
     ungrabifyWhileSimulating: false, // so you can't drag nodes during layout
     fit: true, // on every layout reposition of nodes, fit the viewport
     padding: 30, // padding around the simulation
-    boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+    // boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
     nodeDimensionsIncludeLabels: false, // whether labels should be included in determining the space used by a node
 
     // layout event callbacks
@@ -410,7 +410,7 @@ export default {
     animateFilter(node, i) { return true }, // whether to animate specific nodes when animation is on; non-animated nodes immediately go to their final positions
     animationDuration: 500, // duration of animation in ms if enabled
     animationEasing: undefined, // easing of animation if enabled
-    boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+    // boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
     transform(node, pos) { return pos }, // a function that applies a transform to the final node position
     ready() {}, // on layoutready
     stop() {}, // on layoutstop
@@ -431,7 +431,7 @@ export default {
     // number of nodes
     prelayout: { name: 'cose' }, // Layout options for the first phase
     maxExpandIterations: 4, // Maximum number of expanding iterations
-    boundingBox: undefined, // Constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+    // boundingBox: undefined, // Constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
     randomize: false, // Uses random initial node positions on true
     ...animationOptions,
   },
@@ -501,7 +501,7 @@ export default {
   //   fixedAfterDragging: false, // fixed node after dragging
   //   fit: false, // on every layout reposition of nodes, fit the viewport
   //   padding: 30, // padding around the simulation
-  //   boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+  //   // boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
   //   /** d3-force API* */
   //   alpha: 1, // sets the current alpha to the specified number in the range [0,1]
   //   alphaMin: 0.001, // sets the minimum alpha to the specified number in the range [0,1]
