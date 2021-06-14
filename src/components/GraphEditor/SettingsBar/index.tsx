@@ -130,13 +130,17 @@ const SettingsBarElement = (props: SettingsBarProps) => {
                       payload: { form, value: e.formData, index },
                     })}
                   >
-                    <Button
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                    >
-                      Apply
-                    </Button>
+                    {
+                      form.children ?? (
+                      <Button
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                      >
+                        Apply
+                      </Button>
+                      )
+}
                   </Form>
                 </AccordionDetails>
               </Accordion>
