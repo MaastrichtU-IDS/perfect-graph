@@ -355,3 +355,8 @@ export type GraphEditorConfig = {
 export type {
   GraphEditorProps,
 } from '@components/GraphEditor'
+
+export type NetworkStatistics = {
+  global?: any
+  local?: any
+}

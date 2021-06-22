@@ -1,8 +1,6 @@
 import { createStoreProvider } from 'colay-ui'
-// import { createStoreProvider } from '@root/components/GraphEditor/createStoreProviderWithoutImmer'
-// import { createStoreProvider } from '@root/components/GraphEditor/createStoreProvider'
-
 import {
+  NetworkStatistics,
   OnEventLite,
   GraphConfig,
   GraphEditorConfig,
@@ -17,6 +15,9 @@ import {
   Element,
   GraphEditorRef,
 } from '@type'
+
+// import { createStoreProvider } from '@root/components/GraphEditor/createStoreProviderWithoutImmer'
+// import { createStoreProvider } from '@root/components/GraphEditor/createStoreProvider'
 
 export type GraphEditor = {
   onEvent: OnEventLite;
@@ -42,6 +43,7 @@ export type GraphEditor = {
   selectedItem?: ElementData;
   selectedElement?: Element;
   graphEditorRef: React.RefObject<GraphEditorRef>
+  networkStatistics?: NetworkStatistics
 }
 
 const {

@@ -40,7 +40,7 @@ export const DataBar = (props: DataBarProps) => {
     {
       item,
       onEvent,
-      statistics,
+      networkStatistics,
       globalLabel,
       localLabel,
       isGlobalLabelFirst,
@@ -52,6 +52,7 @@ export const DataBar = (props: DataBarProps) => {
         selectedItem,
         label,
         localDataRef,
+        networkStatistics
       } = editor
       const targetPath = selectedElement?.isNode() ? 'nodes' : 'edges'
       return {
@@ -61,9 +62,9 @@ export const DataBar = (props: DataBarProps) => {
         globalLabel: label?.global?.[targetPath],
         isGlobalLabelFirst: label?.isGlobalFirst?.[targetPath],
         onEvent: editor.onEvent,
-        statistics: {
-          localNetworkStatistics: localDataRef.current.localNetworkStatistics?.[selectedItem?.id],
-          globalNetworkStatistics: localDataRef.current.localNetworkStatistics?.[selectedItem?.id],
+        networkStatistics: {
+          local: localDataRef.current.networkStatistics.local?.[selectedItem?.id],
+          global: networkStatistics?.global ?? localDataRef.current.networkStatistics.local?.[selectedItem?.id],
         },
       }
     },
@@ -84,7 +85,7 @@ export const DataBar = (props: DataBarProps) => {
   React.useEffect(() => {
     animationRef.current?.play?.(isOpen)
   }, [animationRef, isOpen])
-  const hasStatistics = Object.values(statistics).find((val) => val)
+  const hasStatistics = Object.values(networkStatistics).find((val) => val)
   return (
     <Paper
       style={{
@@ -266,18 +267,18 @@ export const DataBar = (props: DataBarProps) => {
             }}
           >
             {
-          statistics.globalNetworkStatistics && (
+          networkStatistics.global && (
             <GlobalNetworkStatistics
-              data={statistics.globalNetworkStatistics}
+              data={networkStatistics.global}
               onEvent={onEvent}
             />
           )
         }
             <Divider />
             {
-          statistics.localNetworkStatistics && (
+          networkStatistics.local && (
             <LocalNetworkStatistics
-              data={statistics.localNetworkStatistics}
+              data={networkStatistics.local}
               onEvent={onEvent}
             />
           )

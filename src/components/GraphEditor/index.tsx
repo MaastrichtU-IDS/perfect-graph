@@ -19,6 +19,7 @@ import {
   NodeElement,
   Playlist,
   OnEventLite,
+  NetworkStatistics,
 } from '@type'
 import {
   getLabel, getSelectedItemByElement,
@@ -63,7 +64,7 @@ export type GraphEditorProps = {
   events?: RecordedEvent[]
   eventHistory?: EventHistory;
   playlists?: Playlist[];
-  globalNetworkStatistics?: any;
+  networkStatistics?: NetworkStatistics;
   isLoading?: boolean;
 } & Omit<
 GraphProps,
@@ -110,7 +111,7 @@ const GraphEditorElement = (
     eventHistory,
     config = DEFAULT_GRAPH_EDITOR_CONFIG,
     playlists,
-    globalNetworkStatistics,
+    networkStatistics,
     isLoading = false,
     ...rest
   } = props
@@ -122,7 +123,9 @@ const GraphEditorElement = (
     newClusterBoxSelection: {
       elementIds: [] as string[],
     },
-    localNetworkStatistics: null,
+    networkStatistics: {
+      local: null,
+    },
   })
   const [state, updateState] = useImmer({
     eventsModal: {
@@ -263,31 +266,24 @@ const GraphEditorElement = (
       autostart: false,
     },
   )
-  // const localNetworkStatisticsRef = React.useRef(null)
-  // React.useEffect(() => {
-  //   if (!config.enableNetworkStatistics) {
-  //     localNetworkStatisticsRef.current = null
-  //   } else {
-  //     localNetworkStatisticsRef.current = calculateStatistics({ nodes, edges })
-  //   }
-  // }, [])
-  // React.useMemo(() => {
-  //   if (localDataRef.current.initialized) {
-  //     localNetworkStatisticsRef.current = calculateStatistics({ nodes, edges })
-  //   }
-  // }, [nodes, edges, config.enableNetworkStatistics])
   React.useEffect(() => {
     if (!config.enableNetworkStatistics) {
-      localDataRef.current.localNetworkStatistics = null
+      localDataRef.current.networkStatistics.local = networkStatistics?.local
     } else {
-      localDataRef.current.localNetworkStatistics = calculateStatistics({ nodes, edges })
+      localDataRef.current.networkStatistics.local = R.mergeDeepRight(
+        calculateStatistics({ nodes, edges }),
+        (networkStatistics?.local ?? {}),
+      )
     }
   }, [])
   React.useMemo(() => {
     if (localDataRef.current.initialized) {
-      localDataRef.current.localNetworkStatistics = calculateStatistics({ nodes, edges })
+      localDataRef.current.networkStatistics.local = R.mergeDeepRight(
+        calculateStatistics({ nodes, edges }),
+        (networkStatistics?.local ?? {}),
+      )
     }
-  }, [nodes, edges, config.enableNetworkStatistics])
+  }, [nodes, edges, networkStatistics?.local, config.enableNetworkStatistics])
   React.useEffect(() => {
     localDataRef.current.targetNode = null
   }, [mode])
@@ -304,7 +300,7 @@ const GraphEditorElement = (
     localDataRef,
     selectedItem,
     selectedElement,
-    globalNetworkStatistics,
+    networkStatistics,
     graphEditorRef,
   }),
   [
@@ -319,7 +315,7 @@ const GraphEditorElement = (
     selectedElementIds,
     selectedItem,
     selectedElement,
-    globalNetworkStatistics,
+    networkStatistics,
     graphEditorRef,
   ])
   return (
@@ -682,20 +678,19 @@ const GraphEditorElement = (
   )
 }
 
-
 const convert = (object) => {
-  var cache = [];
+  let cache = []
   return JSON.stringify(object, (key, value) => {
     if (typeof value === 'object' && value !== null) {
       // Duplicate reference found, discard key
-      if (cache.includes(value)) return;
-  
+      if (cache.includes(value)) return
+
       // Store value in our collection
-      cache.push(value);
+      cache.push(value)
     }
-    return value;
+    return value
   })
-  cache = null;
+  cache = null
 }
 const extractGraphEditorData = (props: GraphEditorProps) => convert({
   graphConfig: props.graphConfig,

@@ -288,6 +288,13 @@ const AppContainer = ({
   ), [dispatch])
   const [controllerProps, controller] = useController({
     ...data,
+    networkStatistics: {
+      local: {
+        "http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2008:BB6175": {
+          rel_indegree: 5
+        }
+      }
+    },
     // events: RECORDED_EVENTS,
     graphConfig: {
       layout: Graph.Layouts.cose,
