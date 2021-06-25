@@ -2,8 +2,9 @@ import React from 'react'
 import { Text } from 'colay-ui'
 import * as R from 'colay/ramda'
 import { useImmer } from 'colay-ui/hooks/useImmer'
-import { BehaviorSubject } from 'colay-ui/utils/BehaviorSubject'
 import createPersistor, { PersistorOptions } from 'colay-ui/utils/createPersistor'
+import { useUpdate } from './useUpdate'
+import { BehaviorSubject } from './BehaviourSubject'
 
 type UpdateConfig = {
 }
@@ -104,33 +105,8 @@ export const createStoreProvider = <T extends any>(
         }
         return selector(store.getState())
       },
-      // connect: <R,>(
-      //   component: React.Component,
-      //   selector: (state: T) => R,
-      //   fieldName: string = 'storeState'
-      // ): R => {
-      //   const {
-      //     current: store
-      //   } = storeRef
-      //   let initial = true
-      //   const { componentWillUnmount } = component
-      //   const subscription = storeSubject.subscribe((newState) => {
-      //     // @ts-ignore
-      //     component[fieldName] = selector(newState)
-      //     if (!initial) {
-      //       component.setState(component.state)
-      //     }
-      //     initial = false
-      //   })
-      //   component.componentWillUnmount = (...rest) => {
-      //     componentWillUnmount?.(...rest)
-      //     subscription.unsubscribe()
-      //   }
-      //   return selector(store.getState())
-      // }
     },
   }
-  // type UpdateStateType = UpdateState<UpdaterType>
 
   const Context = React.createContext(storeRef.current)
   return {
@@ -138,6 +114,7 @@ export const createStoreProvider = <T extends any>(
     Provider: (props: { children: React.ReactNode; value: T }) => {
       const { children, value: valueProp } = props
       const value = valueProp ?? defaultState
+      const initializedRef = React.useRef(false)
       const [
         immerNextState,
         immerUpdate,
@@ -145,36 +122,37 @@ export const createStoreProvider = <T extends any>(
       ] = useImmer<T, UpdateConfig>(value, { logger })
       const [
         mutableNextState,
-        setState,
-      ] = React.useState<T>(value)
-      const mutableUpdateSettings = {
-        set: (val:T) => setState(val),
-        clear: () => setState(defaultState),
-      }
+        updateState,
+        mutableUpdateSettings,
+      ] = useUpdate<T>(value)
       const mutableUpdate = React.useCallback((updateCallback) => {
-        updateCallback(storeRef.current.state)
-        setState(storeRef.current.state)
+        updateState(updateCallback)
       }, [])
-      const nextState = immer ? immerNextState : mutableNextState
+      
+      let nextState = immer ? immerNextState : mutableNextState
       const update = immer ? immerUpdate : mutableUpdate
       const updateSettings = immer ? immerUpdateSettings : mutableUpdateSettings
-      storeRef.current.state = nextState
+      // @TODO: DANGER
+      React.useMemo(() => {
+        if (initializedRef.current) {
+          updateSettings.set(value, { silent: true })
+          nextState = value
+        }
+      }, [value])
+      // @TODO: DANGER
       // @ts-ignore
       storeRef.current.update = update
       storeRef.current.set = updateSettings.set
       storeRef.current.clear = updateSettings.clear
-      storeSubject.next(nextState)
-      const initializedRef = React.useRef(false)
+      if (!R.equals(storeRef.current.state, nextState)) {
+        storeSubject.next(nextState)
+      }
+      storeRef.current.state = nextState
+      
       if (initializedRef.current) {
         persistor?.set(nextState)
       }
-      // @TODO: DANGER
-      React.useMemo(() => {
-        if (initializedRef.current) {
-          updateSettings.set(value)
-        }
-      }, [value])
-      // @TODO: DANGER
+      
       React.useEffect(
         () => {
           const initialize = async () => {
@@ -224,6 +202,7 @@ export const createStoreProvider = <T extends any>(
               ref.current.selectedState,
               newSelectedState,
             )
+            // console.log('SUBSCRIBE', isEqual, state, ref.current.selectedState, newSelectedState)
             return R.when(
               R.isFalse,
               () => {

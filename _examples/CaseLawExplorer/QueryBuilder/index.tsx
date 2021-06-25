@@ -2,28 +2,26 @@
 import React from 'react'
 import Form from '@rjsf/material-ui'
 import * as API from '../API'
-import { Modal, Button, Box, Typography, TextField, Paper } from '@material-ui/core'
+import { Modal, Button, Box, Typography, TextField, Paper,IconButton } from '@material-ui/core'
+import CloseIcon from '@material-ui/icons/Close'
 import { getQueryBuilderSchema } from './constants'
 
 export type QueryBuilderProps = {
   query: any;
   onStart: () => void;
-  onError: () => void;
+  onError: (e: Error) => void;
   onFinish: (data: any) => void;
   onClose: () => void;
   isOpen: boolean;
 }
 
-const prepareData = (data) => {
-  const {
-    nodes,
-    edges
-  } = data
-  const preNodes = R.splitEvery(Math.ceil(nodes.length / CHUNK_COUNT))(nodes)[0]
-  const preEdges = filterEdges(preNodes)(edges)
+const transformData = (data) => {
+  const date = data.Date;
+  console.log(date)
   return {
-    nodes: preNodes,
-    edges: preEdges
+    "DateStart": `${date[0]}-01-01`,
+    "DateEnd": `${date[1]}-12-31`,
+    ...data
   }
 }
 
@@ -65,6 +63,7 @@ export const QueryBuilder = (props: QueryBuilderProps) => {
         overflow: 'scroll'
       }}
       >
+        
         <Box
           style={{
             display: 'flex',
@@ -74,6 +73,17 @@ export const QueryBuilder = (props: QueryBuilderProps) => {
           }}
         >
           <Typography variant="h6">Query Builder</Typography>
+          <IconButton 
+            aria-label="Example"
+            onClick={onClose}
+            // style={{
+            //   position: 'absolute',
+            //   right: 24,
+            //   top: 24
+            // }}
+          >
+            <CloseIcon  />
+          </IconButton>
         </Box>
         <Box
           style={{
@@ -90,49 +100,26 @@ export const QueryBuilder = (props: QueryBuilderProps) => {
               onStart()
               
               try {
-                let casesData = await API.listCases(e.formData)
+                let casesData = await API.listCases(transformData(e.formData))
                 // let casesData = prepareData(cases)
-                
-                onFinish({
-                  nodes: casesData.nodes,
-                  edges: casesData.edges
-                })
+                // console.log('logCasesData',casesData)
+                if (casesData.nodes.length == 0) {
+                  throw new Error("No cases returned")
+                }
+                else {
+                  onFinish({
+                    nodes: casesData.nodes,
+                    edges: casesData.edges,
+                    networkStatistics: casesData.networkStatistics,
+                    message: casesData.message,
+                  })
+                }
               } catch (e) {
                 console.log(e)
-                onError()
+                onError(e)
               }
             }}
           />
-        </Box>
-        <Box
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
-          <Paper style={{
-            display: 'flex',
-
-            flexDirection: 'row', justifyContent: 'space-around', width: '40%'
-          }}>
-            <Button
-              onClick={() => {
-                onCreate(state)
-              }}
-              fullWidth
-            >
-              Create
-            </Button>
-            <Button
-              color="secondary"
-              onClick={onClose}
-              fullWidth
-            >
-              Close
-            </Button>
-          </Paper>
         </Box>
       </Paper>
     </Modal>

@@ -10,9 +10,13 @@ import {
   Typography,
   Backdrop,
   CircularProgress,
-  Modal
+  Modal,
+  Slide,
+  Snackbar,
+  Alert,
+  AlertTitle,
 } from '@material-ui/core'
-import { View, useControllableState } from 'colay-ui'
+import { View, useForwardRef, useMeasure } from 'colay-ui'
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import {
   DarkTheme,
@@ -66,7 +70,7 @@ const filterEdges = (nodes: { id: string }[]) => (edges: { source: string; targe
     (edge) => nodeMap[edge.source] && nodeMap[edge.target]
   )(edges)
 }
-const CHUNK_COUNT = 3
+const CHUNK_COUNT = 5
 const prepareData = (data) => {
   const {
     nodes,
@@ -168,9 +172,11 @@ const DataBarHeader = () => {
 const AppContainer = ({
   changeMUITheme,
   dispatch,
+  width,
+  height,
   ...rest
 }) => {
-  const [user] = useUser()
+  const alertRef= React.useRef(null)
   const configRef = React.useRef({
     visualization: {
       nodeSize: null,
@@ -240,25 +246,19 @@ const AppContainer = ({
           2015
         ],
         Instances: [
-          "Hoge Raad",
-          "Raad van State",
-          "Centrale Raad van Beroep",
-          "College van Beroep voor het bedrijfsleven",
-          "Gerechtshof Arnhem-Leeuwarden"
+          "Hoge Raad", "Raad van State",
         ],
         Domains: [
-          "Not"
+          ""
         ],
         Doctypes: [
           "DEC",
           "OPI"
         ],
-        DegreesSources: 3,
-        popup: false,
-        LiPermission: false,
-        Keywords: "test",
-        DegreesTargets: 3,
-        Eclis: "",
+        DegreesSources: 1,
+        Keywords: "",
+        DegreesTargets: 1,
+        Eclis: "ECLI:NL:GHSGR:1972:AB4988",
         Articles: ""
       },
     },
@@ -288,13 +288,8 @@ const AppContainer = ({
   ), [dispatch])
   const [controllerProps, controller] = useController({
     ...data,
-    networkStatistics: {
-      local: {
-        "http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2008:BB6175": {
-          rel_indegree: 5
-        }
-      }
-    },
+    // nodes: [],
+    // edges: [],
     // events: RECORDED_EVENTS,
     graphConfig: {
       layout: Graph.Layouts.cose,
@@ -387,9 +382,13 @@ const AppContainer = ({
           try {
             elementData = await API.getElementData({ id: selectedItem.data.ecli });
           } catch (error) {
+            alertRef.current.alert({
+              text: JSON.stringify(error),
+              type: 'error'
+            })
             console.error(error)
           }
-          if (elementData) {
+          if (elementData && !R.isEmpty(elementData)) {
             update((draft) => {
               const {
                 item: selectedItem,
@@ -401,9 +400,10 @@ const AppContainer = ({
               // draft.isLoading = false
             })
           } else {
-            update((draft) => {
-              // draft.isLoading = false
-            })
+            // alertRef.current.alert({
+            //   type: 'warning',
+            //   text: 'Data is not available!'
+            // })
           }
           break
         }
@@ -607,12 +607,14 @@ const AppContainer = ({
     }, 1000)
 }, [])
   return (
-    <View style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%' }}>
+    <View
+      style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%' }}
+    >
       <GraphEditor
         {...controllerProps}
         // {...R.omit(['eventHistory', ])(controllerProps)}
         payload={[configRef.current]}
-        style={{ width: '100%', height: 750, }}
+        style={{ width, height }}
         renderNode={(props) => (
           <RenderNode
             {...props}
@@ -632,36 +634,44 @@ const AppContainer = ({
           controller.update((draft) => {
             draft.isLoading = true
           })
+          updateState((draft) => {
+            draft.queryBuilder.visible = false
+          })
         }}
-        onError={() => {
+        onError={(error) => {
           controller.update((draft) => {
             draft.isLoading = false
           })
+          updateState((draft) => {
+            draft.queryBuilder.visible = true
+          })
+          alertRef.current.alert({
+            type: 'warning',
+            text: error.message
+          })
         }}
-        onFinish={({ nodes = [], edges= []} = {}) => {
+        onFinish={({
+          nodes = [],
+          edges= [],
+          networkStatistics,
+          message
+        } = {}) => {
           controller.update((draft) => {
             draft.nodes = nodes
             draft.edges = edges
+            draft.networkStatistics = {
+              local: networkStatistics
+            }
             draft.isLoading = false
-            draft.graphConfig!.layout = GraphLayouts['circle']
+            draft.graphConfig!.layout = Graph.Layouts.circle
           })
-          
+          if (message) {
+            alertRef.current.alert({
+              type: 'warning',
+              text: message
+            })
+          }
         }}
-        // onCreate={async (query) => {
-        //   let cases = await API.listCases(query)
-
-        //   let casesData = prepareData(cases)
-        //   console.log(casesData)
-          
-        //   controller.update((draft) => {
-        //     draft.nodes = casesData.nodes
-        //     draft.edges = casesData.edges
-        //   })
-        //   updateState((draft) => {
-        //     draft.queryBuilder.visible = false
-        //     draft.queryBuilder.query = query
-        //   })
-        // }}
       />
       <HelpModal 
         isOpen={state.helpModal.isOpen}
@@ -680,10 +690,13 @@ const AppContainer = ({
               'custom:isOldUser': 'yes'
             })
           }}
-          onDisagree={() => {
-            alert('To proceed on signin, you need to accept the Terms of Usage!')
-          }}
+          // onDisagree={() => {
+          //   alert('To proceed on signin, you need to accept the Terms of Usage!')
+          // }}
         /> */}
+        <AlertContent 
+          ref={alertRef}
+        />
       <Backdrop
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={controllerProps.isLoading}
@@ -694,6 +707,61 @@ const AppContainer = ({
   )
 }
 
+const AlertContent = React.forwardRef((props,forwardedRef) => {
+    const [open, setOpen] = React.useState(false);
+    const [messageInfo, setMessageInfo] = React.useState(undefined);
+    const ref = useForwardRef(
+      forwardedRef,
+      {},
+      ()=> ({
+        alert: (message) => {
+          setMessageInfo({
+            key: R.uuid(),
+            ...message,
+          })
+          setOpen(true)
+        }
+      })
+    )
+    const handleClose = (event, reason) => {
+      // if (reason === 'clickaway') {
+      //   return;
+      // }
+      setOpen(false);
+    }
+    const TransitionUp = React.useCallback((props) =>(
+      <Slide 
+        {...props}
+        direction="down"
+          handleExited={() => {
+          setMessageInfo(undefined);
+        }}
+      />
+    ), [])
+    return (
+      <Snackbar
+        key={messageInfo?.key}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        open={open}
+        autoHideDuration={4000}
+        TransitionComponent={TransitionUp}
+        onClose={handleClose}
+      >
+        <Alert 
+          onClose={handleClose}
+          severity={messageInfo?.type ?? 'error'}
+        >
+          <AlertTitle>{messageInfo ? R.upperFirst(messageInfo.type): ''}</AlertTitle>
+          {
+            messageInfo?.text
+          }
+        </Alert>
+      </Snackbar>
+    )
+})
 
 const MUI_THEMES = {
   Dark: MUIDarkTheme,

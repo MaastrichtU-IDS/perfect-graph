@@ -1,4 +1,5 @@
 import { createStoreProvider } from 'colay-ui'
+// import { createStoreProvider } from '@root/components/GraphEditor/createStoreProvider'
 import {
   NetworkStatistics,
   OnEventLite,
@@ -16,8 +17,6 @@ import {
   GraphEditorRef,
 } from '@type'
 
-// import { createStoreProvider } from '@root/components/GraphEditor/createStoreProviderWithoutImmer'
-// import { createStoreProvider } from '@root/components/GraphEditor/createStoreProvider'
 
 export type GraphEditor = {
   onEvent: OnEventLite;

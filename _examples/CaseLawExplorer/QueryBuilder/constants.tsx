@@ -74,18 +74,6 @@ export const getQueryBuilderSchema = () => {
           minimum: 1969,
           maximum: 2015,
         },
-        DegreesSources: {
-          type: 'integer',
-          title: 'Degrees Sources',
-          minimum: 1,
-          maximum: 5,
-        },
-        DegreesTargets: {
-          type: 'integer',
-          title: 'Degrees Targets',
-          minimum: 1,
-          maximum: 5,
-        },
         Instances: {
           type: 'array',
           title: 'Instances',
@@ -127,12 +115,25 @@ export const getQueryBuilderSchema = () => {
               'DEC',
               'OPI'
             ],
+            enumNames: [
+              '',
+              'Decision',
+              'Opinion'
+            ],
             type: 'string'
           },
         },
-        LiPermission: {
-          type: 'boolean',
-          title: 'LI Permission',
+        DegreesSources: {
+          type: 'integer',
+          title: 'Degrees Sources',
+          minimum: 1,
+          maximum: 5,
+        },
+        DegreesTargets: {
+          type: 'integer',
+          title: 'Degrees Targets',
+          minimum: 1,
+          maximum: 5,
         },
       },
     },

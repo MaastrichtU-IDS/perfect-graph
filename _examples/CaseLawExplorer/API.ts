@@ -25,7 +25,6 @@ const LIST_CASES = `query QueryNetworkByUserInput(
   $Instances: [String]
   $Domains: [String]
   $Doctypes: [String]
-  $LiPermission: Boolean
 ) {
   queryNetworkByUserInput(
     DataSources: $DataSources
@@ -39,7 +38,6 @@ const LIST_CASES = `query QueryNetworkByUserInput(
     Instances: $Instances
     Domains: $Domains
     Doctypes: $Doctypes
-    LiPermission: $LiPermission
   ) {
     nodes {
       id
@@ -51,18 +49,20 @@ const LIST_CASES = `query QueryNetworkByUserInput(
       target
       data
     }
+    statistics
+    message
   }
 }`
 
 const GET_ELEMENT_DATA = `query GetElementData($id: String) {
-  fetchNodeData(Ecli: $id, LiPermission: true) {
+  fetchNodeData(Ecli: $id) {
     data
     id
   }
 }`
 
 const TEST_AUTH = `query TestAuth($id: String) {
-  testAuth(Ecli: $id, LiPermission: true) {
+  testAuth(Ecli: $id) {
     data
     id
   }
@@ -87,6 +87,8 @@ export async function listCases(variables: listCasesVariables) {
     return {
       nodes: caseResults.nodes.map(convertJSONStringFields),
       edges: caseResults.edges.map(convertJSONStringFields),
+      networkStatistics: JSON.parse(caseResults.statistics),
+      message: caseResults.message,
       // edges: project.edges.items.map(convertJSONStringFields),
     }
 

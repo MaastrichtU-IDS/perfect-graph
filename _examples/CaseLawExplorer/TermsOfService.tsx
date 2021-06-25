@@ -9,7 +9,7 @@ import { useUser } from './useUser';
 
 type TermsOfServiceProps = {
   onAgree: () => void;
-  onDisagree: () => void;
+  onDisagree?: () => void;
   isOpen?: boolean;
   user: object
 }
@@ -19,7 +19,9 @@ const TERMS_OF_SERVICE_URL = `https://en.wikipedia.org/wiki/Terms_of_service#:~:
 export function TermsOfService(props: TermsOfServiceProps) {
   const {
     onAgree,
-    onDisagree,
+    onDisagree = () => {
+      alert('To proceed on signin, you need to accept the Terms of Usage!')
+    },
     user
   } = props
   const [isOpen, setOpen] = React.useState(false);
