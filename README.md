@@ -6,23 +6,23 @@ We want to build a collaborative Knowledge Graph Editor. To achive that goal we 
 
 ## Usage
 
-First, install <a href="https://nodejs.org/en/download/" target="_blank">Nodejs</a> and <a href="https://classic.yarnpkg.com/en/docs/install/" target="_blank">Yarn</a> to your working environment. Then
+First, install <a href="https://nodejs.org/en/download/" target="_blank">Nodejs</a> and <a href="https://classic.yarnpkg.com/en/docs/install/" target="_blank">Yarn</a> to your working environment. Then:
 
-```js
+```bash
 yarn global add expo-cli
 ```
 
-Then,
+Then initialized your expo project:
 
-```js
+```bash
 expo init my-project
 cd my-project
 yarn add perfect-graph unitx-ui unitx
 ```
 
-After you can write this command to the terminal in your project directory
+After you can write this command to the terminal in your project directory:
 
-```js
+```bash
 yarn web
 ```
 
