@@ -1,23 +1,19 @@
 import { Icon } from '@components/Icon'
+import { EVENT } from '@constants'
+import { useGraphEditor } from '@hooks'
 import {
   Accordion, AccordionDetails, AccordionSummary, Button, Divider,
-  IconButton, Paper, Typography,
+  IconButton, Paper, Typography
 } from '@material-ui/core'
 import { FormProps } from '@rjsf/core'
 import Form from '@rjsf/material-ui'
 import {
-  Cluster, EditorMode, EventHistory, OnEventLite,
-  Playlist,
-} from '@type'
-import { EVENT } from '@constants'
-import {
   useAnimation,
-  View, wrapComponent,
+  View, wrapComponent
 } from 'colay-ui'
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import * as R from 'colay/ramda'
 import React from 'react'
-import { useGraphEditor } from '@hooks'
 import { ClusterTable } from './ClusterTable'
 import { EventHistoryTable } from './EventHistoryTable'
 import { PlaylistTable } from './PlaylistTable'
@@ -97,6 +93,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
     >
       <View
         style={{
+          // @ts-ignore
           overflowY: 'auto',
           overflowX: 'hidden',
           // paddingRight: 10,
@@ -182,7 +179,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
             }}
             onCreatePlaylist={(playlistWithoutEvents) => {
               const playlistEvents = state.selectedEventIds.map(
-                (eventId) => eventHistory.events.find((event) => event.id === eventId)!,
+                (eventId) => eventHistory!.events.find((event) => event.id === eventId)!,
               ).sort((item, other) => (item.date > other.date ? 1 : -1))
               updateState((draft) => {
                 draft.createPlaylistDialog.visible = false

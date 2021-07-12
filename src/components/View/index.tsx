@@ -2,7 +2,7 @@ import React from 'react'
 import { PixiComponent } from '@inlet/react-pixi'
 import { PropsWithRef } from 'colay-ui/type'
 import { wrapComponent } from 'colay-ui'
-import { useTheme, Theme, ThemeProps } from '@core/theme'
+import { useTheme, ThemeProps } from '@core/theme'
 import * as PIXI from 'pixi.js'
 import * as C from 'colay/color'
 import {

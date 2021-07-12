@@ -45,6 +45,8 @@ export type GraphEditor = {
   networkStatistics?: NetworkStatistics
 }
 
+export type GraphEditorValue = GraphEditor
+
 const {
   // store,
   Context,

@@ -2,6 +2,12 @@ import { Icon } from '@components/Icon'
 import { SortableList } from '@components/SortableList'
 import { SpeedDialCreator } from '@components/SpeedDialCreator'
 import {
+  EVENT,
+} from '@constants'
+import {
+  useGraphEditor,
+} from '@hooks'
+import {
   Button,
   Card, Checkbox,
   Dialog,
@@ -12,24 +18,15 @@ import Accordion from '@material-ui/core/Accordion'
 import AccordionDetails from '@material-ui/core/AccordionDetails'
 import AccordionSummary from '@material-ui/core/AccordionSummary'
 import {
-  Playlist,
-} from '@type'
-import {
-  EVENT,
-} from '@constants'
-import {
   View,
 } from 'colay-ui'
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import * as R from 'colay/ramda'
 import React from 'react'
-import {
-  useGraphEditor,
-} from '@hooks'
 
 export type EventHistoryTableProps = {
   isOpen?: boolean;
-  onPlay: (playlist: Playlist) => void
+  // onPlay: (playlist: Playlist) => void
   createPlaylistDialog: {
     visible: boolean;
     onClose: () => void;

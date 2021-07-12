@@ -438,6 +438,7 @@ const GraphEditorElement = (
           }}
           renderNode={({ item, element, ...rest }) => (
             <Graph.View
+              interactive
               click={(event) => {
                 const { mode } = localDataRef.current.props
                 const elementId = element.id()
@@ -515,6 +516,7 @@ const GraphEditorElement = (
           )}
           renderEdge={({ item, element, ...rest }) => (
             <Graph.View
+              interactive
               click={(event) => {
                 const { mode } = localDataRef.current.props
                 if (

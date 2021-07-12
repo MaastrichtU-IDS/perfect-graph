@@ -9,7 +9,7 @@ const ICON_SIZE = 24
 
 type Action = {
   name: string;
-  icon: IconProps;
+  icon: Omit<IconProps, 'name'> & { name: string };
   onClick: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
 }
 export type SpeedDialCreatorProps = {
@@ -60,6 +60,7 @@ export const SpeedDialCreator = (props: SpeedDialCreatorProps) => {
              onClick,
            } = action
            return (
+             // @ts-ignore
              <SpeedDialAction
                key={name}
                tooltipTitle={name}
@@ -70,6 +71,7 @@ export const SpeedDialCreator = (props: SpeedDialCreatorProps) => {
                }}
                {...icon}
                icon={(
+                 // @ts-ignore
                  <Icon {...icon} />
                 )}
              />

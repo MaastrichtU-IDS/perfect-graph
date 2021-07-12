@@ -1,6 +1,5 @@
 import React from 'react'
-import { ViewProps } from '../View'
-import { Pressable } from '../Pressable'
+import { View, ViewProps } from '../View'
 
 export type HoverContainerProps = {
   renderHoverElement: () => React.ReactChild;
@@ -20,14 +19,15 @@ export const HoverContainer = (props: HoverContainerProps) => {
     setState({ hovered: false })
   }, [])
   return (
-    <Pressable
+    <View
+      interactive
       {...rest}
-      onHoverStart={onHoverStart}
-      onHoverEnd={onHoverEnd}
+      pointerover={onHoverStart}
+      pointerout={onHoverEnd}
     >
       {children}
       {state.hovered && renderHoverElement()}
-    </Pressable>
+    </View>
   )
 }
 

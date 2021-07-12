@@ -1,6 +1,8 @@
 import { Icon } from '@components/Icon'
 import { SortableList } from '@components/SortableList'
 import { SpeedDialCreator } from '@components/SpeedDialCreator'
+import { EVENT } from '@constants'
+import { useGraphEditor } from '@hooks'
 import {
   Card, Checkbox, IconButton, List,
   ListItem, ListItemAvatar, ListItemText, Typography,
@@ -8,12 +10,6 @@ import {
 import Accordion from '@material-ui/core/Accordion'
 import AccordionDetails from '@material-ui/core/AccordionDetails'
 import AccordionSummary from '@material-ui/core/AccordionSummary'
-import {
-  EventHistory,
-  OnEventLite,
-} from '@type'
-import { EVENT } from '@constants'
-import { useGraphEditor } from '@hooks'
 import {
   View,
   wrapComponent,
@@ -49,6 +45,7 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
   return (
     <View
       style={{
+        // @ts-ignore
         overflowY: 'auto',
         overflowX: 'hidden',
         // paddingRight: 10,
@@ -140,10 +137,10 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
                   <ListItem>
                     <Checkbox
                       checked={!R.isEmpty(state.selectedEventIds)
-             && state.selectedEventIds.length === eventHistory.events.length}
+             && state.selectedEventIds.length === eventHistory!.events.length}
                       onChange={(_, checked) => updateState((draft) => {
                         if (checked) {
-                          draft.selectedEventIds = eventHistory.events.map((event) => event.id)
+                          draft.selectedEventIds = eventHistory!.events.map((event) => event.id)
                         } else {
                           draft.selectedEventIds = []
                         }
@@ -190,7 +187,7 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
         </AccordionSummary>
         <AccordionDetails>
           {
-          eventHistory.events.length === 0 && (
+          eventHistory!.events.length === 0 && (
             <Typography>
               Let's do a few things.
             </Typography>
@@ -199,26 +196,26 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
           <List dense>
             <SortableList
               onReorder={(result) => {
-                const { length } = eventHistory.events
+                const { length } = eventHistory!.events
                 onEvent({
                   type: EVENT.REORDER_HISTORY_ITEM,
                   payload: {
                     fromIndex: length - result.source.index - 1,
-                    toIndex: length - result.destination?.index - 1,
+                    toIndex: length - result.destination!.index! - 1,
                   },
                 })
               }}
-              data={R.reverse(eventHistory.events)}
+              data={R.reverse(eventHistory!.events)}
               renderItem={({
                 provided,
                 item: event,
                 index,
               }) => {
-                const { length } = eventHistory.events
+                const { length } = eventHistory!.events
                 return (
                   <ListItem
                     key={event.id}
-                    selected={eventHistory.currentIndex === (length - 1) - index}
+                    selected={eventHistory!.currentIndex === (length - 1) - index}
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                   >
@@ -269,11 +266,11 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
                             icon: {
                               name: 'navigate_before',
                             },
-                            onClick: (e) => onEvent({
+                            onClick: () => onEvent({
                               type: EVENT.APPLY_EVENTS,
                               payload: {
                                 events: [{
-                                  ...eventHistory.undoEvents[index],
+                                  ...eventHistory!.undoEvents[index],
                                   avoidEventRecording: true,
                                   avoidHistoryRecording: true,
                                 }],

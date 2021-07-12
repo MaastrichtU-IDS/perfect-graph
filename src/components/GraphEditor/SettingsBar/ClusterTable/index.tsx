@@ -4,6 +4,8 @@ import { SpeedDialCreator } from '@components/SpeedDialCreator'
 import { TabPanel } from '@components/TabPanel'
 import { EDITOR_MODE, EVENT } from '@constants'
 import { useGraphEditor } from '@hooks'
+import { GraphEditorValue } from '@hooks/useGraphEditor'
+import { Cluster } from '@type'
 import {
   Button,
   Card, Checkbox,
@@ -467,82 +469,89 @@ export const ClusterTable = (props: ClusterTableProps) => {
   )
 }
 
-const SpeedDialActionsView = (props: ClusterTableProps) => {
+type SpeedDialActionsViewProps = {
+  graphEditorLocalDataRef: GraphEditorValue['localDataRef'];
+  editorMode: GraphEditorValue['mode'];
+  onEvent: GraphEditorValue['onEvent'];
+  item: Cluster;
+}
+
+const SpeedDialActionsView = (props: SpeedDialActionsViewProps) => {
   const {
     item: cluster,
     editorMode,
     onEvent,
     graphEditorLocalDataRef,
   } = props
-  const ACTIONS = [
-    {
-      name: 'Delete',
-      icon: {
-        name: 'delete_rounded',
-      },
-      onClick: (e) => {
-        e.stopPropagation()
-        onEvent({
-          type: EVENT.DELETE_CLUSTER,
-          payload: {
-            itemIds: [cluster.id],
-          },
-        })
-      },
-    },
-    {
-      name: cluster.visible === false ? 'Visible' : 'Invisible',
-      icon: {
-        name: cluster.visible === false ? 'unfold_more' : 'unfold_less',
-      },
-      onClick: (e) => {
-        e.stopPropagation()
-        onEvent({
-          type: EVENT.CHANGE_CLUSTER_VISIBILITY,
-          payload: {
-            clusterId: cluster.id,
-            value: cluster.visible === false,
-          },
-        })
-      },
-    },
-    {
-      name: 'Select',
-      icon: {
-        name: 'beenhere',
-      },
-      onClick: (e) => {
-        e.stopPropagation()
-        onEvent({
-          type: EVENT.SELECT_CLUSTER,
-          payload: {
-            itemIds: [cluster.id],
-          },
-        })
-      },
-    },
-    {
-      name: 'Add',
-      icon: {
-        name: 'add_circle',
-        color: editorMode === EDITOR_MODE.ADD_CLUSTER_ELEMENT
-    && graphEditorLocalDataRef.current.issuedClusterId === cluster.id
-          ? 'primary' : 'inherit',
-      },
-      onClick: (e) => {
-        e.stopPropagation()
-        onEvent({
-          type: EVENT.PRESS_ADD_CLUSTER_ELEMENT,
-          payload: {
-            clusterId: cluster.id,
-          },
-        })
-      },
-    },
-  ]
+
   return (
     <SpeedDialCreator
-      actions={ACTIONS}
+      actions={[
+        {
+          name: 'Delete',
+          icon: {
+            name: 'delete_rounded',
+          },
+          onClick: (e) => {
+            e.stopPropagation()
+            onEvent({
+              type: EVENT.DELETE_CLUSTER,
+              payload: {
+                itemIds: [cluster.id],
+              },
+            })
+          },
+        },
+        {
+          name: cluster.visible === false ? 'Visible' : 'Invisible',
+          icon: {
+            name: cluster.visible === false ? 'unfold_more' : 'unfold_less',
+          },
+          onClick: (e) => {
+            e.stopPropagation()
+            onEvent({
+              type: EVENT.CHANGE_CLUSTER_VISIBILITY,
+              payload: {
+                clusterId: cluster.id,
+                value: cluster.visible === false,
+              },
+            })
+          },
+        },
+        {
+          name: 'Select',
+          icon: {
+            name: 'beenhere',
+          },
+          onClick: (e) => {
+            e.stopPropagation()
+            onEvent({
+              type: EVENT.SELECT_CLUSTER,
+              payload: {
+                itemIds: [cluster.id],
+              },
+            })
+          },
+        },
+        {
+          name: 'Add',
+          icon: {
+            name: 'add_circle',
+            color: editorMode === EDITOR_MODE.ADD_CLUSTER_ELEMENT
+        && graphEditorLocalDataRef.current.issuedClusterId === cluster.id
+              ? 'primary' : 'inherit',
+          },
+          onClick: (e) => {
+            e.stopPropagation()
+            onEvent({
+              type: EVENT.PRESS_ADD_CLUSTER_ELEMENT,
+              payload: {
+                clusterId: cluster.id,
+              },
+            })
+          },
+        },
+      ]}
     />
   )
 }
