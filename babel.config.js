@@ -3,27 +3,31 @@
       api.cache(true)
       return {
 	"presets": [
-		"babel-preset-expo"
+		"@babel/preset-react",
+		"@babel/preset-typescript"
 	],
 	"plugins": [
 		[
 			"module-resolver",
 			{
+				"extensions": [
+					".js",
+					".jsx",
+					".es",
+					".es6",
+					".mjs",
+					".ts",
+					".tsx"
+				],
 				"alias": {
-					"@type": "./src/type",
-					"@constants": "./src/constants",
-					"@components": "./src/components",
 					"@assets": "./src/assets",
-					"@screens": "./src/screens",
-					"@navigation": "./src/navigation",
-					"@utils": "./src/utils",
-					"@views": "./src/views",
-					"@machine": "./src/machine",
-					"@store": "./src/machine/store",
-					"@core": "./src/core",
+					"@components": "./src/components",
 					"@hooks": "./src/hooks",
+					"@utils": "./src/utils",
 					"@root": "./src",
-					"@storybookComponents": "./docs/components"
+					"@core": "./src/core",
+					"@constants": "./src/constants",
+					"@type": "./src/type"
 				}
 			}
 		],
@@ -36,8 +40,7 @@
 		"@babel/plugin-proposal-nullish-coalescing-operator",
 		"@babel/plugin-proposal-optional-chaining",
 		"@babel/plugin-proposal-class-properties",
-		"@babel/plugin-proposal-object-rest-spread",
-		"@babel/plugin-proposal-numeric-separator"
+		"@babel/plugin-proposal-object-rest-spread"
 	]
 }
     }

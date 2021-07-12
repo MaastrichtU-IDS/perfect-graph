@@ -1,34 +1,31 @@
 import React from 'react'
 import { DataItem } from '@type'
-import { ViewStyle } from 'react-native'
 import {
-  Divider, FlatList,
-  ScrollView,
-} from 'unitx-ui'
-import * as R from 'unitx/ramda'
-import { EVENT, ELEMENT_DATA_FIELDS } from '@utils/constants'
+  Container, List, ListItem, Divider, BoxProps,
+} from '@material-ui/core'
+import * as R from 'colay/ramda'
+import { EVENT, ELEMENT_DATA_FIELDS } from '@constants'
 import { NewTripleItem } from './NewTripleItem'
 import {
   TripleItem, EventType,
 } from './TripleItem'
-
-// import DataSection from './DataItem'
+import { DataForm } from './DataForm'
 
 export type DataEditorProps = {
-  style?: ViewStyle;
+  style?: BoxProps['style'];
   data: DataItem[];
   onEvent: (param: {
     type: EventType;
-    extraData: any;
+    payload: any;
     index?: number;
-    dataItem?: DataItem;
+    item?: DataItem;
   }) => void;
   localLabel?: string[]| null;
   globalLabel?: string[] | null;
   isGlobalLabelFirst?: boolean;
 }
 
-const DataEditorElement = (props: DataEditorProps) => {
+export const DataEditorElement = (props: DataEditorProps) => {
   const {
     data,
     onEvent,
@@ -37,43 +34,40 @@ const DataEditorElement = (props: DataEditorProps) => {
     isGlobalLabelFirst,
   } = props
   return (
-    <ScrollView
-      horizontal
+    <Container
       style={{ width: '100%' }}
-      contentContainerStyle={{ width: '100%' }}
     >
-      <FlatList
-        data={data}
-        style={{ width: '100%' }}
-        contentContainerStyle={{ width: '100%' }}
-        renderItem={({ item: dataItem, index }) => (
-          <>
-            <TripleItem
-              {...dataItem}
-              onEvent={(type, extraData) => onEvent({
-                extraData, index, dataItem, type,
-              })}
-              isLocalLabel={R.equals(localLabel, [ELEMENT_DATA_FIELDS.DATA, dataItem.name])}
-              isGlobalLabel={R.equals(globalLabel, [ELEMENT_DATA_FIELDS.DATA, dataItem.name])}
-              isGlobalLabelFirst={isGlobalLabelFirst}
-            />
-            <Divider />
-          </>
-        )}
-        ListFooterComponent={(
+      <List style={{ width: '100%' }}>
+        {
+      data.map((item, index) => (
+        <ListItem key={`${index}`}>
+          <TripleItem
+            {...item}
+            onEvent={({type, payload}) => onEvent({
+              payload, index, item, type,
+            })}
+            isLocalLabel={R.equals(localLabel, [ELEMENT_DATA_FIELDS.DATA, item.name])}
+            isGlobalLabel={R.equals(globalLabel, [ELEMENT_DATA_FIELDS.DATA, item.name])}
+            isGlobalLabelFirst={isGlobalLabelFirst}
+          />
+          <Divider />
+        </ListItem>
+      ))
+          }
+        <ListItem key={`${data.length}`}>
           <NewTripleItem
-            onAdd={(dataItem) => onEvent({
+            onAdd={(item) => onEvent({
               type: EVENT.ADD_DATA,
-              extraData: dataItem,
+              payload: item,
             })}
           />
-        )}
-      />
-    </ScrollView>
+        </ListItem>
+      </List>
+    </Container>
 
   )
 }
-export const DataEditor = DataEditorElement
+export const DataEditor = DataForm // DataEditorElement
 // wrapComponent<DataEditorProps>(
 //   DataEditorElement,
 //   {},

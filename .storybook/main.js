@@ -1,24 +1,23 @@
-const { merge } = require('webpack-merge')
-const { withUnitxExpoWebpackAdapter } = require('unitx/lib/config/webpack/expo')
-const  createExpoWebpackConfig = require('../webpack.config')
-
+const path = require('path')
 module.exports = {
-  stories: ['../src/**/*.stories.(tsx|mdx)'],
+  stories: ['../stories/**/*.stories.@(tsx|mdx)'],
   addons: [
     '@storybook/preset-create-react-app',
-    '@storybook/addon-essentials'
+    '@storybook/addon-essentials',
   ],
-  webpackFinal: async (config, info = {}) => {
-    const { configType= 'DEVELOPMENT' }= info
-    const mode = {DEVELOPMENT: 'development', PRODUCTION: 'production'}[configType]
-    const expoConfig = await withUnitxExpoWebpackAdapter(createExpoWebpackConfig, {
-      mode
-    })
-    const configResult = merge(
-      expoConfig,
-      config
-    )
-    return configResult;
-  }
+  webpackFinal: async (config, { configType }) => {
+    // `configType` has a value of 'DEVELOPMENT' or 'PRODUCTION'
+    // You can change the configuration based on that.
+    // 'PRODUCTION' is used when building the static version of storybook.
+
+    // Make whatever fine-grained changes you need
+    config.module.rules.push({
+      test: /\.css$/i,
+      use: ['style-loader', 'css-loader'],
+      include: path.resolve(__dirname, '../'),
+    });
+    // Return the altered config
+    return config;
+  },
 };
 

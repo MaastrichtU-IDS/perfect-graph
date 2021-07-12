@@ -1,18 +1,14 @@
 import React from 'react'
-import { PropsWithRef } from 'unitx-ui/type'
-// import useEvents from 'unitx-ui/hooks/useEvents'
 import * as PIXI from 'pixi.js'
-import * as R from 'unitx/ramda'
-import { wrapComponent } from 'unitx-ui'
-import { Events } from '@utils'
+import * as R from 'colay/ramda'
 import { PIXIBasicStyle, PIXIShapeStyle } from '@type'
-import View from '../View'
+import { View, ViewProps } from '../View'
 
 export type PressableProps = {
   style?: PIXIBasicStyle & PIXIShapeStyle;
   children?: React.ReactNode;
   buttonMode?: boolean;
-} & Events
+} & ViewProps
 
 // const PressablePIXI = PixiComponent<PressableProps, PIXI.Container>('PressablePIXI', {
 //   create: () => {
@@ -29,7 +25,7 @@ export type PressableProps = {
 //   ,
 // })
 
-function Pressable(props: PressableProps) {
+export const Pressable = (props: PressableProps) => {
   const {
     // onLongPress,
     // onPress,
@@ -89,51 +85,4 @@ function Pressable(props: PressableProps) {
   )
 }
 
-/**
- * ## Usage
- * To use Text on Graph
- * Check example
- *
- * ```js live=true
- * <Graph
- *  style={{ width: '100%', height: 250 }}
- *  nodes={[
- *    {
- *      id: 1,
- *      position: { x: 10, y: 10 },
- *      data: { city: 'Amsterdam' }
- *    },
- *    {
- *      id: 2,
- *      position: { x: 300, y: 10 },
- *      data: { city: 'Maastricht' }
- *    },
- *  ]}
- *  edges={[
- *    { id: 51, source: 1, target: 2 }
- *  ]}
- *  renderNode={({ item: { data } }) => (
- *    <Graph.Pressable
- *      onPress={() => alert('Pressed!!')}
- *      onLongPress={() => alert('LongPressed!!')}
- *    >
-*       <Graph.View
- *         style={{ width: 100, height: 100,  }}
- *       >
- *         <Graph.Text
- *            style={{ fontSize: 18 }}
- *          >
- *           {data.city}
- *          </Graph.Text>
- *       </Graph.View>
- *    </Graph.Pressable>
- * )}
- * />
- * ```
- */
-export default wrapComponent<
-PropsWithRef<{}, PressableProps>
->(
-  Pressable,
-  {},
-)
+

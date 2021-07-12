@@ -1,30 +1,18 @@
+import React from 'react'
 import cytoscape, { Core } from 'cytoscape'
-import { useEffect, useMemo, useRef } from 'react'
-import { ClusterConfig, ClusterInfoByID } from '@type'
-// @ts-ignore
-import euler from 'cytoscape-euler'
-// @ts-ignore
-import cise from 'cytoscape-cise'
-
-cytoscape.use(euler)
-// cytoscape.use(cise)
-// import d3Force from 'cytoscape-d3-force'
-// import euler from 'cytoscape-euler'
-// import cola from 'cytoscape-cola'
-
-// cytoscape.use(d3Force)
-// cytoscape.use(euler)
-// cytoscape.use(cola)
+import { Cluster, ClustersByNodeId, ClustersByChildClusterId } from '@type'
 
 export const mutableGraphMap: Record<string, {
   cy: Core;
-  clustersByID: ClusterInfoByID;
+  clustersByNodeId: ClustersByNodeId;
+  clustersByChildClusterId: ClustersByChildClusterId;
 }> = {}
+
 export type Props = {
   id: string;
   onLoad?: (cy: Core) => void;
   create?: true;
-  clusters?: ClusterConfig;
+  clusters?: Cluster[];
 }
 
 // const createCanvas = () => {
@@ -38,13 +26,13 @@ export default (props: Props) => {
   const {
     onLoad,
     id,
-    clusters = {},
+    clusters = [],
   } = props
-  const isExistRef = useRef(false)
-  const cy = useMemo(() => {
+  const isExistRef = React.useRef(false)
+  const graph = React.useMemo(() => {
     if (mutableGraphMap[id]) {
       isExistRef.current = true
-      return mutableGraphMap[id].cy
+      return mutableGraphMap[id]
     }
     const cyInstance = cytoscape({ // // create
       elements: [],
@@ -75,34 +63,49 @@ export default (props: Props) => {
       // ],
 
     })
-    mutableGraphMap[id] = { cy: cyInstance, clustersByID: {} }
-    return cyInstance
+    mutableGraphMap[id] = {
+      cy: cyInstance,
+      clustersByNodeId: {},
+      clustersByChildClusterId: {},
+    }
+    return mutableGraphMap[id]
   }, [id])
-  const clustersByID = useMemo(() => {
-    const clustersByID: ClusterInfoByID = {}
-    Object.keys(clusters).forEach((clusterName) => {
-      const cluster = clusters[clusterName]
+  const {
+    cy,
+  } = graph
+  React.useMemo(() => {
+    const clustersByNodeId: ClustersByNodeId = {}
+    clusters.forEach((cluster) => {
       cluster.ids.forEach((nodeID) => {
-        clustersByID[nodeID] = {
-          clusterName,
-          expand: cluster.expand,
-        }
+        const clusterById = clustersByNodeId[nodeID] ?? []
+        clusterById.push(cluster)
+        clustersByNodeId[nodeID] = clusterById
       })
     })
-    mutableGraphMap[id].clustersByID = clustersByID
-    return clustersByID
-  }, [clusters])
-  useEffect(() => {
+    const clustersByChildClusterId: ClustersByChildClusterId = {}
+    clusters.forEach((cluster) => {
+      cluster.childClusterIds.forEach((clusterId) => {
+        const clusterById = clustersByChildClusterId[clusterId] ?? []
+        clusterById.push(cluster)
+        clustersByChildClusterId[clusterId] = clusterById
+      })
+    })
+    graph.clustersByNodeId = clustersByNodeId
+    graph.clustersByChildClusterId = clustersByChildClusterId
+  }, [graph, clusters])
+  React.useEffect(() => {
     if (isExistRef.current) return
     setTimeout(() => {
-      onLoad!(cy)
+      onLoad?.(cy)
     }, 500)
-    return () => { !isExistRef.current && cy.destroy() }
+    return () => {
+      if (!isExistRef.current) {
+        delete mutableGraphMap[id]
+        cy.destroy()
+      }
+    }
   }, // destroy
   // eslint-disable-next-line react-hooks/exhaustive-deps
   [cy])
-  return {
-    cy,
-    clustersByID,
-  }
+  return graph
 }

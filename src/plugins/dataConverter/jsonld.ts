@@ -1,4 +1,5 @@
-// import * as R from 'unitx/ramda'
+export default {}
+// import * as R from 'colay/ramda'
 
 // export default (rdfData: any) => {
 //   const data = R.pipe(

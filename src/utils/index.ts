@@ -1,15 +1,19 @@
-import * as R from 'unitx/ramda'
+import * as R from 'colay/ramda'
 import * as PIXI from 'pixi.js'
-import { StyleSheet } from 'react-native'
 import { applyDefaultProps as nativeApplyDefaultProps } from '@inlet/react-pixi'
-import { NativeEventMap } from 'unitx-ui/type'
+import { EventMap } from 'colay-ui/type'
+import { BoundingBox, Position } from 'colay/type'
 // import { Properties } from 'csstype'
-// import * as C from 'unitx/color'
+// import * as C from 'colay/color'
 import {
   Element, NodeData, EdgeData, ElementData,
   DisplayObjectWithYoga, NodeContext, EdgeContext,
+  Cluster, EventInfo, GraphEditorRef, ControllerState,
+  ViewportRef, LightEventInfo,
 } from '@type'
-import { ELEMENT_DATA_FIELDS, PIXI_EVENT_NAMES } from '@utils/constants'
+import {
+  ELEMENT_DATA_FIELDS, PIXI_EVENT_NAMES, EVENT,
+} from '@constants'
 
 // type Result = {
 //   x: number;
@@ -95,9 +99,10 @@ export const processTextStyle = (style: {
   } = style
 
   return new PIXI.TextStyle({
+    // @ts-ignore
     align: JUSTIFY_CONTENT[justifyContent ?? 'flex-start'],
     ...(fontFamily ? { fontFamily } : {}),
-    ...(fontSize ? { fontSize: parseFloat(R.replace(fontSize, '%', '')) * width! } : {}),
+    ...(fontSize ? { fontSize: parseFloat(R.replace(`${fontSize}`, '%', '')) * width! } : {}),
     ...(fontWeight ? { fontWeight: `${parseFloat(fontWeight)}` } : {}),
     fill: color, // gradient
     stroke: color,
@@ -143,7 +148,7 @@ export const processTextStyle = (style: {
 // }
 
 export type EventType = (e: PIXI.InteractionEvent) => void
-export type Events = NativeEventMap
+export type Events = EventMap
 
 // export const processEventProps = (props: Record<string, any>) => {
 //   const newProps = { ...props }
@@ -171,55 +176,11 @@ export const applyEvents = (
       const domEventName = PIXI_EVENT_NAMES[eventName]
       const callback = props[eventName]
       if (callback) {
+        // @ts-ignore
         instance.on(domEventName, callback)
       }
     })
 }
-
-// const processProps = (props: Record<string, any>) => {
-//   const {
-//     style: defaultStyle = {},
-//     ...rest
-//   } = props
-//   const style = StyleSheet.flatten(defaultStyle)
-//   const processedProps = R.pipe(
-//     () => R.ifElse(
-//       R.isNotNil,
-//       () => ({
-//         ...(style.left ? { x: style.left } : {}),
-//         ...(style.top ? { y: style.top } : {}),
-//         ...(style.width ? { width: style.width } : {}),
-//         ...(style.height ? { height: style.height } : {}),
-//       }),
-//       R.always({}),
-//     )(style),
-//   )('')
-//   return {
-//     ...R.pipe(
-//       R.toPairs,
-//       R.map(
-//         ([key, value]) => ([
-//           R.ifElse(
-//             R.has(key),
-//             R.prop(key),
-//             R.always(key),
-//           )(PIXI_EVENT_NAMES),
-//           value,
-//         ]),
-//       ),
-//       R.fromPairs,
-//     )(rest),
-//     ...processedProps,
-//   }
-// }
-
-// export const applyDefaultProps: typeof nativeApplyDefaultProps = (
-//   instance, oldProps, newProps,
-// ) => nativeApplyDefaultProps(
-//   instance,
-//   processProps(oldProps),
-//   processProps(newProps),
-// )
 
 const processProps = (props: Record<string, any>) => {
   const newProps = { ...props }
@@ -243,11 +204,10 @@ type ApplyDefaultPropsConfig = {
 
 export const preprocessProps = <T extends Record<string, any>>(props: T): T => ({
   ...props,
-  style: StyleSheet.flatten(props.style),
 })
 
 export const applyDefaultProps = <P extends Record<string, any> >(
-  instance: PIXI.Graphics | PIXI.DisplayObject,
+  instance: PIXI.Graphics | PIXI.DisplayObject | PIXI.Container,
   oldProps: P,
   // @ts-ignore
   newProps: P = {},
@@ -359,15 +319,16 @@ export const getSelectedItemByElement = (
   }
 }
 
-export const getLabel = (path: string[] = [], item: ElementData): string => {
-  const firstKey = path[0]
-  if (firstKey === ELEMENT_DATA_FIELDS.DATA) {
-    const name = path[1]
-    const foundDataItem = item.data?.find((dataItem) => dataItem.name === name)
-    return foundDataItem?.value[0] ?? ''
-  }
-  return R.path(path)(item)
-}
+export const getLabel = (path: string[] = [], item: ElementData): string => (R.isEmpty(path)
+  ? item.id
+  : (R.path([ELEMENT_DATA_FIELDS.DATA, ...path], item) ?? item.id))
+// const firstKey = path[0]
+// if (firstKey === ELEMENT_DATA_FIELDS.DATA) {
+//   const name = path[1]
+//   const foundDataItem = item.data?.find((dataItem) => dataItem.name === name)
+//   return foundDataItem?.value[0] ?? ''
+// }
+// return R.path(path)(item)
 
 export const readTextFile = async (blob: Blob, encoding?: string) => new Promise<string>(
   (res, rej) => {
@@ -384,19 +345,281 @@ export const readTextFile = async (blob: Blob, encoding?: string) => new Promise
   },
 )
 
-export const calculateDisplayObjectBounds = (object: PIXI.DisplayObject) => {
-  const box = object.getLocalBounds()
+export const calculateObjectBoundsWithoutChildren = (
+  container: PIXI.Container,
+): BoundingBox => {
+  const position = {
+    x: container.x * container.scale.x,
+    y: container.y * container.scale.y,
+  }
+  if (container.children.length === 0) {
+    return {
+      ...position,
+      width: 0,
+      height: 0,
+    }
+  }
+  const object = container.getChildAt(0) as PIXI.Container
+  const children = object.removeChildren()
+  if (object.width === 0) {
+    children.forEach((child) => {
+      object.addChild(child)
+    })
+    return {
+      ...calculateObjectBoundsWithoutChildren(object),
+      ...position,
+    } as BoundingBox
+  }
+  const box: BoundingBox = {
+    ...position,
+    width: object.width * object.scale.x,
+    height: object.height * object.scale.y,
+  }
+  children.forEach((child) => {
+    object.addChild(child)
+  })
+  return box
+}
+
+export const getClusterVisibility = (id: string, clusters: Cluster[] = []) => {
+  let visible = true
+  clusters.forEach((cluster) => {
+    visible = visible && (cluster.visible ?? true)
+  })
+  return visible
+}
+// export const calculateDisplayObjectBounds = (object: PIXI.Container) => {
+//   const box = object.getLocalBounds()
+//   box.width = 45
+//   box.height = 45
+//   return {
+//     // x: object.x + (box.x - object.pivot.x) * object.scale.x,
+//     // y: object.y + (box.y - object.pivot.y) * object.scale.y,
+//     width: box.width * object.scale.x,
+//     height: box.height * object.scale.y,
+//     x: object.x * object.scale.x,
+//     y: object.y * object.scale.y,}
+//   }
+
+export const calculateVisibilityByContext = (
+  context: EdgeContext | NodeContext,
+): boolean => {
+  const visibility = R.all(R.isTrue)(Object.values(context.settings.visibility))
+  return visibility
+}
+
+// @ts-ignore
+export const filterEdges = (nodes: NodeData[]) => (
+  edges: EdgeData[],
+) => {
+  const nodeMap = R.groupBy(R.prop('id'), nodes)
+  return R.filter(
+    (
+      edge: EdgeData,
+    ) => !!(nodeMap[edge.source] && nodeMap[edge.target]),
+    edges,
+  )
+}
+
+type GetUndoActionsSettings = {
+  draft: ControllerState,
+  graphEditor: GraphEditorRef
+}
+export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSettings) => {
+  const {
+    draft,
+    graphEditor,
+  } = settings
+  // const addHistory = true
+  const undoEvents: LightEventInfo[] = R.unnest(
+    events.map((event): LightEventInfo[] => {
+      const {
+        // elementId,
+        type,
+        payload,
+      } = event
+      const oldSelectedElementId = R.last(draft.selectedElementIds ?? [])
+      // const element = elementId
+      //   ? graphEditor.cy.$id(`${elementId}`)
+      //   : null
+      // const {
+      //   item,
+      //   index: itemIndex,
+      // } = (element && getSelectedItemByElement(element, draft)) ?? {}
+      switch (type) {
+        case EVENT.ADD_NODE:
+          return [
+            {
+              type: EVENT.DELETE_NODE,
+              payload,
+            },
+          ]
+        case EVENT.DELETE_NODE:
+          return [
+            {
+              type: EVENT.ADD_NODE,
+              payload,
+            },
+          ]
+        case EVENT.ADD_EDGE:
+          return [
+            {
+              type: EVENT.DELETE_EDGE,
+              payload,
+            },
+          ]
+        case EVENT.DELETE_EDGE:
+          return [
+            {
+              type: EVENT.ADD_EDGE,
+              payload,
+            },
+          ]
+
+        case EVENT.LAYOUT_CHANGED:
+          return [
+            {
+              type: EVENT.SET_POSITIONS_IMPERATIVELY,
+              payload: {
+                oldLayout: draft.graphConfig?.layout,
+                positions: graphEditor.cy.nodes().map((element) => ({
+                  position: {
+                    x: element.position().x,
+                    y: element.position().y,
+                  },
+                  elementId: element.id(),
+                })),
+              },
+            },
+          ]
+        case EVENT.CHANGE_THEME:
+          return [
+            {
+              type: EVENT.CHANGE_THEME,
+              payload: {
+                value: draft.actionBar?.theming?.value,
+              },
+            },
+          ]
+        case EVENT.ELEMENT_SELECTED:
+          return oldSelectedElementId
+            ? [
+              {
+                ...event,
+                type: EVENT.ELEMENT_SELECTED,
+                elementId: oldSelectedElementId,
+              },
+            ]
+            : [
+              {
+                type: EVENT.PRESS_BACKGROUND,
+                payload: {
+                  x: graphEditor.viewport.center.x,
+                  y: graphEditor.viewport.center.y,
+                },
+              },
+            ]
+        case EVENT.PRESS_BACKGROUND:
+          // @ts-ignore
+          return oldSelectedElementId
+            ? [
+              {
+                ...event,
+                elementId: oldSelectedElementId,
+                type: EVENT.ELEMENT_SELECTED,
+                event: {
+                  data: {
+                    originalEvent: {
+                      metaKey: false,
+                    },
+                  },
+                },
+              },
+            ]
+            : []
+
+        default:
+          break
+      }
+      return []
+    }),
+  )
   return {
-    x: object.x + (box.x - object.pivot.x) * object.scale.x,
-    y: object.y + (box.y - object.pivot.y) * object.scale.y,
-    width: box.width * object.scale.x,
-    height: box.height * object.scale.y,
+    addHistory: !R.isEmpty(undoEvents),
+    events: undoEvents,
   }
 }
 
-export const getNodeContextByElement = (element: Element): NodeContext => element.data(
-  ELEMENT_DATA_FIELDS.CONTEXT,
-)
-export const getEdgeContextByElement = (element: Element): EdgeContext => element.data(
-  ELEMENT_DATA_FIELDS.CONTEXT,
-)
+const throttleTimeTable: Record<string, number> = {}
+export const throttle = (callback: (id: string)=> void, delay: number, _id?: string) => {
+  const time = (new Date()).getTime()
+  const id = _id ?? R.uuid()
+  const diff = throttleTimeTable[id] ? (time - throttleTimeTable[id]) : time
+
+  if (diff > delay) {
+    throttleTimeTable[id] = time
+    callback(id)
+  }
+}
+
+export const isPositionInBox = (position: Position, box: BoundingBox) => {
+  const {
+    x,
+    y,
+  } = position
+  return x >= box.x && y >= box.y && x <= box.x + box.width
+  && y <= box.y + box.height
+}
+
+export const getBoundingBox = (startPos: Position, endPos: Position) => ({
+  ...startPos,
+  width: Math.abs(startPos.x - endPos.x),
+  height: Math.abs(startPos.y - endPos.y),
+})
+
+export const cyUnselectAll = (cy: cytoscape.Core) => {
+  cy.elements(':selected').unselect()
+}
+
+export const getElementsCollectionByIds = (cy: cytoscape.Core, ids: string[]) => {
+  let collection = cy.collection()
+  ids.forEach((id) => {
+    collection = collection.merge(cy.$id(id))
+  })
+  return collection
+}
+
+export const getPointerPositionOnViewport = (
+  viewport: ViewportRef,
+  event: MouseEvent,
+) => {
+  const position = {
+    x: event.clientX,
+    y: event.clientY,
+  }
+  // @ts-ignore
+  if (viewport.options.interaction) {
+    // @ts-ignore
+    viewport.options.interaction.mapPositionToPoint(position, event.clientX, event.clientY)
+  }
+  position.x /= viewport.scale.x
+  position.y /= viewport.scale.y
+  position.x += viewport.left
+  position.y += viewport.top
+  return position
+}
+
+export const contextUtils = {
+  update: (element: Element, context: any) => {
+    element.data({
+      [ELEMENT_DATA_FIELDS.CONTEXT]: context,
+    })
+  },
+  get: (element: Element) => element.data(ELEMENT_DATA_FIELDS.CONTEXT),
+  getNodeContext: (element: Element): NodeContext => element.data(
+    ELEMENT_DATA_FIELDS.CONTEXT,
+  ),
+  getEdgeContext: (element: Element): EdgeContext => element.data(
+    ELEMENT_DATA_FIELDS.CONTEXT,
+  ),
+}

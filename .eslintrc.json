@@ -8,7 +8,8 @@
 	],
 	"plugins": [
 		"react-hooks",
-		"@typescript-eslint"
+		"@typescript-eslint",
+		"react-hooks"
 	],
 	"parserOptions": {
 		"project": "./tsconfig.json"
@@ -41,24 +42,8 @@
 						"./src/assets"
 					],
 					[
-						"@screens",
-						"./src/screens"
-					],
-					[
-						"@navigation",
-						"./src/navigation"
-					],
-					[
-						"@views",
-						"./src/views"
-					],
-					[
-						"@machine",
-						"./src/machine"
-					],
-					[
 						"@store",
-						"./src/machine/store"
+						"./src/store"
 					],
 					[
 						"@type",
@@ -75,10 +60,6 @@
 					[
 						"@hooks",
 						"./src/hooks"
-					],
-					[
-						"@storybookComponents",
-						"./docs/components"
 					]
 				],
 				"extensions": [
@@ -105,10 +86,6 @@
 			"error",
 			"never"
 		],
-		"functional/functional-parameters": 0,
-		"functional/prefer-readonly-type": 0,
-		"functional/no-return-void": 0,
-		"functional/no-mixed-type": 0,
 		"import/prefer-default-export": 0,
 		"no-loop-func": 0,
 		"@typescript-eslint/explicit-function-return-type": 0,
@@ -127,6 +104,7 @@
 		],
 		"no-underscore-dangle": 0,
 		"no-nested-ternary": 0,
+		"import/no-extraneous-dependencies": 0,
 		"react-hooks/rules-of-hooks": "error",
 		"react-hooks/exhaustive-deps": "warn",
 		"react/jsx-filename-extension": 0,
@@ -135,18 +113,16 @@
 		"jsx-a11y/label-has-associated-control": 0,
 		"react/forbid-prop-types": 0,
 		"react/prop-types": 0,
+		"no-param-reassign": 0,
 		"react/jsx-max-props-per-line": [
 			1,
 			{
 				"maximum": 1
 			}
 		],
+		"@typescript-eslint/explicit-module-boundary-types": 0,
 		"react/jsx-props-no-spreading": 0,
-		"react/no-unused-prop-types": 0,
-		"react/require-default-props": 0,
 		"react/destructuring-assignment": 0,
-		"no-param-reassign": 0,
-		"no-shadow": 0,
 		"react/sort-comp": [
 			2,
 			{

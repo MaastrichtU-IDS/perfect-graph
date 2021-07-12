@@ -1,9 +1,8 @@
 import React from 'react'
 import { RenderNode } from '@type'
-import * as R from 'unitx/ramda'
-import json from 'unitx/json'
-import Graph from './Graph'
-import { DynamicRender, DynamicRenderProps } from './DynamicRender'
+import * as R from 'colay/ramda'
+import { DynamicRender, DynamicRenderProps } from 'colay-ui'
+import { Graph } from './Graph'
 
 type RenderJSONContext = Parameters<RenderNode>[0]
 
@@ -45,29 +44,29 @@ export const RenderJSON = (props: RenderJSONProps) => {
     selectedUI,
     (value) => {
       if (typeof value === 'string' && value.startsWith('$.')) {
-        return json.path({
-          json: calculatedContext,
-          path: value,
-        })[0]
+        return R.path(value.split('.'), calculatedContext)
+        // return json.path({
+        //   json: calculatedContext,
+        //   path: value,
+        // })[0]
       }
       return value
     },
   )
   return (
     <DynamicRender
-      // @ts-ignore
-      components={Graph}
+      components={Graph as unknown as DynamicRenderProps['components']}
       data={data}
     />
   )
 }
 
 export const mockRenderJSON: RenderJSONProps = {
-  // @ts-ignore
-  context: {},
+  context: {} as unknown as RenderJSONProps['context'],
   ui: [
     [
       {
+        id: '1',
         type: 'View',
         props: {
           style: {
@@ -81,15 +80,17 @@ export const mockRenderJSON: RenderJSONProps = {
         },
         children: [
           {
+            id: '1',
             type: 'Text',
             props: {},
-            children: [{ component: '$.label' }],
+            children: [{ id: '1', component: '$.label' }],
           },
         ],
       },
     ],
     [
       {
+        id: '1',
         type: 'View',
         props: {
           style: {
@@ -102,9 +103,10 @@ export const mockRenderJSON: RenderJSONProps = {
         },
         children: [
           {
+            id: '1',
             type: 'Text',
             props: {},
-            children: [{ component: '$.label' }],
+            children: [{ id: '1', component: '$.label' }],
           },
         ],
       },

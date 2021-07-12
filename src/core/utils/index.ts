@@ -3,27 +3,30 @@ import {
   EdgeSingular, LayoutOptions,
   Layouts, NodeSingular,
 } from 'cytoscape'
-import * as R from 'unitx/ramda'
-import { Position } from 'unitx/type'
+import * as R from 'colay/ramda'
+import { Position } from 'colay/type'
 import { DataItem } from '@type'
 
 export const filter = (
   cy: Core,
   predicate: (el: Collection) => boolean | string[],
 ) => R.ifElse(
-  R.isArray,
+  R.is(Array),
   () => R.reduce(
     (accCollection: Collection, id: string) => accCollection.union(
       cy.getElementById(id),
-    ), cy.collection(), predicate,
+    ),
+    cy.collection(),
+    // @ts-ignore
+    predicate,
   ),
   cy.elements().filter,
 )(predicate)
 
 export const getLabel = (
   dataList: DataItem[] = [],
-) => R.find(R.propEq('key', 'label'))(dataList)?.value ?? ''
-// export const getContext = <T>(el: NodeSingular|EdgeSingular): Context => el.data().context
+  // @ts-ignore
+) => R.find(R.propEq('key', 'label'), dataList)?.value ?? ''
 
 type Info = Record<string, {
   element: NodeSingular;
@@ -40,18 +43,6 @@ export type Props = {
   onStop?: (c: {layout: Layouts;info: Info}) => void;
   predicate?: (cy: EdgeSingular|NodeSingular) => boolean | string[];
 }
-
-// {
-//   name: 'T',
-//   surname: 'S'
-// }
-
-export const dataListToObject = (data: DataItem[]) => R.pipe(
-  R.map(
-    ({ value, name }: DataItem) => ([name, value]),
-  ),
-  R.fromPairs,
-)(data)
 
 // export const layoutCreator = (props: Props) => {
 //   const {

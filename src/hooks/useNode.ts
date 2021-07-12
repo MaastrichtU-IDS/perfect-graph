@@ -1,24 +1,35 @@
 import React from 'react'
-import { useStateWithCallback } from 'unitx-ui/hooks'
-import { NodeSingular } from 'cytoscape'
-import { Position } from 'unitx/type'
-import { NodeContext, NodeConfig, ClusterInfo } from '@type'
+import { useStateWithCallback } from 'colay-ui'
+import { NodeSingular, Core } from 'cytoscape'
+import { Position } from 'colay/type'
+import {
+  NodeContext,
+  NodeConfig,
+  Cluster,
+  NodeData,
+} from '@type'
+import { getClusterVisibility, calculateVisibilityByContext, contextUtils } from '@utils'
+import { CYTOSCAPE_EVENT, ELEMENT_DATA_FIELDS } from '@constants'
+import { useInitializedRef } from 'colay-ui/hooks/useInitializedRef'
 import { mutableGraphMap } from './useGraph'
 import { useElement } from './useElement'
 
 export type Props = {
-  id: string;
   graphID: string;
   position: Position;
+  isCluster?: boolean;
   onPositionChange?: (c: {element: NodeSingular; context: NodeContext }) => void|any;
   config?: NodeConfig;
+  item: NodeData;
 }
 
 type Result = {
   element: NodeSingular;
   context: NodeContext;
-  cluster?: ClusterInfo;
+  clusters?: Cluster[];
+  cy: Core;
 }
+
 const DEFAULT_BOUNDING_BOX = {
   x: 0,
   y: 0,
@@ -28,47 +39,97 @@ const DEFAULT_BOUNDING_BOX = {
 
 export default (props: Props): Result => {
   const {
-    id,
     position,
     onPositionChange,
     graphID,
-    config,
+    config = {},
+    item,
+    isCluster = false,
   } = props
-  const { cy, clustersByID } = mutableGraphMap[graphID]
+  const {
+    id,
+  } = item
+  const initializedRef = useInitializedRef()
+  const { cy, clustersByNodeId, clustersByChildClusterId } = mutableGraphMap[graphID]
+  const clusters = isCluster
+    ? clustersByChildClusterId[id]
+    : clustersByNodeId[id]
   const [, setState] = useStateWithCallback({}, () => {})
   const contextRef = React.useRef<NodeContext>({
     render: (callback: () => {}) => setState({}, callback),
+    onPositionChange: () => {
+      onPositionChange?.({ element, context: contextRef.current })
+      element.connectedEdges().forEach((mutableEdge) => {
+        const edgeContext = contextUtils.get(mutableEdge)
+        edgeContext.onPositionChange()
+      })
+    },
     boundingBox: DEFAULT_BOUNDING_BOX,
+    settings: {
+      filtered: true,
+      visibility: {
+        cluster: getClusterVisibility(id, clusters),
+      },
+    },
   } as NodeContext)
   const element = React.useMemo(() => cy!.add({
-    data: { id, context: contextRef.current }, // ...(parentID ? { parent: parentID } : {}),
+    data: {
+      id,
+      [ELEMENT_DATA_FIELDS.CONTEXT]: contextRef.current,
+      [ELEMENT_DATA_FIELDS.DATA]: item?.data,
+    }, // ...(parentID ? { parent: parentID } : {}),
     position: { ...position },
     group: 'nodes',
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }) as NodeSingular, [cy, id])
   React.useEffect(
     () => {
-      element.on('position', () => {
-        element.connectedEdges().forEach((mutableEdge) => {
-          mutableEdge.data().onPositionChange()
-        })
-      onPositionChange?.({ element, context: contextRef.current })
-      })
+      const {
+        current: {
+          onPositionChange,
+        },
+      } = contextRef
+      element.on(CYTOSCAPE_EVENT.position, onPositionChange)
       return () => {
+        element.off(CYTOSCAPE_EVENT.position, `#${element.id()}`, onPositionChange)
         cy!.remove(element!)
       }
     }, // destroy
     [cy, id],
   )
+  React.useMemo(() => {
+    if (initializedRef.current) {
+      element.position(position)
+    }
+  }, [position.x, position.y])
+
+  // Update Visibility
+  React.useMemo(() => {
+    const clusterVisibility = getClusterVisibility(element.id(), clusters)
+    if (clusterVisibility !== contextRef.current.settings.visibility.cluster) {
+      const oldVisible = calculateVisibilityByContext(contextRef.current)
+      contextRef.current.settings.visibility.cluster = clusterVisibility
+      // contextRef.current.settings = {
+      //   ...contextRef.current.settings,
+      //   visibility,
+      // }
+      contextUtils.update(element, contextRef.current)
+      if (oldVisible !== calculateVisibilityByContext(contextRef.current)) {
+        contextRef.current.render()
+      }
+    }
+  }, [element, clusters])
   useElement({
     contextRef,
     cy,
     element,
     config,
+    item,
   })
   return {
     element,
     context: contextRef.current,
-    cluster: clustersByID[id],
+    clusters,
+    cy,
   }
 }
