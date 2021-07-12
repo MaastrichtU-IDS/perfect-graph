@@ -46,6 +46,7 @@ export const LayoutOptions = (props: LayoutOptionsProps) => {
   return (
     <Box>
       <Button
+        // @ts-ignore
         onClick={onOpen}
         sx={{
           color: (theme) => theme.palette.text.secondary,

@@ -1,26 +1,22 @@
 import {
   Icon,
 } from '@components/Icon'
+import { EDITOR_MODE, EVENT } from '@constants'
+import { useGraphEditor } from '@hooks'
 import {
   Box, Button, FormControl, IconButton, InputLabel, Menu,
-  MenuItem, Select, useTheme,
+  MenuItem, Select, useTheme, SelectProps,
 } from '@material-ui/core'
 import {
-  EditorMode,
-  EventType,
-  GraphConfig,
-  GraphEditorRef,
-  OnEventLite,
+  EditorMode, OnEventLite,
 } from '@type'
 import { readTextFile } from '@utils'
-import { EDITOR_MODE, EVENT } from '@constants'
 import DocumentPicker from '@utils/DocumentPicker'
 import { useAnimation, useDisclosure, wrapComponent } from 'colay-ui'
 import { Recorder } from 'colay-ui/components/Recorder'
 // import Form from 'unitx-ui/components/Form'
 import * as R from 'colay/ramda'
 import React from 'react'
-import { useGraphEditor } from '@hooks'
 import { LayoutOptions } from './LayoutOptions'
 // export const ACTION = {
 //   EXPORT_DATA: 'EXPORT_DATA',
@@ -359,7 +355,7 @@ const MoreOptions = (props: MoreOptionsProps) => {
     onClose,
     onOpen,
   } = useDisclosure({})
-  const handleMenuItemClick = async (event: EventType, index: number) => {
+  const handleMenuItemClick = async (event: React.MouseEvent<HTMLLIElement>, index: number) => {
     onClose()
     const action = Object.values(OPTIONS)[index]
     switch (action) {
@@ -394,10 +390,11 @@ const MoreOptions = (props: MoreOptionsProps) => {
     }
   }
 
-  const handleThemeChange = (e: EventType) => {
+  const handleThemeChange: SelectProps['onChange'] = (e) => {
     onAction({ type: EVENT.CHANGE_THEME, value: e.target.value })
     onClose()
   }
+
   return (
     <>
       <IconButton
@@ -457,4 +454,4 @@ const styles = {
   button: {
     marginRight: 10,
   },
-}
+} as const

@@ -187,7 +187,10 @@ export const ClusterTable = (props: ClusterTableProps) => {
                     onClick={(e) => e.stopPropagation()}
                     checked={!R.isEmpty(state.selectedClusterIds)
                && state.selectedClusterIds.length === clusters.length}
-                    onChange={(_, checked) => {
+                    onChange={(event) => {
+                      const {
+                        checked,
+                      } = event.target
                       updateState((draft) => {
                         if (checked) {
                           draft.selectedClusterIds = clusters.map((cluster) => cluster.id)
@@ -279,7 +282,8 @@ export const ClusterTable = (props: ClusterTableProps) => {
                             <Checkbox
                               onClick={(e) => e.stopPropagation()}
                               checked={state.selectedClusterIds.includes(cluster.id)}
-                              onChange={(_, checked) => {
+                              onChange={(e) => {
+                                const { checked } = e.target
                                 updateState((draft) => {
                                   if (checked) {
                                     draft.selectedClusterIds.push(cluster.id)

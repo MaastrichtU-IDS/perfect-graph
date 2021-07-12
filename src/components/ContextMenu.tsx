@@ -1,5 +1,5 @@
 import React from 'react'
-import { Position } from 'unitx/type'
+import { Position } from 'colay/type'
 import { GraphEditorRef } from '@type'
 import { useTheme } from '@core/theme'
 import { View } from './View'
@@ -24,7 +24,7 @@ export const ContextMenu = (props: ContextMenuProps) => {
     onSelect,
     items = [],
     open,
-    position,
+    position = { x: 0, y: 0 },
     graphEditorRef,
   } = props
   const theme = useTheme()

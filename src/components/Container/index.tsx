@@ -33,6 +33,7 @@ ContainerProps
 export type ContainerType = React.FC<ContainerPropsWithRef>
 export type ContainerRef = PIXI.Container
 
+// @ts-ignore
 export const Container = PixiComponent<ContainerProps, PIXI.Container>(
   'PIXIContainer',
   {

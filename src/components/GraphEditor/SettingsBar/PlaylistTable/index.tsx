@@ -126,13 +126,16 @@ export const PlaylistTable = (props: EventHistoryTableProps) => {
                     onClick={(e) => e.stopPropagation()}
                     checked={!R.isEmpty(state.selectedPlaylistIds)
                && state.selectedPlaylistIds.length === playlists.length}
-                    onChange={(_, checked) => updateState((draft) => {
-                      if (checked) {
-                        draft.selectedPlaylistIds = playlists.map((playlist) => playlist.id)
-                      } else {
-                        draft.selectedPlaylistIds = []
-                      }
-                    })}
+                    onChange={(e) => {
+                      const { checked } = e.target
+                      updateState((draft) => {
+                        if (checked) {
+                          draft.selectedPlaylistIds = playlists.map((playlist) => playlist.id)
+                        } else {
+                          draft.selectedPlaylistIds = []
+                        }
+                      })
+                    }}
                     inputProps={{ 'aria-label': 'primary checkbox' }}
                   />
                   <IconButton
@@ -210,15 +213,18 @@ export const PlaylistTable = (props: EventHistoryTableProps) => {
                             onClick={(e) => e.stopPropagation()}
                             checked={hasSelected
                           && state.selectedPlaylistIds.includes(playlist.id)}
-                            onChange={(_, checked) => updateState((draft) => {
-                              if (checked) {
-                                draft.selectedPlaylistIds.push(playlist.id)
-                              } else {
-                                draft.selectedPlaylistIds = draft.selectedPlaylistIds.filter(
-                                  (id) => id !== playlist.id,
-                                )
-                              }
-                            })}
+                            onChange={(e) => {
+                              const { checked } = e.target
+                              updateState((draft) => {
+                                if (checked) {
+                                  draft.selectedPlaylistIds.push(playlist.id)
+                                } else {
+                                  draft.selectedPlaylistIds = draft.selectedPlaylistIds.filter(
+                                    (id) => id !== playlist.id,
+                                  )
+                                }
+                              })
+                            }}
                             inputProps={{ 'aria-label': 'primary checkbox' }}
                           />
                           <Typography

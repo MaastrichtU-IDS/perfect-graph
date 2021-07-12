@@ -138,13 +138,16 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
                     <Checkbox
                       checked={!R.isEmpty(state.selectedEventIds)
              && state.selectedEventIds.length === eventHistory!.events.length}
-                      onChange={(_, checked) => updateState((draft) => {
-                        if (checked) {
-                          draft.selectedEventIds = eventHistory!.events.map((event) => event.id)
-                        } else {
-                          draft.selectedEventIds = []
-                        }
-                      })}
+                      onChange={(e) => {
+                        const { checked } = e.target
+                        updateState((draft) => {
+                          if (checked) {
+                            draft.selectedEventIds = eventHistory!.events.map((event) => event.id)
+                          } else {
+                            draft.selectedEventIds = []
+                          }
+                        })
+                      }}
                       onClick={(e) => e.stopPropagation()}
                       inputProps={{ 'aria-label': 'primary checkbox' }}
                     />
@@ -222,13 +225,16 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
                     <ListItemAvatar>
                       <Checkbox
                         checked={state.selectedEventIds.includes(event.id)}
-                        onChange={(_, checked) => updateState((draft) => {
-                          if (checked) {
-                            draft.selectedEventIds.push(event.id)
-                          } else {
-                            draft.selectedEventIds = draft.selectedEventIds.filter((id) => id !== event.id)
-                          }
-                        })}
+                        onChange={(e) => {
+                          const { checked } = e.target
+                          updateState((draft) => {
+                            if (checked) {
+                              draft.selectedEventIds.push(event.id)
+                            } else {
+                              draft.selectedEventIds = draft.selectedEventIds.filter((id) => id !== event.id)
+                            }
+                          })
+                        }}
                         inputProps={{ 'aria-label': 'primary checkbox' }}
                       />
                     </ListItemAvatar>

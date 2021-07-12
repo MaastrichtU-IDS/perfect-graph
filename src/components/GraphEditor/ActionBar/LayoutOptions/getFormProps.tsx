@@ -1,17 +1,12 @@
+import { LAYOUT_NAMES } from '@constants'
 import {
-  MenuItem,
+  Card,
+  CardActionArea, CardContent, CardMedia, MenuItem,
   Popper,
   TextField,
-  Typography,
-  Backdrop,
-  Portal,
-  Card,
-  CardActionArea,
-  CardMedia,
-  CardContent,
+  Typography
 } from '@material-ui/core'
 import { utils, WidgetProps } from '@rjsf/core'
-import { LAYOUT_NAMES } from '@constants'
 import { useDisclosure, View } from 'colay-ui'
 import React from 'react'
 import { LAYOUT_INFO } from './layoutInfo'
@@ -80,11 +75,11 @@ const LayoutNameSelect = (props: WidgetProps) => {
   }: React.FocusEvent<HTMLInputElement>) => onFocus(id, processValue(schema, value))
   const {
     anchorEl,
-    isOpen,
+    // isOpen,
     onClose,
     onOpen,
   } = useDisclosure({})
-  const hoveredIndexRef = React.useRef(null)
+  const hoveredIndexRef = React.useRef(-1)
   return (
     <TextField
       id={id}
@@ -164,8 +159,8 @@ type LayoutNameItemProps = {
   label: string;
   disabled?: boolean;
   openInfo: {
-    anchorEl: any;
-    isOpen: boolean
+    anchorEl?: any;
+    isOpen?: boolean
   };
 }
 const LayoutNameItem = (props: LayoutNameItemProps) => {
@@ -178,7 +173,7 @@ const LayoutNameItem = (props: LayoutNameItemProps) => {
     isOpen,
     anchorEl,
   } = openInfo
-  const info = LAYOUT_INFO[value]
+  const info = LAYOUT_INFO[value as keyof typeof LAYOUT_INFO]
   return (
     <>
       <View
@@ -327,7 +322,7 @@ export const getFormProps = () => ({
   },
   uiSchema: {
     name: {
-      'ui:field': (props) => {
+      'ui:field': (props: any) => {
         const {
           schema,
           formData,
@@ -338,7 +333,7 @@ export const getFormProps = () => ({
             value={formData}
             options={{
               enumOptions: schema.enum.map(
-                (value) => ({
+                (value: string) => ({
                   label: value,
                   value,
                 }),
