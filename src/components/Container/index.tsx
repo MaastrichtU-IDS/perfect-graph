@@ -1,87 +1,92 @@
 import React from 'react'
-import { PixiComponent } from '@inlet/react-pixi'
+import {
+  PixiComponent,
+  Container as PIXIReactContainer,
+} from '@inlet/react-pixi'
 import * as PIXI from 'pixi.js'
-import * as R from 'unitx/ramda'
 import { dragTrack } from '@core/utils/events'
 import {
   applyDefaultProps, preprocessProps,
 } from '@utils'
 import {
-  PIXIFlexStyle, PIXIBasicStyle,
+  PIXIFlexStyle,
+  PIXIBasicStyle,
+  PIXIDisplayObjectProps,
+  PIXIBasicProps,
 } from '@type'
-import { Position } from 'unitx-ui/type'
+import { Position, PropsWithRef } from 'colay-ui/type'
+import { Enumerable } from 'colay/type'
 
-export type ContainerProps = {
+export type ContainerProps = PIXIBasicProps & PIXIDisplayObjectProps
+& Omit<React.ComponentProps<typeof PIXIReactContainer>, 'children'> &{
   style: PIXIFlexStyle & PIXIBasicStyle;
-  children: React.ReactNode;
+  children: Enumerable<React.ReactNode>;
   draggable?: boolean;
   onDrag?: (param: Position) => void;
 }
 
-// export type Container = PIXI.Container & {
-//   flex: boolean;
-//   yoga: YogaLayout;
-// }
+type ContainerPropsWithRef = PropsWithRef<
+PIXI.Container,
+ContainerProps
+>
 
-const Container = PixiComponent<ContainerProps, PIXI.Container>('PIXIContainer', {
-  create: ({
-    onDrag, draggable = false,
-  }) => {
-    const instance = new PIXI.Container()
-    instance.interactive = draggable
-    R.when(
-      R.isTrue,
-      () => {
+export type ContainerType = React.FC<ContainerPropsWithRef>
+export type ContainerRef = PIXI.Container
+
+// @ts-ignore
+export const Container = PixiComponent<ContainerProps, PIXI.Container>(
+  'PIXIContainer',
+  {
+    create: (props) => {
+      const {
+        onDrag,
+        draggable = false,
+        interactive = false,
+      } = props
+      const instance = new PIXI.Container()
+      instance.interactive = interactive || draggable
+      if (draggable) {
         const { onDown, onMove } = dragTrack((posDiff) => {
           const { parent: { scale } } = instance
           instance.x += posDiff.x / scale.x
           instance.y += posDiff.y / scale.y
           onDrag && onDrag({ x: instance.x, y: instance.y })
         })
-        instance.on('pointerdown', (e: PIXI.InteractionEvent) => {
-          // @ts-ignore
-          const { x, y } = e.data.originalEvent
-          onDown({ x, y })
-        })
-          .on('pointermove', (e: PIXI.InteractionEvent) => {
-            // @ts-ignore
-            const { x, y } = e.data.originalEvent
+        instance
+          .on('mousedown', (e: PIXI.InteractionEvent) => {
+            const { originalEvent } = e.data
+            const { x, y } = originalEvent as MouseEvent
+            onDown({ x, y })
+          })
+          .on('mousemove', (e: PIXI.InteractionEvent) => {
+            const { originalEvent } = e.data
+            const { x, y } = originalEvent as MouseEvent
             onMove({ x, y })
           })
-          // .on('pointertap', (e: PIXI.InteractionEvent) => {
-          //   e.data.originalEvent.stopPropagation()
-          //   e.data.originalEvent.preventDefault()
-          // })
-      },
-    )(draggable)
-
-    return instance
+      }
+      // applyEvents(instance, props)
+      return instance
+    },
+    applyProps: (mutableInstance: PIXI.Container, oldProps, _props) => {
+      const props = preprocessProps(_props)
+      const {
+        left = 0,
+        top = 0,
+        width,
+        height,
+      } = props.style ?? {}
+      applyDefaultProps(
+        mutableInstance,
+        oldProps,
+        props,
+        {
+          isFlex: false,
+        },
+      )
+      mutableInstance.x = left
+      mutableInstance.y = top
+      width && (mutableInstance.width = width)
+      height && (mutableInstance.height = height)
+    },
   },
-  applyProps: (mutableInstance: PIXI.Container, oldProps, _props) => {
-    const props = preprocessProps(_props)
-    const {
-      left = 0,
-      top = 0,
-      width,
-      height,
-    } = props.style ?? {}
-    applyDefaultProps(
-      mutableInstance,
-      oldProps,
-      props,
-      {
-        isFlex: false,
-      },
-    )
-    mutableInstance.x = left
-    mutableInstance.y = top
-    width && (mutableInstance.width = width)
-    height && (mutableInstance.height = height)
-  },
-})
-
-export default Container
-
-// wrapComponent<FlexContainerProps>(
-//   FlexContainer,
-// )
+) as unknown as ContainerType

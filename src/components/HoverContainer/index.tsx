@@ -1,12 +1,11 @@
 import React from 'react'
-import { ViewProps } from '../View'
-import Touchable from '../Touchable'
+import { View, ViewProps } from '../View'
 
 export type HoverContainerProps = {
   renderHoverElement: () => React.ReactChild;
 } & ViewProps
 
-const HoverContainer = (props: HoverContainerProps) => {
+export const HoverContainer = (props: HoverContainerProps) => {
   const {
     children,
     renderHoverElement,
@@ -20,14 +19,15 @@ const HoverContainer = (props: HoverContainerProps) => {
     setState({ hovered: false })
   }, [])
   return (
-    <Touchable
+    <View
+      interactive
       {...rest}
-      onHoverStart={onHoverStart}
-      onHoverEnd={onHoverEnd}
+      pointerover={onHoverStart}
+      pointerout={onHoverEnd}
     >
       {children}
       {state.hovered && renderHoverElement()}
-    </Touchable>
+    </View>
   )
 }
 
@@ -95,4 +95,3 @@ const HoverContainer = (props: HoverContainerProps) => {
  * />
  * ```
  */
-export default HoverContainer

@@ -5,7 +5,7 @@ import { YogaLayout } from './YogaLayout'
 
 type TransformStatic = PIXI.Transform
 
-const NineSlicePlane = (<any>PIXI).NineSlicePlane || (<any>PIXI).mesh.NineSlicePlane
+// const NineSlicePlane = (<any>PIXI).NineSlicePlane || (<any>PIXI).mesh.NineSlicePlane
 
 declare module 'pixi.js' {
   export type DisplayObject = {

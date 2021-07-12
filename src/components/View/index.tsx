@@ -1,29 +1,33 @@
 import React from 'react'
 import { PixiComponent } from '@inlet/react-pixi'
-import { Position, ForwardRef, PropsWithRef } from 'unitx-ui/type'
-import { wrapComponent, useTheme } from 'unitx-ui'
+import { PropsWithRef } from 'colay-ui/type'
+import { wrapComponent } from 'colay-ui'
+import { useTheme, ThemeProps } from '@core/theme'
 import * as PIXI from 'pixi.js'
-import * as C from 'unitx/color'
+import * as C from 'colay/color'
 import {
   applyDefaultProps, preprocessProps,
 } from '@utils'
-import { PIXIBasicStyle, PIXIShapeStyle, Theme } from '@type'
+import {
+  PIXIBasicStyle, PIXIShapeStyle, PIXIBasicProps,
+} from '@type'
 
-export type ViewProps = {
+export type ViewProps = PIXIBasicProps & {
   style?: PIXIBasicStyle & PIXIShapeStyle;
-  onDrag?: (pos: Position) => void;
   children?: React.ReactNode;
-  theme?: Theme;
 }
 
-const ViewPIXI = PixiComponent<ViewProps, PIXI.Graphics>('View', {
+export type ViewType = React.FC<ViewProps>
+
+export type ViewRef = PIXI.Graphics
+
+// @ts-ignore
+const ViewPIXI = PixiComponent<ViewProps & ThemeProps, PIXI.Graphics>('View', {
   create: () => {
     const instance = new PIXI.Graphics()
     // contextMenu
-    // @ts-ignore
     // instance.contextMenu = createContextMenu({ items: contextMenu })
     // instance.on('rightclick', (e: PIXI.interaction.InteractionEvent) => {
-    //   // @ts-ignore
     //   instance.contextMenu.onContextMenu(e.data.originalEvent)
     // })
     return instance
@@ -32,24 +36,34 @@ const ViewPIXI = PixiComponent<ViewProps, PIXI.Graphics>('View', {
     const props = preprocessProps(_props)
     const {
       style: {
-        width = 0,
-        height = 0,
-        backgroundColor = props.theme!.colors.primary,
+        width = instance.width,
+        height = instance.height,
+        backgroundColor, //= props.theme!.palette.background.paper,
         borderRadius = 0,
         borderWidth = 0,
         borderColor = 'black',
       } = {},
     } = props
     instance.clear()
-    instance.beginFill(C.rgbNumber(backgroundColor), C.getAlpha(backgroundColor))
-    instance.lineStyle(borderWidth, C.rgbNumber(borderColor))
-    instance.drawRoundedRect(0, 0, width, height, borderRadius)
+    if (backgroundColor) {
+      instance.beginFill(C.rgbNumber(backgroundColor), C.getAlpha(backgroundColor))
+      instance.lineStyle(borderWidth, C.rgbNumber(borderColor))
+      const radius = width / 2
+      if ((width === height) && (borderRadius >= radius)) {
+        instance.drawCircle(radius, radius, radius)
+      } else {
+        instance.drawRoundedRect(0, 0, width, height, borderRadius)
+      }
+    }
     instance.endFill()
     applyDefaultProps(instance, oldProps, props)
   },
 })
 
-function View(props: ViewProps, forwardedRef: ForwardRef<PIXI.Container>) {
+const ViewElement = (
+  props: ViewProps,
+  forwardedRef: React.ForwardedRef<ViewRef>,
+) => {
   const theme = useTheme()
   return (
     <ViewPIXI
@@ -61,40 +75,9 @@ function View(props: ViewProps, forwardedRef: ForwardRef<PIXI.Container>) {
   )
 }
 
-/**
- * ## Usage
- * To use View on Graph
- * Check example
- *
- * ```js live=true
- * <Graph
- *  style={{ width: '100%', height: 250 }}
- *  nodes={[
- *    {
- *      id: 1,
- *      position: { x: 10, y: 10 },
- *      data: { color: 'red' }
- *    },
- *    {
- *      id: 2,
- *      position: { x: 300, y: 10 },
- *      data: { color: 'blue' }
- *    },
- *  ]}
- *  edges={[
- *    { id: 51, source: 1, target: 2 }
- *  ]}
- *  renderNode={({ item: { data } }) => (
- *    <Graph.View
- *      style={{ width: 100, height: 100, backgroundColor: data.color }}
- *    />
- * )}
- * />
- * ```
- */
-export default wrapComponent<
+export const View = wrapComponent<
 PropsWithRef<PIXI.Container, ViewProps>
->(View, { isForwardRef: true })
+>(ViewElement, { isForwardRef: true })
 // >
 //   <FlexContainer style={rest.style}>
 //     {children}

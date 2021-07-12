@@ -1,3 +1,0 @@
-# Collaboration
-
-Coming Soon!

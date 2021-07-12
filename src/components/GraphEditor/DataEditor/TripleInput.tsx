@@ -1,21 +1,23 @@
 import React from 'react'
-import { Pressable, TextStyle, ViewStyle } from 'react-native'
 import {
-  Grid, Input,
-
-  Text,
-  useData,
-  useForwardRef, wrapComponent
-} from 'unitx-ui'
-import { ForwardRef } from 'unitx-ui/type'
+  ButtonBase, GridProps,
+  TextField, Typography,
+  TypographyProps,
+  ClickAwayListener,
+} from '@material-ui/core'
+import {
+  useForwardRef,
+  wrapComponent,
+} from 'colay-ui'
 
 export type Suggestion = {
   title: string;
   value: string;
 }
+type TextStyle = TypographyProps['style']
 
 export type TripleInputProps = {
-  style?: ViewStyle;
+  style?: GridProps['style'];
   textStyle?: TextStyle;
   placeholder: string;
   editable?: boolean;
@@ -29,7 +31,7 @@ export type TripleInputProps = {
 export const mockTripleInputProps: TripleInputProps = {
   placeholder: 'Enter Value',
   value: 'Heyy',
-  onValueChange: (value) => console.log('val:', value),
+  onValueChange: (value) => {},
   getSuggestions: async () => [
     { title: 'Izmir', value: 'Izmir' },
     { title: 'Istanbul', value: 'Istanbul' },
@@ -48,17 +50,25 @@ export const TEXT_STYLE_MAP = {
   } as TextStyle,
   new: {
     fontStyle: 'italic',
-  }as TextStyle,
+  } as TextStyle,
 } as const
 
-const TripleInputElement = (props: TripleInputProps, ref: ForwardRef<{}>) => {
+export const TRIPLE_INPUT_HEIGHT = 50
+
+export type TripleInputType = React.FC<TripleInputProps>
+
+const TripleInputElement = (
+  props: TripleInputProps,
+  ref: React.ForwardedRef<TripleInputType>,
+) => {
   const {
     value,
     textStyle,
     onEnter,
+    editable,
   } = props
-  const [state, update] = useData({
-    editable: props.editable,
+  const [state, setState] = React.useState({
+    editable,
     suggestions: [] as Suggestion[],
     isLoading: false,
     selectedSuggestion: null as Suggestion | null,
@@ -73,64 +83,69 @@ const TripleInputElement = (props: TripleInputProps, ref: ForwardRef<{}>) => {
   const inputRef = useForwardRef(
     ref,
     {},
-    () => ({
-      changeMode: (editable: boolean) => {
-        update((draft) => {
-          draft.editable = editable
-        })
-        setTimeout(() => inputRef.current.focus(), 10)
-      },
-      getSelectedSuggestion: () => state.selectedSuggestion,
-    }),
+    // () => ({}),
   )
+  const changeMode = (editable: boolean) => {
+    setState({
+      ...state,
+      editable,
+    })
+  }
   const onChangeText = React.useCallback(async (value) => {
     const suggestions = await getSuggestions?.({ value }) ?? []
-    update((draft) => {
-      draft.suggestions = suggestions
-      draft.isLoading = false
-      draft.selectedSuggestion = null
+    setState({
+      ...state,
+      suggestions,
+      isLoading: false,
+      selectedSuggestion: null,
     })
-    onValueChange?.(value,)
-  }, [update, getSuggestions])
+    onValueChange?.(value)
+  }, [getSuggestions])
   const onBlur = React.useCallback(() => {
-    setTimeout(() => {
-      update((draft) => {
-        draft.editable = false
-      })
-    }, 200)
-  }, [update])
+    setState({
+      ...state,
+      editable: false,
+    })
+  }, [])
+
   return (
-    <Pressable
-      style={[
+    <ClickAwayListener onClickAway={onBlur}>
+      <ButtonBase
+        sx={{
+          width: '100%',
+          alignItems: 'flex-start',
+          display: 'flex',
+          height: TRIPLE_INPUT_HEIGHT,
+          ...style,
+        }}
+        disableTouchRipple
+        onFocus={() => {
+          !disabled && changeMode(true)
+        }}
+      >
         {
-          flex: 1,
-        },
-        style,
-      ]}
-      // @ts-ignore
-      onFocus={() => {
-        !disabled && inputRef.current.changeMode(true)
-      }}
-    >
-      <Grid>
-        <Input
-          ref={inputRef}
-          value={value}
-          onSubmitEditing={onEnter}
-          style={[
-            {
-              width: '100%',
-              lineHeight: LINE_HEIGHT,
-              height: LINE_HEIGHT,
-            },
-            textStyle,
-            state.editable ? null : { display: 'none' },
-          ]}
-          onChangeText={onChangeText}
-          onBlur={onBlur}
-          placeholder={placeholder}
-        >
-          {/* {state.suggestions.map(
+          state.editable && (
+            <TextField
+              // @ts-ignore
+              ref={inputRef}
+              value={value}
+              autoFocus
+              variant="standard"
+              onSubmitEditing={onEnter}
+              style={{
+                width: '100%',
+                lineHeight: LINE_HEIGHT,
+                height: LINE_HEIGHT,
+                ...textStyle,
+                ...(state.editable ? {} : { display: 'none' }),
+              }}
+              onChange={onChangeText}
+              onBlur={onBlur}
+              placeholder={placeholder}
+            />
+          )
+        }
+        {/* {state.suggestions.map(
             (item, index) => (
               <AutocompleteItem
                 {...item}
@@ -150,25 +165,20 @@ const TripleInputElement = (props: TripleInputProps, ref: ForwardRef<{}>) => {
               />
             ),
           )} */}
-        </Input>
-        <Text
-          style={[
-            {
-              width: '100%',
-              lineHeight: LINE_HEIGHT,
-              height: LINE_HEIGHT,
-            },
-            textStyle,
-            state.editable ? { display: 'none' } : {},
-          ]}
-          // on
-          ellipsizeMode="tail"
-          numberOfLines={1}
+        <Typography
+          sx={{
+            width: '100%',
+            textAlign: 'start',
+            // lineHeight: LINE_HEIGHT,
+            // height: LINE_HEIGHT,
+            ...textStyle,
+            ...(state.editable ? { display: 'none' } : {}),
+          }}
         >
           {value === '' ? placeholder : value}
-        </Text>
-      </Grid>
-    </Pressable>
+        </Typography>
+      </ButtonBase>
+    </ClickAwayListener>
   )
 }
 

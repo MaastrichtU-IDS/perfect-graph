@@ -1,18 +1,8 @@
 import React from 'react'
-// import {  ApplicationProvider } from 'unitx-ui';
-const { create } = require('@storybook/theming');
-const R = require('unitx/lib/ramda');
+const { create } = require('colay-docs/storybook/theming');
+const { GithubEdit, } = require('colay-docs')
+const R = require('colay/lib/ramda');
 
-// export const decorators = [
-//   (Story) => (
-//     <ApplicationProvider>
-//       <Story />
-//     </ApplicationProvider>
-//   ),
-// ];
-
-
- 
 const SECTION_NAME_LIST =  ['intro','components', 'layoutengine', 'plugins', 'support', 'collaboration']
 // Option defaults:
 export const parameters = {
@@ -27,14 +17,14 @@ export const parameters = {
       return R.cond([
         [
           R.allPass([
-            () =>R.isNegative(sectionAIndex),
+            () =>sectionAIndex<0,
             () => sectionBIndex >= 0,
           ]),
           R.always(-1)
         ],
         [
           R.allPass([
-            () =>R.isNegative(sectionBIndex),
+            () =>sectionBIndex<0,
             () => sectionAIndex >= 0,
           ]),
           R.always(1)
@@ -68,6 +58,84 @@ export const parameters = {
     }),
     panelPosition: 'bottom',
     showPanel: false,
-  }
+  },
+  layout: 'fullscreen',
+  actions: { argTypesRegex: '^on[A-Z].*' },
+  viewport: {
+    viewports: {
+      mobile: {
+        name: 'iPhone X',
+        styles: {
+          width: '375px',
+          height: '812px',
+        },
+      },
+      tablet: {
+        name: 'iPad',
+        styles: {
+          width: '768px',
+          height: '1024px',
+        },
+      },
+      laptop: {
+        name: 'Laptop',
+        styles: {
+          width: '1024px',
+          height: '768px',
+        },
+      },
+      desktop: {
+        name: 'Desktop',
+        styles: {
+          width: '1440px',
+          height: '1024px',
+        },
+      },
+    },
+  },
 }
+const GITHUB_URL = ''
 
+export const decorators = [
+  (Story, {parameters}) => {
+    const relativePath = parameters.fileName.replace('../../../../', '')
+    return (
+      <>
+        <GithubEdit>
+          {`${GITHUB_URL}/blob/master/${relativePath}`}
+        </GithubEdit>
+        <div style={{ height: 20 }}/>
+        <Story />
+      </>
+    )
+  },
+];
+
+
+// import * as nextImage from 'next/image'
+
+// // Replace next/image for Storybook
+// Object.defineProperty(nextImage, 'default', {
+//   configurable: true,
+//   value: (props) => {
+//     const { width, height } = props
+//     const ratio = (height / width) * 100
+//     return (
+//       <div
+//         style={{
+//           paddingBottom: `${ratio}%`,
+//           position: 'relative',
+//         }}>
+//         <img
+//           style={{
+//             objectFit: 'cover',
+//             position: 'absolute',
+//             width: '100%',
+//             height: '100%',
+//           }}
+//           {...props}
+//         />
+//       </div>
+//     )
+//   },
+// })

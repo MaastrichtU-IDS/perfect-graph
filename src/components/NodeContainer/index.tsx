@@ -1,34 +1,53 @@
 import React from 'react'
-import { wrapComponent } from 'unitx-ui'
-import { ForwardRef, Position } from 'unitx-ui/type'
+import { wrapComponent } from 'colay-ui'
 import { useNode } from '@hooks'
-import { RenderNode } from '@type'
-import Container from '../Container'
+import {
+  RenderNode, NodeConfig, GraphRef,
+} from '@type'
+import {
+  calculateObjectBoundsWithoutChildren,
+  calculateVisibilityByContext,
+} from '@utils'
+import { useTheme } from '@core/theme'
+import { Container } from '../Container'
 
 export type NodeContainerProps = {
   children: RenderNode;
   item: any;
   graphID: string;
-  position?: Position;
+  graphRef: React.RefObject<GraphRef>;
+  config?: NodeConfig;
+
 }
 
-function NodeContainer(props: NodeContainerProps, __: ForwardRef<typeof NodeContainer>) {
+export type NodeContainerType = React.ForwardedRef<NodeContainerProps>
+const DEFAULT_POSITION = { x: 0, y: 0 }
+const NodeContainerElement = (
+  props: NodeContainerProps,
+  __: React.ForwardedRef<NodeContainerType>,
+) => {
   const {
     item,
     graphID,
     children,
-    position = item.position ?? { x: 0, y: 0 },
+    config = {} as NodeConfig,
+    graphRef,
   } = props
   const containerRef = React.useRef(null)
-  const { element } = useNode({
-    id: item.id,
-    position,
+  const { element, context, cy } = useNode({
     graphID,
-    // onPositionChange: ({ element }) => {
-    //   const { x, y } = element.position()
-    //   containerRef.current.x = x
-    //   containerRef.current.y = y
-    // },
+    config,
+    position: config.position ?? item.position ?? DEFAULT_POSITION,
+    onPositionChange: ({ element }) => {
+      const { x, y } = element.position()
+      // @ts-ignore
+      containerRef.current.x = x
+      // @ts-ignore
+      containerRef.current.y = y
+      context.boundingBox.x = x
+      context.boundingBox.y = y
+    },
+    item,
   })
   const { x, y } = element.position()
   const onDrag = React.useCallback(
@@ -37,6 +56,17 @@ function NodeContainer(props: NodeContainerProps, __: ForwardRef<typeof NodeCont
     },
     [element],
   )
+  React.useEffect(() => {
+    // @ts-ignore
+    context.boundingBox = calculateObjectBoundsWithoutChildren(
+      containerRef.current!,
+    )
+  })
+  const theme = useTheme()
+  const visible = calculateVisibilityByContext(context)
+  const opacity = context.settings.filtered
+    ? 1
+    : (config.filter?.settings?.opacity ?? 0.2)
   return (
     <Container
       ref={containerRef}
@@ -44,16 +74,28 @@ function NodeContainer(props: NodeContainerProps, __: ForwardRef<typeof NodeCont
         left: x,
         top: y,
       }}
+      alpha={opacity}
+      visible={visible}
       draggable
       onDrag={onDrag}
+      // onRightPress={(event) => {
+      //   event.data.originalEvent.preventDefault()
+      //   event.data.originalEvent.stopPropagation()
+      // }}
     >
-      {children({ item, element })}
+      {children({
+        item,
+        element,
+        cy,
+        theme,
+        graphRef,
+      })}
     </Container>
   )
 }
 
-export default wrapComponent<NodeContainerProps>(
-  NodeContainer,
+export const NodeContainer = wrapComponent<NodeContainerProps>(
+  NodeContainerElement,
   {
     isForwardRef: true,
   },
