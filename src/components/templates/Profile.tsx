@@ -41,8 +41,8 @@ const ProfileElement = (
         width: 300,
         height: 150,
         flexDirection: 'row',
-        paddingLeft: 10,
-        paddingTop: 10,
+        // paddingLeft: 10,
+        // paddingTop: 10,
       }}
       >
         <Image
@@ -81,7 +81,6 @@ const ProfileElement = (
     </>
   )
 }
-
 
 export const ProfileTemplate = wrapComponent<ProfileProps>(
   ProfileElement,

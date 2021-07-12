@@ -12,7 +12,6 @@ import Accordion from '@material-ui/core/Accordion'
 import AccordionDetails from '@material-ui/core/AccordionDetails'
 import AccordionSummary from '@material-ui/core/AccordionSummary'
 import {
-  OnEventLite,
   Playlist,
 } from '@type'
 import {
@@ -35,6 +34,10 @@ export type EventHistoryTableProps = {
     visible: boolean;
     onClose: () => void;
   }
+  onCreatePlaylist: (param: {
+    id: string;
+    name: string;
+  }) => void
 }
 
 // onSelectPlaylist={(playlist, checked) => {
@@ -174,7 +177,7 @@ export const PlaylistTable = (props: EventHistoryTableProps) => {
                 type: EVENT.REORDER_PLAYLIST,
                 payload: {
                   fromIndex: result.source.index,
-                  toIndex: result.destination.index,
+                  toIndex: result.destination!.index,
                 },
               })}
               data={playlists}

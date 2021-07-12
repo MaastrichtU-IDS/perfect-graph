@@ -1,6 +1,6 @@
 import React from 'react'
 import { Icon, IconProps } from '@components/Icon'
-import { IconButton, SpeedDial, SpeedDialAction } from '@material-ui/core'
+import { SpeedDial, SpeedDialAction } from '@material-ui/core'
 import {
   View,
 } from 'colay-ui'
@@ -10,7 +10,7 @@ const ICON_SIZE = 24
 type Action = {
   name: string;
   icon: IconProps;
-  onClick: (e: MouseEvent) => void
+  onClick: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
 }
 export type SpeedDialCreatorProps = {
   actions: Action[];

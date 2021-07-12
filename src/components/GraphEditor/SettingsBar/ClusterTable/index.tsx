@@ -1,8 +1,9 @@
-import React from 'react'
 import { Icon } from '@components/Icon'
 import { SortableList } from '@components/SortableList'
 import { SpeedDialCreator } from '@components/SpeedDialCreator'
 import { TabPanel } from '@components/TabPanel'
+import { EDITOR_MODE, EVENT } from '@constants'
+import { useGraphEditor } from '@hooks'
 import {
   Button,
   Card, Checkbox,
@@ -17,29 +18,24 @@ import AccordionSummary from '@material-ui/core/AccordionSummary'
 import { FormProps } from '@rjsf/core'
 import Form from '@rjsf/material-ui'
 import {
-  Cluster, EditorMode, OnEventLite,
-} from '@type'
-import { EDITOR_MODE, EVENT } from '@constants'
-import {
   useDisclosure, View,
 } from 'colay-ui'
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import * as R from 'colay/ramda'
-import { useGraphEditor } from '@hooks'
-
+import React from 'react'
 import { CreateClusterByAlgorithm } from './CreateClusterByAlgorithm'
 
 export type ClusterTableProps = {
   // onSelectAllClusters: (checked: boolean) => void
   // onSelectCluster: (cluster: Cluster, checked: boolean) => void
-  createClusterForm: FormProps<any>;
+  createClusterForm?: FormProps<any>;
 }
 
 export const ClusterTable = (props: ClusterTableProps) => {
   const {
     // onSelectAllClusters,
     // onSelectCluster,
-    createClusterForm,
+    createClusterForm = {},
   } = props
   const [
     {

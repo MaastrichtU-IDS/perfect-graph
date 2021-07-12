@@ -11,27 +11,26 @@ import {
   DroppableStateSnapshot,
 } from 'react-beautiful-dnd'
 
+// const grid = 8
 
-const grid = 8
+// const getItemStyle = (isDragging: boolean, draggableStyle: any) => ({
+//   // some basic styles to make the items look a bit nicer
+//   userSelect: 'none',
+//   padding: grid * 2,
+//   margin: `0 0 ${grid}px 0`,
 
-const getItemStyle = (isDragging: boolean, draggableStyle: any) => ({
-  // some basic styles to make the items look a bit nicer
-  userSelect: 'none',
-  padding: grid * 2,
-  margin: `0 0 ${grid}px 0`,
+//   // change background colour if dragging
+//   background: isDragging ? 'lightgreen' : 'grey',
 
-  // change background colour if dragging
-  background: isDragging ? 'lightgreen' : 'grey',
+//   // styles we need to apply on draggables
+//   ...draggableStyle,
+// })
 
-  // styles we need to apply on draggables
-  ...draggableStyle,
-})
-
-const getListStyle = (isDraggingOver: boolean) => ({
-  background: isDraggingOver ? 'lightblue' : 'lightgrey',
-  padding: grid,
-  width: 250,
-})
+// const getListStyle = (isDraggingOver: boolean) => ({
+//   background: isDraggingOver ? 'lightblue' : 'lightgrey',
+//   padding: grid,
+//   width: 250,
+// })
 
 export type SortableListProps<T> = {
   onReorder?: (result: DropResult) => void
@@ -49,7 +48,7 @@ export type SortableListProps<T> = {
   // renderContainer: (props: {})
 }
 
-export const SortableList = <T extends any>(props: SortableListProps<T>) => {
+export const SortableList = <T extends { id: string }>(props: SortableListProps<T>) => {
   const {
     onReorder,
     onDragEnd,
@@ -60,11 +59,12 @@ export const SortableList = <T extends any>(props: SortableListProps<T>) => {
   return (
     <DragDropContext onDragEnd={(result) => {
       onDragEnd?.(result)
-      if (!result.destination && (result.destination.index === result.source.index)) {
+      if (!result.destination && (result.destination!.index === result.source.index)) {
         return
       }
       onReorder?.(result)
-    }}>
+    }}
+    >
       <Droppable droppableId={droppableId}>
         {(droppableProvided, droppableSnapshot) => (
           <div
@@ -78,7 +78,9 @@ export const SortableList = <T extends any>(props: SortableListProps<T>) => {
                   draggableId={item.id}
                   index={index}
                 >
-                  {(provided, snapshot, rubric) => renderItem({
+                  {
+                  // @ts-ignore
+                  (provided, snapshot, rubric) => renderItem({
                     item,
                     index,
                     provided,
@@ -86,7 +88,8 @@ export const SortableList = <T extends any>(props: SortableListProps<T>) => {
                     rubric,
                     droppableProvided,
                     droppableSnapshot,
-                  })}
+                  })
+}
                   {/* {(provided, snapshot) => (
                     <div
                       ref={provided.innerRef}

@@ -15,6 +15,7 @@ export type ImageProps = {
   source: ImageURISource;
 }
 
+// @ts-ignore
 const ImagePIXI = PixiComponent<ImageProps, PIXI.Sprite>('Image', {
   create: (props: ImageProps) => {
     const instance = new PIXI.Sprite(getTextureFromProps('Sprite', props))
@@ -29,16 +30,22 @@ const ImagePIXI = PixiComponent<ImageProps, PIXI.Sprite>('Image', {
       ...restProps
     } = props
     const isUriSource = R.has('uri')(source)
-    R.when(
-      R.anyPass([
-        R.always(isUriSource && source.uri !== oldProps.source?.uri),
-        R.always(source !== oldProps.source),
-      ]),
-      () => {
-        mutableInstance.texture = getTextureFromProps('Sprite', props)
-      },
-      source,
-    )
+    if (
+      (isUriSource && source.uri !== oldProps.source?.uri)
+        || source !== oldProps.source
+    ) {
+      mutableInstance.texture = getTextureFromProps('Sprite', props)
+    }
+    // R.when(
+    //   R.anyPass([
+    //     R.always(isUriSource && source.uri !== oldProps.source?.uri),
+    //     R.always(source !== oldProps.source),
+    //   ]),
+    //   () => {
+    //     mutableInstance.texture = getTextureFromProps('Sprite', props)
+    //   },
+    //   source,
+    // )
     applyDefaultProps(mutableInstance, oldProps, restProps, { rescaleToYoga: true })
   },
 })
@@ -50,6 +57,5 @@ function ImageElement(props: ImageProps) {
     />
   )
 }
-
 
 export const Image = wrapComponent<ImageProps>(ImageElement)

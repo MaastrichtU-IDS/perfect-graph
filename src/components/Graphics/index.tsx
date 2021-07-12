@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Position } from 'colay-ui/type'
 import { BoundingBox, NodeElement } from '@type'
 import * as PIXI from 'pixi.js'

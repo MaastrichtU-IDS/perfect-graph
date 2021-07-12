@@ -59,7 +59,7 @@ const NodeContainerElement = (
   React.useEffect(() => {
     // @ts-ignore
     context.boundingBox = calculateObjectBoundsWithoutChildren(
-      containerRef.current,
+      containerRef.current!,
     )
   })
   const theme = useTheme()

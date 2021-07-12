@@ -1,15 +1,14 @@
 import React from 'react'
 import * as PIXI from 'pixi.js'
 import * as R from 'colay/ramda'
-import { Events } from '@utils'
 import { PIXIBasicStyle, PIXIShapeStyle } from '@type'
-import { View } from '../View'
+import { View, ViewProps } from '../View'
 
 export type PressableProps = {
   style?: PIXIBasicStyle & PIXIShapeStyle;
   children?: React.ReactNode;
   buttonMode?: boolean;
-} & Events
+} & ViewProps
 
 // const PressablePIXI = PixiComponent<PressableProps, PIXI.Container>('PressablePIXI', {
 //   create: () => {

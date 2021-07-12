@@ -437,8 +437,8 @@ const GraphEditorElement = (
             })
           }}
           renderNode={({ item, element, ...rest }) => (
-            <Graph.Pressable
-              onPress={(event) => {
+            <Graph.View
+              click={(event) => {
                 const { mode } = localDataRef.current.props
                 const elementId = element.id()
                 if (
@@ -511,11 +511,11 @@ const GraphEditorElement = (
                   : (label?.nodes?.[item.id] ?? label?.global.nodes),
                 ...rest,
               })}
-            </Graph.Pressable>
+            </Graph.View>
           )}
           renderEdge={({ item, element, ...rest }) => (
-            <Graph.Pressable
-              onPress={(event) => {
+            <Graph.View
+              click={(event) => {
                 const { mode } = localDataRef.current.props
                 if (
                   [
@@ -558,7 +558,7 @@ const GraphEditorElement = (
               ...rest,
             })
 }
-            </Graph.Pressable>
+            </Graph.View>
           )}
         >
           <ContextMenu

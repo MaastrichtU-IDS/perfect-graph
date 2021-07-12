@@ -40,7 +40,7 @@ import {
   MyLocation,
   DragHandle,
 } from '@material-ui/icons'
-import { MUIIconProps } from '@material-ui/core'
+import { IconProps as MUIIconProps } from '@material-ui/core'
 
 const ICONS = {
   assessment: Assessment,
@@ -97,6 +97,7 @@ export const Icon = (props: IconProps) => {
   } = props
   const IconSelected = ICONS[name]
   return (
+    // @ts-ignore
     <IconSelected {...rest} />
   )
 }

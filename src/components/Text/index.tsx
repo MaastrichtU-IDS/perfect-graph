@@ -4,7 +4,7 @@ import * as R from 'colay/ramda'
 import { wrapComponent } from 'colay-ui'
 import { PropsWithRef } from 'colay-ui/type'
 import { PixiComponent } from '@inlet/react-pixi'
-import { useTheme } from '@core/theme'
+import { useTheme, ThemeProps } from '@core/theme'
 import * as C from 'colay/color'
 import { applyDefaultProps } from '@utils'
 
@@ -29,6 +29,7 @@ const processTextProps = (props: TextPIXIProps) => {
     ...props,
     style: R.pick(PositionStyleKeys)(style),
     textStyle: R.pipe(
+      // @ts-ignore
       R.toPairs,
       R.map(
         ([key, value]: [string, any]) => R.cond([
@@ -37,6 +38,7 @@ const processTextProps = (props: TextPIXIProps) => {
           [R.equals('textShadowRadius'), () => (['dropShadowBlur', C.rgbNumber(value)])],
           [R.equals('textShadowOffset'), () => (['dropShadowDistance', R.values(value)?.[0]])],
           [R.T, R.always([key, value])],
+          // @ts-ignore
         ])(key),
       ),
       R.fromPairs,
@@ -54,10 +56,13 @@ const processTextProps = (props: TextPIXIProps) => {
           R.identity,
         ],
       ]),
+      // @ts-ignore
     )(R.omit([PositionStyleKeys])({ ...style })),
   }
 }
-const TextPIXI = PixiComponent<TextPIXIProps, PIXI.Text>('PIXIText', {
+
+// @ts-ignore
+const TextPIXI = PixiComponent<TextPIXIProps & ThemeProps, PIXI.Text>('PIXIText', {
   create: (props) => {
     const {
       style = {},
@@ -139,4 +144,3 @@ const TextElement = (
 export const Text = wrapComponent<
 PropsWithRef<PIXI.Text, TextProps>
 >(TextElement, { isForwardRef: true })
-
