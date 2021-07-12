@@ -1,8 +1,8 @@
 import React from 'react'
 import { PixiComponent } from '@inlet/react-pixi'
-import {  PropsWithRef } from 'colay-ui/type'
+import { PropsWithRef } from 'colay-ui/type'
 import { wrapComponent } from 'colay-ui'
-import { useTheme } from '@core/theme'
+import { useTheme, Theme } from '@core/theme'
 import * as PIXI from 'pixi.js'
 import * as C from 'colay/color'
 import {
@@ -21,7 +21,8 @@ export type ViewType = React.FC<ViewProps>
 
 export type ViewRef = PIXI.Graphics
 
-const ViewPIXI = PixiComponent<ViewProps, PIXI.Graphics>('View', {
+// @ts-ignore
+const ViewPIXI = PixiComponent<ViewProps & {theme: Theme}, PIXI.Graphics>('View', {
   create: () => {
     const instance = new PIXI.Graphics()
     // contextMenu

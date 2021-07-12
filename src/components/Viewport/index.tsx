@@ -8,6 +8,7 @@ import { wrapComponent, useForwardRef } from 'colay-ui'
 import { getBoundingBox, getPointerPositionOnViewport } from '@utils'
 import { Position, BoundingBox } from 'colay/type'
 import { drawGraphics } from '@components/Graphics'
+import { ViewportType } from '@type'
 
 type NativeViewportProps = {
   app: PIXI.Application;
@@ -48,7 +49,7 @@ type NativeViewportProps = {
   }) => void;
 
 }
-type ViewportType = ViewportNative & {clickEvent: any; isClick: boolean}
+
 const DEFAULT_EVENT_HANDLER = () => {}
 const ReactViewportComp = PixiComponent('Viewport', {
   create: (props: NativeViewportProps) => {
@@ -95,8 +96,10 @@ const ReactViewportComp = PixiComponent('Viewport', {
       'pointerdown',
       (e) => {
         const { metaKey } = e.data.originalEvent
+        // @ts-ignore
         if (e.target !== viewport || metaKey) {
           if (metaKey) {
+            // @ts-ignore
             const position = getPointerPositionOnViewport(viewport, e.data.originalEvent)
             localDataRef.current.boxSelection.startPosition = {
               x: position.x,
@@ -143,6 +146,7 @@ const ReactViewportComp = PixiComponent('Viewport', {
     viewport.on('pointermove', (e) => {
       // const { metaKey } = e.data.originalEvent
       if (localDataRef.current.boxSelection.enabled) {
+        // @ts-ignore
         const position = getPointerPositionOnViewport(viewport, e.data.originalEvent)
         localDataRef.current.boxSelection.currentPosition = {
           x: position.x,

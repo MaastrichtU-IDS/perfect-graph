@@ -11,7 +11,7 @@ import {
   PIXI_EVENT_NAMES,
   CYTOSCAPE_EVENT,
 } from '@constants'
-import { Viewport } from 'pixi-viewport'
+import { Viewport as ViewportNative } from 'pixi-viewport'
 import * as PIXI from 'pixi.js'
 import { YogaConstants } from '@utils/addFlexLayout/flex-layout/YogaContants'
 import { YogaLayout } from '@utils/addFlexLayout/flex-layout/YogaLayout'
@@ -312,9 +312,12 @@ export type DrawLine = (
     from: Position;
   }) => void
 
-export type ViewportRef = Viewport & {
+export type ViewportType = PIXI.DisplayObject & ViewportNative & {
+  clickEvent: any;
+  isClick: boolean;
   hitArea: BoundingBox
 }
+export type ViewportRef = ViewportType
 
 export type GraphRef = {
   cy: Core;

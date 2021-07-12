@@ -9,7 +9,7 @@ import {
   getSelectedItemByElement, getUndoEvents,
 } from '@utils'
 import {
-  EDITOR_MODE, EVENT, MOCK_DATA,
+  EDITOR_MODE, EVENT,
 } from '@constants'
 import { createHistory } from '@utils/createHistory'
 import { useImmer } from 'colay-ui/hooks/useImmer'
@@ -71,8 +71,12 @@ export const useController = (
     // targetNode: null,
   })
   const [state, updateState] = useImmer(controllerConfig)
-  const update = React.useCallback((updater) => {
+  type UpdateFunction = (draft: UseControllerData, config: {
+    graphEditorRef: React.MutableRefObject<GraphEditorRef>
+  }) => void
+  const update = React.useCallback((updater: UpdateFunction) => {
     updateState((draft) => {
+      // @ts-ignore
       updater(draft, { graphEditorRef })
     })
   }, [updateState, graphEditorRef])

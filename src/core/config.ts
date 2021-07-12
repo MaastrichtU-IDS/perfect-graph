@@ -28,6 +28,7 @@ cytoscape.use(cola)
 cytoscape.use(d3Force)
 
 PIXI.settings.ROUND_PIXELS = true
+// @ts-ignore
 PIXI.settings.PRECISION_FRAGMENT = 'highp'
 PIXI.settings.RESOLUTION = 32// 64// window.devicePixelRatio
 PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.LINEAR
