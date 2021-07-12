@@ -36,9 +36,8 @@ export type GraphEditor = {
     newClusterBoxSelection: {
       elementIds: string[];
     };
-    localNetworkStatistics?: any;
+    networkStatistics?: NetworkStatistics;
   }>;
-  globalNetworkStatistics?: any;
   selectedItem?: ElementData;
   selectedElement?: Element;
   graphEditorRef: React.RefObject<GraphEditorRef>

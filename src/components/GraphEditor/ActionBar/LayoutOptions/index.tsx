@@ -13,6 +13,9 @@ import { getFormProps } from './getFormProps'
 type LayoutOptionsValue = {
   name?: string;
   animationDuration?: number;
+  refresh? : number;
+  maxIterations? : number;
+  maxSimulationTime? : number;
 }
 export type LayoutOptionsProps = {
   layout?: LayoutOptionsValue;
@@ -41,7 +44,6 @@ export const LayoutOptions = (props: LayoutOptionsProps) => {
     onClose()
   }, [onEvent])
   return (
-
     <Box>
       <Button
         onClick={onOpen}

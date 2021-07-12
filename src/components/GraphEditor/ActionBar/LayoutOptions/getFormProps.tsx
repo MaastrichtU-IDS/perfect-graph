@@ -349,4 +349,4 @@ export const getFormProps = () => ({
       },
     },
   },
-})
+}) as const

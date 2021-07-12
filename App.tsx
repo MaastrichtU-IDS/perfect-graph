@@ -1,15 +1,15 @@
 import React from 'react'
 import App from './_examples/CaseLawExplorer'
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core'
+import { ThemeProvider, createTheme } from '@material-ui/core'
 import { useMeasure,View } from 'colay-ui'
 
-const theme = createMuiTheme()
+const theme = createTheme()
 
 
 export default () => {
   const [containerRef, { width, height, initialized }] = useMeasure()
   return (
-    <MuiThemeProvider theme={theme}>
+    <ThemeProvider theme={theme}>
           <View 
       ref={containerRef}
       style={{
@@ -25,6 +25,6 @@ export default () => {
         )
       }
     </View>
-    </MuiThemeProvider>
+    </ThemeProvider>
   )
 }

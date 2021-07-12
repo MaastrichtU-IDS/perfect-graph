@@ -3,7 +3,7 @@ import { Text } from 'colay-ui'
 import * as R from 'colay/ramda'
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import createPersistor, { PersistorOptions } from 'colay-ui/utils/createPersistor'
-import { useUpdate } from './useUpdate'
+import { useUpdate } from 'colay-ui/hooks/useUpdate'
 import { BehaviorSubject } from './BehaviourSubject'
 
 type UpdateConfig = {
