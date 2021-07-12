@@ -1,3 +1,4 @@
+export default {}
 // import * as R from 'colay/ramda'
 
 // export default (rdfData: any) => {

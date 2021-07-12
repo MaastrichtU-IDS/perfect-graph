@@ -33,6 +33,7 @@ export const DataForm = (props: DataEditorProps) => {
         onSubmit={(e: React.MouseEvent<HTMLButtonElement>) => onEvent({
           type: EVENT.UPDATE_DATA,
           payload: {
+            // @ts-ignore
             value: e.formData,
           },
         })}

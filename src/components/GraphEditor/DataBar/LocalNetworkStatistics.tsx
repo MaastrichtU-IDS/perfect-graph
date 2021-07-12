@@ -1,18 +1,16 @@
 import { Icon } from '@components/Icon'
 import {
-  IconButton,
-  Typography,
   Accordion,
   AccordionDetails,
-  AccordionSummary,
+  AccordionSummary, IconButton,
+  Typography,
 } from '@material-ui/core'
-import { EVENT } from '@constants'
+import { OnEventLite } from '@type'
 import {
   JSONViewer,
 } from 'colay-ui'
 import { View } from 'colay-ui/components/View'
 import React from 'react'
-import { OnEventLite } from '@type'
 
 export type LocalNetworkStatisticsProps = {
   data?: any;
@@ -22,7 +20,6 @@ export type LocalNetworkStatisticsProps = {
 export const LocalNetworkStatistics = (props: LocalNetworkStatisticsProps) => {
   const {
     data,
-    onEvent,
   } = props
   return (
     <Accordion

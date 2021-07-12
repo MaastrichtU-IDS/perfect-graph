@@ -10,7 +10,8 @@ type ValueBoxProps = {
   extended?: boolean;
   state: any;
   setState: (s: any) => void;
-} & Pick<TripleItemProps, 'value' | 'onEvent' | 'isMulti' | 'isAdditional'>
+  isMulti?: boolean;
+} & Pick<TripleItemProps, 'value' | 'onEvent'  | 'isAdditional'>
 
 export const ValueBox = (props: ValueBoxProps) => {
   const {
@@ -37,21 +38,26 @@ export const ValueBox = (props: ValueBoxProps) => {
                     value={valueItem}
                     onValueChange={(value) => onEvent({
                       type: EVENT.CHANGE_DATA_VALUE,
-                      value,
-                      valueIndex,
+                      payload: {
+                        value,
+                        valueIndex,
+                      },
                     })}
                     // type={type}
                   />
                   <Box
                     style={{ width: ICON_SIZE }}
                   >
-                    {
+                    <>
+                      {
                     isMulti && (
                     <IconButton
                       onClick={() => onEvent({
                         type: EVENT.DELETE_DATA_VALUE,
-                        valueIndex,
-                        valueItem,
+                        payload: {
+                          valueIndex,
+                          valueItem,
+                        },
                       })}
                       sx={{ width: ICON_SIZE, height: ICON_SIZE, p: 0 }}
                     >
@@ -62,6 +68,7 @@ export const ValueBox = (props: ValueBoxProps) => {
                     </IconButton>
                     )
   }
+                    </>
                   </Box>
                 </Box>
               ))
@@ -84,7 +91,9 @@ export const ValueBox = (props: ValueBoxProps) => {
               onEnter={() => {
                 onEvent({
                   type: EVENT.ADD_DATA_VALUE,
-                  value: state.newDataValue,
+                  payload: {
+                    value: state.newDataValue,
+                  },
                 })
                 setState({
                   ...state,
