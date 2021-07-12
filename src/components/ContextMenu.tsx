@@ -28,44 +28,50 @@ export const ContextMenu = (props: ContextMenuProps) => {
     graphEditorRef,
   } = props
   const theme = useTheme()
-  return open && (
-    <View
-      style={{
-        position: 'absolute',
-        left: position.x,
-        top: position.y,
-        backgroundColor: 'white', // theme.palette.text.primary,
-        height: 420,
-        width: WIDTH,
-      }}
-    >
+  return (
+    <>
       {
-        items.map(({ value, label }) => (
+        open && (
           <View
-            key={value}
-            interactive
-            buttonMode
-            click={() => onSelect?.(value)}
+            style={{
+              position: 'absolute',
+              left: position.x,
+              top: position.y,
+              backgroundColor: 'white', // theme.palette.text.primary,
+              height: 420,
+              width: WIDTH,
+            }}
           >
-            <Text
-              style={{
-                fontSize: DEFAULT_FONT_SIZE * (1 / graphEditorRef.current.viewport.scale.x),
-              }}
-            >
-              {label}
-            </Text>
-            <View
-              style={{
-                width: WIDTH,
-                height: 2,
-                backgroundColor: theme.palette.text.primary,
-                marginBottom: 5
-              }}
-            />
+            {
+              items.map(({ value, label }) => (
+                <View
+                  key={value}
+                  interactive
+                  buttonMode
+                  click={() => onSelect?.(value)}
+                >
+                  <Text
+                    style={{
+                      fontSize: DEFAULT_FONT_SIZE * (1 / graphEditorRef.current.viewport.scale.x),
+                    }}
+                  >
+                    {label}
+                  </Text>
+                  <View
+                    style={{
+                      width: WIDTH,
+                      height: 2,
+                      backgroundColor: theme.palette.text.primary,
+                      marginBottom: 5,
+                    }}
+                  />
+                </View>
+              ))
+            }
+            {children}
           </View>
-        ))
-      }
-      {children}
-    </View>
+        )
+    }
+    </>
   )
 }

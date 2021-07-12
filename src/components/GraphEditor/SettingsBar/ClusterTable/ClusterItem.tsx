@@ -1,3 +1,4 @@
+export default {}
 // import { Icon } from '@components/Icon'
 // import {
 //   IconButton, Typography,

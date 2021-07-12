@@ -28,8 +28,8 @@ export type GraphEditor = {
   events?: RecordedEvent[]
   eventHistory?: EventHistory;
   playlists?: Playlist[];
-  localDataRef: React.Ref<{
-    initialized: false;
+  localDataRef: React.RefObject<{
+    initialized: boolean;
     targetNode: NodeElement | null;
     props: GraphEditorProps;
     issuedClusterId: string|null;

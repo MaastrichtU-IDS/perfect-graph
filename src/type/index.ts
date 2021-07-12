@@ -167,6 +167,7 @@ export type PIXIBasicStyle = {
   width?: number;
   height?: number;
   zIndex?: number;
+  marginBottom?: number;
 } & PIXIFlexStyle
 
 export type PIXIBasicProps = {

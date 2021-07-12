@@ -37,12 +37,12 @@ export const ClusterTable = (props: ClusterTableProps) => {
   const {
     // onSelectAllClusters,
     // onSelectCluster,
-    createClusterForm = {},
+    createClusterForm = { schema: { } },
   } = props
   const [
     {
       onEvent,
-      clusters,
+      clusters = [],
       editorMode,
       graphEditorLocalDataRef,
     },
@@ -110,6 +110,7 @@ export const ClusterTable = (props: ClusterTableProps) => {
               <IconButton
                 onClick={(e) => {
                   e.stopPropagation()
+                  // @ts-ignore
                   onOpen(e)
                 }}
               >
@@ -226,13 +227,6 @@ export const ClusterTable = (props: ClusterTableProps) => {
           <TabPanel
             value={state.currentTab}
             index={0}
-            style={{
-              padding: 0,
-              paddingLeft: 0,
-              paddingTop: 0,
-              paddingRight: 0,
-              paddingBottom: 0,
-            }}
           >
             {
           clusters.length === 0 && (
@@ -248,7 +242,7 @@ export const ClusterTable = (props: ClusterTableProps) => {
                     type: EVENT.REORDER_CLUSTER,
                     payload: {
                       fromIndex: result.source.index,
-                      toIndex: result.destination.index,
+                      toIndex: result.destination!.index,
                     },
                   })
                 }}
@@ -256,7 +250,7 @@ export const ClusterTable = (props: ClusterTableProps) => {
                 renderItem={({
                   provided,
                   item: cluster,
-                  index,
+                  // index,
                 }) => {
                   const { ids: elementIds, id, name } = cluster
                   return (
@@ -538,7 +532,7 @@ const SpeedDialActionsView = (props: SpeedDialActionsViewProps) => {
           icon: {
             name: 'add_circle',
             color: editorMode === EDITOR_MODE.ADD_CLUSTER_ELEMENT
-        && graphEditorLocalDataRef.current.issuedClusterId === cluster.id
+        && graphEditorLocalDataRef.current?.issuedClusterId === cluster.id
               ? 'primary' : 'inherit',
           },
           onClick: (e) => {

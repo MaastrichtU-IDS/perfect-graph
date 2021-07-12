@@ -49,6 +49,7 @@ export const PreferencesModal = (props: PreferencesModalProps) => {
       onEvent: editor.onEvent,
     }),
   )
+  // @ts-ignore
   const drawer = React.useMemo(() => createDrawer(sidebar), [sidebar, components])
   return (
     <Modal
@@ -106,7 +107,27 @@ export const PreferencesModal = (props: PreferencesModalProps) => {
               <Typography color="text.primary">UI</Typography>
             </Breadcrumbs>
             <Form
-              schema={MOCK_SCHEMA}
+              schema={{
+                type: 'object',
+                required: [
+                  'historyTabVisible',
+                  'playlistTabVisible',
+                ],
+                properties: {
+                  labelTextSize: {
+                    type: 'number',
+                    title: 'Label Text Size',
+                  },
+                  historyTabVisible: {
+                    type: 'boolean',
+                    title: 'History Tab Visible',
+                  },
+                  playlistTabVisible: {
+                    type: 'boolean',
+                    title: 'Playlist Tab Visible',
+                  },
+                },
+              }}
               uiSchema={{
                 'ui:options': {
                   label: false,
@@ -127,15 +148,22 @@ const createDrawer = (sidebar: SidebarItemData[]) => (
     <Divider />
     <List>
       <DataRender
+      // @ts-ignore
         data={sidebar}
         accessor={['items']}
-        renderItem={({ item, children }) => (
-          <SidebarItem
-            item={item}
-          >
-            {children}
-          </SidebarItem>
-        )}
+        renderItem={(params) => {
+          const {
+            children,
+          } = params
+          const item = params.item as unknown as SidebarItemData
+          return (
+            <SidebarItem
+              item={item}
+            >
+              {children}
+            </SidebarItem>
+          )
+        }}
       />
     </List>
   </div>
@@ -154,9 +182,9 @@ const SidebarItem = (props: SidebarItemProps) => {
   const handleClick = () => {
     setOpen(!open)
   }
-  const item = R.is(String)(propItem) ? {
+  const item = (R.is(String)(propItem) ? {
     label: propItem,
-  } : propItem
+  } : propItem) as Exclude<SidebarItemData, string>
   const hasChildren = !!item.items
   return (
     <>
@@ -211,30 +239,3 @@ const MOCK_SIDEBAR_DATA = [
     ],
   },
 ]
-
-const MOCK_COMPONENTS = {
-
-}
-const MOCK_SCHEMA = {
-  // title: 'A registration form',
-  // description: 'A simple form example.',
-  type: 'object',
-  required: [
-    'historyTabVisible',
-    'playlistTabVisible',
-  ],
-  properties: {
-    labelTextSize: {
-      type: 'number',
-      title: 'Label Text Size',
-    },
-    historyTabVisible: {
-      type: 'boolean',
-      title: 'History Tab Visible',
-    },
-    playlistTabVisible: {
-      type: 'boolean',
-      title: 'Playlist Tab Visible',
-    },
-  },
-}

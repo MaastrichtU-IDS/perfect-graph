@@ -1,16 +1,15 @@
-import React from 'react'
+import { EVENT } from '@constants'
+import { Clusters } from '@core/clusters'
+import { useGraphEditor } from '@hooks'
 import {
-  InputLabel, MenuItem, Select,
+  InputLabel, MenuItem, Select
 } from '@material-ui/core'
 import Form from '@rjsf/material-ui'
 import {
-  View,
+  View
 } from 'colay-ui'
 import { useImmer } from 'colay-ui/hooks/useImmer'
-import { OnEventLite } from '@type'
-import { Clusters } from '@core/clusters'
-import { EVENT } from '@constants'
-import { useGraphEditor } from '@hooks'
+import React from 'react'
 
 export type CreateClusterByAlgorithmProps = {
   onSubmit: () => void

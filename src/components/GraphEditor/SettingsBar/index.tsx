@@ -3,13 +3,13 @@ import { EVENT } from '@constants'
 import { useGraphEditor } from '@hooks'
 import {
   Accordion, AccordionDetails, AccordionSummary, Button, Divider,
-  IconButton, Paper, Typography
+  IconButton, Paper, Typography,
 } from '@material-ui/core'
 import { FormProps } from '@rjsf/core'
 import Form from '@rjsf/material-ui'
 import {
   useAnimation,
-  View, wrapComponent
+  View, wrapComponent,
 } from 'colay-ui'
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import * as R from 'colay/ramda'

@@ -20,6 +20,7 @@ import {
   Playlist,
   OnEventLite,
   NetworkStatistics,
+  EventType,
 } from '@type'
 import {
   getLabel, getSelectedItemByElement,
@@ -176,8 +177,8 @@ const GraphEditorElement = (
   const selectedItem = selectedElement && getSelectedItemByElement(
     selectedElement, { nodes, edges },
   ).item
-  const selectedElementIsNode = selectedElement && selectedElement.isNode()
-  const targetPath = selectedElementIsNode ? 'nodes' : 'edges'
+  // const selectedElementIsNode = selectedElement && selectedElement.isNode()
+  // const targetPath = selectedElementIsNode ? 'nodes' : 'edges'
   const onEvent: OnEventLite = React.useCallback((eventInfo) => {
     const {
       props: {
@@ -323,12 +324,13 @@ const GraphEditorElement = (
       value={graphEditorValue}
     >
       <Box
+      // @ts-ignore
         style={{
           ...style,
           overflow: 'hidden',
           position: 'relative',
         }}
-        onMouseMove={(e) => {
+        onMouseMove={(e: React.MouseEvent<HTMLDivElement>) => {
           throttle(
             () => {
               const {
@@ -425,6 +427,7 @@ const GraphEditorElement = (
               draft.contextMenu.visible = true
               draft.contextMenu.position = getPointerPositionOnViewport(
                 graphEditorRef.current.viewport,
+                // @ts-ignore
                 event.event.data.originalEvent,
               )
             })
@@ -458,6 +461,7 @@ const GraphEditorElement = (
                   return
                 }
                 if (
+                  // @ts-ignore
                   [EDITOR_MODE.ADD, EDITOR_MODE.CONTINUES_ADD].includes(mode)
                 ) {
                   if (localDataRef.current.targetNode) {
@@ -507,9 +511,9 @@ const GraphEditorElement = (
                     : (label?.nodes?.[item.id] ?? label?.global.nodes),
                   item,
                 ),
-                labelPath: label?.isGlobalFirst
+                labelPath: (label?.isGlobalFirst
                   ? (label?.global.nodes ?? label?.nodes?.[item.id])
-                  : (label?.nodes?.[item.id] ?? label?.global.nodes),
+                  : (label?.nodes?.[item.id] ?? label?.global.nodes)) ?? [],
                 ...rest,
               })}
             </Graph.View>
@@ -553,9 +557,9 @@ const GraphEditorElement = (
                   : (label?.edges?.[item.id] ?? label?.global.edges),
                 item,
               ),
-              labelPath: label?.isGlobalFirst
+              labelPath: (label?.isGlobalFirst
                 ? (label?.global.edges ?? label?.edges?.[item.id])
-                : (label?.edges?.[item.id] ?? label?.global.edges),
+                : (label?.edges?.[item.id] ?? label?.global.edges)) ?? [],
               element,
               ...rest,
             })
@@ -643,7 +647,7 @@ const GraphEditorElement = (
 
               default:
                 onEvent({
-                  type,
+                  type: type as EventType,
                   payload: value,
                 })
                 break
@@ -680,19 +684,18 @@ const GraphEditorElement = (
   )
 }
 
-const convert = (object) => {
-  let cache = []
+const convert = (object: any) => {
+  const cache: any[] = []
   return JSON.stringify(object, (key, value) => {
     if (typeof value === 'object' && value !== null) {
       // Duplicate reference found, discard key
-      if (cache.includes(value)) return
+      if (cache.includes(value)) return null
 
       // Store value in our collection
       cache.push(value)
     }
     return value
   })
-  cache = null
 }
 const extractGraphEditorData = (props: GraphEditorProps) => convert({
   graphConfig: props.graphConfig,

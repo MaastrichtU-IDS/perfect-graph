@@ -1,24 +1,17 @@
 // @ts-nocheck
 import cytoscape from 'cytoscape'
 import * as R from 'colay/ramda'
+import { NodeData, EdgeData } from '@type'
 
 type Props = {
-  nodes: {
-    id: string;
-    data: any;
-  }[]
-  edges: {
-    id: string;
-    source: string;
-    target: string;
-    data: any;
-  }[]
+  nodes: NodeData[]
+  edges: EdgeData[]
 }
-export const calculateStatistics = (props: Props) => {
+export const calculateStatistics = (params: Props) => {
   const {
     nodes = [],
     edges = [],
-  } = props
+  } = params
   const cy = cytoscape({
     // @ts-ignore
     elements: R.concat(

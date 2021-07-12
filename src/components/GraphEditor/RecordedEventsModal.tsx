@@ -1,7 +1,7 @@
 import {
   Button,
   CircularProgress, Modal,
-  Paper, Typography,
+  Paper, Typography, CircularProgressProps,
 } from '@material-ui/core'
 import { TimeoutManager } from '@utils/TimeoutManager'
 import { View } from 'colay-ui'
@@ -111,7 +111,7 @@ export const RecordedEventsModal = (props: EventsModalProps) => {
               Close
             </Button>
           </View>
-          <Typography variant="subtitle">
+          <Typography variant="subtitle1">
             {`Current Event: ${currentTimer?.type}`}
           </Typography>
           <View
@@ -135,7 +135,7 @@ export const RecordedEventsModal = (props: EventsModalProps) => {
   )
 }
 
-function CircularProgressWithLabel(props) {
+function CircularProgressWithLabel(props: CircularProgressProps) {
   return (
     <View>
       <CircularProgress
@@ -159,7 +159,7 @@ function CircularProgressWithLabel(props) {
           color="textSecondary"
         >
           {`${Math.round(
-            props.value,
+            props.value!,
           )}%`}
 
         </Typography>

@@ -11,7 +11,7 @@ export const MouseIcon = (props: MouseIconProps) => {
     name,
     cursor = false,
   } = props
-  const [state, setState] = React.useState({
+  const [, setState] = React.useState({
     x: 0,
     y: 0,
   })
