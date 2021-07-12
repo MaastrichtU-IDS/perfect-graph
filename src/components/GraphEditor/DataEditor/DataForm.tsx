@@ -1,9 +1,10 @@
 import React from 'react'
+// @ts-ignore
 import Form from '@rjsf/semantic-ui'
 // import Form from '@rjsf/semantic-ui'
-import { Box } from '@material-ui/core'
+import { Box, BoxProps } from '@material-ui/core'
 import { EVENT } from '@constants'
-import { OnEventLite } from '@type'
+import { OnEventLite, DataItem } from '@type'
 
 export type DataEditorProps = {
   style?: BoxProps['style'];
@@ -29,7 +30,7 @@ export const DataForm = (props: DataEditorProps) => {
     >
       <Form
         formData={data ?? []}
-        onSubmit={(e) => onEvent({
+        onSubmit={(e: React.MouseEvent<HTMLButtonElement>) => onEvent({
           type: EVENT.UPDATE_DATA,
           payload: {
             value: e.formData,
@@ -96,38 +97,4 @@ export const DataForm = (props: DataEditorProps) => {
       />
     </Box>
   )
-}
-
-const SCHEMA = {
-  title: 'DataEditor',
-  type: 'array',
-  items: {
-    required: ['name', 'value'],
-    type: 'object',
-    properties: {
-      name: {
-        type: 'string',
-      },
-      value: {
-        type: 'array',
-        items: {
-          type: 'string',
-        },
-      },
-      additional: {
-        type: 'object',
-        properties: {
-          name: {
-            type: 'string',
-          },
-          value: {
-            type: 'array',
-            items: {
-              type: 'string',
-            },
-          },
-        },
-      },
-    },
-  },
 }

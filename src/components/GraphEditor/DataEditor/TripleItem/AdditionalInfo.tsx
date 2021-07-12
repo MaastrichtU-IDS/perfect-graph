@@ -1,14 +1,14 @@
-import React from 'react'
-import { Box, Collapse, Divider } from '@material-ui/core'
-import { DataItem, EventInfo } from '@type'
 import { EVENT } from '@constants'
-import { AdditionalTripleItem, EventType } from '../AdditionalTripleItem'
+import { Box, Collapse, Divider } from '@material-ui/core'
+import { DataItem, OnEventLite } from '@type'
+import React from 'react'
+import { AdditionalTripleItem } from '../AdditionalTripleItem'
 import { NewTripleItem } from '../NewTripleItem'
 
 type AdditionalInfoProps= {
   extended: boolean;
   additional: DataItem['additional'];
-  onEvent: (event: EventInfo) => void;
+  onEvent: OnEventLite;
 }
 export const AdditionalInfo = (props: AdditionalInfoProps) => {
   const {

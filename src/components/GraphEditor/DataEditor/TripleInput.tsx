@@ -1,6 +1,6 @@
 import React from 'react'
 import {
-  ButtonBase, Grid,
+  ButtonBase, GridProps,
   TextField, Typography,
   TypographyProps,
   ClickAwayListener,
@@ -17,7 +17,7 @@ export type Suggestion = {
 type TextStyle = TypographyProps['style']
 
 export type TripleInputProps = {
-  style?: Grid['style'];
+  style?: GridProps['style'];
   textStyle?: TextStyle;
   placeholder: string;
   editable?: boolean;
@@ -126,6 +126,7 @@ const TripleInputElement = (
         {
           state.editable && (
             <TextField
+              // @ts-ignore
               ref={inputRef}
               value={value}
               autoFocus

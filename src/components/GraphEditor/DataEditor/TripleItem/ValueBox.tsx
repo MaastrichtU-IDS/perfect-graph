@@ -7,7 +7,10 @@ import { TripleItemProps, ICON_SIZE } from './index'
 import { TripleInput } from '../TripleInput'
 
 type ValueBoxProps = {
-  extended: boolean;
+  extended?: boolean;
+  state: any;
+  setState: (s: any) => void;
+  // @ts-ignore
 } & Pick<TripleItemProps, 'value' | 'onEvent' | 'isMulti' | 'isAdditional'>
 
 export const ValueBox = (props: ValueBoxProps) => {

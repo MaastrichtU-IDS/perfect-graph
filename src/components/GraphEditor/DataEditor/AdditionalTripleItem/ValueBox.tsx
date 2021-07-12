@@ -7,7 +7,9 @@ import { TripleItemProps, ICON_SIZE } from './index'
 import { TripleInput } from '../TripleInput'
 
 type ValueBoxProps = {
-  extended: boolean;
+  extended?: boolean;
+  state: any;
+  setState: (s: any) => void;
 } & Pick<TripleItemProps, 'value' | 'onEvent' | 'isMulti' | 'isAdditional'>
 
 export const ValueBox = (props: ValueBoxProps) => {
@@ -33,7 +35,11 @@ export const ValueBox = (props: ValueBoxProps) => {
                   <TripleInput
                     placeholder="Enter Value"
                     value={valueItem}
-                    onValueChange={(value) => onEvent(EVENT.CHANGE_DATA_VALUE, { value, valueIndex })}
+                    onValueChange={(value) => onEvent({
+                      type: EVENT.CHANGE_DATA_VALUE,
+                      value,
+                      valueIndex,
+                    })}
                     // type={type}
                   />
                   <Box
@@ -42,7 +48,11 @@ export const ValueBox = (props: ValueBoxProps) => {
                     {
                     isMulti && (
                     <IconButton
-                      onClick={() => onEvent(EVENT.DELETE_DATA_VALUE, { valueIndex, valueItem })}
+                      onClick={() => onEvent({
+                        type: EVENT.DELETE_DATA_VALUE,
+                        valueIndex,
+                        valueItem,
+                      })}
                       sx={{ width: ICON_SIZE, height: ICON_SIZE, p: 0 }}
                     >
                       <Icon
@@ -72,7 +82,10 @@ export const ValueBox = (props: ValueBoxProps) => {
                 newDataValue: value,
               })}
               onEnter={() => {
-                onEvent(EVENT.ADD_DATA_VALUE, { value: state.newDataValue })
+                onEvent({
+                  type: EVENT.ADD_DATA_VALUE,
+                  value: state.newDataValue,
+                })
                 setState({
                   ...state,
                   newDataValue: '',

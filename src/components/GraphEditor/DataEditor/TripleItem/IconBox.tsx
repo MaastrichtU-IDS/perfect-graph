@@ -1,14 +1,15 @@
 import { Icon } from '@components/Icon'
-import { Box, IconButton, Divider } from '@material-ui/core'
 import { EVENT } from '@constants'
+import { Box, Divider, IconButton } from '@material-ui/core'
+import { OnEventLite } from '@type'
 import React from 'react'
-import { ICON_SIZE, TripleItemProps, EventType } from './index'
 import { TRIPLE_INPUT_HEIGHT } from '../TripleInput'
+import { ICON_SIZE, TripleItemProps } from './index'
 
 export type IconBoxProps = {
   isAdditional: boolean;
   onExtend: () => void;
-  onEvent: (type: EventType) => void;
+  onEvent: OnEventLite;
   extended: boolean;
   type: string;
 } & Pick<TripleItemProps, 'isLocalLabel' | 'isGlobalLabel' | 'isGlobalLabelFirst'>
@@ -18,7 +19,6 @@ export const IconBox = (props: IconBoxProps) => {
     onExtend,
     extended,
     onEvent,
-    isGlobalLabel,
     isLocalLabel,
     isGlobalLabelFirst,
   } = props

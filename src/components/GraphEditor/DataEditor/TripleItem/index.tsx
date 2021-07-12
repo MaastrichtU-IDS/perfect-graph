@@ -1,7 +1,7 @@
 import {
   Box,
 } from '@material-ui/core'
-import { DataItem, EventInfo } from '@type'
+import { DataItem, OnEventLite } from '@type'
 import { DATA_TYPE, EVENT } from '@constants'
 import * as R from 'colay/ramda'
 import React from 'react'
@@ -14,7 +14,7 @@ export type EventType = keyof typeof EVENT
 
 export type TripleItemProps = {
   isAdditional?: boolean;
-  onEvent: (event: EventInfo) => void;
+  onEvent: OnEventLite;
   isLocalLabel?: boolean;
   isGlobalLabel?: boolean;
   isGlobalLabelFirst?: boolean;

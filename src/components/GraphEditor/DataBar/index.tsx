@@ -63,8 +63,8 @@ export const DataBar = (props: DataBarProps) => {
         isGlobalLabelFirst: label?.isGlobalFirst?.[targetPath],
         onEvent: editor.onEvent,
         networkStatistics: {
-          local: localDataRef.current.networkStatistics.local?.[selectedItem?.id],
-          global: networkStatistics?.global ?? localDataRef.current.networkStatistics.local?.[selectedItem?.id],
+          local: localDataRef.current.networkStatistics.local?.[selectedItem?.id!],
+          global: networkStatistics?.global ?? localDataRef.current!.networkStatistics.local?.[selectedItem?.id!],
         },
       }
     },
@@ -100,6 +100,7 @@ export const DataBar = (props: DataBarProps) => {
         style={{
           height: '100%',
           width: '100%',
+          // @ts-ignore
           overflowY: 'auto',
           overflowX: 'hidden',
         }}

@@ -91,7 +91,7 @@ const DEFAULT_GRAPH_EDITOR_CONFIG: GraphEditorConfig = {
 }
 const GraphEditorElement = (
   props: GraphEditorProps,
-  ref: React.ForwardedRef<GraphEditorRef>,
+  ref: React.MutableRefObject<GraphEditorRef>,
 ) => {
   const {
     onEvent: onEventCallback = DEFAULT_HANDLER,

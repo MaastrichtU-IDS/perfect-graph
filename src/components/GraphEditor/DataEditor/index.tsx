@@ -25,7 +25,7 @@ export type DataEditorProps = {
   isGlobalLabelFirst?: boolean;
 }
 
-const DataEditorElement = (props: DataEditorProps) => {
+export const DataEditorElement = (props: DataEditorProps) => {
   const {
     data,
     onEvent,
