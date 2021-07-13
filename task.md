@@ -1,3 +1,7 @@
+# Latest stable version
+
+- pixi-viewport: 4.15.0
+
 # TODO
 
 - StackList of events as history
@@ -20,7 +24,7 @@
   - Add renderCell
 - Change Label (labelPath)
 - Sparql results to RDF
--  checkbox to do automatic updates 
+- checkbox to do automatic updates
 
 # DOING
 
@@ -54,4 +58,3 @@
 - Euler as default layout // cose?
 - Layout Item explanation (as Gif or Image)
 - Work on Network statistics tab
-
