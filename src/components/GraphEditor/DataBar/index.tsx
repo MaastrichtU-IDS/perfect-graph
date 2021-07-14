@@ -1,9 +1,11 @@
 import { Icon } from '@components/Icon'
 import { useGraphEditor } from '@hooks'
 import {
-  Accordion, AccordionDetails, AccordionSummary, Divider, IconButton, Paper, Typography,
+  Accordion, AccordionDetails,
+  AccordionSummary, Divider, IconButton, Paper, Typography,
 } from '@material-ui/core'
 import { EVENT } from '@constants'
+import { EdgeElement } from '@type'
 import {
   JSONViewer,
   useAnimation,
@@ -44,6 +46,7 @@ export const DataBar = (props: DataBarProps) => {
       globalLabel,
       localLabel,
       isGlobalLabelFirst,
+      selectedElement,
     },
   ] = useGraphEditor(
     (editor) => {
@@ -52,7 +55,7 @@ export const DataBar = (props: DataBarProps) => {
         selectedItem,
         label,
         localDataRef,
-        networkStatistics
+        networkStatistics,
       } = editor
       const targetPath = selectedElement?.isNode() ? 'nodes' : 'edges'
       return {
@@ -66,6 +69,7 @@ export const DataBar = (props: DataBarProps) => {
           local: localDataRef.current!.networkStatistics!.local?.[selectedItem?.id!],
           global: networkStatistics?.global ?? localDataRef.current!.networkStatistics!.local?.[selectedItem?.id!],
         },
+        selectedElement,
       }
     },
   )
@@ -86,6 +90,7 @@ export const DataBar = (props: DataBarProps) => {
     animationRef.current?.play?.(isOpen)
   }, [animationRef, isOpen])
   const hasStatistics = Object.values(networkStatistics).find((val) => val)
+  const isEdge = selectedElement?.isEdge()
   return (
     <Paper
       style={{
@@ -126,6 +131,9 @@ export const DataBar = (props: DataBarProps) => {
               // flexWrap: 'wrap',
             }}
             >
+              {
+                isEdge && <EdgeElementSummary element={selectedElement} />
+              }
               {
         editable && item?.data
           ? (
@@ -309,5 +317,28 @@ export const DataBar = (props: DataBarProps) => {
         />
       </IconButton>
     </Paper>
+  )
+}
+
+type EdgeElementSummaryProps = {
+  element: EdgeElement;
+}
+const EdgeElementSummary = (props: EdgeElementSummaryProps) => {
+  const {
+    element,
+  } = props
+  const sourceId = element.source().id()
+  const targetId = element.target().id()
+  return (
+    <View>
+      <View style={{ flexDirection: 'row' }}>
+        <Typography variant="subtitle1">source:</Typography>
+        <Typography>{` ${sourceId}`}</Typography>
+      </View>
+      <View style={{ flexDirection: 'row' }}>
+        <Typography variant="subtitle1">target:</Typography>
+        <Typography>{` ${targetId}`}</Typography>
+      </View>
+    </View>
   )
 }
