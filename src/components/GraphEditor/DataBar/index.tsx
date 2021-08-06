@@ -3,6 +3,7 @@ import { useGraphEditor } from '@hooks'
 import {
   Accordion, AccordionDetails,
   AccordionSummary, Divider, IconButton, Paper, Typography,
+  Button,
 } from '@material-ui/core'
 import { EVENT } from '@constants'
 import { EdgeElement } from '@type'
@@ -13,9 +14,10 @@ import {
 import { View } from 'colay-ui/components/View'
 import * as R from 'colay/ramda'
 import React from 'react'
-import {
-  DataEditor,
-} from '../DataEditor'
+// import {
+//   DataEditor,
+// } from '../DataEditor'
+import { JSONEditor } from './JSONEditor'
 import { GlobalNetworkStatistics } from './GlobalNetworkStatistics'
 import { LocalNetworkStatistics } from './LocalNetworkStatistics'
 
@@ -91,6 +93,9 @@ export const DataBar = (props: DataBarProps) => {
   }, [animationRef, isOpen])
   const hasStatistics = Object.values(networkStatistics).find((val) => val)
   const isEdge = selectedElement?.isEdge()
+  const [state, setState] = React.useState({
+    isEditing: false,
+  })
   return (
     <Paper
       style={{
@@ -136,12 +141,31 @@ export const DataBar = (props: DataBarProps) => {
               }
               {
         editable && item?.data
+          && (
+            // <DataEditor
+            //   data={item.data}
+            //   onEvent={onEvent}
+            //   {...rest}
+            // />
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'flex-end',
+              }}
+            >
+              <Button
+                onClick={() => setState({ ...state, isEditing: !state.isEditing })}
+              >
+                {state.isEditing ? 'Done' : 'Edit'}
+
+              </Button>
+            </View>
+          )
+      }
+              {
+        state.isEditing
           ? (
-            <DataEditor
-              data={item.data}
-              onEvent={onEvent}
-              {...rest}
-            />
+            <JSONEditor />
           )
           : (
             <JSONViewer
@@ -261,6 +285,7 @@ export const DataBar = (props: DataBarProps) => {
             />
           )
       }
+
             </View>
           </AccordionDetails>
         </Accordion>
@@ -342,3 +367,131 @@ const EdgeElementSummary = (props: EdgeElementSummaryProps) => {
     </View>
   )
 }
+
+// {
+//   editable && item?.data
+//     ? (
+//       <DataEditor
+//         data={item.data}
+//         onEvent={onEvent}
+//         {...rest}
+//       />
+//     )
+//     : (
+//       <JSONViewer
+//         extraData={[localLabel, globalLabel]}
+//         data={item?.data}
+//         left={(props) => {
+//           const {
+//             item: { path },
+//             collapsed, onCollapse, noChild,
+//           } = props
+//           const isLocalLabel = R.equals(path, localLabel)
+//           const isGlobalLabel = R.equals(path, globalLabel)
+//           return (
+//             <>
+
+//               <IconButton
+//                 size="small"
+//                 sx={{ height: ICON_SIZE }}
+//                 onClick={() => onEvent(
+//                   isLocalLabel
+//                     ? {
+//                       type: EVENT.CLEAR_NODE_LOCAL_LABEL,
+//                     }
+//                     : {
+//                       type: EVENT.SET_NODE_LOCAL_LABEL,
+//                       payload: {
+//                         value: path,
+//                       },
+//                     },
+//                 )}
+//               >
+//                 <Icon
+//                   style={{
+//                     fontSize: ICON_SIZE,
+//                     textDecoration: !isGlobalLabelFirst ? 'underline' : '',
+//                   }}
+//                   name={
+//                     isLocalLabel ? 'bookmark' : 'bookmark_border'
+//                   }
+//                 />
+//               </IconButton>
+//               <IconButton
+//                 size="small"
+//                 sx={{ height: ICON_SIZE }}
+//                 onClick={() => onEvent(
+//                   isGlobalLabel
+//                     ? {
+//                       type: EVENT.CLEAR_NODE_GLOBAL_LABEL,
+//                     }
+//                     : {
+//                       type: EVENT.SET_NODE_GLOBAL_LABEL,
+//                       payload: {
+//                         value: path,
+//                       },
+//                     },
+//                 )}
+//               >
+//                 <Icon
+//                   style={{
+//                     fontSize: ICON_SIZE,
+//                     textDecoration: isGlobalLabelFirst ? 'underline' : '',
+//                   }}
+//                   name={
+//                     isGlobalLabel ? 'bookmarks' : 'bookmark_border'
+// }
+//                 />
+//               </IconButton>
+//               <IconButton
+//                 size="small"
+//                 sx={{ height: ICON_SIZE }}
+//                 disabled={noChild}
+//                 onClick={() => onCollapse(!collapsed)}
+//               >
+//                 <Icon
+//                   style={{
+//                     fontSize: ICON_SIZE, // noChild ? 12 : ICON_SIZE,
+//                   }}
+//                   name={
+//                 noChild
+//                   ? 'fiber_manual_record'
+//                   : collapsed
+//                     ? 'arrow_drop_down_rounded'
+//                     : 'arrow_drop_up_rounded'
+// }
+//                 />
+//               </IconButton>
+//             </>
+//           )
+//         }}
+//         renderItem={({ item: { key, value } }) => (
+//           <View
+//             style={{
+//               flexDirection: 'row',
+//               justifyContent: 'space-between',
+//             }}
+//           >
+//             <Typography
+//               variant="subtitle1"
+//               style={{ alignContent: 'center' }}
+//             >
+//               {`${key}${value ? ': ' : ''}`}
+//             </Typography>
+//             {value
+//               ? (
+//                 <Typography
+//                   variant="subtitle1"
+//                   // noWrap
+//                   display="inline"
+//                   style={{ alignContent: 'center' }}
+//                 >
+//                   {value}
+//                 </Typography>
+//               )
+//               : null}
+//           </View>
+//         )}
+//       />
+//     )
+// }

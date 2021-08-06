@@ -333,7 +333,7 @@ const AppContainer = ({
     },
     dataBar: {
       // isOpen: true,
-      editable: false,
+      editable: true,
       header: DataBarHeader,
     },
     actionBar: {
@@ -377,6 +377,7 @@ const AppContainer = ({
       } = (element && getSelectedItemByElement(element, draft)) ?? {}
       switch (type) {
         case EVENT.ELEMENT_SELECTED: {
+          return
           // draft.isLoading = true
           let elementData = null
           try {
