@@ -1,6 +1,6 @@
 {
   "name": "perfect-graph",
-  "version": "0.0.84",
+  "version": "0.0.85",
   "description": "",
   "main": "node_modules/expo/AppEntry.js",
   "types": "dist/index.d.ts",
@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@inlet/react-pixi": "6.6.3",
+    "brace": "0.11.1",
     "cytoscape": "3.19.0",
     "cytoscape-avsdf": "1.0.0",
     "cytoscape-cise": "1.0.0",
@@ -38,6 +39,8 @@
     "cytoscape-fcose": "1.2.3",
     "cytoscape-klay": "3.1.4",
     "cytoscape-spread": "3.0.0",
+    "jsoneditor": "9.5.3",
+    "jsoneditor-react": "3.1.1",
     "jsonld": "3.3.0",
     "jsonld-context-parser": "2.1.1",
     "n3": "1.7.0",
