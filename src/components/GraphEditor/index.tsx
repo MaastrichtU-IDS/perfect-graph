@@ -319,6 +319,7 @@ const GraphEditorElement = (
     networkStatistics,
     graphEditorRef,
   ])
+  // useWhyDidUpdate('GRAPH_EDITOR_RENDER', props)
   return (
     <GraphEditorProvider
       value={graphEditorValue}
@@ -365,8 +366,8 @@ const GraphEditorElement = (
         // @ts-ignore
           ref={graphEditorRef}
           style={{
-            width: '100%',
-            height: '100%',
+            width: style?.width,
+            height: style?.height,
           }}
           nodes={nodes}
           edges={edges}
@@ -381,9 +382,11 @@ const GraphEditorElement = (
           }}
           selectedElementIds={selectedElementIds}
           onPress={({ position }) => {
-            updateState((draft) => {
-              draft.contextMenu.visible = false
-            })
+            if (state.contextMenu.visible) {
+              updateState((draft) => {
+                draft.contextMenu.visible = false
+              })
+            }
             const { mode } = localDataRef.current.props
             if (
             // @ts-ignore

@@ -371,6 +371,7 @@ const AppContainer = ({
       const {
         cy,
       } = graphEditor
+      console.log('EVENT', type)
       const element = cy.$id(elementId)
       const {
         item: selectedItem,
@@ -584,28 +585,28 @@ const AppContainer = ({
   //   }, 9000)
   // }, [])
   React.useEffect(() => {
-    setTimeout(() => {
-      controller.update((draft, { graphEditorRef }) => {
-        try {
-          const { hitArea } = graphEditorRef.current.viewport
-          const margin = 500
-          const boundingBox = {
-            x1: hitArea.x + margin,
-            y1: hitArea.y + margin,
-            w: hitArea.width - 2*margin,
-            h: hitArea.height - 2*margin,
-          }
-          // const layout = Graph.Layouts.cose
-          // draft.graphConfig!.layout = {
-          //   ...layout,
-          //   animationDuration: 0,
-          //   boundingBox,
-          // } 
-        } catch (error) {
-          console.log('error',error)
-        }
-      })
-    }, 1000)
+    // setTimeout(() => {
+    //   controller.update((draft, { graphEditorRef }) => {
+    //     try {
+    //       const { hitArea } = graphEditorRef.current.viewport
+    //       const margin = 500
+    //       const boundingBox = {
+    //         x1: hitArea.x + margin,
+    //         y1: hitArea.y + margin,
+    //         w: hitArea.width - 2*margin,
+    //         h: hitArea.height - 2*margin,
+    //       }
+    //       const layout = Graph.Layouts.cose
+    //       draft.graphConfig!.layout = {
+    //         ...layout,
+    //         animationDuration: 0,
+    //         boundingBox,
+    //       } 
+    //     } catch (error) {
+    //       console.log('error',error)
+    //     }
+    //   })
+    // }, 1000)
 }, [])
 
   return (

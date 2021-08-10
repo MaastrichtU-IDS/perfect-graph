@@ -13,9 +13,9 @@ import {
 import { CYTOSCAPE_EVENT } from '@constants'
 import {
   DataRender, useForwardRef,
-  useMeasure,
   View,
   ViewProps, wrapComponent,
+  useWhyDidUpdate
 } from 'colay-ui'
 import { PropsWithRef } from 'colay-ui/type'
 import * as C from 'colay/color'
@@ -212,7 +212,7 @@ const DEFAULT_CONFIG = {
 
 const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
   const {
-    style,
+    style = {},
     nodes = [],
     edges = [],
     onPress,
@@ -227,6 +227,8 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
     renderClusterNode = DefaultRenderClusterNode,
   } = props
   // const boxSelectionEnabled = !!onBoxSelection
+  const width = style?.width as number
+  const height = style?.height as number
   const config = React.useMemo(() => ({
     ...DEFAULT_CONFIG,
     ...configProp,
@@ -242,10 +244,6 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
     clusters: config.clusters,
   })
   const graphRef = useForwardRef<GraphRef>(ref, { cy })
-  const [
-    containerRef,
-    { width, height, initialized },
-  ] = useMeasure()
   const graphLayoutRef = React.useRef<cytoscape.Layouts>(null)
   React.useMemo(() => {
     graphRef.current.app = stageRef.current?.app!
@@ -264,7 +262,7 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
   }, [selectedElementIds, cy])
   React.useEffect(() => {
     R.when(
-      () => !!(stageRef.current && config.layout && initialized),
+      () => !!(stageRef.current && config.layout),
       () => {
         setTimeout(() => {
           const { hitArea } = viewportRef.current!
@@ -294,7 +292,7 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
       },
       true,
     )
-  }, [stageRef.current, config.layout, initialized])
+  }, [stageRef.current, config.layout])
   const backgroundColor = React.useMemo(
     () => C.rgbNumber(theme.palette.background.default),
     [theme.palette.background.default],
@@ -316,17 +314,13 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
     ...DEFAULT_EDGE_CONFIG,
     ...(config.edges ?? {}),
   }
-  // useWhyDidUpdate('heyy', {
-  //   stageRef: stageRef.current, layout: config.layout, width, height,
-  // })
+  
   const onPressCallback = React.useCallback((e) => {
     cyUnselectAll(cy)
     onPress?.(e)
   }, [cy, onPress])
   return (
     <View
-    // @ts-ignore
-      ref={containerRef}
       style={style}
     >
       <Stage
