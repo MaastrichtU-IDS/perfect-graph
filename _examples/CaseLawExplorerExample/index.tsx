@@ -237,7 +237,7 @@ const AppContainer = ({
   const filteredDataRef = React.useRef({})
   const [state, updateState] = useImmer({
     queryBuilder: {
-      visible: true,
+      visible: false,
       query: {
         DataSources: [
           "RS"
@@ -293,7 +293,7 @@ const AppContainer = ({
     // edges: [],
     // events: RECORDED_EVENTS,
     graphConfig: {
-      layout: Graph.Layouts.cose,
+      // layout: Graph.Layouts.cose,
       zoom: 0.2,
       nodes: {},
       // clusters: [
@@ -334,7 +334,7 @@ const AppContainer = ({
     },
     dataBar: {
       // isOpen: true,
-      editable: false,
+      editable: true,
       header: DataBarHeader,
     },
     actionBar: {
@@ -595,12 +595,12 @@ const AppContainer = ({
             w: hitArea.width - 2*margin,
             h: hitArea.height - 2*margin,
           }
-          const layout = Graph.Layouts.cose
-            draft.graphConfig!.layout = {
-              ...layout,
-              animationDuration: 0,
-              boundingBox,
-            } 
+          // const layout = Graph.Layouts.cose
+          // draft.graphConfig!.layout = {
+          //   ...layout,
+          //   animationDuration: 0,
+          //   boundingBox,
+          // } 
         } catch (error) {
           console.log('error',error)
         }
@@ -682,7 +682,7 @@ const AppContainer = ({
         })}
         videoId={HELP_VIDEO_ID}
       />
-      <TermsOfService
+      {/* <TermsOfService
           user={user}
           onAgree={async () => {
             updateState((draft) => {
@@ -695,7 +695,7 @@ const AppContainer = ({
           // onDisagree={() => {
           //   alert('To proceed on signin, you need to accept the Terms of Usage!')
           // }}
-        />
+        /> */}
         <AlertContent 
           ref={alertRef}
         />

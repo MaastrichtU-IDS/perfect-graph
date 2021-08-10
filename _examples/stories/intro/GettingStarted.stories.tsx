@@ -28,7 +28,7 @@ Then,
 \`\`\`js
 expo init my-project
 cd my-project
-yarn add perfect-graph unitx-ui unitx
+yarn add ../../src unitx-ui unitx
 \`\`\`
 
 After you can write this command to the terminal in your project directory
@@ -40,7 +40,7 @@ yarn web
 So let's start coding
 
 \`\`\`js
-import { Graph } from "perfect-graph";
+import { Graph } from "../../src";
 
 function MyGraph() {
   return (

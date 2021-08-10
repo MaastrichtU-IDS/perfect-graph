@@ -206,19 +206,20 @@ export const preprocessProps = <T extends Record<string, any>>(props: T): T => (
   ...props,
 })
 
+const IS_FLEX_DEFAULT = true
 export const applyDefaultProps = <P extends Record<string, any> >(
   instance: PIXI.Graphics | PIXI.DisplayObject | PIXI.Container,
   oldProps: P,
   // @ts-ignore
   newProps: P = {},
   config: ApplyDefaultPropsConfig = {
-    isFlex: true,
+    isFlex: IS_FLEX_DEFAULT,
     rescaleToYoga: false,
   },
 ) => {
   const mutableInstance = instance as DisplayObjectWithYoga
   const {
-    isFlex = true,
+    isFlex = IS_FLEX_DEFAULT,
     rescaleToYoga = false,
   } = config
   const { style = {}, ...restProps } = newProps

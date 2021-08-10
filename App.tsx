@@ -1,5 +1,5 @@
 import React from 'react'
-import App from './_examples/CaseLawExplorer'
+import App from './_examples/CaseLawExplorerExample'
 import { ThemeProvider, createTheme } from '@material-ui/core'
 import { useMeasure,View } from 'colay-ui'
 
@@ -26,5 +26,6 @@ export default () => {
       }
     </View>
     </ThemeProvider>
+    
   )
 }
