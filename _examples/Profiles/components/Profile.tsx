@@ -1,13 +1,10 @@
 import React from 'react'
 import { wrapComponent } from 'colay-ui'
-import {
-  NodeData,
-} from '@type'
 import { Position } from 'colay-ui/type'
-import { Pressable } from '@components/Pressable'
-import { Image } from '@components/Image'
-import { Text } from '@components/Text'
-import { View, ViewProps } from '@components/View'
+import { Pressable } from '../../../src/components/Pressable'
+import { Image } from '../../../src/components/Image'
+import { Text } from '../../../src/components/Text'
+import { View, ViewProps } from '../../../src/components/View'
 
 export type ProfileProps = {
   name: string;
@@ -17,7 +14,6 @@ export type ProfileProps = {
   style?: ViewProps['style'];
   onClick?: () => void;
 }
-// const SWITCH_COLLAPSE = 'SWITCH_COLLAPSE'
 
 export type ProfileType = React.FC<ProfileProps>
 

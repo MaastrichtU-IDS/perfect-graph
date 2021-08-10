@@ -46,7 +46,7 @@ const closeAllBars = (draft:UseControllerData) => {
 }
 
 export const useController = (
-  useControllerData: UseControllerData,
+  useControllerData: Partial<UseControllerData>,
   _graphEditorRef?: React.MutableRefObject<GraphEditorRef>,
   // options: ControllerOptions = {},
 ) => {

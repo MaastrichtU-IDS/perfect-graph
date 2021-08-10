@@ -614,8 +614,7 @@ const AppContainer = ({
     >
       <GraphEditor
         {...controllerProps}
-        // {...R.omit(['eventHistory', ])(controllerProps)}
-        payload={[configRef.current]}
+        extraData={[configRef.current]}
         style={{ width, height }}
         renderNode={(props) => (
           <RenderNode

@@ -1,5 +1,6 @@
 import React from 'react'
 import App from './_examples/CaseLawExplorerExample'
+import ProfilesApp from './_examples/Profiles'
 import { ThemeProvider, createTheme } from '@material-ui/core'
 import { useMeasure,View } from 'colay-ui'
 
@@ -18,7 +19,7 @@ export default () => {
     >
       {
         initialized && (
-          <App
+          <ProfilesApp
             dispatch={() => {}}
             {...{width, height}}
           />
