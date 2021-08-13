@@ -7488,25 +7488,25 @@ colay-docs@0.0.60:
     sass-loader "10.1.1"
     style-loader "2.0.0"
 
-colay-ui@0.0.97:
-  version "0.0.97"
-  resolved "https://registry.yarnpkg.com/colay-ui/-/colay-ui-0.0.97.tgz#44abb7eec8b0d7a5f450d0fa2d27a9f1591c7e40"
-  integrity sha512-kq9IRur4a522yeiV1X949ChAA2x1SYCWiqU2rm8g4Wy6uKlATyIeHRQINGNf0UVnO25W52H9sXwp3e1A5kCrbg==
+colay-ui@0.0.98:
+  version "0.0.98"
+  resolved "https://registry.yarnpkg.com/colay-ui/-/colay-ui-0.0.98.tgz#df8d354221274980c9c52f21e4c60721bf7c1eab"
+  integrity sha512-KFDdaz8r4Q57ok0Cu5kv2yht3/Bx1bHFe/GQ+lNj6YEmiM/FWX6l0oWsSyBIA+PwM+bRGvw5veV/gkvQ5ppgKw==
   dependencies:
     react-error-boundary "3.1.0"
 
-colay@0.0.56:
-  version "0.0.56"
-  resolved "https://registry.yarnpkg.com/colay/-/colay-0.0.56.tgz#323f7a0ddef882b475ea8408697e9c734e277559"
-  integrity sha512-qhPVMrpc01pWcafqa5jHUSkLE8/51womXk6bE/EU/J5OPIA1u8T0GoLJegqiZ+s1n9qGdHC6nWdaGI1slTfcVg==
+colay@0.0.57:
+  version "0.0.57"
+  resolved "https://registry.yarnpkg.com/colay/-/colay-0.0.57.tgz#c477ae8a5d60c28b5fdcb38e893de9ef003ff6cc"
+  integrity sha512-XIv6/RF0qgvMKBy2aQLYCKUAppSADlOU8tur4QT8dO1LFs7KQEf19MZm2ldFlhcgf9Xnv+OGMN7gUdxJxWPxAg==
   dependencies:
     "@types/async" "3.2.5"
     "@types/ramda" "0.27.34"
     async "3.2.0"
     color "3.1.3"
-    nanoid "3.1.23"
     pluralize "8.0.0"
     ramda "0.27.1"
+    uuid "8.3.2"
     victor "1.1.0"
 
 collapse-white-space@^1.0.2:
@@ -13336,7 +13336,7 @@ nan@^2.12.1:
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.15.0.tgz#3f34a473ff18e15c1b5626b62903b5ad6e665fee"
   integrity sha512-8ZtvEnA2c5aYCZYd1cvgdnU6cqwixRoYg70xPLWUws5ORTa/lnw+u4amixRS/Ac5U5mQVgp9pnlSUnbNWFaWZQ==
 
-nanoid@3.1.23, nanoid@^3.1.16, nanoid@^3.1.23:
+nanoid@^3.1.16, nanoid@^3.1.23:
   version "3.1.23"
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.1.23.tgz#f744086ce7c2bc47ee0a8472574d5c78e4183a81"
   integrity sha512-FiB0kzdP0FFVGDKlRLEQ1BgDzU87dy5NnzjeW9YZNt+/c3+q82EQDUwniSAUxp/F0gFNI1ZhKU1FqYsMuqZVnw==
@@ -17792,6 +17792,11 @@ uuid@3.3.2:
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.3.2.tgz#1b4af4955eb3077c501c23872fc6513811587131"
   integrity sha512-yXJmeNaw3DnnKAOKJE51sL/ZaYfWJRl1pK9dr19YFCu0ObS231AB1/LbqTKRAQ5kw8A90rA6fr4riOUpTZvQZA==
 
+uuid@8.3.2, uuid@^8.3.2:
+  version "8.3.2"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
+  integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
+
 uuid@^3.0.0, uuid@^3.2.1, uuid@^3.3.2, uuid@^3.4.0:
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.4.0.tgz#b23e4358afa8a202fe7a100af1f5f883f02007ee"
@@ -17801,11 +17806,6 @@ uuid@^7.0.3:
   version "7.0.3"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-7.0.3.tgz#c5c9f2c8cf25dc0a372c4df1441c41f5bd0c680b"
   integrity sha512-DPSke0pXhTZgoF/d+WSt2QaKMCFSfx7QegxEWT+JOuHF5aWrKEn0G+ztjuJg/gG8/ItK+rbPCD/yNv8yyih6Cg==
-
-uuid@^8.3.2:
-  version "8.3.2"
-  resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
-  integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
 
 v8-compile-cache@^2.0.3:
   version "2.3.0"
