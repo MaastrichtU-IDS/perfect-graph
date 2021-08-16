@@ -1,4 +1,3 @@
-import '@core/config'
 import { RenderEdge } from '@type'
 import { cyUnselectAll } from '@utils'
 import * as R from 'colay/ramda'

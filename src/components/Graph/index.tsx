@@ -15,7 +15,6 @@ import {
   DataRender, useForwardRef,
   View,
   ViewProps, wrapComponent,
-  useWhyDidUpdate,
 } from 'colay-ui'
 import { PropsWithRef } from 'colay-ui/type'
 import * as C from 'colay/color'

@@ -354,7 +354,9 @@ export const ClusterTable = (props: ClusterTableProps) => {
                                   e.stopPropagation()
                                   onEvent({
                                     type: EVENT.ELEMENT_SELECTED,
-                                    elementId,
+                                    payload: {
+                                      itemIds: [elementId]
+                                    },
                                   })
                                 }}
                               >

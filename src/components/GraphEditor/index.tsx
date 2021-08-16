@@ -157,7 +157,12 @@ const GraphEditorElement = (
   }, [graphEditorRef.current])
   // @TODO: DANGER
   const selectedElement = React.useMemo(
-    () => graphEditorRef.current?.cy?.$id(R.last(selectedElementIds)!),
+    () => {
+      const collection = graphEditorRef.current?.cy?.$id(R.last(selectedElementIds)!)
+      return collection?.length === 0
+        ? null
+        : collection
+    },
     // if (!localDataRef.current.initialized) {
     //   const callback = () => {
     //     setTimeout(() => {
@@ -495,11 +500,13 @@ const GraphEditorElement = (
                   })
                   return
                 }
-                cyUnselectAll(graphEditorRef.current.cy)
-                element.select()
+                // cyUnselectAll(graphEditorRef.current.cy)
+                // element.select()
                 onEvent({
                   type: EVENT.ELEMENT_SELECTED,
-                  elementId: element.id(),
+                  payload: {
+                    itemIds: [element.id()],
+                  },
                   event,
                 })
               }}
@@ -541,11 +548,13 @@ const GraphEditorElement = (
                   })
                   return
                 }
-                cyUnselectAll(graphEditorRef.current.cy)
-                element.select()
+                // cyUnselectAll(graphEditorRef.current.cy)
+                // element.select()
                 onEvent({
                   type: EVENT.ELEMENT_SELECTED,
-                  elementId: element.id(),
+                  payload: {
+                    itemIds: [element.id()],
+                  },
                 })
               }}
             >

@@ -323,7 +323,6 @@ const AppContainer = ({
       // isOpen: true,
     },
     settingsBar: {
-      opened: true,
       // forms: [AUTO_CREATED_SCHEMA,FETCH_SCHEMA, VIEW_CONFIG_SCHEMA, {...FILTER_SCHEMA,  formData: configRef.current.filtering}, ],
       forms: [{ ...FETCH_SCHEMA, formData: configRef.current.fetching }, VIEW_CONFIG_SCHEMA, { ...FILTER_SCHEMA, formData: configRef.current.filtering },],
       createClusterForm: {
@@ -333,7 +332,7 @@ const AppContainer = ({
       },
     },
     dataBar: {
-      // isOpen: true,
+      isOpen: true,
       editable: false,
       header: DataBarHeader,
     },
@@ -379,6 +378,16 @@ const AppContainer = ({
       switch (type) {
         case EVENT.ELEMENT_SELECTED: {
           // draft.isLoading = true
+          const {
+            itemIds,
+          } = payload
+          const selectedItemId = itemIds?.[0]
+          const element = selectedItemId
+            ? graphEditor.cy.$id(`${selectedItemId}`)
+            : null
+          const {
+            item: selectedItem,
+          } = (element && getSelectedItemByElement(element, draft)) ?? {}
           let elementData = null
           try {
             elementData = await API.getElementData({ id: selectedItem.data.ecli });

@@ -439,7 +439,7 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
         type,
         payload,
       } = event
-      const oldSelectedElementId = R.last(draft.selectedElementIds ?? [])
+      const oldSelectedElementIds = draft.selectedElementIds
       // const element = elementId
       //   ? graphEditor.cy.$id(`${elementId}`)
       //   : null
@@ -503,12 +503,14 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
             },
           ]
         case EVENT.ELEMENT_SELECTED:
-          return oldSelectedElementId
+          return oldSelectedElementIds
             ? [
               {
                 ...event,
                 type: EVENT.ELEMENT_SELECTED,
-                elementId: oldSelectedElementId,
+                payload: {
+                  itemIds: oldSelectedElementIds,
+                },
               },
             ]
             : [
@@ -522,11 +524,13 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
             ]
         case EVENT.PRESS_BACKGROUND:
           // @ts-ignore
-          return oldSelectedElementId
+          return oldSelectedElementIds
             ? [
               {
                 ...event,
-                elementId: oldSelectedElementId,
+                payload: {
+                  itemIds: oldSelectedElementIds,
+                },
                 type: EVENT.ELEMENT_SELECTED,
                 event: {
                   data: {
@@ -624,3 +628,10 @@ export const contextUtils = {
     ELEMENT_DATA_FIELDS.CONTEXT,
   ),
 }
+
+export const getElementData = (element: Element) => element.data(ELEMENT_DATA_FIELDS.DATA)
+
+export const getItemFromElement = (element: Element) => ({
+  id: element.id(),
+  data: getElementData(element),
+})

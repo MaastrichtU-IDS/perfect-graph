@@ -67,7 +67,7 @@ const controlPointsCreator = {
   },
 }
 const drawArrowHead = ({
-  graphics: mutableGraphics,
+  graphics,
   to,
   radius = 10,
   unitVector,
@@ -90,14 +90,14 @@ const drawArrowHead = ({
     V.add(bottomCenter),
   )(perpendicularUnitDistanceVec)
   const topControlPoint = V.add(unitDistanceVec)(to)
-  mutableGraphics.beginFill(fill)
-  mutableGraphics.drawPolygon(
+  graphics.beginFill(fill)
+  graphics.drawPolygon(
     new PIXI.Point(leftControlPoint.x, leftControlPoint.y),
     new PIXI.Point(rightControlPoint.x, rightControlPoint.y),
     new PIXI.Point(topControlPoint.x, topControlPoint.y),
   )
-  mutableGraphics.endFill()
-  mutableGraphics.isSprite = true
+  graphics.endFill()
+  graphics.isSprite = true
 }
 export const drawLine = (
   config: {
@@ -129,7 +129,7 @@ export const drawLine = (
     fill = C.rgbNumber(DefaultTheme.palette.background.paper),
     directed,
     type, //= 'bezier',
-    graphics: mutableInstance,
+    graphics,
     width = 6,
     alpha = 1,
     arrowHead = {
@@ -168,12 +168,12 @@ export const drawLine = (
     V.subtract(V.multiplyScalar(radiusTo)(unitVector)),
     V.add(marginVector),
   )(centerOfTo)
-  mutableInstance.clear()
-  mutableInstance.lineStyle(width, fill, alpha)
+  graphics.clear()
+  graphics.lineStyle(width, fill, alpha)
 
   if (directed) {
     drawArrowHead({
-      graphics: mutableInstance,
+      graphics,
       unitVector,
       to,
       fill,
@@ -200,8 +200,8 @@ export const drawLine = (
             control1,
             control2,
           }: BezierLinePoints) => {
-            mutableInstance.moveTo(start.x, start.y)
-            mutableInstance.bezierCurveTo(
+            graphics.moveTo(start.x, start.y)
+            graphics.bezierCurveTo(
               control1.x, control1.y, control2.x, control2.y, end.x, end.y,
             )
           },
@@ -225,12 +225,12 @@ export const drawLine = (
             mid,
             end,
           }: BezierLinePoints) => {
-            mutableInstance.moveTo(start.x, start.y)
-            mutableInstance.lineTo(
+            graphics.moveTo(start.x, start.y)
+            graphics.lineTo(
               mid.x, mid.y,
             )
-            mutableInstance.moveTo(mid.x, mid.y)
-            mutableInstance.lineTo(
+            graphics.moveTo(mid.x, mid.y)
+            graphics.lineTo(
               end.x, end.y,
             )
           },
@@ -255,31 +255,22 @@ export const drawLine = (
               start,
               end,
             }: BezierLinePoints) => {
-              mutableInstance.moveTo(start.x, start.y)
-              mutableInstance.bezierCurveTo(
+              graphics.moveTo(start.x, start.y)
+              graphics.bezierCurveTo(
                 start.x, start.y, mid.x, mid.y, end.x, end.y,
               )
             },
           )(controlPoints)
         } else {
-          mutableInstance.moveTo(from.x, from.y)
-          mutableInstance.lineTo(to.x, to.y)
+          graphics.moveTo(from.x, from.y)
+          graphics.lineTo(to.x, to.y)
         }
       },
     ],
   ])(type)
-  mutableInstance.endFill()
-  mutableInstance.zIndex = EDGE_LINE_Z_INDEX
+  graphics.endFill()
+  graphics.zIndex = EDGE_LINE_Z_INDEX
 }
-
-// export const Graphics = PixiComponent<GraphicsProps, PIXI.Graphics>('PIXIGraphics', {
-//   create: () => {
-//     const mutableInstance = new PIXI.Graphics()
-//     return mutableInstance
-//   },
-//   // applyProps: (mutableInstance, __, _props) => {
-//   // },
-// })
 
 export { Graphics } from '@inlet/react-pixi'
 

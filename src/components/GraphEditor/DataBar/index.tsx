@@ -5,7 +5,7 @@ import {
   AccordionSummary, Divider, IconButton, Paper, Typography,
   Button,
 } from '@material-ui/core'
-import { EVENT } from '@constants'
+import { EVENT, SIDE_PANEL_DEFAULT_WIDTH } from '@constants'
 import { EdgeElement } from '@type'
 import {
   JSONViewer,
@@ -17,9 +17,12 @@ import React from 'react'
 // import {
 //   DataEditor,
 // } from '../DataEditor'
+import { useDragInfo } from '@hooks/useDragInfo'
+import { useDrag } from '@hooks/useDrag'
 import { JSONEditor } from './JSONEditor'
 import { GlobalNetworkStatistics } from './GlobalNetworkStatistics'
 import { LocalNetworkStatistics } from './LocalNetworkStatistics'
+import { ConnectedElements } from './ConnectedElements'
 
 export type DataBarProps = {
   editable?: boolean;
@@ -29,6 +32,7 @@ export type DataBarProps = {
 } // & Omit<DataEditorProps, 'data'>
 
 const WIDTH_PROPORTION = 40
+const PANEL_WIDTH = 200
 const ICON_SIZE = 16
 
 export const DataBar = (props: DataBarProps) => {
@@ -75,41 +79,60 @@ export const DataBar = (props: DataBarProps) => {
       }
     },
   )
-
   const {
     style: animationStyle,
     ref: animationRef,
   } = useAnimation({
     from: {
-      right: `-${WIDTH_PROPORTION}%`,
+      width: 0,
     },
     to: {
-      right: '0%',
+      width: SIDE_PANEL_DEFAULT_WIDTH,
     },
     autoPlay: false,
   })
+  const containerRef = React.useRef()
   React.useEffect(() => {
     animationRef.current?.play?.(isOpen)
   }, [animationRef, isOpen])
   const hasStatistics = Object.values(networkStatistics).find((val) => val)
-  const isEdge = selectedElement?.isEdge()
   const [state, setState] = React.useState({
     isEditing: false,
   })
+  const onMouseDown = useDrag({
+    ref: containerRef,
+    onDrag: ({ x, y }, rect) => {
+      const target = containerRef.current
+      target.style.width = `${rect.width + x}px`
+    },
+  })
   return (
     <Paper
+      ref={containerRef}
       style={{
         position: 'absolute',
-        width: `${WIDTH_PROPORTION}%`,
         height: '100%',
         top: 0,
+        display: 'flex',
+        flexDirection: 'row',
+        right: 0,
+        // width: animationStyle.right,
         ...animationStyle,
       }}
     >
+      <div
+        style={{
+          width: 5,
+          height: '100%',
+          backgroundColor: 'black',
+          cursor: 'col-resize',
+        }}
+        onMouseDown={onMouseDown}
+      />
       <View
         style={{
           height: '100%',
-          width: '100%',
+          width: '96%',
           // @ts-ignore
           overflowY: 'auto',
           overflowX: 'hidden',
@@ -123,7 +146,10 @@ export const DataBar = (props: DataBarProps) => {
           <AccordionSummary>
             <Typography
               variant="h6"
-              // style={{ marginLeft: 2 }}
+              style={{
+                wordBreak: 'break-word',
+                padding: 2,
+              }}
             >
               {` id: ${item?.id}`}
             </Typography>
@@ -136,9 +162,9 @@ export const DataBar = (props: DataBarProps) => {
               // flexWrap: 'wrap',
             }}
             >
-              {
+              {/* {
                 isEdge && <EdgeElementSummary element={selectedElement} />
-              }
+              } */}
               {
         editable && item?.data
           && (
@@ -292,6 +318,7 @@ export const DataBar = (props: DataBarProps) => {
 
         )}
         <Divider />
+        <ConnectedElements />
         {
         hasStatistics && (
           <View

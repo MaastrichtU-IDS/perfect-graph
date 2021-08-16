@@ -21,6 +21,9 @@ export default (props) => {
       // zoom: 0.2,
       nodes: {},
     },
+    dataBar: {
+      isOpen: true,
+    }
   })
   return (
     <GraphEditor

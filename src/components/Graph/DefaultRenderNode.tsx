@@ -43,4 +43,3 @@ export const DefaultRenderNode: RenderNode = ({
     </GraphView>
   )
 }
-

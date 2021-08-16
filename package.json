@@ -73,7 +73,7 @@
     "colay": "0.0.57",
     "colay-dev": "0.0.8",
     "colay-docs": "0.0.60",
-    "colay-ui": "0.0.98",
+    "colay-ui": "0.0.102",
     "expo": "42.0.1",
     "immer": "9.0.5",
     "json-schema-merge-allof": "0.8.1",

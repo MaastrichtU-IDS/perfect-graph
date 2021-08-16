@@ -52,6 +52,9 @@ export const useElement = (props: Props): Result => {
     () => {
       renderEvents.forEach((eventName) => {
         element.on(eventName, () => {
+          // if (element.isNode()) {
+          //   console.log(item.id, eventName)
+          // }
           contextRef.current?.render?.()
         })
       })

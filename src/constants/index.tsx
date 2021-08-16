@@ -14,6 +14,7 @@ export const ELEMENT_TYPE = {
 
 export const EVENT = {
   ELEMENT_SELECTED: 'ELEMENT_SELECTED',
+  ELEMENT_SELECTED_WITH_ZOOM: 'ELEMENT_SELECTED_WITH_ZOOM',
   CHANGE_DATA_NAME: 'CHANGE_DATA_NAME',
   CHANGE_DATA_VALUE: 'CHANGE_DATA_VALUE',
   CHANGE_DATA_NAME_ADDITIONAL: 'CHANGE_DATA_NAME_ADDITIONAL',
@@ -130,6 +131,7 @@ export const PIXI_EVENT_NAMES = {
   onRightPress: 'rightclick',
 }
 
+export const SIDE_PANEL_DEFAULT_WIDTH = 300
 // export const eventHandlers = [
 //   'click',
 //   'mousedown',

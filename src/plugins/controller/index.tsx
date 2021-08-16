@@ -16,8 +16,9 @@ import { useImmer } from 'colay-ui/hooks/useImmer'
 import { Position } from 'colay-ui/type'
 import { download } from 'colay-ui/utils'
 import * as R from 'colay/ramda'
-import PIXI from 'pixi.js'
+import * as PIXI from 'pixi.js'
 import React from 'react'
+import * as V from 'colay/vector'
 
 // type ControllerOptions = {
 //   // onEvent?: (info: EventInfo, draft: ControllerState) => boolean;
@@ -258,8 +259,70 @@ export const useController = (
             draft.selectedElementIds = []
             break
           }
+          case EVENT.ELEMENT_SELECTED_WITH_ZOOM: {
+            const {
+              itemIds,
+            } = payload
+            draft.selectedElementIds = itemIds
+            const selectedItemId = itemIds[0]
+            const element = selectedItemId
+              ? graphEditor.cy.$id(`${selectedItemId}`)
+              : null
+            if (element) {
+              const {
+                viewport,
+              } = graphEditor
+              let TARGET_SIZE = 2000 // viewport.hitArea.width / 2// 800
+              // const MARGIN_SIZE = 180
+
+              // element.neighborhood().layout({
+              //   ...Graph.Layouts.circle,
+              //   boundingBox: {
+              //     x1: center.x - TARGET_SIZE / 2,
+              //     y1: center.y - TARGET_SIZE / 3,
+              //     w: TARGET_SIZE / 2,
+              //     h: TARGET_SIZE / 2,
+              //   },
+              // }).start()
+              console.log(viewport.hitArea.width, TARGET_SIZE)
+              if (viewport.hitArea.width === TARGET_SIZE) {
+                TARGET_SIZE += 500
+              }
+              let position
+              if (element.isNode()) {
+                position = element.position()
+              } else {
+                position = V.midpoint(
+                  element.source().position(),
+                )(element.target().position())
+              }
+              const center = {
+                x: position.x + TARGET_SIZE / 4,
+                y: position.y,
+              }
+              const centerPoint = new PIXI.Point(center.x, center.y)
+              viewport.snapZoom({
+                center: centerPoint,
+                width: TARGET_SIZE,
+                forceStart: true,
+                time: Graph.Layouts.grid.animationDuration + 500,
+                removeOnComplete: true,
+                removeOnInterrupt: true,
+                noMove: false,
+              })
+            }
+
+            break
+          }
           case EVENT.ELEMENT_SELECTED: {
-            draft.selectedElementIds = [selectedItem!.id]
+            const {
+              itemIds,
+            } = payload
+            draft.selectedElementIds = itemIds
+            const selectedItemId = itemIds[0]
+            const element = selectedItemId
+              ? graphEditor.cy.$id(`${selectedItemId}`)
+              : null
             if (event && event.data!.originalEvent.metaKey && element?.isNode()) {
               draft.dataBar!.isOpen = true
               const {

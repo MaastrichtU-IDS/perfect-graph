@@ -1,5 +1,5 @@
 import { Icon } from '@components/Icon'
-import { EVENT } from '@constants'
+import { EVENT, SIDE_PANEL_DEFAULT_WIDTH } from '@constants'
 import { useGraphEditor } from '@hooks'
 import {
   Accordion, AccordionDetails, AccordionSummary, Button, Divider,
@@ -12,6 +12,7 @@ import {
   View, wrapComponent,
 } from 'colay-ui'
 import { useImmer } from 'colay-ui/hooks/useImmer'
+import { useDrag } from '@hooks/useDrag'
 import * as R from 'colay/ramda'
 import React from 'react'
 import { ClusterTable } from './ClusterTable'
@@ -64,10 +65,10 @@ const SettingsBarElement = (props: SettingsBarProps) => {
     ref: animationRef,
   } = useAnimation({
     from: {
-      left: `-${WIDTH_PROPORTION}%`,
+      width: 0,
     },
     to: {
-      left: '0%',
+      width: SIDE_PANEL_DEFAULT_WIDTH,
     },
     autoPlay: false,
   })
@@ -81,16 +82,37 @@ const SettingsBarElement = (props: SettingsBarProps) => {
     },
     selectedEventIds: [] as string[],
   })
+  const containerRef = React.useRef()
+  const onMouseDown = useDrag({
+    ref: containerRef,
+    onDrag: ({ x, y }, rect) => {
+      const target = containerRef.current
+      target.style.width = `${rect.width + x}px`
+    },
+  })
   return (
     <Paper
+      ref={containerRef}
       style={{
         position: 'absolute',
         width: `${WIDTH_PROPORTION}%`,
         height: '100%',
         top: 0,
+        left: 0,
+        display: 'flex',
+        flexDirection: 'row',
         ...animationStyle,
       }}
     >
+      <div
+        style={{
+          width: 5,
+          height: '100%',
+          backgroundColor: 'black',
+          cursor: 'col-resize',
+        }}
+        onMouseDown={onMouseDown}
+      />
       <View
         style={{
           // @ts-ignore
