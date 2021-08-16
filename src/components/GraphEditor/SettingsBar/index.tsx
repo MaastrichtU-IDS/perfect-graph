@@ -87,7 +87,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
     ref: containerRef,
     onDrag: ({ x, y }, rect) => {
       const target = containerRef.current
-      target.style.width = `${rect.width + x}px`
+      target.style.width = `${rect.width - x}px`
     },
   })
   return (
@@ -95,7 +95,6 @@ const SettingsBarElement = (props: SettingsBarProps) => {
       ref={containerRef}
       style={{
         position: 'absolute',
-        width: `${WIDTH_PROPORTION}%`,
         height: '100%',
         top: 0,
         left: 0,
@@ -104,23 +103,13 @@ const SettingsBarElement = (props: SettingsBarProps) => {
         ...animationStyle,
       }}
     >
-      <div
-        style={{
-          width: 5,
-          height: '100%',
-          backgroundColor: 'black',
-          cursor: 'col-resize',
-        }}
-        onMouseDown={onMouseDown}
-      />
       <View
         style={{
           // @ts-ignore
           overflowY: 'auto',
           overflowX: 'hidden',
-          // paddingRight: 10,
-          // paddingLeft: 10,
-          height: '100%', // eventHistory ? '50%' : '100%',
+          height: '100%',
+          width: '97%',
         }}
       >
         {
@@ -241,7 +230,15 @@ const SettingsBarElement = (props: SettingsBarProps) => {
         )
       }
       </View>
-
+      <div
+        style={{
+          width: 5,
+          height: '100%',
+          backgroundColor: 'black',
+          cursor: 'col-resize',
+        }}
+        onMouseDown={onMouseDown}
+      />
       <IconButton
         style={styles.icon}
         onClick={() => {
