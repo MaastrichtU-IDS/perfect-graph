@@ -15,7 +15,7 @@ import {
   DataRender, useForwardRef,
   View,
   ViewProps, wrapComponent,
-  useWhyDidUpdate
+  useWhyDidUpdate,
 } from 'colay-ui'
 import { PropsWithRef } from 'colay-ui/type'
 import * as C from 'colay/color'
@@ -26,8 +26,9 @@ import * as PIXI from 'pixi.js'
 import { ClusterNodeContainer } from '../ClusterNodeContainer'
 import { EdgeContainer } from '../EdgeContainer'
 import { NodeContainer } from '../NodeContainer'
-import { Text as GraphText } from '../Text'
-import { View as GraphView } from '../View'
+import { DefaultRenderClusterNode } from './DefaultRenderClusterNode'
+import { DefaultRenderNode } from './DefaultRenderNode'
+import { DefaultRenderEdge } from './DefaultRenderEdge'
 import { Viewport, ViewportProps } from '../Viewport'
 
 export type GraphProps = {
@@ -49,164 +50,6 @@ export type GraphProps = {
     boundingBox: BoundingBox;
   }) => void;
   selectedElementIds?: string[]
-}
-
-const DEFAULT_NODE_CONFIG = {
-  renderEvents: [
-    CYTOSCAPE_EVENT.select,
-    CYTOSCAPE_EVENT.unselect,
-    CYTOSCAPE_EVENT.selectEdge,
-    CYTOSCAPE_EVENT.unselectEdge,
-  ],
-}
-
-const DEFAULT_EDGE_CONFIG = {
-  renderEvents: [
-    CYTOSCAPE_EVENT.select,
-    CYTOSCAPE_EVENT.unselect,
-    CYTOSCAPE_EVENT.selectNode,
-    CYTOSCAPE_EVENT.unselectNode,
-  ],
-}
-
-export const DefaultRenderNode: RenderNode = ({
-  item, element, cy, theme,
-}) => {
-  const hasSelectedEdge = element.connectedEdges(':selected').length > 0
-  return (
-    <GraphView
-      style={{
-        width: 50,
-        height: 50,
-        justifyContent: 'center',
-        alignItems: 'center',
-        display: 'flex',
-        backgroundColor: hasSelectedEdge
-          ? theme.palette.secondary.main
-          : (element.selected()
-            ? theme.palette.primary.main
-            : theme.palette.background.paper),
-        borderRadius: 50,
-      }}
-      interactive
-      click={() => {
-        cyUnselectAll(cy)
-        element.select()
-      }}
-      // rightclick={(e) => {
-        // alert('Heyy')
-      // }}
-      // onRightPress={(e) => {
-      // }}
-      // mouseover={(e) => {
-      // }}
-      // onPressEnd={(e) => {
-      // }}
-    >
-      <GraphText
-        style={{
-          position: 'absolute',
-          top: -40,
-          color: 'black',
-        }}
-        isSprite
-      >
-        {R.last(item.id.split('/'))?.substring(0, 10) ?? item.id}
-      </GraphText>
-    </GraphView>
-  )
-}
-
-export const DefaultRenderEdge: RenderEdge = ({
-  cy,
-  item,
-  element,
-}) => (
-  <GraphView
-    style={{
-      // width: 20,
-      // height: 20,
-      position: 'absolute',
-
-      justifyContent: 'center',
-      alignItems: 'center',
-      display: 'flex',
-      // backgroundColor: DefaultTheme.palette.background.paper,
-      // element.selected()
-      //   ? DefaultTheme.palette.primary.main
-      //   : DefaultTheme.palette.background.paper,
-      // borderRadius: 50,
-    }}
-    click={() => {
-      cyUnselectAll(cy)
-      element.select()
-    }}
-  >
-    <GraphText
-      style={{
-        // position: 'absolute',
-        // top: -40,
-        // backgroundColor: DefaultTheme.palette.background.paper,
-        color: 'black',
-        fontSize: 12,
-      }}
-      isSprite
-    >
-      {R.last(item.id.split('/'))?.substring(0, 10) ?? item.id}
-    </GraphText>
-  </GraphView>
-)
-
-export const DefaultRenderClusterNode: RenderNode = ({
-  item, element, cy, theme,
-}) => {
-  const hasSelectedEdge = element.connectedEdges(':selected').length > 0
-  return (
-    <GraphView
-      style={{
-        width: 150,
-        height: 150,
-        justifyContent: 'center',
-        alignItems: 'center',
-        display: 'flex',
-        backgroundColor: hasSelectedEdge
-          ? theme.palette.secondary.main
-          : (element.selected()
-            ? theme.palette.primary.main
-            : theme.palette.warning.main),
-        borderRadius: 20,
-      }}
-      interactive
-      click={() => {
-        cyUnselectAll(cy)
-        element.select()
-      }}
-      // rightclick={(e) => {
-        // alert('Heyy')
-      // }}
-      // onRightPress={(e) => {
-      // }}
-      // mouseover={(e) => {
-      // }}
-      // onPressEnd={(e) => {
-      // }}
-    >
-      <GraphText
-        style={{
-          position: 'absolute',
-          top: -90,
-          color: 'black',
-        }}
-        isSprite
-      >
-        {R.last(item.id.split('/'))?.substring(0, 10) ?? item.id}
-      </GraphText>
-    </GraphView>
-  )
-}
-
-const DEFAULT_CONFIG = {
-  theme: DefaultTheme,
 }
 
 const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
@@ -313,7 +156,7 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
     ...DEFAULT_EDGE_CONFIG,
     ...(config.edges ?? {}),
   }
-  
+
   const onPressCallback = React.useCallback((e) => {
     cyUnselectAll(cy)
     onPress?.(e)
@@ -436,6 +279,28 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
   )
 }
 
+const DEFAULT_NODE_CONFIG = {
+  renderEvents: [
+    CYTOSCAPE_EVENT.select,
+    CYTOSCAPE_EVENT.unselect,
+    CYTOSCAPE_EVENT.selectEdge,
+    CYTOSCAPE_EVENT.unselectEdge,
+  ],
+}
+
+const DEFAULT_EDGE_CONFIG = {
+  renderEvents: [
+    CYTOSCAPE_EVENT.select,
+    CYTOSCAPE_EVENT.unselect,
+    CYTOSCAPE_EVENT.selectNode,
+    CYTOSCAPE_EVENT.unselectNode,
+  ],
+}
+
+const DEFAULT_CONFIG = {
+  theme: DefaultTheme,
+}
+
 export const Graph = wrapComponent<PropsWithRef<GraphRef, GraphProps>>(
   GraphElement,
   {
@@ -443,3 +308,7 @@ export const Graph = wrapComponent<PropsWithRef<GraphRef, GraphProps>>(
     isEqual: R.equalsExclude(R.is(Function)),
   },
 )
+
+export { DefaultRenderClusterNode } from './DefaultRenderClusterNode'
+export { DefaultRenderNode } from './DefaultRenderNode'
+export { DefaultRenderEdge } from './DefaultRenderEdge'
