@@ -287,9 +287,9 @@ export const useController = (
               //     h: TARGET_SIZE / 2,
               //   },
               // }).start()
-              if (viewport.hitArea.width === TARGET_SIZE) {
-                TARGET_SIZE += 500
-              }
+              // if (viewport.hitArea.width === TARGET_SIZE) {
+              //   TARGET_SIZE += 500
+              // }
               let position
               if (selectedElement.isNode()) {
                 position = selectedElement.position()

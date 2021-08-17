@@ -292,9 +292,9 @@ export const DataBar = (props: DataBarProps) => {
                     ? (
                       <Typography
                         variant="subtitle1"
-                        // noWrap
-                        display="inline"
-                        style={{ alignContent: 'center' }}
+                        component="h2"
+                        align="center"
+                        style={{ wordWrap: 'break-word' }}
                       >
                         {value}
                       </Typography>

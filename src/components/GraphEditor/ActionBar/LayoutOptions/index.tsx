@@ -98,7 +98,7 @@ export const LayoutOptions = (props: LayoutOptionsProps) => {
         </Portal>
         <Box
           sx={{
-            width: { sx: '10vw', md: '50vw' },
+            width: 450,
             padding: 2,
           }}
         >

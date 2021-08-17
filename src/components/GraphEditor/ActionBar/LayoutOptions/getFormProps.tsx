@@ -224,7 +224,7 @@ const LayoutCard = (props: LayoutCardProps) => {
     <>
       <Card
         sx={{
-          width: '50vw',
+          width: 450,
           zIndex: (theme) => theme.zIndex.modal,
         }}
       >
