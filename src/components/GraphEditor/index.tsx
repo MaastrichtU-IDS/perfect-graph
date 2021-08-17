@@ -324,7 +324,6 @@ const GraphEditorElement = (
     networkStatistics,
     graphEditorRef,
   ])
-  // useWhyDidUpdate('GRAPH_EDITOR_RENDER', props)
   return (
     <GraphEditorProvider
       value={graphEditorValue}
@@ -715,6 +714,7 @@ const extractGraphEditorData = (props: GraphEditorProps) => convert({
   // settingsBar: R.omit(['header', 'footer'], props.settingsBar),
   dataBar: R.omit(['header', 'footer'], props.dataBar),
   actionBar: R.omit(['right', 'left'], props.actionBar),
+  eventHistory: props.eventHistory,
   mode: props.mode,
   nodes: props.nodes,
   edges: props.edges,

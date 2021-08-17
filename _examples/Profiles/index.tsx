@@ -23,7 +23,13 @@ export default (props) => {
     },
     dataBar: {
       isOpen: true,
-    }
+    },
+    settingsBar: {
+      isOpen: true,
+    },
+    actionBar: {
+      isOpen: true,
+    },
   })
   return (
     <GraphEditor

@@ -34,7 +34,6 @@ export type SettingsBarProps = {
   createClusterForm?: FormProps<any>;
 }
 
-const WIDTH_PROPORTION = 30
 const SettingsBarElement = (props: SettingsBarProps) => {
   const {
     isOpen = false,

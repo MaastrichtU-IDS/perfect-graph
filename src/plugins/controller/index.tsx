@@ -438,10 +438,22 @@ export const useController = (
             draft.actionBar!.isOpen = !draft.actionBar?.isOpen
             break
           case EVENT.IMPORT_DATA:
+
             R.mapObjIndexed((value, key) => {
               // @ts-ignore
               draft[key] = value
             })(payload.value)
+            const {
+              eventHistory: eventHistoryData,
+            } = payload.value ?? {}
+            eventHistory.set({
+              currentIndex: eventHistoryData.events.length,
+              items: eventHistoryData.events.map((event, i) => ({
+                id: R.uuid(),
+                do: [event],
+                undo: [eventHistoryData.undoEvents[i]],
+              })),
+            })
             break
           case EVENT.IMPORT_EVENTS:
             closeAllBars(draft)

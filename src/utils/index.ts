@@ -596,7 +596,7 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
             },
           ]
         case EVENT.ELEMENT_SELECTED:
-          return oldSelectedElementIds
+          return (oldSelectedElementIds && oldSelectedElementIds.length > 0)
             ? [
               {
                 ...event,
@@ -616,7 +616,7 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
               },
             ]
         case EVENT.ELEMENT_SELECTED_WITH_ZOOM:
-          return oldSelectedElementIds
+          return (oldSelectedElementIds && oldSelectedElementIds.length > 0)
             ? [
               {
                 ...event,
