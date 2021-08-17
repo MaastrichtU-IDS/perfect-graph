@@ -17,8 +17,8 @@ import React from 'react'
 // import {
 //   DataEditor,
 // } from '../DataEditor'
-import { useDragInfo } from '@hooks/useDragInfo'
 import { useDrag } from '@hooks/useDrag'
+import { ResizeDivider } from '@components/ResizeDivider'
 import { JSONEditor } from './JSONEditor'
 import { GlobalNetworkStatistics } from './GlobalNetworkStatistics'
 import { LocalNetworkStatistics } from './LocalNetworkStatistics'
@@ -120,19 +120,13 @@ export const DataBar = (props: DataBarProps) => {
         ...animationStyle,
       }}
     >
-      <div
-        style={{
-          width: 5,
-          height: '100%',
-          backgroundColor: 'black',
-          cursor: 'col-resize',
-        }}
+      <ResizeDivider
         onMouseDown={onMouseDown}
       />
       <View
         style={{
           height: '100%',
-          width: '96%',
+          flex: 1,
           // @ts-ignore
           overflowY: 'auto',
           overflowX: 'hidden',

@@ -12,9 +12,10 @@ import {
   View, wrapComponent,
 } from 'colay-ui'
 import { useImmer } from 'colay-ui/hooks/useImmer'
-import { useDrag } from '@hooks/useDrag'
-import * as R from 'colay/ramda'
 import React from 'react'
+import * as R from 'colay/ramda'
+import { useDrag } from '@hooks/useDrag'
+import { ResizeDivider } from '@components/ResizeDivider'
 import { ClusterTable } from './ClusterTable'
 import { EventHistoryTable } from './EventHistoryTable'
 import { PlaylistTable } from './PlaylistTable'
@@ -109,7 +110,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
           overflowY: 'auto',
           overflowX: 'hidden',
           height: '100%',
-          width: '97%',
+          flex: 1,
         }}
       >
         {
@@ -230,13 +231,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
         )
       }
       </View>
-      <div
-        style={{
-          width: 5,
-          height: '100%',
-          backgroundColor: 'black',
-          cursor: 'col-resize',
-        }}
+      <ResizeDivider
         onMouseDown={onMouseDown}
       />
       <IconButton

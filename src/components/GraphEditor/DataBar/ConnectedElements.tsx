@@ -80,6 +80,7 @@ export const ConnectedElements = () => {
           {
         itemList.map((item) => (
           <ListItem
+            key={item.id}
             button
             onClick={() => onEvent({
               type: EVENT.ELEMENT_SELECTED_WITH_ZOOM,

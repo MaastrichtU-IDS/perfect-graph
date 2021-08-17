@@ -6,7 +6,9 @@ import {
   GraphEditorRef, GraphLabelData, RDFType, RecordedEvent,
 } from '@type'
 import {
-  getSelectedItemByElement, getUndoEvents,
+  getSelectedItemByElement,
+  getUndoEvents,
+  getSelectedElementInfo,
 } from '@utils'
 import {
   EDITOR_MODE, EVENT,
@@ -264,11 +266,10 @@ export const useController = (
               itemIds,
             } = payload
             draft.selectedElementIds = itemIds
-            const selectedItemId = itemIds[0]
-            const element = selectedItemId
-              ? graphEditor.cy.$id(`${selectedItemId}`)
-              : null
-            if (element) {
+            const {
+              selectedElement,
+            } = getSelectedElementInfo(draft, graphEditor)
+            if (selectedElement) {
               const {
                 viewport,
               } = graphEditor
@@ -289,12 +290,12 @@ export const useController = (
                 TARGET_SIZE += 500
               }
               let position
-              if (element.isNode()) {
-                position = element.position()
+              if (selectedElement.isNode()) {
+                position = selectedElement.position()
               } else {
                 position = V.midpoint(
-                  element.source().position(),
-                )(element.target().position())
+                  selectedElement.source().position(),
+                )(selectedElement.target().position())
               }
               const center = {
                 x: position.x + TARGET_SIZE / 4,
@@ -319,23 +320,22 @@ export const useController = (
               itemIds,
             } = payload
             draft.selectedElementIds = itemIds
-            const selectedItemId = itemIds[0]
-            const element = selectedItemId
-              ? graphEditor.cy.$id(`${selectedItemId}`)
-              : null
-            if (event && event.data!.originalEvent.metaKey && element?.isNode()) {
+            const {
+              selectedElement,
+            } = getSelectedElementInfo(draft, graphEditor)
+            if (event && event.data!.originalEvent.metaKey && selectedElement?.isNode()) {
               draft.dataBar!.isOpen = true
               const {
                 viewport,
               } = graphEditor
               const TARGET_SIZE = 2000 // viewport.hitArea.width / 2// 800
               // const MARGIN_SIZE = 180
-              const position = element.position()
+              const position = selectedElement.position()
               const center = {
                 x: position.x + TARGET_SIZE / 4,
                 y: position.y,
               }
-              element.neighborhood().layout({
+              selectedElement.neighborhood().layout({
                 ...Graph.Layouts.circle,
                 boundingBox: {
                   x1: center.x - TARGET_SIZE / 2,
@@ -547,13 +547,13 @@ export const useController = (
           case EVENT.DELETE_CLUSTER_ELEMENT: {
             const {
               clusterId,
-              elementIds = [],
+              itemIds = [],
             } = payload
             const selectedCluster = draft.graphConfig?.clusters?.find(
               (cluster) => cluster.id === clusterId,
             )
             selectedCluster!.ids = selectedCluster!.ids.filter(
-              (id) => !elementIds.includes(id),
+              (id) => !itemIds.includes(id),
             )
             break
           }
@@ -572,15 +572,15 @@ export const useController = (
             draft.mode = EDITOR_MODE.ADD_CLUSTER_ELEMENT
             break
           }
-          case EVENT.ADD_CLUSTER_ELEMENTS: {
+          case EVENT.ADD_CLUSTER_ELEMENT: {
             const {
               clusterId,
-              elementIds,
+              itemIds,
             } = payload
             const selectedCluster = draft.graphConfig?.clusters?.find(
               (cluster) => cluster.id === clusterId,
             )
-            selectedCluster!.ids = R.union((selectedCluster?.ids ?? []), elementIds)
+            selectedCluster!.ids = R.union((selectedCluster?.ids ?? []), itemIds)
             break
           }
           case EVENT.CHANGE_CLUSTER_VISIBILITY: {

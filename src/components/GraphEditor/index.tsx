@@ -421,10 +421,10 @@ const GraphEditorElement = (
             } = event
             if (EDITOR_MODE.ADD_CLUSTER_ELEMENT === mode) {
               onEvent({
-                type: EVENT.ADD_CLUSTER_ELEMENTS,
+                type: EVENT.ADD_CLUSTER_ELEMENT,
                 payload: {
                   clusterId: localDataRef.current.issuedClusterId,
-                  elementIds,
+                  itemIds,
                 },
               })
               return
@@ -492,10 +492,10 @@ const GraphEditorElement = (
                 }
                 if (EDITOR_MODE.ADD_CLUSTER_ELEMENT === mode) {
                   onEvent({
-                    type: EVENT.ADD_CLUSTER_ELEMENTS,
+                    type: EVENT.ADD_CLUSTER_ELEMENT,
                     payload: {
                       clusterId: localDataRef.current.issuedClusterId,
-                      elementIds: [elementId],
+                      itemIds: [elementId],
                     },
                   })
                   return

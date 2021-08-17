@@ -320,6 +320,26 @@ export const getSelectedItemByElement = (
   }
 }
 
+export const getSelectedElementInfo = (draft: ControllerState, graphEditor: GraphEditorRef) => {
+  const itemIds = draft.selectedElementIds
+  const selectedItemId = R.last(itemIds ?? [])
+  const selectedElement = selectedItemId
+    ? graphEditor.cy.$id(`${selectedItemId}`)
+    : null
+  if (!selectedElement) {
+    return {}
+  }
+  const isNode = selectedElement.isNode()
+  const targetPath = isNode ? 'nodes' : 'edges'
+  const index = draft[targetPath].findIndex((targetItem: ElementData) => targetItem.id === selectedItemId)
+  return {
+    selectedItem: draft[targetPath][index],
+    selectedElement,
+    index,
+    type: targetPath,
+  }
+}
+
 export const getLabel = (path: string[] = [], item: ElementData): string => (R.isEmpty(path)
   ? item.id
   : (R.path([ELEMENT_DATA_FIELDS.DATA, ...path], item) ?? item.id))
@@ -440,25 +460,15 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
         payload,
       } = event
       const oldSelectedElementIds = draft.selectedElementIds
-      // const element = elementId
-      //   ? graphEditor.cy.$id(`${elementId}`)
-      //   : null
-      // const {
-      //   item,
-      //   index: itemIndex,
-      // } = (element && getSelectedItemByElement(element, draft)) ?? {}
+      const {
+        selectedElement,
+        selectedItem,
+      } = getSelectedElementInfo(draft, graphEditor)
       switch (type) {
-        case EVENT.ADD_NODE:
+        case EVENT.ADD_CLUSTER_ELEMENT:
           return [
             {
-              type: EVENT.DELETE_NODE,
-              payload,
-            },
-          ]
-        case EVENT.DELETE_NODE:
-          return [
-            {
-              type: EVENT.ADD_NODE,
+              type: EVENT.DELETE_CLUSTER_ELEMENT,
               payload,
             },
           ]
@@ -469,28 +479,11 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
               payload,
             },
           ]
-        case EVENT.DELETE_EDGE:
+        case EVENT.ADD_NODE:
           return [
             {
-              type: EVENT.ADD_EDGE,
+              type: EVENT.DELETE_NODE,
               payload,
-            },
-          ]
-
-        case EVENT.LAYOUT_CHANGED:
-          return [
-            {
-              type: EVENT.SET_POSITIONS_IMPERATIVELY,
-              payload: {
-                oldLayout: draft.graphConfig?.layout,
-                positions: graphEditor.cy.nodes().map((element) => ({
-                  position: {
-                    x: element.position().x,
-                    y: element.position().y,
-                  },
-                  elementId: element.id(),
-                })),
-              },
             },
           ]
         case EVENT.CHANGE_THEME:
@@ -499,6 +492,102 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
               type: EVENT.CHANGE_THEME,
               payload: {
                 value: draft.actionBar?.theming?.value,
+              },
+            },
+          ]
+        case EVENT.CHANGE_CLUSTER_VISIBILITY:
+          return [
+            {
+              type: EVENT.CHANGE_CLUSTER_VISIBILITY,
+              payload: {
+                ...payload,
+                value: !payload.value,
+              },
+            },
+          ]
+        case EVENT.CLEAR_NODE_GLOBAL_LABEL:
+          return [
+            {
+              type: EVENT.SET_NODE_GLOBAL_LABEL,
+              payload: {
+                value: draft.label!.global!.nodes!,
+              },
+            },
+          ]
+        case EVENT.CLEAR_NODE_LOCAL_LABEL:
+          return [
+            {
+              type: EVENT.SET_NODE_LOCAL_LABEL,
+              payload: {
+                value: draft.label!.nodes[selectedItem!.id],
+              },
+            },
+          ]
+        case EVENT.CREATE_PLAYLIST:
+          return [
+            {
+              type: EVENT.DELETE_PLAYLIST,
+              payload: {
+                itemIds: payload.items?.map((item) => item.id),
+              },
+            },
+          ]
+        case EVENT.CREATE_CLUSTER:
+          return [
+            {
+              type: EVENT.DELETE_CLUSTER,
+              payload: {
+                itemIds: payload.items?.map((item) => item.id),
+              },
+            },
+          ]
+        case EVENT.DELETE_CLUSTER: {
+          const {
+            itemIds = [],
+          } = payload
+          const items = draft.graphConfig?.clusters?.filter(
+            (cluster) => itemIds.includes(cluster.id),
+          )
+          return [
+            {
+              type: EVENT.CREATE_CLUSTER,
+              payload: {
+                items,
+              },
+            },
+          ]
+        }
+        case EVENT.DELETE_CLUSTER_ELEMENT: {
+          return [
+            {
+              type: EVENT.ADD_CLUSTER_ELEMENT,
+              payload,
+            },
+          ]
+        }
+
+        case EVENT.DELETE_EDGE:
+          return [
+            {
+              type: EVENT.ADD_EDGE,
+              payload,
+            },
+          ]
+        case EVENT.DELETE_NODE:
+          return [
+            {
+              type: EVENT.ADD_NODE,
+              payload,
+            },
+          ]
+        case EVENT.DELETE_PLAYLIST:
+          return [
+            {
+              type: EVENT.CREATE_PLAYLIST,
+              payload: {
+                items: draft.playlists!.filter(
+                  (playlist) => payload.itemIds.includes(playlist.id),
+                ),
               },
             },
           ]
@@ -522,6 +611,53 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
                 },
               },
             ]
+        case EVENT.ELEMENT_SELECTED_WITH_ZOOM:
+          return oldSelectedElementIds
+            ? [
+              {
+                ...event,
+                type: EVENT.ELEMENT_SELECTED,
+                payload: {
+                  itemIds: oldSelectedElementIds,
+                },
+              },
+            ]
+            : [
+              {
+                type: EVENT.PRESS_BACKGROUND,
+                payload: {
+                  x: graphEditor.viewport.center.x,
+                  y: graphEditor.viewport.center.y,
+                },
+              },
+            ]
+        case EVENT.LAYOUT_CHANGED:
+          return [
+            {
+              type: EVENT.SET_POSITIONS_IMPERATIVELY,
+              payload: {
+                oldLayout: draft.graphConfig?.layout,
+                positions: graphEditor.cy.nodes().map((element) => ({
+                  position: {
+                    x: element.position().x,
+                    y: element.position().y,
+                  },
+                  elementId: element.id(),
+                })),
+              },
+            },
+          ]
+
+        case EVENT.MODE_CHANGED:
+          return [
+            {
+              type: EVENT.MODE_CHANGED,
+              payload: {
+                value: draft.mode,
+              },
+            },
+          ]
+
         case EVENT.PRESS_BACKGROUND:
           // @ts-ignore
           return oldSelectedElementIds
@@ -542,7 +678,53 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
               },
             ]
             : []
+        case EVENT.SET_NODE_GLOBAL_LABEL:
+          return [
+            {
+              type: EVENT.SET_NODE_GLOBAL_LABEL,
+              payload: {
+                value: draft.label!.global!.nodes!,
+              },
+            },
+          ]
+        case EVENT.SET_NODE_LOCAL_LABEL:
+          return [
+            {
+              type: EVENT.SET_NODE_LOCAL_LABEL,
+              payload: {
+                value: draft.label!.nodes[selectedItem!.id],
+              },
+            },
+          ]
+        case EVENT.UPDATE_DATA:
+          return [
+            {
+              type: EVENT.UPDATE_DATA,
+              payload: {
+                value: selectedItem!.data,
+              },
+            },
+          ]
+        case EVENT.SET_POSITIONS_IMPERATIVELY:
+          return [
+            {
+              type: EVENT.SET_POSITIONS_IMPERATIVELY,
+              payload: {
+                oldLayout: draft.graphConfig?.layout,
+                positions: payload.positions.map(({ elementId }) => {
+                  const element = graphEditor.cy.$id(`${elementId}`)
+                  return {
+                    position: {
+                      x: element.position().x,
+                      y: element.position().y,
+                    },
+                    elementId,
+                  }
+                }),
 
+              },
+            },
+          ]
         default:
           break
       }

@@ -370,7 +370,7 @@ export const ClusterTable = (props: ClusterTableProps) => {
                                   onEvent({
                                     type: EVENT.DELETE_CLUSTER_ELEMENT,
                                     payload: {
-                                      elementIds: [elementId],
+                                      itemIds: [elementId],
                                       clusterId: cluster.id,
                                     },
                                   })
