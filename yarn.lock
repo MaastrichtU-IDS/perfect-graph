@@ -4094,10 +4094,10 @@
     sudo-prompt "^9.0.0"
     wcwidth "^1.0.1"
 
-"@rjsf/core@3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@rjsf/core/-/core-3.0.0.tgz#7f79b0635c969e3fbfe0aaa4773d844fbee68a63"
-  integrity sha512-QSvyVMDiwd7neVnIMOte4tZUvtDWgLDYKOsq1tgCsIFh+RXskd3AEBf6IsK8w6Wg36Om7YalDqqrtXbk9z+rLw==
+"@rjsf/core@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@rjsf/core/-/core-3.1.0.tgz#7667364a4532e25c164abbc2adabe39157ffec4c"
+  integrity sha512-EwM2juiQxEdXzFy9rIIsDr6/e+FYeR1cKx0/no8ASEuXZ1p+/nf/CxKGobzD6UhpRip7JK9PhhuHFEFBIjHFJA==
   dependencies:
     "@types/json-schema" "^7.0.7"
     ajv "^6.7.0"
@@ -4109,15 +4109,15 @@
     prop-types "^15.7.2"
     react-is "^16.9.0"
 
-"@rjsf/material-ui@3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@rjsf/material-ui/-/material-ui-3.0.0.tgz#69ece2cb549f0e860b5f89898db90edcc95b15ba"
-  integrity sha512-T2B8QnrDQphbFNxDz7baAa0zTd5TXJmO9soHBPTKKdniRbMEOQ19AJBbZkA3ED2XZa/xrUY/6XjERQLpNACddw==
+"@rjsf/material-ui@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@rjsf/material-ui/-/material-ui-3.1.0.tgz#ed15fc75de1594f87cd8336b7f2ebc492a432d8b"
+  integrity sha512-kWz37spT5SOXkb8Axq4g4BzQjXRylQr6B7eFAg1NPhSK7KrJYwSMSsFJ9Ze2vEBxwEiR0Z0n/4puaamGuGFRBw==
 
-"@rjsf/semantic-ui@3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@rjsf/semantic-ui/-/semantic-ui-3.0.0.tgz#bf30d4341ee4ef94e20c6dfea1e4d25175f15ba9"
-  integrity sha512-Q7OZ34M51cniKvdt6iIBUuxU57qTNkgTgoBrGHqH0MF+WLCakDNq+wXSxNlLwuI666zicgT/Ne15zSV3JOd2PQ==
+"@rjsf/semantic-ui@3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@rjsf/semantic-ui/-/semantic-ui-3.1.0.tgz#aa73dd12f2aedfbec83ae9a79032b943d2cffa1f"
+  integrity sha512-eRkB/IKyCujY4B0vADtnoknuf3vK7g1UA30YjGS4cbZpBjbng4h3TiJnLZpBES0bJ5T+3VLIj7I95k1CugLI6g==
   dependencies:
     semantic-ui-css "^2.4.1"
     semantic-ui-react "^0.87.3"
@@ -14331,10 +14331,10 @@ pixi-flex-layout@1.0.3:
   dependencies:
     yoga-layout-prebuilt "^1.9.3"
 
-pixi-viewport@4.31.0:
-  version "4.31.0"
-  resolved "https://registry.yarnpkg.com/pixi-viewport/-/pixi-viewport-4.31.0.tgz#eb090e790fcdd51992b794d80eca21820ce95249"
-  integrity sha512-VnI080My0dBN5b+JQEOdhSEr3zX4jD0CchMxhBfpj2BQoPIUppxTsi/R/kEdQ5ZnjGCn76/k0Q0xeW3WbEKb7g==
+pixi-viewport@4.32.0:
+  version "4.32.0"
+  resolved "https://registry.yarnpkg.com/pixi-viewport/-/pixi-viewport-4.32.0.tgz#f3b000105ec3a969b6821a282b6b1db65e00f045"
+  integrity sha512-KZYZokCjCNexWBFWMahBnUWQNnVRyKMff0OqPaT9ykOd0WJBGPp2ovU0Q758/NIOKyNiO2bK3Ok3EJfO+DcH1g==
   dependencies:
     penner "^0.1.3"
 
