@@ -56,7 +56,6 @@ export const ConnectedElements = () => {
     itemList = selectedElement.connectedEdges().toArray().map(
       getItemFromElement,
     )
-    console.log(itemList)
   } else {
     itemList = [selectedElement.source(), selectedElement.target()].map(
       getItemFromElement,

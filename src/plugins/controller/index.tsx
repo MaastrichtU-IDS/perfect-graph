@@ -107,7 +107,9 @@ export const useController = (
             addHistory,
             events: undoEvents,
             // @ts-ignore
-          } = getUndoEvents([eventInfo], { graphEditor, draft })
+          } = getUndoEvents(
+            [eventInfo], { graphEditor, controllerState: JSON.parse(JSON.stringify(draft)) },
+          )
           if (addHistory) {
             eventHistory.add({
               do: [
@@ -268,7 +270,7 @@ export const useController = (
             draft.selectedElementIds = itemIds
             const {
               selectedElement,
-            } = getSelectedElementInfo(draft, graphEditor)
+            } = getSelectedElementInfo(JSON.parse(JSON.stringify(draft)), graphEditor)
             if (selectedElement) {
               const {
                 viewport,
@@ -285,7 +287,6 @@ export const useController = (
               //     h: TARGET_SIZE / 2,
               //   },
               // }).start()
-              console.log(viewport.hitArea.width, TARGET_SIZE)
               if (viewport.hitArea.width === TARGET_SIZE) {
                 TARGET_SIZE += 500
               }
@@ -322,7 +323,7 @@ export const useController = (
             draft.selectedElementIds = itemIds
             const {
               selectedElement,
-            } = getSelectedElementInfo(draft, graphEditor)
+            } = getSelectedElementInfo(JSON.parse(JSON.stringify(draft)), graphEditor)
             if (event && event.data!.originalEvent.metaKey && selectedElement?.isNode()) {
               draft.dataBar!.isOpen = true
               const {

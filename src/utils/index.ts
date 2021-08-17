@@ -320,8 +320,10 @@ export const getSelectedItemByElement = (
   }
 }
 
-export const getSelectedElementInfo = (draft: ControllerState, graphEditor: GraphEditorRef) => {
-  const itemIds = draft.selectedElementIds
+export const getSelectedElementInfo = (
+  controllerState: ControllerState, graphEditor: GraphEditorRef,
+) => {
+  const itemIds = controllerState.selectedElementIds
   const selectedItemId = R.last(itemIds ?? [])
   const selectedElement = selectedItemId
     ? graphEditor.cy.$id(`${selectedItemId}`)
@@ -331,9 +333,11 @@ export const getSelectedElementInfo = (draft: ControllerState, graphEditor: Grap
   }
   const isNode = selectedElement.isNode()
   const targetPath = isNode ? 'nodes' : 'edges'
-  const index = draft[targetPath].findIndex((targetItem: ElementData) => targetItem.id === selectedItemId)
+  const index = controllerState[targetPath].findIndex(
+    (targetItem: ElementData) => targetItem.id === selectedItemId,
+  )
   return {
-    selectedItem: draft[targetPath][index],
+    selectedItem: controllerState[targetPath][index],
     selectedElement,
     index,
     type: targetPath,
@@ -443,12 +447,12 @@ export const filterEdges = (nodes: NodeData[]) => (
 }
 
 type GetUndoActionsSettings = {
-  draft: ControllerState,
+  controllerState: ControllerState,
   graphEditor: GraphEditorRef
 }
 export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSettings) => {
   const {
-    draft,
+    controllerState,
     graphEditor,
   } = settings
   // const addHistory = true
@@ -459,11 +463,11 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
         type,
         payload,
       } = event
-      const oldSelectedElementIds = draft.selectedElementIds
+      const oldSelectedElementIds = controllerState.selectedElementIds
       const {
         selectedElement,
         selectedItem,
-      } = getSelectedElementInfo(draft, graphEditor)
+      } = getSelectedElementInfo(controllerState, graphEditor)
       switch (type) {
         case EVENT.ADD_CLUSTER_ELEMENT:
           return [
@@ -491,7 +495,7 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
             {
               type: EVENT.CHANGE_THEME,
               payload: {
-                value: draft.actionBar?.theming?.value,
+                value: controllerState.actionBar?.theming?.value,
               },
             },
           ]
@@ -510,7 +514,7 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
             {
               type: EVENT.SET_NODE_GLOBAL_LABEL,
               payload: {
-                value: draft.label!.global!.nodes!,
+                value: controllerState.label!.global!.nodes!,
               },
             },
           ]
@@ -519,7 +523,7 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
             {
               type: EVENT.SET_NODE_LOCAL_LABEL,
               payload: {
-                value: draft.label!.nodes[selectedItem!.id],
+                value: controllerState.label!.nodes[selectedItem!.id],
               },
             },
           ]
@@ -545,7 +549,7 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
           const {
             itemIds = [],
           } = payload
-          const items = draft.graphConfig?.clusters?.filter(
+          const items = controllerState.graphConfig?.clusters?.filter(
             (cluster) => itemIds.includes(cluster.id),
           )
           return [
@@ -585,7 +589,7 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
             {
               type: EVENT.CREATE_PLAYLIST,
               payload: {
-                items: draft.playlists!.filter(
+                items: controllerState.playlists!.filter(
                   (playlist) => payload.itemIds.includes(playlist.id),
                 ),
               },
@@ -636,7 +640,7 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
             {
               type: EVENT.SET_POSITIONS_IMPERATIVELY,
               payload: {
-                oldLayout: draft.graphConfig?.layout,
+                oldLayout: controllerState.graphConfig?.layout,
                 positions: graphEditor.cy.nodes().map((element) => ({
                   position: {
                     x: element.position().x,
@@ -653,7 +657,7 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
             {
               type: EVENT.MODE_CHANGED,
               payload: {
-                value: draft.mode,
+                value: controllerState.mode,
               },
             },
           ]
@@ -683,7 +687,7 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
             {
               type: EVENT.SET_NODE_GLOBAL_LABEL,
               payload: {
-                value: draft.label!.global!.nodes!,
+                value: controllerState.label!.global!.nodes!,
               },
             },
           ]
@@ -692,7 +696,7 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
             {
               type: EVENT.SET_NODE_LOCAL_LABEL,
               payload: {
-                value: draft.label!.nodes[selectedItem!.id],
+                value: controllerState.label!.nodes[selectedItem!.id],
               },
             },
           ]
@@ -710,7 +714,7 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
             {
               type: EVENT.SET_POSITIONS_IMPERATIVELY,
               payload: {
-                oldLayout: draft.graphConfig?.layout,
+                oldLayout: controllerState.graphConfig?.layout,
                 positions: payload.positions.map(({ elementId }) => {
                   const element = graphEditor.cy.$id(`${elementId}`)
                   return {

@@ -102,7 +102,6 @@ export default (props: Props): Result => {
       element.position(position)
     }
   }, [position.x, position.y])
-
   // Update Visibility
   React.useMemo(() => {
     const clusterVisibility = getClusterVisibility(element.id(), clusters)

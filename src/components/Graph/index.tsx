@@ -213,7 +213,7 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
             }}
           >
             <DataRender
-              extraData={[extraData, config.nodes]}
+              extraData={[extraData, config.nodes, config.clusters]}
               data={nodes}
               accessor={['children']}
               keyExtractor={(item) => item.id}
@@ -232,7 +232,7 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
               )}
             />
             <DataRender
-              extraData={[extraData, config.edges]}
+              extraData={[extraData, config.edges, config.clusters]}
               data={edges}
               accessor={['children']}
               keyExtractor={(item) => item.id}

@@ -31,7 +31,6 @@ export default (props) => {
         // extraData={[configRef.current]}
         style={{ width, height }}
         renderNode={(info) => {
-          console.log(info)
           const { item } = info
           return (
               <ProfileTemplate
