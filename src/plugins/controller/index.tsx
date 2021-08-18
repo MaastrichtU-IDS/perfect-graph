@@ -190,11 +190,11 @@ export const useController = (
           }
           case EVENT.DELETE_NODE: {
             const {
-              items = [],
+              itemIds = [],
             } = payload as {
-              items: {id: string} []
+              itemIds: {id: string} []
             }
-            const itemIds = items.map((item) => item.id)
+            // const itemIds = items.map((item) => item.id)
             // const itemIndex = draft.nodes.findIndex((node) => node.id === item.id)
             // draft.nodes.splice(itemIndex, 1)
             draft.nodes = draft.nodes.filter((nodeItem) => !itemIds.includes(nodeItem.id))
@@ -227,11 +227,11 @@ export const useController = (
           }
           case EVENT.DELETE_EDGE: {
             const {
-              items = [],
+              itemIds = [],
             } = payload as {
-              items: {id: string} []
+              itemIds: {id: string} []
             }
-            const itemIds = items.map((item) => item.id)
+            // const itemIds = items.map((item) => item.id)
             draft.edges = draft.edges.filter((edgeItem) => !itemIds.includes(edgeItem.id))
             if (draft.mode === EDITOR_MODE.DELETE) {
               draft.mode = EDITOR_MODE.DEFAULT

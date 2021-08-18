@@ -574,14 +574,28 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
           return [
             {
               type: EVENT.ADD_EDGE,
-              payload,
+              payload: {
+                items: controllerState.edges!.filter(
+                  (item) => payload.itemIds.includes(item.id),
+                ),
+              },
             },
           ]
         case EVENT.DELETE_NODE:
           return [
             {
               type: EVENT.ADD_NODE,
-              payload,
+              payload: {
+                items: controllerState.nodes!.filter(
+                  (item) => payload.itemIds.includes(item.id),
+                ).map((item) => {
+                  const position = graphEditor.cy.$id(item.id).position()
+                  return {
+                    ...item,
+                    position,
+                  }
+                }),
+              },
             },
           ]
         case EVENT.DELETE_PLAYLIST:

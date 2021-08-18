@@ -466,7 +466,7 @@ const GraphEditorElement = (
                   onEvent({
                     type: EVENT.DELETE_NODE,
                     payload: {
-                      items: [item],
+                      itemIds: [item.id],
                     },
                     event,
                   })
@@ -546,7 +546,7 @@ const GraphEditorElement = (
                   onEvent({
                     type: EVENT.DELETE_EDGE,
                     payload: {
-                      items: [item],
+                      itemIds: [item.id],
                     },
                     event,
                   })
@@ -669,10 +669,7 @@ const GraphEditorElement = (
                 onEvent({
                   type: EVENT.DELETE_NODE,
                   payload: {
-                    items: nodes.filter(
-                      (nodeItem) => localDataRef.current.newClusterBoxSelection.elementIds
-                        .includes(nodeItem.id),
-                    ),
+                    itemIds: localDataRef.current.newClusterBoxSelection.elementIds
                   },
                 })
                 break
