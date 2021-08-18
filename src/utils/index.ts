@@ -764,8 +764,8 @@ export const isPositionInBox = (position: Position, box: BoundingBox) => {
 
 export const getBoundingBox = (startPos: Position, endPos: Position) => ({
   ...startPos,
-  width: Math.abs(startPos.x - endPos.x),
-  height: Math.abs(startPos.y - endPos.y),
+  width: endPos.x - startPos.x,
+  height: endPos.y - startPos.y,
 })
 
 export const cyUnselectAll = (cy: cytoscape.Core) => {

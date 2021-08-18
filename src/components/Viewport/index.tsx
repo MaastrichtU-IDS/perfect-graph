@@ -2,6 +2,7 @@ import { PixiComponent, useApp } from '@inlet/react-pixi'
 import * as R from 'colay/ramda'
 import { Viewport as ViewportNative } from 'pixi-viewport'
 import * as PIXI from 'pixi.js'
+import * as V from 'colay/vector'
 // import Cull from 'pixi-cull'
 import React from 'react'
 import { wrapComponent, useForwardRef } from 'colay-ui'
@@ -78,9 +79,9 @@ const ReactViewportComp = PixiComponent('Viewport', {
     onCreate?.(viewport)
     viewport.sortableChildren = true
     viewport
-      .drag()
+      .drag({ pressDrag: false })
       .pinch()
-      .wheel()
+      .wheel({ trackpadPinch: true, wheelZoom: false })
     const localDataRef = {
       current: {
         boxSelection: {
@@ -95,7 +96,8 @@ const ReactViewportComp = PixiComponent('Viewport', {
     viewport.on(
       'pointerdown',
       (e) => {
-        const { metaKey } = e.data.originalEvent
+        // const { metaKey } = e.data.originalEvent
+        const metaKey = true
         // @ts-ignore
         if (e.target !== viewport || metaKey) {
           if (metaKey) {
@@ -105,14 +107,6 @@ const ReactViewportComp = PixiComponent('Viewport', {
               x: position.x,
               y: position.y,
             }
-            localDataRef.current.boxSelection.enabled = metaKey
-            const boxElement = new PIXI.Graphics()
-            viewport.addChild(boxElement!)
-            localDataRef.current.boxSelection.boxElement = boxElement
-            onBoxSelectionStart({
-              event: e,
-              startPosition: position,
-            })
           }
           viewport.plugins.pause('drag')
         }
@@ -138,13 +132,22 @@ const ReactViewportComp = PixiComponent('Viewport', {
           boundingBox: getBoundingBox(startPosition!, currentPosition!),
         })
         viewport.removeChild(boxElement!)
-        localDataRef.current.boxSelection.enabled = false
         boxElement?.destroy()
-        localDataRef.current.boxSelection.boxElement = null
       }
+      localDataRef.current.boxSelection = {}
     })
     viewport.on('pointermove', (e) => {
       // const { metaKey } = e.data.originalEvent
+      if (localDataRef.current.boxSelection.startPosition && !localDataRef.current.boxSelection.boxElement) {
+        const boxElement = new PIXI.Graphics()
+        viewport.addChild(boxElement!)
+        localDataRef.current.boxSelection.boxElement = boxElement
+        onBoxSelectionStart({
+          event: e,
+          startPosition: localDataRef.current.boxSelection.startPosition,
+        })
+        localDataRef.current.boxSelection.enabled = true
+      }
       if (localDataRef.current.boxSelection.enabled) {
         // @ts-ignore
         const position = getPointerPositionOnViewport(viewport, e.data.originalEvent)
