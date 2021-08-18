@@ -19,7 +19,7 @@ export default () => {
     >
       {
         initialized && (
-          <ProfilesApp
+          <App
             dispatch={() => {}}
             {...{width, height}}
           />
