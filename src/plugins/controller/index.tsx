@@ -148,10 +148,9 @@ export const useController = (
           return
         }
         const {
-          item: selectedItem,
-          // index: selectedItemIndex,
+          item: eventRelatedItem,
         } = (element && getSelectedItemByElement(element, draft)) ?? {}
-        const targetDataList = selectedItem?.data!// getSelectedItemByElement(element, draft).data
+        const targetDataList = eventRelatedItem?.data!// getSelectedItemByElement(element, draft).data
         switch (type) {
           case EVENT.REDO_EVENT:
             eventHistory.redo()
@@ -159,40 +158,19 @@ export const useController = (
           case EVENT.UNDO_EVENT:
             eventHistory.undo()
             break
-          case EVENT.UPDATE_DATA:
+          case EVENT.UPDATE_DATA: {
+            const {
+              selectedItem,
+            } = getSelectedElementInfo(draft, graphEditor)
             selectedItem!.data = payload.value
             break
+          }
           case EVENT.ADD_DATA:
             targetDataList.push({
               ...payload,
               value: [payload.value],
             })
             break
-          // case EVENT.MAKE_DATA_LABEL: {
-          //   const newLabel = [ELEMENT_DATA_FIELDS.DATA, dataItem.name]
-          //   const isSame = R.equals(draft.label[targetPath][selectedItem.id], newLabel)
-          //   if (isSame) {
-          //     delete draft.label[targetPath][selectedItem.id]
-          //   } else {
-          //     draft.label[targetPath][selectedItem.id] = newLabel
-          //   }
-          //   // targetDataList[index].name = payload.value
-          //   break
-          // }
-          // case EVENT.MAKE_DATA_LABEL_FIRST: {
-          //   draft.label.isGlobalFirst = false
-          //   break
-          // }
-          // case EVENT.MAKE_GLOBAL_DATA_LABEL: {
-          //   const newLabel = [ELEMENT_DATA_FIELDS.DATA, dataItem.name]
-          //   const isSame = R.equals(draft.label?.global[targetPath], newLabel)
-          //   draft.label!.global[targetPath] = isSame ? [ELEMENT_DATA_FIELDS.ID] : newLabel
-          //   break
-          // }
-          // case EVENT.MAKE_GLOBAL_DATA_LABEL_FIRST: {
-          //   draft.label!.isGlobalFirst = true
-          //   break
-          // }
           case EVENT.ADD_NODE: {
             const {
               items,
@@ -275,7 +253,7 @@ export const useController = (
               const {
                 viewport,
               } = graphEditor
-              let TARGET_SIZE = 2000 // viewport.hitArea.width / 2// 800
+              const TARGET_SIZE = 2000 // viewport.hitArea.width / 2// 800
               // const MARGIN_SIZE = 180
 
               // element.neighborhood().layout({
@@ -514,11 +492,11 @@ export const useController = (
             const {
               value,
             } = payload
-            draft.label!.nodes[selectedItem!.id] = value
+            draft.label!.nodes[eventRelatedItem!.id] = value
             break
           }
           case EVENT.CLEAR_NODE_LOCAL_LABEL: {
-            delete draft.label!.nodes[selectedItem!.id]
+            delete draft.label!.nodes[eventRelatedItem!.id]
             break
           }
           case EVENT.TOGGLE_NODE_GLOBAL_LABEL_FIRST: {
