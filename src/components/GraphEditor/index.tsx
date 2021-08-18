@@ -431,12 +431,17 @@ const GraphEditorElement = (
             // TODO: DANGER**
             localDataRef.current.newClusterBoxSelection.elementIds = elementIds
             updateState((draft) => {
+              const e = event.event.data.originalEvent
               draft.contextMenu.visible = true
-              draft.contextMenu.position = getPointerPositionOnViewport(
-                graphEditorRef.current.viewport,
-                // @ts-ignore
-                event.event.data.originalEvent,
-              )
+              draft.contextMenu.position = {
+                x: e.clientX,
+                y: e.clientY,
+              }
+              // getPointerPositionOnViewport(
+              //   graphEditorRef.current.viewport,
+              //   // @ts-ignore
+              //   event.event.data.originalEvent,
+              // )
             })
             // TODO: **DANGER
             onEvent({
@@ -577,52 +582,7 @@ const GraphEditorElement = (
 }
             </Graph.View>
           )}
-        >
-          <ContextMenu
-            graphEditorRef={graphEditorRef}
-            items={[
-              { value: 'CreateCluster', label: 'Create Cluster' },
-              { value: 'Delete', label: 'Delete' },
-              { value: 'Settings', label: 'Settings' },
-            ]}
-            onSelect={(value) => {
-              updateState((draft) => {
-                draft.contextMenu.visible = false
-              })
-              switch (value) {
-                case 'CreateCluster':
-                  onEvent({
-                    type: EVENT.CREATE_CLUSTER,
-                    payload: {
-                      items: [{
-                        id: R.uuid(),
-                        name: `Cluster-${graphConfig?.clusters?.length ?? 0}`,
-                        ids: localDataRef.current.newClusterBoxSelection.elementIds,
-                        childClusterIds: [],
-                      }],
-                    },
-                  })
-                  break
-                case 'Delete':
-                  onEvent({
-                    type: EVENT.DELETE_NODE,
-                    payload: {
-                      items: nodes.filter(
-                        (nodeItem) => localDataRef.current.newClusterBoxSelection.elementIds
-                          .includes(nodeItem.id),
-                      ),
-                    },
-                  })
-                  break
-                default:
-                  break
-              }
-              localDataRef.current.newClusterBoxSelection.elementIds = []
-            }}
-            position={state.contextMenu.position}
-            open={state.contextMenu.visible}
-          />
-        </Graph>
+        />
         {
         settingsBar && (
           <SettingsBar
@@ -679,6 +639,50 @@ const GraphEditorElement = (
             updateState(() => {})
             eventTimeoutsManager.clear()
           }}
+        />
+        <ContextMenu
+          graphEditorRef={graphEditorRef}
+          items={[
+            { value: 'CreateCluster', label: 'Create Cluster' },
+            { value: 'Delete', label: 'Delete' },
+            { value: 'Settings', label: 'Settings' },
+          ]}
+          onSelect={(value) => {
+            updateState((draft) => {
+              draft.contextMenu.visible = false
+            })
+            switch (value) {
+              case 'CreateCluster':
+                onEvent({
+                  type: EVENT.CREATE_CLUSTER,
+                  payload: {
+                    items: [{
+                      id: R.uuid(),
+                      name: `Cluster-${graphConfig?.clusters?.length ?? 0}`,
+                      ids: localDataRef.current.newClusterBoxSelection.elementIds,
+                      childClusterIds: [],
+                    }],
+                  },
+                })
+                break
+              case 'Delete':
+                onEvent({
+                  type: EVENT.DELETE_NODE,
+                  payload: {
+                    items: nodes.filter(
+                      (nodeItem) => localDataRef.current.newClusterBoxSelection.elementIds
+                        .includes(nodeItem.id),
+                    ),
+                  },
+                })
+                break
+              default:
+                break
+            }
+            localDataRef.current.newClusterBoxSelection.elementIds = []
+          }}
+          position={state.contextMenu.position}
+          open={state.contextMenu.visible}
         />
       </Box>
       <PreferencesModal

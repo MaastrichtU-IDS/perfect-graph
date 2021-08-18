@@ -77,7 +77,6 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
   const { theme } = config
   const graphID = React.useMemo<string>(() => config.graphId ?? R.uuid(), [config.graphId])
   const stageRef = React.useRef<{ app: PIXI.Application }>(null)
-  const viewportRef = React.useRef<ViewportRef>(null)
   const { cy } = useGraph({
     id: graphID,
     onLoad: () => {
@@ -86,15 +85,14 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
   })
   const graphRef = useForwardRef<GraphRef>(ref, { cy })
   const graphLayoutRef = React.useRef<cytoscape.Layouts>(null)
-  React.useMemo(() => {
+  React.useEffect(() => {
     graphRef.current.app = stageRef.current?.app!
-    graphRef.current.viewport = viewportRef.current!
     if (graphRef.current.app) {
       graphRef.current.app.view.addEventListener('contextmenu', (e) => {
         e.preventDefault()
       })
     }
-  }, [stageRef.current, viewportRef.current])
+  }, [stageRef.current])
   React.useEffect(() => {
     cyUnselectAll(cy)
     selectedElementIds.forEach((id) => {
@@ -102,38 +100,32 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
     })
   }, [selectedElementIds, cy])
   React.useEffect(() => {
-    R.when(
-      () => !!(stageRef.current && config.layout),
-      () => {
-        setTimeout(() => {
-          const { hitArea } = viewportRef.current!
-          const boundingBox = {
-            x1: hitArea.x,
-            y1: hitArea.y,
-            w: hitArea.width,
-            h: hitArea.height,
-          }
-          graphLayoutRef.current?.stop()
-          // @ts-ignore
-          graphLayoutRef.current = cy.createLayout({
-            boundingBox,
-            ...config.layout,
-          })
-          graphLayoutRef.current.on('layoutstop', () => {
-          // @ts-ignore
-            graphLayoutRef.current = null
-            // Fix the edge lines
-            cy.edges().forEach((edge) => {
-              const edgeContext = contextUtils.get(edge)
-              edgeContext.onPositionChange()
-            })
-          })
-          graphLayoutRef.current.start()
-        }, 100)
-      },
-      true,
-    )
-  }, [stageRef.current, config.layout])
+    if (stageRef.current && config.layout) {
+      const { hitArea } = graphRef.current.viewport
+      const boundingBox = {
+        x1: hitArea.x,
+        y1: hitArea.y,
+        w: hitArea.width,
+        h: hitArea.height,
+      }
+      graphLayoutRef.current?.stop()
+      // @ts-ignore
+      graphLayoutRef.current = cy.createLayout({
+        boundingBox,
+        ...config.layout,
+      })
+      graphLayoutRef.current.on('layoutstop', () => {
+        // @ts-ignore
+        graphLayoutRef.current = null
+        // Fix the edge lines
+        cy.edges().forEach((edge) => {
+          const edgeContext = contextUtils.get(edge)
+          edgeContext.onPositionChange()
+        })
+      })
+      graphLayoutRef.current.start()
+    }
+  }, [config.layout])
   const backgroundColor = React.useMemo(
     () => C.rgbNumber(theme.palette.background.default),
     [theme.palette.background.default],
@@ -181,8 +173,9 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
           value={theme}
         >
           <Viewport
-          // @ts-ignore
-            ref={viewportRef}
+            onCreate={(viewport) => {
+              graphRef.current.viewport = viewport
+            }}
             onPress={onPressCallback}
             zoom={config.zoom}
             transform={config.transform}

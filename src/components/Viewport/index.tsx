@@ -97,16 +97,13 @@ const ReactViewportComp = PixiComponent('Viewport', {
       'pointerdown',
       (e) => {
         // const { metaKey } = e.data.originalEvent
-        const metaKey = true
         // @ts-ignore
-        if (e.target !== viewport || metaKey) {
-          if (metaKey) {
-            // @ts-ignore
-            const position = getPointerPositionOnViewport(viewport, e.data.originalEvent)
-            localDataRef.current.boxSelection.startPosition = {
-              x: position.x,
-              y: position.y,
-            }
+        if (e.target === e.currentTarget) {
+          // @ts-ignore
+          const position = getPointerPositionOnViewport(viewport, e.data.originalEvent)
+          localDataRef.current.boxSelection.startPosition = {
+            x: position.x,
+            y: position.y,
           }
           viewport.plugins.pause('drag')
         }
