@@ -226,7 +226,7 @@ const EdgeContainerElement = (
           zIndex: EDGE_CONTAINER_Z_INDEX,
         }}
         // interactive
-        // click={() => console.log('ONPRESS')}
+        // pointertap={() => console.log('ONPRESS')}
       >
         {
           children({
@@ -249,7 +249,7 @@ const EdgeContainerElement = (
         alpha={opacity}
         // interactive
         // buttonMode
-        // click={() => console.log('ONPRESS')}
+        // pointertap={() => console.log('ONPRESS')}
       />
     </>
   )

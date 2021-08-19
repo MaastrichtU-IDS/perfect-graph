@@ -48,7 +48,7 @@ export function dragTrack(
       // )(result ?? {})
     },
   )(mutableData.position)
-  document.addEventListener('mouseup', () => {
+  document.addEventListener('pointerup', () => {
     mutableData.position = null
   })
   return {

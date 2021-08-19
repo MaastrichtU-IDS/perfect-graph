@@ -142,7 +142,7 @@ export const processTextStyle = (style: {
 }
 // export const PIXI_EVENT_NAMES = {
 //   onAdded: 'added',
-//   onClick: 'click',
+//   onClick: 'pointertap',
 //   onMouseDown: 'mousedown',
 //   onMouseMove: 'mousemove',
 //   onMouseOut: 'mouseout',
@@ -810,14 +810,11 @@ export const getPointerPositionOnViewport = (
   viewport: ViewportRef,
   event: MouseEvent,
 ) => {
-  const position = {
-    x: event.clientX,
-    y: event.clientY,
-  }
+  const position = getEventClientPosition(event)
   // @ts-ignore
   if (viewport.options.interaction) {
     // @ts-ignore
-    viewport.options.interaction.mapPositionToPoint(position, event.clientX, event.clientY)
+    viewport.options.interaction.mapPositionToPoint(position, position.x, position.y)
   }
   position.x /= viewport.scale.x
   position.y /= viewport.scale.y
@@ -826,6 +823,13 @@ export const getPointerPositionOnViewport = (
   return position
 }
 
+export const getEventClientPosition = (e) => {
+  const event = e.touches?.[0] ?? e.changedTouches?.[0] ?? e
+  return {
+    x: event.clientX,
+    y: event.clientY,
+  }
+}
 export const contextUtils = {
   update: (element: Element, context: any) => {
     element.data({

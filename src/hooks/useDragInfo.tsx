@@ -1,8 +1,9 @@
 import React from 'react'
 
 import * as R from 'colay/ramda'
-import { Position, } from 'colay/type'
+import { Position } from 'colay/type'
 import * as V from 'colay/vector'
+import { getEventClientPosition } from '@utils'
 
 type OnDragResult = {
   keepDragging?: boolean;
@@ -43,9 +44,10 @@ export const useDragInfo = (
           boundingClientRect,
           position,
         } = mutableData
+        const clientPosition = getEventClientPosition(e)
         onMove(V.add({
-          x: e.clientX - boundingClientRect.left,
-          y: e.clientY - boundingClientRect.top,
+          x: clientPosition.x - boundingClientRect.left,
+          y: clientPosition.y - boundingClientRect.top,
         })(position))
       }
     }

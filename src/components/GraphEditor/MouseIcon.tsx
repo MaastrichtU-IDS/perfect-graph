@@ -1,4 +1,5 @@
 import React from 'react'
+import { getEventClientPosition } from '@utils'
 // import { Icon } from '@material-ui/core'
 
 export type MouseIconProps = {
@@ -20,9 +21,10 @@ export const MouseIcon = (props: MouseIconProps) => {
       if (cursor) {
         return
       }
+      const position = getEventClientPosition(event)
       setState({
-        x: event.clientX + 30,
-        y: event.clientY + 30,
+        x: position.x + 30,
+        y: position.y + 30,
       })
     }
     document.addEventListener('mousemove', onMouseMove)

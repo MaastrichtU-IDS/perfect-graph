@@ -122,16 +122,16 @@ export const DATA_TYPE_BY_INDEX = [
 export const LAYOUT_NAMES = Object.keys(Layouts)
 
 export const PIXI_EVENT_NAMES = {
-  onPress: 'click',
+  onPress: 'pointertap',
   onHoverEnd: 'mouseout',
   onHoverStart: 'mouseover',
-  onPressEnd: 'mouseup',
-  onPressMove: 'mousemove',
-  onPressStart: 'mousedown',
+  onPressEnd: 'pointerup',
+  onPressMove: 'pointermove',
+  onPressStart: 'pointerdown',
   onRightPress: 'rightclick',
 }
 
-export const SIDE_PANEL_DEFAULT_WIDTH = 350
+export const SIDE_PANEL_DEFAULT_WIDTH = 330
 // export const eventHandlers = [
 //   'click',
 //   'mousedown',

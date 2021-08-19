@@ -56,7 +56,7 @@ const ProfileElement = (
             }}
             interactive
             buttonMode
-            click={() => {
+            pointertap={() => {
               if (link) {
                 window.open(link, '_blank')
               }

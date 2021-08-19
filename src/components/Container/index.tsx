@@ -7,6 +7,7 @@ import * as PIXI from 'pixi.js'
 import { dragTrack } from '@core/utils/events'
 import {
   applyDefaultProps, preprocessProps,
+  getEventClientPosition,
 } from '@utils'
 import {
   PIXIFlexStyle,
@@ -53,14 +54,14 @@ export const Container = PixiComponent<ContainerProps, PIXI.Container>(
           onDrag && onDrag({ x: instance.x, y: instance.y })
         })
         instance
-          .on('mousedown', (e: PIXI.InteractionEvent) => {
+          .on('pointerdown', (e: PIXI.InteractionEvent) => {
             const { originalEvent } = e.data
-            const { x, y } = originalEvent as MouseEvent
+            const { x, y } = getEventClientPosition(originalEvent)// originalEvent as MouseEvent
             onDown({ x, y })
           })
-          .on('mousemove', (e: PIXI.InteractionEvent) => {
+          .on('pointermove', (e: PIXI.InteractionEvent) => {
             const { originalEvent } = e.data
-            const { x, y } = originalEvent as MouseEvent
+            const { x, y } = getEventClientPosition(originalEvent)// originalEvent as MouseEvent
             onMove({ x, y })
           })
       }

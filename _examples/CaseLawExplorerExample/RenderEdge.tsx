@@ -50,7 +50,7 @@ export const RenderEdge = ({
                 alignItems: 'center',
                 display: 'flex',
               }}
-              click={() => {
+              pointertap={() => {
                 cy.$(':selected').unselect()
                 element.select()
               }}

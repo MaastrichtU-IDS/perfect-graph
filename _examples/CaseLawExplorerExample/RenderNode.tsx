@@ -77,7 +77,7 @@ export const RenderNode = ({
           : color),
         borderRadius: size,
       }}
-      click={(e) => {
+      pointertap={(e) => {
         cy.$(':selected').unselect()
         element.select()
       }}

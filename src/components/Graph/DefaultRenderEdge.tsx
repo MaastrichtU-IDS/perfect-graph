@@ -25,7 +25,7 @@ export const DefaultRenderEdge: RenderEdge = ({
       //   : DefaultTheme.palette.background.paper,
       // borderRadius: 50,
     }}
-    click={() => {
+    pointertap={() => {
       cyUnselectAll(cy)
       element.select()
     }}

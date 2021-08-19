@@ -25,7 +25,7 @@ export const DefaultRenderClusterNode: RenderNode = ({
         borderRadius: 20,
       }}
       interactive
-      click={() => {
+      pointertap={() => {
         cyUnselectAll(cy)
         element.select()
       }}

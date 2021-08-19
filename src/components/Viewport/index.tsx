@@ -221,7 +221,7 @@ const ReactViewportComp = PixiComponent('Viewport', {
       height,
     } = newProps
     mutableViewport.resize(width, height)
-    mutableViewport.removeListener('click', mutableViewport.clickEvent)
+    mutableViewport.removeListener('pointertap', mutableViewport.clickEvent)
     mutableViewport.clickEvent = (e: PIXI.InteractionEvent) => R.ifElse(
       R.equals(e.target),
       () => {
@@ -251,7 +251,7 @@ const ReactViewportComp = PixiComponent('Viewport', {
         transform?.pivotY,
       ),
     )(transform)
-    mutableViewport.on('click', mutableViewport.clickEvent)
+    mutableViewport.on('pointertap', mutableViewport.clickEvent)
     // return
   },
   didMount: () => {

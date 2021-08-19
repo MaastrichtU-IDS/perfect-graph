@@ -16,7 +16,7 @@ import {
 } from '@type'
 import {
   getLabel, getSelectedItemByElement,
-  throttle,
+  throttle, getEventClientPosition,
 } from '@utils'
 import { calculateStatistics } from '@utils/networkStatistics'
 import { useTimeoutManager } from '@utils/useTimeoutManager'
@@ -431,10 +431,7 @@ const GraphEditorElement = (
             updateState((draft) => {
               const e = event.event.data.originalEvent
               draft.contextMenu.visible = true
-              draft.contextMenu.position = {
-                x: e.clientX,
-                y: e.clientY,
-              }
+              draft.contextMenu.position = getEventClientPosition(e)
               // getPointerPositionOnViewport(
               //   graphEditorRef.current.viewport,
               //   // @ts-ignore
@@ -452,7 +449,7 @@ const GraphEditorElement = (
           renderNode={({ item, element, ...rest }) => (
             <Graph.View
               interactive
-              click={(event) => {
+              pointertap={(event) => {
                 const { mode } = localDataRef.current.props
                 const elementId = element.id()
                 if (
@@ -534,7 +531,7 @@ const GraphEditorElement = (
           renderEdge={({ item, element, ...rest }) => (
             <Graph.View
               interactive
-              click={(event) => {
+              pointertap={(event) => {
                 const { mode } = localDataRef.current.props
                 if (
                   [

@@ -48,7 +48,7 @@ export const ContextMenu = (props: ContextMenuProps) => {
                   key={value}
                   interactive
                   buttonMode
-                  click={() => onSelect?.(value)}
+                  pointertap={() => onSelect?.(value)}
                 >
                   <Text
                     style={{
