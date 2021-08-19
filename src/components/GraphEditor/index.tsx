@@ -139,10 +139,14 @@ const GraphEditorElement = (
         y: 0,
       },
     },
+    isLoading: true,
   })
   localDataRef.current.props = props
   React.useEffect(() => {
     localDataRef.current.initialized = true
+    setTimeout(() => updateState((draft) => {
+      draft.isLoading = false
+    }), 2200)
   }, [])
   const graphId = React.useMemo<string>(
     () => graphConfig?.graphId ?? R.uuid(),
@@ -411,6 +415,7 @@ const GraphEditorElement = (
             onEvent({
               type: EVENT.PRESS_BACKGROUND,
               payload: { position },
+              avoidHistoryRecording: true,
             })
           }}
           onBoxSelection={(event) => {
@@ -512,6 +517,7 @@ const GraphEditorElement = (
                     itemIds: [element.id()],
                   },
                   event,
+                  avoidHistoryRecording: true,
                 })
               }}
             >
@@ -559,6 +565,7 @@ const GraphEditorElement = (
                   payload: {
                     itemIds: [element.id()],
                   },
+                  avoidHistoryRecording: true,
                 })
               }}
             >
@@ -669,7 +676,7 @@ const GraphEditorElement = (
                 onEvent({
                   type: EVENT.DELETE_NODE,
                   payload: {
-                    itemIds: localDataRef.current.newClusterBoxSelection.elementIds
+                    itemIds: localDataRef.current.newClusterBoxSelection.elementIds,
                   },
                 })
                 break
@@ -687,7 +694,7 @@ const GraphEditorElement = (
       />
       <Backdrop
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={isLoading}
+        open={isLoading || state.isLoading}
       >
         <CircularProgress color="inherit" />
       </Backdrop>

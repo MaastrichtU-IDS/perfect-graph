@@ -357,6 +357,7 @@ export const ClusterTable = (props: ClusterTableProps) => {
                                     payload: {
                                       itemIds: [elementId]
                                     },
+                                    avoidHistoryRecording: true,
                                   })
                                 }}
                               >

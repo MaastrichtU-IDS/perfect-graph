@@ -14314,10 +14314,10 @@ pirates@^4.0.0, pirates@^4.0.1:
   dependencies:
     node-modules-regexp "^1.0.0"
 
-pixi-cull@1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/pixi-cull/-/pixi-cull-1.0.0.tgz#caa76fb3ce2544ba9aa24cd8a8f768a692d2522a"
-  integrity sha512-K0b0cI/Hd+yAbFRe0qrYr/XLUwYzFidNNCkFv/MH+SZt7rwJlKnO4xgID6tR7GvE/LyKDPn1Hfgaoer3NAc4/w==
+pixi-cull@2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/pixi-cull/-/pixi-cull-2.0.1.tgz#571fd29c9a7c354a80363a1c335a53f11372d7c8"
+  integrity sha512-EHJ+xM4N8ulRSsrTSvfC4NJc12POWFWoHPTq8DKFGQU0iOvIQh4sAPAevuM7GKBat2u7t7kbGkSZXen6E+AK7A==
 
 pixi-flex-layout@1.0.3:
   version "1.0.3"

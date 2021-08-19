@@ -86,6 +86,7 @@ export const ConnectedElements = () => {
               payload: {
                 itemIds: [item.id],
               },
+              avoidHistoryRecording: true,
             })}
           >
             <ListItemIcon>

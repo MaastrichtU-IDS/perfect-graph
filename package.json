@@ -44,7 +44,7 @@
     "jsonld": "3.3.0",
     "jsonld-context-parser": "2.1.1",
     "n3": "1.7.0",
-    "pixi-cull": "1.0.0",
+    "pixi-cull": "2.0.1",
     "pixi-flex-layout": "1.0.3",
     "pixi-viewport": "4.32.0",
     "pixi.js": "6.1.1",

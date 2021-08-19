@@ -1,4 +1,5 @@
 import * as R from 'colay/ramda'
+import * as C from 'colay/color'
 import * as PIXI from 'pixi.js'
 import { applyDefaultProps as nativeApplyDefaultProps } from '@inlet/react-pixi'
 import { EventMap } from 'colay-ui/type'
@@ -56,22 +57,44 @@ import {
 //   return newStyle
 // }
 
-// position: 'absolute',
-//     width: 231,
-//     height: 20,
-//     left: 151,
-//     top: 72,
-//     fontFamily: 'Roboto',
-//     fontStyle: 'italic',
-//     fontWeight: '500',
-//     fontSize: '8.66%',
-//     display: 'flex',
-//     alignItems: 'center',
-//     justifyContent: 'flex-start',
-//     letterSpacing: 0,
-//     textDecorationLine: 'none',
-//     textTransform: 'lowercase',
-//     color: 'rgba(255,255,255,1)',
+export const processStyle = (props: any = {}, mutableInstance): any => {
+  const { parent } = mutableInstance
+  const {
+    style = {},
+  } = props
+  const newProps: any = {}
+  R.forEachObjIndexed((val: any, key: string) => {
+    let isNumber = true
+    if (R.is(String)(val) && R.includes(val, '%')) {
+      isNumber = false
+      val = (parseFloat(R.replace(val, '%', '')) / 100)
+    }
+    switch (key) {
+      case 'width':
+        newProps.width = isNumber ? val : val * parent.width
+        break
+      case 'height':
+        newProps.height = isNumber ? val : val * parent.height
+        break
+      case 'top':
+        newProps.y = isNumber ? val : val * parent.height
+        break
+      case 'left':
+        newProps.x = isNumber ? val : val * parent.width
+        break
+      case 'backgroundColor':
+        newProps.fill = C.rgbNumber(val)
+        break
+      case 'borderRadius':
+        newProps.radius = val
+        break
+      default:
+        break
+    }
+  }, style)
+  return newProps
+}
+
 const JUSTIFY_CONTENT = {
   'flex-start': 'left',
   center: 'center',
@@ -150,21 +173,6 @@ export const processTextStyle = (style: {
 export type EventType = (e: PIXI.InteractionEvent) => void
 export type Events = EventMap
 
-// export const processEventProps = (props: Record<string, any>) => {
-//   const newProps = { ...props }
-//   Object
-//     .keys(PIXI_EVENT_NAMES)
-//     .map((eventName) => {
-//       // @ts-ignore
-//       const domEventName = PIXI_EVENT_NAMES[eventName]
-//       const callback = props[eventName]
-//       if (callback) {
-//         newProps[domEventName] = callback
-//       }
-//     })
-//   return newProps
-// }
-
 export const applyEvents = (
   instance: PIXI.DisplayObject,
   props: Record<string, any>,
@@ -182,8 +190,11 @@ export const applyEvents = (
     })
 }
 
-const processProps = (props: Record<string, any>) => {
-  const newProps = { ...props }
+const processProps = (props: Record<string, any>, mutableInstance) => {
+  const newProps = {
+    ...props,
+    // ...processStyle(props, mutableInstance),
+  }
   Object
     .keys(PIXI_EVENT_NAMES)
     .map((eventName) => {
@@ -206,7 +217,8 @@ export const preprocessProps = <T extends Record<string, any>>(props: T): T => (
   ...props,
 })
 
-const IS_FLEX_DEFAULT = true
+export const IS_FLEX_DEFAULT = false
+
 export const applyDefaultProps = <P extends Record<string, any> >(
   instance: PIXI.Graphics | PIXI.DisplayObject | PIXI.Container,
   oldProps: P,
@@ -240,8 +252,8 @@ export const applyDefaultProps = <P extends Record<string, any> >(
   }
   return nativeApplyDefaultProps(
     mutableInstance,
-    processProps(oldProps),
-    processProps(restProps),
+    processProps(oldProps, mutableInstance),
+    processProps(restProps, mutableInstance),
   )
 }
 

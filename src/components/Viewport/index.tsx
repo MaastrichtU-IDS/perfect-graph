@@ -10,6 +10,7 @@ import { getBoundingBox, getPointerPositionOnViewport } from '@utils'
 import { Position, BoundingBox } from 'colay/type'
 import { drawGraphics } from '@components/Graphics'
 import { ViewportType } from '@type'
+import { Simple, SpatialHash } from "pixi-cull"
 
 type NativeViewportProps = {
   app: PIXI.Application;
@@ -136,14 +137,21 @@ const ReactViewportComp = PixiComponent('Viewport', {
     viewport.on('pointermove', (e) => {
       // const { metaKey } = e.data.originalEvent
       if (localDataRef.current.boxSelection.startPosition && !localDataRef.current.boxSelection.boxElement) {
-        const boxElement = new PIXI.Graphics()
-        viewport.addChild(boxElement!)
-        localDataRef.current.boxSelection.boxElement = boxElement
-        onBoxSelectionStart({
-          event: e,
-          startPosition: localDataRef.current.boxSelection.startPosition,
-        })
-        localDataRef.current.boxSelection.enabled = true
+        const position = getPointerPositionOnViewport(viewport, e.data.originalEvent)
+        if (
+          R.pipe(
+            V.subtract(localDataRef.current.boxSelection.startPosition),
+            V.length,
+          )(position) > 20) {
+          const boxElement = new PIXI.Graphics()
+          viewport.addChild(boxElement!)
+          localDataRef.current.boxSelection.boxElement = boxElement
+          onBoxSelectionStart({
+            event: e,
+            startPosition: localDataRef.current.boxSelection.startPosition,
+          })
+          localDataRef.current.boxSelection.enabled = true
+        }
       }
       if (localDataRef.current.boxSelection.enabled) {
         // @ts-ignore
@@ -182,6 +190,22 @@ const ReactViewportComp = PixiComponent('Viewport', {
       // @ts-ignore
       data.event.preventDefault()
     })
+
+    // PIXI CULL
+    const cull = new Simple({
+      dirtyTest: false,
+    }) // new SpatialHash()
+    cull.addList(viewport.children)
+    cull.cull(viewport.getVisibleBounds())
+
+    // cull whenever the viewport moves
+    PIXI.Ticker.shared.add(() => {
+      if (viewport.dirty) {
+        cull.cull(viewport.getVisibleBounds())
+        viewport.dirty = false
+      }
+    })
+    // PIXI CULL
     return viewport
   },
   applyProps: (

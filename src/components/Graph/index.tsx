@@ -122,6 +122,8 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
           const edgeContext = contextUtils.get(edge)
           edgeContext.onPositionChange()
         })
+        // FOR CULLING
+        graphRef.current.viewport.dirty = true
       })
       graphLayoutRef.current.start()
     }
