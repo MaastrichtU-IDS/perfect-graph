@@ -285,15 +285,16 @@ export const useController = (
                 y: position.y,
               }
               const centerPoint = new PIXI.Point(center.x, center.y)
-              viewport.snapZoom({
-                center: centerPoint,
-                width: TARGET_SIZE,
-                forceStart: true,
-                time: Graph.Layouts.grid.animationDuration + 500,
-                removeOnComplete: true,
-                removeOnInterrupt: true,
-                noMove: false,
-              })
+              viewport.center = centerPoint
+              // viewport.snapZoom({
+              //   center: centerPoint,
+              //   width: TARGET_SIZE,
+              //   forceStart: true,
+              //   time: Graph.Layouts.grid.animationDuration + 500,
+              //   removeOnComplete: true,
+              //   removeOnInterrupt: true,
+              //   noMove: false,
+              // })
             }
 
             break

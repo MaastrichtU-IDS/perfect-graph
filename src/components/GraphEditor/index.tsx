@@ -1,48 +1,37 @@
-import React from 'react'
 import {
   DefaultRenderEdge,
   DefaultRenderNode, Graph, GraphProps,
 } from '@components'
+import { ContextMenu } from '@components/ContextMenu'
+import { EDITOR_MODE, EVENT } from '@constants'
+import { Clusters } from '@core/clusters'
+import { GraphEditorProvider } from '@hooks/useGraphEditor'
 import {
-  Box,
-  Backdrop,
-  CircularProgress,
+  Backdrop, Box, CircularProgress,
+  Modal,
 } from '@material-ui/core'
 import {
-  EditorMode, EventInfo,
-  GraphConfig,
-  GraphEditorRef, GraphLabelData,
-  RecordedEvent, GraphEditorRenderEdge,
-  GraphEditorRenderNode, EventHistory,
-  OnEvent,
-  GraphEditorConfig,
-  NodeElement,
-  Playlist,
-  OnEventLite,
-  NetworkStatistics,
-  EventType,
+  EditorMode, EventHistory, EventInfo, EventType, GraphConfig, GraphEditorConfig, GraphEditorRef, GraphEditorRenderEdge,
+  GraphEditorRenderNode, GraphLabelData, NetworkStatistics, NodeElement, OnEvent, OnEventLite, Playlist, RecordedEvent,
 } from '@type'
 import {
   getLabel, getSelectedItemByElement,
-  throttle, cyUnselectAll,
-  getPointerPositionOnViewport,
+  throttle,
 } from '@utils'
-import { EDITOR_MODE, EVENT } from '@constants'
-import { useTimeoutManager } from '@utils/useTimeoutManager'
 import { calculateStatistics } from '@utils/networkStatistics'
+import { useTimeoutManager } from '@utils/useTimeoutManager'
 import { useForwardRef, wrapComponent } from 'colay-ui'
+import { useImmer } from 'colay-ui/hooks/useImmer'
 import { PropsWithRef } from 'colay-ui/type'
 import * as R from 'colay/ramda'
-import { Clusters } from '@core/clusters'
-import { useImmer } from 'colay-ui/hooks/useImmer'
-import { ContextMenu } from '@components/ContextMenu'
-import { GraphEditorProvider } from '@hooks/useGraphEditor'
+import React from 'react'
 import { ActionBar, ActionBarProps } from './ActionBar'
 import { DataBar, DataBarProps } from './DataBar'
 import { MouseIcon } from './MouseIcon'
-import { SettingsBar, SettingsBarProps } from './SettingsBar'
-import { RecordedEventsModal } from './RecordedEventsModal'
 import { PreferencesModal, PreferencesModalProps } from './PreferencesModal'
+import { RecordedEventsModal } from './RecordedEventsModal'
+import { SettingsBar, SettingsBarProps } from './SettingsBar'
+import { ModalComponent, ModalComponentProps } from './ModalComponent'
 
 type RenderElementAdditionalInfo = {
   // label: string;
@@ -67,6 +56,9 @@ export type GraphEditorProps = {
   playlists?: Playlist[];
   networkStatistics?: NetworkStatistics;
   isLoading?: boolean;
+  modals?: {
+    ElementSettings?: ModalComponentProps
+  };
 } & Omit<
 GraphProps,
 'config'|'onPress' | 'renderNode' | 'renderEdge'
@@ -114,6 +106,7 @@ const GraphEditorElement = (
     playlists,
     networkStatistics,
     isLoading = false,
+    modals = {},
     ...rest
   } = props
   const localDataRef = React.useRef({
@@ -680,6 +673,14 @@ const GraphEditorElement = (
                   },
                 })
                 break
+              case 'Settings':
+                onEvent({
+                  type: EVENT.ELEMENT_SETTINGS,
+                  payload: {
+                    itemIds: localDataRef.current.newClusterBoxSelection.elementIds,
+                  },
+                })
+                break
               default:
                 break
             }
@@ -692,6 +693,13 @@ const GraphEditorElement = (
       <PreferencesModal
         {...preferencesModal}
       />
+      {
+        Object.keys(modals).map((modalName) => (
+          <ModalComponent
+            {...(modals[modalName] ?? {})}
+          />
+        ))
+      }
       <Backdrop
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={isLoading || state.isLoading}

@@ -83,7 +83,27 @@ const prepareData = (data) => {
     edges: preEdges
   }
 }
+
+const populate = (times, data) => ({
+  nodes: R.concatAll(R.times(()=>R.clone(data.nodes), times)).map(
+    (n, i) => i<data.nodes.length ? n : ({
+    ...n,
+    id: i, 
+  })
+  ),
+  edges: R.concatAll(R.times(()=>R.clone(data.edges), times)).map(
+    (n, i) => i<data.edges.length ? n : ({
+    ...n,
+    id: i,
+  })
+  )
+})
+
 const data = prepareData(defaultData)
+// const data = populate(4,prepareData(defaultData))
+
+console.log('NODES:', data.nodes.length, )
+console.log('EDGES:', data.edges.length, )
 type Props = Partial<GraphEditorProps>
 
 const NODE_SIZE = {
@@ -318,6 +338,14 @@ const AppContainer = ({
       //     childClusterIds: []
       //   }
       // ]
+    },
+    modals: {
+      ElementSettings: {
+        form: {
+          schema: FILTER_SCHEMA.schema,
+        },
+        isOpen: false
+      }
     },
     preferencesModal: {
       // isOpen: true,
