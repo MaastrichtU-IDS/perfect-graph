@@ -6,11 +6,15 @@ import * as V from 'colay/vector'
 // import Cull from 'pixi-cull'
 import React from 'react'
 import { wrapComponent, useForwardRef } from 'colay-ui'
-import { getBoundingBox, getPointerPositionOnViewport } from '@utils'
+import {
+  getBoundingBox,
+  getPointerPositionOnViewport,
+  isMultipleTouches,
+} from '@utils'
 import { Position, BoundingBox } from 'colay/type'
 import { drawGraphics } from '@components/Graphics'
 import { ViewportType } from '@type'
-import { Simple, SpatialHash } from "pixi-cull"
+import { Simple } from 'pixi-cull'
 
 type NativeViewportProps = {
   app: PIXI.Application;
@@ -98,8 +102,12 @@ const ReactViewportComp = PixiComponent('Viewport', {
       'pointerdown',
       (e) => {
         // const { metaKey } = e.data.originalEvent
+        // BOX_SELECTION
         // @ts-ignore
-        if (e.target === e.currentTarget) {
+        if (
+          e.target === e.currentTarget
+          && !isMultipleTouches(e)
+        ) {
           // @ts-ignore
           const position = getPointerPositionOnViewport(viewport, e.data.originalEvent)
           localDataRef.current.boxSelection.startPosition = {

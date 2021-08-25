@@ -830,6 +830,12 @@ export const getEventClientPosition = (e) => {
     y: event.clientY,
   }
 }
+
+export const isMultipleTouches = (e) => {
+  const touches = e.touches ?? e.changedTouches
+  return touches && touches.length > 0
+}
+
 export const contextUtils = {
   update: (element: Element, context: any) => {
     element.data({
