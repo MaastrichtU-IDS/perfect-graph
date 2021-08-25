@@ -593,13 +593,20 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
               },
             },
           ]
-        case EVENT.DELETE_NODE:
+        case EVENT.DELETE_NODE: {
+          const {
+            itemIds,
+          } = payload
+          const relatedEdges = controllerState.edges.filter(
+            (edgeItem) => itemIds.includes(edgeItem.source)
+            || itemIds.includes(edgeItem.target),
+          )
           return [
             {
               type: EVENT.ADD_NODE,
               payload: {
                 items: controllerState.nodes!.filter(
-                  (item) => payload.itemIds.includes(item.id),
+                  (item) => itemIds.includes(item.id),
                 ).map((item) => {
                   const position = graphEditor.cy.$id(item.id).position()
                   return {
@@ -607,9 +614,10 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
                     position,
                   }
                 }),
+                edgeItems: relatedEdges,
               },
             },
-          ]
+          ] }
         case EVENT.DELETE_PLAYLIST:
           return [
             {

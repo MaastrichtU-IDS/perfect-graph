@@ -15,6 +15,9 @@ const { asNumber, guessType } = utils
 
 const nums = new Set(['number', 'integer'])
 
+export const WIDTH = 300
+export const HEIGHT = 300
+
 /**
  * This is a silly limitation in the DOM where option change event values are
  * always retrieved as strings.
@@ -193,7 +196,7 @@ const LayoutNameItem = (props: LayoutNameItemProps) => {
           alt={label}
         />
       </View>
-      <Popper
+      {/* <Popper
         // id={id}
         open={isOpen}
         anchorEl={anchorEl}
@@ -208,7 +211,7 @@ const LayoutNameItem = (props: LayoutNameItemProps) => {
           {...info}
         />
 
-      </Popper>
+      </Popper> */}
     </>
   )
 }
@@ -224,16 +227,15 @@ const LayoutCard = (props: LayoutCardProps) => {
     <>
       <Card
         sx={{
-          width: 450,
+          width: WIDTH,
           zIndex: (theme) => theme.zIndex.modal,
         }}
       >
         <CardActionArea>
           <CardMedia
             component="img"
-            height="340"
-            width="240"
-
+            height={`${HEIGHT}`}
+            width={`${WIDTH}`}
             image={image}
             title={title}
           />

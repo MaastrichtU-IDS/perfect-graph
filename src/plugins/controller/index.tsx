@@ -175,8 +175,10 @@ export const useController = (
           case EVENT.ADD_NODE: {
             const {
               items,
+              edgeItems,
             } = payload
             draft.nodes = draft.nodes.concat(items)
+            draft.edges = draft.edges.concat(edgeItems ?? [])
             // const { position } = payload
             // draft.nodes.push({
             //   id: `${draft.nodes.length + 1}`, // R.uuid(),

@@ -189,7 +189,7 @@ const ReactViewportComp = PixiComponent('Viewport', {
             height: boundingBox.height,
             backgroundColor: 'rgba(0,0,0,0)',
             borderColor: 'rgba(0,0,0,0.7)',
-            borderWidth: 1,
+            borderWidth: 1 / viewport.scale.x,
           },
         })
       }
@@ -297,6 +297,70 @@ function ViewportElement(props: ViewportProps, ref: React.ForwardedRef<ViewportT
   //     }
   //   })
   // }, [])
+  const keyboardRef = React.useRef({
+    pressedKeys: {},
+    intervalTimeout: null,
+  })
+  React.useEffect(() => {
+    const keyDownListener = (e) => {
+      if (document.body === e.target) {
+        keyboardRef.current.pressedKeys[e.key] = true
+        if (!keyboardRef.current.intervalTimeout) {
+          const interval = setInterval(() => {
+            const {
+              current: {
+                center,
+              },
+            } = viewportRef
+            const {
+              current: {
+                pressedKeys,
+              },
+            } = keyboardRef
+            const pointer = {
+              x: 0,
+              y: 0,
+            }
+            const MULTIPLIER = 30
+            Object.keys(pressedKeys).map((key) => {
+              switch (key) {
+                case 'ArrowRight':
+                  pointer.x += MULTIPLIER
+                  break
+                case 'ArrowLeft':
+                  pointer.x -= MULTIPLIER
+                  break
+                case 'ArrowUp':
+                  pointer.y -= MULTIPLIER
+                  break
+                case 'ArrowDown':
+                  pointer.y += MULTIPLIER
+                  break
+
+                default:
+                  break
+              }
+            })
+            const newCenter = new PIXI.Point(center.x + pointer.x, center.y + pointer.y)
+            viewportRef.current.center = newCenter
+          }, 5)
+          keyboardRef.current.intervalTimeout = interval
+        }
+        // viewportRef.current.center =
+      }
+    }
+    const keyUpListener = (e) => {
+      clearInterval(keyboardRef.current.intervalTimeout)
+      keyboardRef.current.intervalTimeout = null
+      keyboardRef.current.pressedKeys = {}
+    }
+    document.addEventListener('keydown', keyDownListener)
+    document.addEventListener('keyup', keyUpListener)
+    return () => {
+      document.removeEventListener('keydown', keyDownListener)
+      document.removeEventListener('keyup', keyUpListener)
+    }
+  }, [])
   return (
     <ReactViewportComp
       ref={viewportRef}

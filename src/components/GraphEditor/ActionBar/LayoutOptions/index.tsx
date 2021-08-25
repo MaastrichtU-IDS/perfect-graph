@@ -8,7 +8,11 @@ import { EVENT } from '@constants'
 import { OnEventLite } from '@type'
 import { useDisclosure } from 'colay-ui'
 import React from 'react'
-import { getFormProps } from './getFormProps'
+import {
+  getFormProps,
+  WIDTH,
+  HEIGHT,
+} from './getFormProps'
 
 type LayoutOptionsValue = {
   name?: string;
@@ -98,7 +102,7 @@ export const LayoutOptions = (props: LayoutOptionsProps) => {
         </Portal>
         <Box
           sx={{
-            width: 450,
+            width: WIDTH,
             padding: 2,
           }}
         >
