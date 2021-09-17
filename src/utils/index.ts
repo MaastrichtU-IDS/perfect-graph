@@ -792,15 +792,35 @@ export const isPositionInBox = (position: Position, box: BoundingBox) => {
     x,
     y,
   } = position
-  return x >= box.x && y >= box.y && x <= box.x + box.width
-  && y <= box.y + box.height
+  const x_ = box.x + box.width
+  const y_ = box.y + box.height
+  const startPos = {
+    x: box.x < x_ ? box.x : x_,
+    y: box.y < y_ ? box.y : y_,
+  }
+  const endPos = {
+    x: box.x < x_ ? x_ : box.x,
+    y: box.y < y_ ? y_ : box.y,
+  }
+  return x >= startPos.x && y >= startPos.y && x <= endPos.x
+  && y <= endPos.y
 }
 
-export const getBoundingBox = (startPos: Position, endPos: Position) => ({
-  ...startPos,
-  width: endPos.x - startPos.x,
-  height: endPos.y - startPos.y,
-})
+export const getBoundingBox = (
+  startPos: Position, endPos: Position, abs = false,
+) => {
+  const width = endPos.x - startPos.x
+  const height = endPos.y - startPos.y
+  // const x = startPos.x < endPos.x ? startPos.x : endPos.x
+  // const y = startPos.y < endPos.y ? startPos.y : endPos.y
+  return {
+    ...startPos,
+    // x,
+    // y,
+    width: abs ? Math.abs(width) : width,
+    height: abs ? Math.abs(height) : height,
+  }
+}
 
 export const cyUnselectAll = (cy: cytoscape.Core) => {
   cy.elements(':selected').unselect()

@@ -1,12 +1,14 @@
 import React from 'react'
 import { wrapComponent } from 'colay-ui'
 import { useNode } from '@hooks'
+import { CYTOSCAPE_EVENT, } from '@constants'
 import {
   RenderNode, NodeConfig, GraphRef,
 } from '@type'
 import {
   calculateObjectBoundsWithoutChildren,
   calculateVisibilityByContext,
+  contextUtils
 } from '@utils'
 import { useTheme } from '@core/theme'
 import { Container } from '../Container'
@@ -78,6 +80,12 @@ const NodeContainerElement = (
       visible={visible}
       draggable
       onDrag={onDrag}
+      mouseover={() => {
+        element.emit(CYTOSCAPE_EVENT.mouseover)
+      }}
+      mouseout={() => {
+        element.emit(CYTOSCAPE_EVENT.mouseout)
+      }}
       // onRightPress={(event) => {
       //   event.data.originalEvent.preventDefault()
       //   event.data.originalEvent.stopPropagation()
@@ -89,6 +97,7 @@ const NodeContainerElement = (
         cy,
         theme,
         graphRef,
+        context,
       })}
     </Container>
   )

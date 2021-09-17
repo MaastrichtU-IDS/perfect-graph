@@ -75,6 +75,7 @@ export const GlobalNetworkStatistics = (props: GlobalNetworkStatisticsProps) => 
       <AccordionDetails>
         <JSONViewer
           data={data}
+          sort={-1}
           left={({ collapsed, onCollapse, noChild }) => (
             <IconButton
               size="small"

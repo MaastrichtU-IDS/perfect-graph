@@ -72,6 +72,7 @@ export const LocalNetworkStatistics = (props: LocalNetworkStatisticsProps) => {
       <AccordionDetails>
         <JSONViewer
           data={data}
+          sort={-1}
           left={({ collapsed, onCollapse, noChild }) => (
             <IconButton
               size="small"

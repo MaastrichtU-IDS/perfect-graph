@@ -70,6 +70,7 @@ export default (props: Props): Result => {
       visibility: {
         cluster: getClusterVisibility(id, clusters),
       },
+      hovered: false,
     },
   } as NodeContext)
   const element = React.useMemo(() => cy!.add({
@@ -89,9 +90,21 @@ export default (props: Props): Result => {
           onPositionChange,
         },
       } = contextRef
+      const onHover = () => {
+        contextRef.current.settings.hovered = true
+        contextUtils.update(element, contextRef.current)
+      }
+      const onHoverExit = () => {
+        contextRef.current.settings.hovered = false
+        contextUtils.update(element, contextRef.current)
+      }
       element.on(CYTOSCAPE_EVENT.position, onPositionChange)
+      element.on(CYTOSCAPE_EVENT.mouseover, onHover)
+      element.on(CYTOSCAPE_EVENT.mouseout, onHoverExit)
       return () => {
         element.off(CYTOSCAPE_EVENT.position, `#${element.id()}`, onPositionChange)
+        element.off(CYTOSCAPE_EVENT.mouseover, `#${element.id()}`, onHover)
+        element.off(CYTOSCAPE_EVENT.mouseout, `#${element.id()}`, onHoverExit)
         cy!.remove(element!)
       }
     }, // destroy

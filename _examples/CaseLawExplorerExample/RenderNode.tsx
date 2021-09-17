@@ -9,14 +9,15 @@ export type RenderNodeProps = Parameters<RenderNodeType>[0]
 
 const DEFAULT_FONT_SIZE = 20
 const TOP_SCALE = 3.1
-export const RenderNode = ({
-   item, element, cy, theme,
-   visualization, 
-   filtering,
-   labelPath,
-   label,
-  graphRef 
-}: RenderNodeProps) => {
+export const RenderNode = (props: RenderNodeProps) => {
+  const {
+    item, element, cy, theme,
+    visualization, 
+    filtering,
+    labelPath,
+    label,
+   graphRef ,
+ } = props
   const text = R.takeLast(6, `${label}`)//item.id
   const size = calculateNodeSize(item.data, visualization.nodeSize)
   const color = visualization.nodeColor ? calculateColor(
@@ -61,7 +62,6 @@ export const RenderNode = ({
       }
     }
   }, [graphRef.current.viewport])
-  
   return (
     <Graph.View
       style={{
@@ -72,9 +72,15 @@ export const RenderNode = ({
         display: 'flex',
         backgroundColor: hasSelectedEdge
         ? theme.palette.secondary.main
-        : (element.selected()
+        : (
+          element.selected()
           ? theme.palette.primary.main
-          : color),
+          : (
+            element.hovered()
+            ? theme.palette.secondary.main
+            : color
+            )
+          ),
         borderRadius: size,
       }}
       pointertap={(e) => {

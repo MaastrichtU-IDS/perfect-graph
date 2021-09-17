@@ -3,7 +3,7 @@ import {
   DefaultRenderNode, Graph, GraphProps,
 } from '@components'
 import { ContextMenu } from '@components/ContextMenu'
-import { EDITOR_MODE, EVENT } from '@constants'
+import { EDITOR_MODE, EVENT, CYTOSCAPE_EVENT } from '@constants'
 import { Clusters } from '@core/clusters'
 import { GraphEditorProvider } from '@hooks/useGraphEditor'
 import {
@@ -428,25 +428,28 @@ const GraphEditorElement = (
             }
             // TODO: DANGER**
             localDataRef.current.newClusterBoxSelection.elementIds = elementIds
-            updateState((draft) => {
-              const e = event.event.data.originalEvent
-              draft.contextMenu.visible = true
-              draft.contextMenu.position = getEventClientPosition(e)
-              // getPointerPositionOnViewport(
-              //   graphEditorRef.current.viewport,
-              //   // @ts-ignore
-              //   event.event.data.originalEvent,
-              // )
-            })
-            // TODO: **DANGER
-            onEvent({
-              type: EVENT.BOX_SELECTION,
-              payload: {
-                elementIds,
-              },
-            })
+            if (elementIds.length > 0) {
+              updateState((draft) => {
+                const e = event.event.data.originalEvent
+                draft.contextMenu.visible = true
+                draft.contextMenu.position = getEventClientPosition(e)
+                // getPointerPositionOnViewport(
+                //   graphEditorRef.current.viewport,
+                //   // @ts-ignore
+                //   event.event.data.originalEvent,
+                // )
+              })
+              // TODO: **DANGER
+              onEvent({
+                type: EVENT.BOX_SELECTION,
+                payload: {
+                  elementIds,
+                },
+              })
+            }
           }}
-          renderNode={({ item, element, ...rest }) => (
+          renderNode={({ item, element, ...rest }) => {
+            return (
             <Graph.View
               interactive
               pointertap={(event) => {
@@ -527,7 +530,7 @@ const GraphEditorElement = (
                 ...rest,
               })}
             </Graph.View>
-          )}
+          )}}
           renderEdge={({ item, element, ...rest }) => (
             <Graph.View
               interactive

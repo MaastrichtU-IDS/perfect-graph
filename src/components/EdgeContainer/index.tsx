@@ -6,7 +6,7 @@ import * as PIXI from 'pixi.js'
 import { useTheme } from '@core/theme'
 import { useEdge } from '@hooks'
 import { contextUtils, calculateVisibilityByContext } from '@utils'
-import { EDGE_CONTAINER_Z_INDEX } from '@constants'
+import { EDGE_CONTAINER_Z_INDEX, CYTOSCAPE_EVENT } from '@constants'
 import {
   RenderEdge,
   EdgeConfig,
@@ -16,7 +16,6 @@ import {
   GraphRef,
 } from '@type'
 import * as V from 'colay/vector'
-
 import { Graphics, drawLine as defaultDrawLine } from '../Graphics'
 import { Container, ContainerRef } from '../Container'
 
@@ -225,7 +224,13 @@ const EdgeContainerElement = (
           ),
           zIndex: EDGE_CONTAINER_Z_INDEX,
         }}
-        // interactive
+        interactive
+        mouseover={() => {
+          element.emit(CYTOSCAPE_EVENT.mouseover)
+        }}
+        mouseout={() => {
+          element.emit(CYTOSCAPE_EVENT.mouseout)
+        }}
         // pointertap={() => console.log('ONPRESS')}
       >
         {

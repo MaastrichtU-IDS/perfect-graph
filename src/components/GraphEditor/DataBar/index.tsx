@@ -191,6 +191,7 @@ export const DataBar = (props: DataBarProps) => {
             <JSONViewer
               extraData={[localLabel, globalLabel]}
               data={item?.data}
+              sort={-1}
               left={(props) => {
                 const {
                   item: { path },

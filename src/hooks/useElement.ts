@@ -52,9 +52,6 @@ export const useElement = (props: Props): Result => {
     () => {
       renderEvents.forEach((eventName) => {
         element.on(eventName, () => {
-          // if (element.isNode()) {
-          //   console.log(item.id, eventName)
-          // }
           contextRef.current?.render?.()
         })
       })
@@ -109,6 +106,12 @@ export const useElement = (props: Props): Result => {
       }
     }
   }, [config.filter])
+
+  // Add fields
+  React.useMemo(() => {
+    element.hovered = () => contextRef.current?.settings.hovered
+    element.filtered = () => contextRef.current?.settings.filtered
+  }, [element])
   return {
 
   }

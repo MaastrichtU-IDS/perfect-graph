@@ -279,6 +279,8 @@ const DEFAULT_NODE_CONFIG = {
     CYTOSCAPE_EVENT.unselect,
     CYTOSCAPE_EVENT.selectEdge,
     CYTOSCAPE_EVENT.unselectEdge,
+    CYTOSCAPE_EVENT.mouseover,
+    CYTOSCAPE_EVENT.mouseout,
   ],
 }
 
@@ -288,6 +290,8 @@ const DEFAULT_EDGE_CONFIG = {
     CYTOSCAPE_EVENT.unselect,
     CYTOSCAPE_EVENT.selectNode,
     CYTOSCAPE_EVENT.unselectNode,
+    CYTOSCAPE_EVENT.mouseover,
+    CYTOSCAPE_EVENT.mouseout,
   ],
 }
 

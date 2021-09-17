@@ -7488,17 +7488,17 @@ colay-docs@0.0.60:
     sass-loader "10.1.1"
     style-loader "2.0.0"
 
-colay-ui@0.0.103:
-  version "0.0.103"
-  resolved "https://registry.yarnpkg.com/colay-ui/-/colay-ui-0.0.103.tgz#9ec605f1546a7ce809ac32485611874ab46f76ac"
-  integrity sha512-QogZQa9jHHsEZXnKUNb/wCrM+erwcn7Q1z9CVxMuVwI6g3UkYpsfT0uiMePnIWaSn8PnrC0hGC+Cd+ilnhmBsg==
+colay-ui@0.0.112:
+  version "0.0.112"
+  resolved "https://registry.yarnpkg.com/colay-ui/-/colay-ui-0.0.112.tgz#7d629e2746479c3112751e15b73531ef9f4aaafd"
+  integrity sha512-2IkIDpRnPBqnxCrj+qDAVEN9BI96ofYAPulhmIW+vURGbWI+zt3D1gxQaTQFcRGiUovYYUZazlw4zKupb0BmWg==
   dependencies:
     react-error-boundary "3.1.0"
 
-colay@0.0.60:
-  version "0.0.60"
-  resolved "https://registry.yarnpkg.com/colay/-/colay-0.0.60.tgz#6913c9e98eb8ef979afdad80be8ae936527a2e7a"
-  integrity sha512-6BLH8SRnpzGxu1hlC+h5wMO0Wpia4b7lFrZKJWMSEixNN5ARaJj8T8KsFXaMHCR5xm5Uz44a6QIA47XmZYp2IA==
+colay@0.0.62:
+  version "0.0.62"
+  resolved "https://registry.yarnpkg.com/colay/-/colay-0.0.62.tgz#e6dd1b3c86b6cb3363d284c13989dcae28404a9b"
+  integrity sha512-f2U8Is47w+y1YuY4QNgiCKD1XLIVd12Uj7vU29M6/Ufoth/oeFA+5M8efFxnjmkquYeXReYo+HQURnFZgkV1oA==
   dependencies:
     "@types/async" "3.2.5"
     "@types/ramda" "0.27.34"

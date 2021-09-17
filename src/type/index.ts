@@ -39,12 +39,14 @@ export type EdgeElementSettings = {
   visibility: {
     nodeVisible: boolean;
   }
+  hovered: boolean
 }
 export type NodeElementSettings = {
   filtered: boolean;
   visibility: {
     cluster: boolean;
   }
+  hovered: boolean;
 }
 export type NodeContext = ElementContext<NodeElementSettings> & {
   boundingBox: BoundingBox;

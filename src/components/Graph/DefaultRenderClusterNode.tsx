@@ -29,15 +29,6 @@ export const DefaultRenderClusterNode: RenderNode = ({
         cyUnselectAll(cy)
         element.select()
       }}
-      // rightclick={(e) => {
-        // alert('Heyy')
-      // }}
-      // onRightPress={(e) => {
-      // }}
-      // mouseover={(e) => {
-      // }}
-      // onPressEnd={(e) => {
-      // }}
     >
       <GraphText
         style={{

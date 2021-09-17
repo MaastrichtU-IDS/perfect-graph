@@ -4,6 +4,7 @@ import * as R from 'colay/ramda'
 import React from 'react'
 import { Text as GraphText } from '../Text'
 import { View as GraphView } from '../View'
+import { CYTOSCAPE_EVENT } from '@constants'
 
 export const DefaultRenderNode: RenderNode = ({
   item, element, cy, theme,
