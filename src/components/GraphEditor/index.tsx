@@ -32,6 +32,7 @@ import { PreferencesModal, PreferencesModalProps } from './PreferencesModal'
 import { RecordedEventsModal } from './RecordedEventsModal'
 import { SettingsBar, SettingsBarProps } from './SettingsBar'
 import { ModalComponent, ModalComponentProps } from './ModalComponent'
+import { ElementSettingsModal } from './modals/ElementSettingsModal'
 
 type RenderElementAdditionalInfo = {
   // label: string;
@@ -106,9 +107,16 @@ const GraphEditorElement = (
     playlists,
     networkStatistics,
     isLoading = false,
-    modals = {},
+    modals = {
+      ElementSettings: {
+        isOpen: true,
+        render: ElementSettingsModal,
+        a: 'asd',
+      },
+    },
     ...rest
   } = props
+
   const localDataRef = React.useRef({
     initialized: false,
     targetNode: null as NodeElement | null,
@@ -131,6 +139,7 @@ const GraphEditorElement = (
         x: 0,
         y: 0,
       },
+      itemIds: [],
     },
     isLoading: true,
   })
@@ -433,6 +442,7 @@ const GraphEditorElement = (
                 const e = event.event.data.originalEvent
                 draft.contextMenu.visible = true
                 draft.contextMenu.position = getEventClientPosition(e)
+                draft.contextMenu.itemIds = elementIds
                 // getPointerPositionOnViewport(
                 //   graphEditorRef.current.viewport,
                 //   // @ts-ignore
@@ -448,10 +458,20 @@ const GraphEditorElement = (
               })
             }
           }}
-          renderNode={({ item, element, ...rest }) => {
-            return (
+          renderNode={({ item, element, ...rest }) => (
             <Graph.View
               interactive
+              // rightdown={(event) => {
+              //   event.stopPropagation()
+              // }}
+              rightclick={(event) => {
+                updateState((draft) => {
+                  draft.contextMenu.visible = true
+                  draft.contextMenu.position = getEventClientPosition(event.data.originalEvent)
+                  draft.contextMenu.itemIds = [element.id()]
+                })
+                event.stopPropagation()
+              }}
               pointertap={(event) => {
                 const { mode } = localDataRef.current.props
                 const elementId = element.id()
@@ -530,10 +550,24 @@ const GraphEditorElement = (
                 ...rest,
               })}
             </Graph.View>
-          )}}
+          )}
           renderEdge={({ item, element, ...rest }) => (
             <Graph.View
               interactive
+              rightclick={(event) => {
+                onEvent({
+                  type: EVENT.ELEMENT_SELECTED,
+                  payload: {
+                    itemIds: [element.id()],
+                  },
+                  event,
+                  avoidHistoryRecording: true,
+                })
+                updateState((draft) => {
+                  draft.contextMenu.visible = true
+                })
+                event.stopPropagation()
+              }}
               pointertap={(event) => {
                 const { mode } = localDataRef.current.props
                 if (
@@ -648,9 +682,6 @@ const GraphEditorElement = (
             { value: 'Settings', label: 'Settings' },
           ]}
           onSelect={(value) => {
-            updateState((draft) => {
-              draft.contextMenu.visible = false
-            })
             switch (value) {
               case 'CreateCluster':
                 onEvent({
@@ -659,7 +690,7 @@ const GraphEditorElement = (
                     items: [{
                       id: R.uuid(),
                       name: `Cluster-${graphConfig?.clusters?.length ?? 0}`,
-                      ids: localDataRef.current.newClusterBoxSelection.elementIds,
+                      ids: state.contextMenu.itemIds,
                       childClusterIds: [],
                     }],
                   },
@@ -669,7 +700,7 @@ const GraphEditorElement = (
                 onEvent({
                   type: EVENT.DELETE_NODE,
                   payload: {
-                    itemIds: localDataRef.current.newClusterBoxSelection.elementIds,
+                    itemIds: state.contextMenu.itemIds,
                   },
                 })
                 break
@@ -677,7 +708,7 @@ const GraphEditorElement = (
                 onEvent({
                   type: EVENT.ELEMENT_SETTINGS,
                   payload: {
-                    itemIds: localDataRef.current.newClusterBoxSelection.elementIds,
+                    itemIds: state.contextMenu.itemIds,
                   },
                 })
                 break
@@ -685,6 +716,10 @@ const GraphEditorElement = (
                 break
             }
             localDataRef.current.newClusterBoxSelection.elementIds = []
+            updateState((draft) => {
+              draft.contextMenu.visible = false
+              draft.contextMenu.itemIds = []
+            })
           }}
           position={state.contextMenu.position}
           open={state.contextMenu.visible}

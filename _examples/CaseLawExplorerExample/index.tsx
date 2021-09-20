@@ -339,14 +339,14 @@ const AppContainer = ({
       //   }
       // ]
     },
-    modals: {
-      ElementSettings: {
-        form: {
-          schema: FILTER_SCHEMA.schema,
-        },
-        isOpen: false
-      }
-    },
+    // modals: {
+    //   ElementSettings: {
+    //     form: {
+    //       schema: FILTER_SCHEMA.schema,
+    //     },
+    //     isOpen: false
+    //   }
+    // },
     preferencesModal: {
       // isOpen: true,
     },

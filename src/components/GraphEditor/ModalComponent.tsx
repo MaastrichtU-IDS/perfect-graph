@@ -25,6 +25,7 @@ export const ModalComponent = (props: ModalComponentProps) => {
     form,
     onClose = () => {},
   } = props
+  const Component = props.render
   return (
     <Modal
       open={isOpen}
@@ -65,7 +66,7 @@ export const ModalComponent = (props: ModalComponentProps) => {
             </Form>
           </Paper>
         )
-        : (render?.() ?? null)
+        : <Component />
       }
 
     </Modal>

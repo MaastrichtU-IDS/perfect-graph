@@ -19,7 +19,6 @@ export type NodeContainerProps = {
   graphID: string;
   graphRef: React.RefObject<GraphRef>;
   config?: NodeConfig;
-
 }
 
 export type NodeContainerType = React.ForwardedRef<NodeContainerProps>
