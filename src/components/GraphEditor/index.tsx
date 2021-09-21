@@ -107,13 +107,7 @@ const GraphEditorElement = (
     playlists,
     networkStatistics,
     isLoading = false,
-    modals = {
-      ElementSettings: {
-        isOpen: true,
-        render: ElementSettingsModal,
-        a: 'asd',
-      },
-    },
+    modals,
     ...rest
   } = props
 
@@ -128,6 +122,9 @@ const GraphEditorElement = (
     networkStatistics: {
       local: null,
     },
+    contextMenu: {
+      itemIds: [],
+    },
   })
   const [state, updateState] = useImmer({
     eventsModal: {
@@ -139,7 +136,6 @@ const GraphEditorElement = (
         x: 0,
         y: 0,
       },
-      itemIds: [],
     },
     isLoading: true,
   })
@@ -438,11 +434,11 @@ const GraphEditorElement = (
             // TODO: DANGER**
             localDataRef.current.newClusterBoxSelection.elementIds = elementIds
             if (elementIds.length > 0) {
+              localDataRef.current.contextMenu.itemIds = elementIds
               updateState((draft) => {
                 const e = event.event.data.originalEvent
                 draft.contextMenu.visible = true
                 draft.contextMenu.position = getEventClientPosition(e)
-                draft.contextMenu.itemIds = elementIds
                 // getPointerPositionOnViewport(
                 //   graphEditorRef.current.viewport,
                 //   // @ts-ignore
@@ -465,10 +461,10 @@ const GraphEditorElement = (
               //   event.stopPropagation()
               // }}
               rightclick={(event) => {
+                localDataRef.current.contextMenu.itemIds = [element.id()]
                 updateState((draft) => {
                   draft.contextMenu.visible = true
                   draft.contextMenu.position = getEventClientPosition(event.data.originalEvent)
-                  draft.contextMenu.itemIds = [element.id()]
                 })
                 event.stopPropagation()
               }}
@@ -682,6 +678,13 @@ const GraphEditorElement = (
             { value: 'Settings', label: 'Settings' },
           ]}
           onSelect={(value) => {
+            const {
+              current: {
+                contextMenu: {
+                  itemIds,
+                },
+              },
+            } = localDataRef
             switch (value) {
               case 'CreateCluster':
                 onEvent({
@@ -690,7 +693,7 @@ const GraphEditorElement = (
                     items: [{
                       id: R.uuid(),
                       name: `Cluster-${graphConfig?.clusters?.length ?? 0}`,
-                      ids: state.contextMenu.itemIds,
+                      ids: itemIds,
                       childClusterIds: [],
                     }],
                   },
@@ -700,7 +703,7 @@ const GraphEditorElement = (
                 onEvent({
                   type: EVENT.DELETE_NODE,
                   payload: {
-                    itemIds: state.contextMenu.itemIds,
+                    itemIds,
                   },
                 })
                 break
@@ -708,7 +711,7 @@ const GraphEditorElement = (
                 onEvent({
                   type: EVENT.ELEMENT_SETTINGS,
                   payload: {
-                    itemIds: state.contextMenu.itemIds,
+                    itemIds,
                   },
                 })
                 break
@@ -716,9 +719,9 @@ const GraphEditorElement = (
                 break
             }
             localDataRef.current.newClusterBoxSelection.elementIds = []
+            localDataRef.current.contextMenu.itemIds = []
             updateState((draft) => {
               draft.contextMenu.visible = false
-              draft.contextMenu.itemIds = []
             })
           }}
           position={state.contextMenu.position}
@@ -732,6 +735,7 @@ const GraphEditorElement = (
         Object.keys(modals).map((modalName) => (
           <ModalComponent
             {...(modals[modalName] ?? {})}
+            name={modalName}
           />
         ))
       }

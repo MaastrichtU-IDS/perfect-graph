@@ -1,4 +1,7 @@
 import React from 'react'
+import {
+  pauseEvent,
+} from '@utils'
 
 export const useDrag = (options) => {
   const {
@@ -12,6 +15,7 @@ export const useDrag = (options) => {
     const prevY = e.y
     const panelRect = ref.current.getBoundingClientRect()
     function mousemove(e) {
+      pauseEvent(e)
       const newX = prevX - e.x
       const newY = prevY - e.y
       onDrag({ x: newX, y: newY }, panelRect)

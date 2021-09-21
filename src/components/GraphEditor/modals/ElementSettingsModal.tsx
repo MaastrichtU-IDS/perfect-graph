@@ -11,12 +11,15 @@ import {
   ListItemText,
   Link,
   Breadcrumbs,
+  Button,
   Collapse,
 } from '@material-ui/core'
 import { Icon } from '@components/Icon'
 import { useGraphEditor } from '@hooks'
 import { EVENT } from '@constants'
-import { View, DataRender } from 'colay-ui'
+import {
+  View, DataRender, dataRenderPath, isReact,
+} from 'colay-ui'
 import Form from '@rjsf/material-ui'
 import ExpandLess from '@material-ui/icons/ExpandLess'
 import ExpandMore from '@material-ui/icons/ExpandMore'
@@ -37,22 +40,6 @@ export type PreferencesModalProps = {
 }
 
 const getId = (sidebarItem: SidebarItemData) => sidebarItem?.id ?? sidebarItem
-export const dataRenderPath = (accessor: string[], selectedPath: string[], data: any[]) => {
-  let result
-  const find = (children, currentPath = []) => {
-    const foundItem = Object.values(children).find((child) => {
-      const newPath = [...currentPath, child.id]
-      if (R.equals(newPath, selectedPath)) {
-        result = child
-        return true
-      }
-      return find(R.path(accessor, child) ?? [], newPath)
-    })
-    return foundItem
-  }
-  find(data)
-  return result
-}
 
 export const ElementSettingsModal = (props: PreferencesModalProps) => {
   const {
@@ -63,10 +50,12 @@ export const ElementSettingsModal = (props: PreferencesModalProps) => {
   const [
     {
       onEvent,
+      graphEditorLocalDataRef,
     },
   ] = useGraphEditor(
     (editor) => ({
       onEvent: editor.onEvent,
+      graphEditorLocalDataRef: editor.localDataRef,
     }),
   )
   const sidebar = React.useMemo(() => {
@@ -105,6 +94,7 @@ export const ElementSettingsModal = (props: PreferencesModalProps) => {
     selectedPath: state.selectedPath,
   }), [sidebar, components, state.selectedPath])
   const Component = components[state.componentId] ?? React.Fragment
+  const form = components[state.componentId]
   return (
     <Paper
       style={{
@@ -153,7 +143,52 @@ export const ElementSettingsModal = (props: PreferencesModalProps) => {
             }
             <Typography color="text.primary">{R.last(state.selectedPath)}</Typography>
           </Breadcrumbs> */}
-          <Component />
+          {
+      !isReact.compatible(Component)
+        ? (
+          <Paper
+            style={{
+              maxWidth: '80%',
+              maxHeight: '90%',
+              overflow: 'scroll',
+              padding: 2,
+            }}
+          >
+            <Form
+              {...form}
+              style={{
+                width: '100%',
+                height: '100%',
+              }}
+              schema={R.omit(['title'])(form.schema)}
+              onSubmit={({ formData }) => {
+                onEvent({
+                  type: EVENT.ELEMENT_SETTINGS_FORM_SUBMIT,
+                  payload: {
+                    name: state.componentId,
+                    value: formData,
+                    itemIds: graphEditorLocalDataRef.current.contextMenu.itemIds,
+                  },
+                })
+                graphEditorLocalDataRef.current.contextMenu.itemIds = []
+              }}
+            >
+              {
+              form.children ?? (
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+              >
+                Save
+              </Button>
+              )
+}
+            </Form>
+          </Paper>
+        )
+        : <Component />
+      }
           {/* <Form
               schema={{
                 type: 'object',
@@ -256,7 +291,6 @@ const SidebarItem = (props: SidebarItemProps) => {
   }
   const hasChildren = !!item.children
   const selected = selectedPath.join('').includes(path.join(''))
-  console.log(path, selectedPath, selected)
   return (
     <>
       <ListItem
@@ -289,7 +323,50 @@ const SidebarItem = (props: SidebarItemProps) => {
 
 const MOCK_COMPONENTS = {
   General: () => <div>General</div>,
-  Visualization: () => <div>Visualization</div>,
+  Visualization: {
+    schema: {
+      type: 'object',
+      properties: {
+        size: {
+          title: 'Size',
+          type: 'integer',
+          minimum: 10,
+          maximum: 50,
+        },
+        fontSize: {
+          title: 'Font Size',
+          type: 'integer',
+          minimum: 10,
+          maximum: 50,
+        },
+        backgroundColor: {
+          type: 'string',
+          title: 'color picker',
+          default: '#151ce6',
+        },
+        textColor: {
+          type: 'string',
+          title: 'color picker',
+          default: '#151ce6',
+        },
+      },
+    },
+    uiSchema: {
+      size: {
+        'ui:widget': 'range',
+      },
+      fontSize: {
+        'ui:widget': 'range',
+      },
+      backgroundColor: {
+        'ui:widget': 'color',
+      },
+      textColor: {
+        'ui:widget': 'color',
+      },
+    },
+  },
+  // Visualization: () => <div>Visualization</div>,
   Filter: () => <div>Filter</div>,
   History: () => <div>History</div>,
   Settings: () => <div>Settings</div>,
@@ -300,21 +377,21 @@ const MOCK_SIDEBAR_DATA = [
     icon: <Icon name="settings" />,
     id: 'General',
     children: [
-      'UI',
+      'Visualization',
     ],
   },
-  {
-    icon: <Icon name="bookmark" />,
-    id: 'Visualization',
-    children: [
-      {
-        icon: <Icon name="filter" />,
-        id: 'Filter',
-        children: [
-          'History',
-        ],
-      },
-      'Settings',
-    ],
-  },
+  // {
+  //   icon: <Icon name="bookmark" />,
+  //   id: 'Visualization',
+  //   children: [
+  //     {
+  //       icon: <Icon name="filter" />,
+  //       id: 'Filter',
+  //       children: [
+  //         'History',
+  //       ],
+  //     },
+  //     'Settings',
+  //   ],
+  // },
 ]

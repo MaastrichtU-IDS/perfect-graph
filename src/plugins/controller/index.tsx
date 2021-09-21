@@ -21,6 +21,9 @@ import * as R from 'colay/ramda'
 import * as PIXI from 'pixi.js'
 import React from 'react'
 import * as V from 'colay/vector'
+import {
+  ElementSettingsModal,
+} from '@components/GraphEditor/modals/ElementSettingsModal'
 
 // type ControllerOptions = {
 //   // onEvent?: (info: EventInfo, draft: ControllerState) => boolean;
@@ -31,6 +34,7 @@ GraphEditorProps,
 'nodes'| 'edges' | 'mode'
 | 'actionBar' | 'dataBar' | 'settingsBar'
 | 'graphConfig' | 'events' | 'label' | 'playlists' | 'selectedElementIds'
+| 'modals'
 > & {
   onEvent?: (info: EventInfo & {
     graphEditor: GraphEditorRef;
@@ -665,6 +669,36 @@ export const useController = (
             draft.playlists = draft.playlists!.filter((playlist) => !itemIds.includes(playlist.id))
             break
           }
+          case EVENT.ELEMENT_SETTINGS: {
+            if (draft.modals?.ElementSettings) {
+              draft.modals.ElementSettings.isOpen = true
+            }
+            break
+          }
+          case EVENT.ELEMENT_SETTINGS_FORM_SUBMIT: {
+            const {
+              name,
+              value,
+            } = payload
+            console.log('v', name, value)
+            // draft.modals.ElementSettings.isOpen = true
+            switch (name) { 
+              case 'Visualization':
+
+                break;
+            
+              default:
+                break;
+            }
+            break
+          }
+          case EVENT.CLOSE_MODAL: {
+            const {
+              name,
+            } = payload
+            draft.modals[name].isOpen = false
+            break
+          }
           default:
             break
         }
@@ -740,4 +774,10 @@ const DEFAULT_CONTROLLER_CONFIG: UseControllerData = {
     //   events: MOCK_DATA.events,
     // },
   ],
+  modals: {
+    ElementSettings: {
+      isOpen: false,
+      render: ElementSettingsModal,
+    },
+  },
 }

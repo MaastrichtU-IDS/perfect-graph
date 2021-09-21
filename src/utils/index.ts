@@ -885,3 +885,11 @@ export const getItemFromElement = (element: Element) => ({
   id: element.id(),
   data: getElementData(element),
 })
+
+export const pauseEvent = (e) => {
+  if (e.stopPropagation) e.stopPropagation()
+  if (e.preventDefault) e.preventDefault()
+  e.cancelBubble = true
+  e.returnValue = false
+  return false
+}

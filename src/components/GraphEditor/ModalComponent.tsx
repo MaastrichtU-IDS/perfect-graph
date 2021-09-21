@@ -7,6 +7,12 @@ import {
 import { FormProps } from '@rjsf/core'
 import Form from '@rjsf/material-ui'
 import * as R from 'colay/ramda'
+import {
+  useGraphEditor,
+} from '@hooks'
+import {
+  EVENT,
+} from '@constants'
 // import {
 //   View,
 // } from 'colay-ui'
@@ -23,14 +29,33 @@ export const ModalComponent = (props: ModalComponentProps) => {
     isOpen = false,
     render,
     form,
-    onClose = () => {},
+    onClose,
+    name,
   } = props
-  const Component = props.render
+  const Component = render
+  const [
+    {
+      onEvent,
+    },
+  ] = useGraphEditor(
+    (editor) => ({
+      onEvent: editor.onEvent,
+    }),
+  )
+  const onCloseCallback = React.useCallback(() => {
+    onClose?.()
+    onEvent({
+      type: EVENT.CLOSE_MODAL,
+      payload: {
+        name,
+      },
+    })
+  }, [onClose])
   return (
     <Modal
       open={isOpen}
-      onClose={onClose}
-      onBackdropClick={onClose}
+      onClose={onCloseCallback}
+      onBackdropClick={onCloseCallback}
       style={{
         display: 'flex',
         alignItems: 'center',
