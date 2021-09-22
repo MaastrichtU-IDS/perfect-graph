@@ -81,10 +81,10 @@ export const useController = (
   type UpdateFunction = (draft: UseControllerData, config: {
     graphEditorRef: React.MutableRefObject<GraphEditorRef>
   }) => void
-  const update = React.useCallback((updater: UpdateFunction) => {
-    updateState((draft) => {
+  const update = React.useCallback(async (updater: UpdateFunction) => {
+    await updateState(async (draft) => {
       // @ts-ignore
-      updater(draft, { graphEditorRef })
+      await updater(draft, { graphEditorRef })
     })
   }, [updateState, graphEditorRef])
   const onEvent = React.useCallback((eventInfo: EventInfo) => {
@@ -104,7 +104,7 @@ export const useController = (
       : null
     // const isNode = element?.isNode()
     // const targetPath = isNode ? 'nodes' : 'edges'
-    update((draft) => {
+    update(async (draft) => {
       try {
         if (!avoidHistoryRecording) {
           const {
@@ -142,7 +142,7 @@ export const useController = (
             event,
           })
         }
-        const isAllowedToProcess = controllerConfig.onEvent?.({
+        const isAllowedToProcess = await controllerConfig.onEvent?.({
           ...eventInfo,
           graphEditor,
           // @ts-ignore
