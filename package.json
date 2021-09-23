@@ -11,6 +11,7 @@
   },
   "license": "MIT",
   "keywords": [],
+  "homepage": "http://maastrichtu-ids.github.io/perfect-graph",
   "scripts": {
     "web": "expo web",
     "dev": "next dev",
@@ -73,7 +74,7 @@
     "colay-docs": "0.0.60",
     "colay-ui": "0.0.113",
     "expo": "42.0.1",
-    "immer": "9.0.5",
+    "immer": "9.0.6",
     "json-schema-merge-allof": "0.8.1",
     "jsoneditor": "9.5.3",
     "jsoneditor-react": "3.1.1",
