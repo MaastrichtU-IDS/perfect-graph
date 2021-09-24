@@ -101,7 +101,7 @@ export const useElement = (props: Props): Result => {
     if (oldFiltered !== filtered) {
       contextUtils.update(element, contextRef.current)
       // @ts-ignore
-      if (calculateVisibilityByContext(contextRef.current!)) {
+      if (calculateVisibilityByContext(element)) {
         contextRef.current?.render()
       }
     }

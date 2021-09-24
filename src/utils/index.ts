@@ -11,6 +11,7 @@ import {
   DisplayObjectWithYoga, NodeContext, EdgeContext,
   Cluster, EventInfo, GraphEditorRef, ControllerState,
   ViewportRef, LightEventInfo,
+  EdgeElement, NodeElement,
 } from '@type'
 import {
   ELEMENT_DATA_FIELDS, PIXI_EVENT_NAMES, EVENT,
@@ -250,6 +251,9 @@ export const applyDefaultProps = <P extends Record<string, any> >(
     //   easing: (t) => t,
     // }
   }
+  // FOR CULLING
+  mutableInstance._visible = newProps.visible
+  // FOR CULLING
   return nativeApplyDefaultProps(
     mutableInstance,
     processProps(oldProps, mutableInstance),
@@ -421,7 +425,9 @@ export const calculateObjectBoundsWithoutChildren = (
 export const getClusterVisibility = (id: string, clusters: Cluster[] = []) => {
   let visible = true
   clusters.forEach((cluster) => {
-    visible = visible && (cluster.visible ?? true)
+    if (cluster.ids.includes(id)) {
+      visible = visible && !(cluster.visible ?? true)
+    }
   })
   return visible
 }
@@ -439,9 +445,16 @@ export const getClusterVisibility = (id: string, clusters: Cluster[] = []) => {
 //   }
 
 export const calculateVisibilityByContext = (
-  context: EdgeContext | NodeContext,
+  element: EdgeElement|NodeElement,
 ): boolean => {
+  const context = contextUtils.get(element)
   const visibility = R.all(R.isTrue)(Object.values(context.settings.visibility))
+  // if (element.isEdge()) {
+  //   const target = element.target()
+  //   const source = element.source()
+  //   return visibility && calculateVisibilityByContext(target)
+  //   && calculateVisibilityByContext(source)
+  // }
   return visibility
 }
 

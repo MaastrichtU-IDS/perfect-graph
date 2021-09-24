@@ -1,11 +1,16 @@
-// @ts-nocheck
+import React from 'react'
 import { Position } from 'colay-ui/type'
 import { BoundingBox, NodeElement } from '@type'
 import * as PIXI from 'pixi.js'
+import {
+  PixiComponent,
+} from '@inlet/react-pixi'
 import * as R from 'colay/ramda'
 import * as V from 'colay/vector'
 import * as C from 'colay/color'
+import { applyDefaultProps, preprocessProps } from '@utils'
 import { DefaultTheme } from '@core/theme'
+import { wrapComponent } from 'colay-ui'
 import { EDGE_LINE_Z_INDEX } from '@constants'
 
 export type GraphicsProps = {
@@ -272,8 +277,6 @@ export const drawLine = (
   graphics.zIndex = EDGE_LINE_Z_INDEX
 }
 
-export { Graphics } from '@inlet/react-pixi'
-
 export const drawGraphics = (instance: PIXI.Graphics, props: {
   style: any
 }) => {
@@ -298,3 +301,34 @@ export const drawGraphics = (instance: PIXI.Graphics, props: {
   }
   instance.endFill()
 }
+
+// @ts-ignore
+const GraphicsPIXI = PixiComponent<GraphProps, PIXI.Graphics>('Graphics2', {
+  create: (props: GraphProps) => {
+    const instance = new PIXI.Graphics()
+    return instance
+  },
+  applyProps: (mutableInstance: PIXI.Graphics, oldProps, _props) => {
+    const props = preprocessProps(_props)
+    const {
+      ...restProps
+    } = props
+
+    applyDefaultProps(mutableInstance, oldProps, restProps)
+  },
+})
+
+function GraphicsElement(props: GraphProps, forwardRef: any) {
+  return (
+    <GraphicsPIXI
+      ref={forwardRef}
+      {...props}
+    />
+  )
+}
+
+export const Graphics = wrapComponent<GraphProps>(
+  GraphicsElement, {
+    isForwardRef: true,
+  },
+)

@@ -119,14 +119,14 @@ export default (props: Props): Result => {
   React.useMemo(() => {
     const clusterVisibility = getClusterVisibility(element.id(), clusters)
     if (clusterVisibility !== contextRef.current.settings.visibility.cluster) {
-      const oldVisible = calculateVisibilityByContext(contextRef.current)
+      const oldVisible = calculateVisibilityByContext(element)
       contextRef.current.settings.visibility.cluster = clusterVisibility
       // contextRef.current.settings = {
       //   ...contextRef.current.settings,
       //   visibility,
       // }
       contextUtils.update(element, contextRef.current)
-      if (oldVisible !== calculateVisibilityByContext(contextRef.current)) {
+      if (oldVisible !== calculateVisibilityByContext(element)) {
         contextRef.current.render()
       }
     }

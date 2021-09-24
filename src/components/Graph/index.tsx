@@ -191,7 +191,7 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
               const selectedCollection = cy.nodes().filter((element) => {
                 const elementPosition = element.position()
                 const elementContext = contextUtils.get(element)
-                const selected = calculateVisibilityByContext(elementContext)
+                const selected = calculateVisibilityByContext(element)
                   && isPositionInBox(elementPosition, boundingBox)
                 if (selected) {
                   element.select()

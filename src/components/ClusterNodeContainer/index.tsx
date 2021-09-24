@@ -84,7 +84,7 @@ const ClusterNodeContainerElement = (
     )
   })
   const theme = useTheme()
-  const visible = calculateVisibilityByContext(context) && !(item.visible ?? true)
+  const visible = calculateVisibilityByContext(element) && (item.visible ?? true)
   const opacity = context.settings.filtered
     ? 1
     : (config.filter?.settings?.opacity ?? 0.2)

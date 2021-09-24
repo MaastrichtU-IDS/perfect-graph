@@ -210,6 +210,11 @@ const ReactViewportComp = PixiComponent('Viewport', {
     PIXI.Ticker.shared.add(() => {
       if (viewport.dirty) {
         cull.cull(viewport.getVisibleBounds())
+        viewport.children.map((child) => {
+          if (R.isFalse(child._visible)) {
+            child.visible = child._visible
+          }
+        })
         viewport.dirty = false
       }
     })

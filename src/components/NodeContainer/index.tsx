@@ -1,14 +1,14 @@
 import React from 'react'
 import { wrapComponent } from 'colay-ui'
 import { useNode } from '@hooks'
-import { CYTOSCAPE_EVENT, } from '@constants'
+import { CYTOSCAPE_EVENT } from '@constants'
 import {
   RenderNode, NodeConfig, GraphRef,
 } from '@type'
 import {
   calculateObjectBoundsWithoutChildren,
   calculateVisibilityByContext,
-  contextUtils
+  contextUtils,
 } from '@utils'
 import { useTheme } from '@core/theme'
 import { Container } from '../Container'
@@ -64,7 +64,7 @@ const NodeContainerElement = (
     )
   })
   const theme = useTheme()
-  const visible = calculateVisibilityByContext(context)
+  const visible = calculateVisibilityByContext(element)
   const opacity = context.settings.filtered
     ? 1
     : (config.filter?.settings?.opacity ?? 0.2)

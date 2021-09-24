@@ -111,17 +111,17 @@ export default <T>(props: Props<T>): Result<T> => {
     () => {
       const nodeDataUpdated = () => {
         // Update visibility
-        const oldVisible = calculateVisibilityByContext(contextRef.current)
+        const oldVisible = calculateVisibilityByContext(element)
         const sourceContext = contextUtils.get(element.source())
         const targetContext = contextUtils.get(element.target())
-        const sourceVisible = calculateVisibilityByContext(sourceContext)
-        const targetVisible = calculateVisibilityByContext(targetContext)
+        const sourceVisible = calculateVisibilityByContext(element.source())
+        const targetVisible = calculateVisibilityByContext(element.target())
         const newNodeVisible = sourceVisible && targetVisible
         let forceRender = false
         if (newNodeVisible !== contextRef.current.settings.visibility.nodeVisible) {
           contextRef.current.settings.visibility.nodeVisible = newNodeVisible
           contextUtils.update(element, contextRef.current)
-          if (oldVisible !== calculateVisibilityByContext(contextRef.current)) {
+          if (oldVisible !== calculateVisibilityByContext(element)) {
             forceRender = false
           }
         }

@@ -201,7 +201,7 @@ const EdgeContainerElement = (
     fromPosition,
     undirectedNormVector,
   } = calculateVectorInfo(element.source(), element.target())
-  const visible = calculateVisibilityByContext(context)
+  const visible = calculateVisibilityByContext(element)
   const filtered = context.settings.filtered && context.settings.nodeFiltered
   const opacity = filtered
     ? 1
