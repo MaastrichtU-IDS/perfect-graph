@@ -310,6 +310,8 @@ const GraphEditorElement = (
     selectedElement,
     networkStatistics,
     graphEditorRef,
+    nodes,
+    edges,
   }),
   [
     config,
@@ -325,6 +327,8 @@ const GraphEditorElement = (
     selectedElement,
     networkStatistics,
     graphEditorRef,
+    nodes,
+    edges,
   ])
   return (
     <GraphEditorProvider

@@ -15,6 +15,8 @@ import {
   ElementData,
   Element,
   GraphEditorRef,
+  NodeData,
+  EdgeData,
 } from '@type'
 
 
@@ -41,7 +43,9 @@ export type GraphEditor = {
   selectedItem?: ElementData;
   selectedElement?: Element;
   graphEditorRef: React.RefObject<GraphEditorRef>
-  networkStatistics?: NetworkStatistics
+  networkStatistics?: NetworkStatistics;
+  nodes: NodeData[]
+  edges: EdgeData[]
 }
 
 export type GraphEditorValue = GraphEditor
