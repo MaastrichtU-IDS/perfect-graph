@@ -31,8 +31,6 @@ export type DataBarProps = {
   footer?: React.FC;
 } // & Omit<DataEditorProps, 'data'>
 
-const WIDTH_PROPORTION = 40
-const PANEL_WIDTH = 200
 const ICON_SIZE = 16
 
 export const DataBar = (props: DataBarProps) => {
@@ -79,6 +77,9 @@ export const DataBar = (props: DataBarProps) => {
       }
     },
   )
+  const localDataRef = React.useRef({
+    width: SIDE_PANEL_DEFAULT_WIDTH,
+  })
   const {
     style: animationStyle,
     ref: animationRef,
@@ -87,10 +88,10 @@ export const DataBar = (props: DataBarProps) => {
       width: 0,
     },
     to: {
-      width: SIDE_PANEL_DEFAULT_WIDTH,
+      width: localDataRef.current.width,
     },
     autoPlay: false,
-  })
+  }, [localDataRef.current.width])
   const containerRef = React.useRef()
   React.useEffect(() => {
     animationRef.current?.play?.(isOpen)
@@ -102,8 +103,9 @@ export const DataBar = (props: DataBarProps) => {
   const onMouseDown = useDrag({
     ref: containerRef,
     onDrag: ({ x, y }, rect) => {
+      localDataRef.current.width = rect.width + x
       const target = containerRef.current
-      target.style.width = `${rect.width + x}px`
+      target.style.width = `${localDataRef.current.width}px`
     },
   })
   return (

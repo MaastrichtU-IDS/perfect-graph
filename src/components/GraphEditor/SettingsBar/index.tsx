@@ -60,6 +60,9 @@ const SettingsBarElement = (props: SettingsBarProps) => {
       // graphEditorLocalDataRef: editor.localDataRef,
     }),
   )
+  const localDataRef = React.useRef({
+    width: SIDE_PANEL_DEFAULT_WIDTH,
+  })
   const {
     style: animationStyle,
     ref: animationRef,
@@ -68,11 +71,10 @@ const SettingsBarElement = (props: SettingsBarProps) => {
       width: 0,
     },
     to: {
-      width: SIDE_PANEL_DEFAULT_WIDTH,
+      width: localDataRef.current.width,
     },
     autoPlay: false,
-  })
-  // const initialized = React.useRef(false)
+  }, [localDataRef.current.width])
   React.useEffect(() => {
     animationRef.current.play(isOpen)
   }, [animationRef, isOpen])
@@ -86,8 +88,9 @@ const SettingsBarElement = (props: SettingsBarProps) => {
   const onMouseDown = useDrag({
     ref: containerRef,
     onDrag: ({ x, y }, rect) => {
+      localDataRef.current.width = rect.width - x
       const target = containerRef.current
-      target.style.width = `${rect.width - x}px`
+      target.style.width = `${localDataRef.current.width}px`
     },
   })
   return (
