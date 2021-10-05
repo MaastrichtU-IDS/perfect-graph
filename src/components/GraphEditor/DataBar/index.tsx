@@ -71,7 +71,7 @@ export const DataBar = (props: DataBarProps) => {
         onEvent: editor.onEvent,
         networkStatistics: {
           local: localDataRef.current!.networkStatistics!.local?.[selectedItem?.id!],
-          global: (networkStatistics?.global ?? localDataRef.current!.networkStatistics!.local)?.[selectedItem?.id!],
+          global: networkStatistics?.global?.[selectedItem?.id!],
         },
         selectedElement,
       }
