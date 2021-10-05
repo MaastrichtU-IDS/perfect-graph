@@ -329,6 +329,7 @@ export type GraphRef = {
 }
 
 export type GraphEditorRef = GraphRef & {
+  context: GraphEditorContext;
 }
 
 export type RecordedEvent = EventInfo
@@ -365,4 +366,32 @@ export type {
 export type NetworkStatistics = {
   global?: any
   local?: any
+}
+
+export type GraphEditorContext = {
+  onEvent: OnEventLite;
+  graphConfig?: GraphConfig;
+  config?: GraphEditorConfig;
+  label?: GraphLabelData;
+  selectedElementIds?: string[] | null;
+  mode?: EditorMode;
+  events?: RecordedEvent[]
+  eventHistory?: EventHistory;
+  playlists?: Playlist[];
+  localDataRef: React.RefObject<{
+    initialized: boolean;
+    targetNode: NodeElement | null;
+    props: GraphEditorProps;
+    issuedClusterId: string|null;
+    newClusterBoxSelection: {
+      elementIds: string[];
+    };
+    networkStatistics?: NetworkStatistics;
+  }>;
+  selectedItem?: ElementData;
+  selectedElement?: Element;
+  graphEditorRef: React.RefObject<GraphEditorRef>
+  networkStatistics?: NetworkStatistics;
+  nodes: NodeData[]
+  edges: EdgeData[]
 }

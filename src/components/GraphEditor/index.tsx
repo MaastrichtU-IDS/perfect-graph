@@ -330,6 +330,9 @@ const GraphEditorElement = (
     nodes,
     edges,
   ])
+  if (graphEditorRef.current) {
+    graphEditorRef.current.context = graphEditorValue
+  }
   return (
     <GraphEditorProvider
       value={graphEditorValue}
