@@ -29,6 +29,7 @@ export type DataBarProps = {
   isOpen?: boolean;
   header?: React.FC;
   footer?: React.FC;
+  sort?: any;
 } // & Omit<DataEditorProps, 'data'>
 
 const ICON_SIZE = 16
@@ -37,6 +38,7 @@ export const DataBar = (props: DataBarProps) => {
   const {
     editable = true,
     isOpen = false,
+    sort = -1,
     header: HeaderComponent,
     footer: FooterComponent,
     ...rest
@@ -193,7 +195,7 @@ export const DataBar = (props: DataBarProps) => {
             <JSONViewer
               extraData={[localLabel, globalLabel]}
               data={item?.data}
-              sort={-1}
+              sort={sort}
               left={(props) => {
                 const {
                   item: { path },
@@ -202,7 +204,13 @@ export const DataBar = (props: DataBarProps) => {
                 const isLocalLabel = R.equals(path, localLabel)
                 const isGlobalLabel = R.equals(path, globalLabel)
                 return (
-                  <>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      height: 32,
+                    }}
+                  >
 
                     <IconButton
                       size="small"
@@ -275,7 +283,7 @@ export const DataBar = (props: DataBarProps) => {
 }
                       />
                     </IconButton>
-                  </>
+                  </View>
                 )
               }}
               renderItem={({ item: { key, value } }) => (
@@ -284,6 +292,7 @@ export const DataBar = (props: DataBarProps) => {
                     flexDirection: 'row',
                     justifyContent: 'space-between',
                     width: '100%',
+                    alignItems: 'center',
                   }}
                 >
                   <Typography

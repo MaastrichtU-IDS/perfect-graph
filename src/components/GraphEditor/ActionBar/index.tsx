@@ -255,6 +255,7 @@ const ActionBarElement = (props: ActionBarProps) => {
           <LayoutOptions
             layout={graphConfig?.layout}
             onEvent={onEvent}
+            {...actions.layout}
           />
           )
         }

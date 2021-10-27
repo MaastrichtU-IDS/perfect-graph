@@ -11,7 +11,6 @@ import React from 'react'
 import {
   getFormProps,
   WIDTH,
-  HEIGHT,
 } from './getFormProps'
 
 type LayoutOptionsValue = {
@@ -23,6 +22,7 @@ type LayoutOptionsValue = {
 }
 export type LayoutOptionsProps = {
   layout?: LayoutOptionsValue;
+  schema?: any;
   onEvent: OnEventLite;
 }
 
@@ -30,6 +30,7 @@ export const LayoutOptions = (props: LayoutOptionsProps) => {
   const {
     layout = {},
     onEvent,
+    schema,
   } = props
   const {
     anchorEl,
@@ -108,6 +109,7 @@ export const LayoutOptions = (props: LayoutOptionsProps) => {
         >
           <Form
             {...getFormProps()}
+            {...(schema ? { schema } : {})}
             // extraData={[layout]}
             formData={{
               name: layout.name,
