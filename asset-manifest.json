@@ -1,20 +1,20 @@
 {
   "files": {
-    "app.js": "/perfect-graph/static/js/app.57ee8156.chunk.js",
-    "app.js.map": "/perfect-graph/static/js/app.57ee8156.chunk.js.map",
+    "app.js": "/perfect-graph/static/js/app.cdd14a52.chunk.js",
+    "app.js.map": "/perfect-graph/static/js/app.cdd14a52.chunk.js.map",
     "runtime~app.js": "/perfect-graph/static/js/runtime~app.05835bb9.js",
     "runtime~app.js.map": "/perfect-graph/static/js/runtime~app.05835bb9.js.map",
-    "static/js/2.ade9a5be.chunk.js": "/perfect-graph/static/js/2.ade9a5be.chunk.js",
-    "static/js/2.ade9a5be.chunk.js.map": "/perfect-graph/static/js/2.ade9a5be.chunk.js.map",
+    "static/js/2.1a16fecc.chunk.js": "/perfect-graph/static/js/2.1a16fecc.chunk.js",
+    "static/js/2.1a16fecc.chunk.js.map": "/perfect-graph/static/js/2.1a16fecc.chunk.js.map",
     "index.html": "/perfect-graph/index.html",
     "manifest.json": "/perfect-graph/manifest.json",
     "serve.json": "/perfect-graph/serve.json",
-    "static/js/2.ade9a5be.chunk.js.LICENSE.txt": "/perfect-graph/static/js/2.ade9a5be.chunk.js.LICENSE.txt",
+    "static/js/2.1a16fecc.chunk.js.LICENSE.txt": "/perfect-graph/static/js/2.1a16fecc.chunk.js.LICENSE.txt",
     "static/media/jsoneditor-icons.svg": "/perfect-graph/static/media/jsoneditor-icons.15f2789d.svg"
   },
   "entrypoints": [
     "static/js/runtime~app.05835bb9.js",
-    "static/js/2.ade9a5be.chunk.js",
-    "static/js/app.57ee8156.chunk.js"
+    "static/js/2.1a16fecc.chunk.js",
+    "static/js/app.cdd14a52.chunk.js"
   ]
 }
