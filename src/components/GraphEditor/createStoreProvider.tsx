@@ -1,10 +1,11 @@
 import React from 'react'
 import { Text } from 'colay-ui'
 import * as R from 'colay/ramda'
-import { useImmer } from 'colay-ui/hooks/useImmer'
 import createPersistor, { PersistorOptions } from 'colay-ui/utils/createPersistor'
+import { BehaviorSubject } from 'colay-ui/utils/BehaviorSubject'
+import { useInitializedRef } from 'colay-ui/hooks/useInitializedRef'
 import { useUpdate } from 'colay-ui/hooks/useUpdate'
-import { BehaviorSubject } from './BehaviourSubject'
+import { useImmer } from 'colay-ui/hooks/useImmer'
 
 type UpdateConfig = {
 }
@@ -36,7 +37,7 @@ export const createStoreProvider = <T extends any>(
     version,
     migrations,
     logger,
-    init = R.identity,
+    init,
     immer = true,
   } = options ?? {}
   const persistor = persist
@@ -111,10 +112,10 @@ export const createStoreProvider = <T extends any>(
   const Context = React.createContext(storeRef.current)
   return {
     Context,
-    Provider: (props: { children: React.ReactNode; value: T }) => {
-      const { children, value: valueProp } = props
+    Provider: (props: { children: React.ReactNode; value?: T; fallback?: any }) => {
+      const { children, value: valueProp, fallback: providerFallback } = props
       const value = valueProp ?? defaultState
-      const initializedRef = React.useRef(false)
+      const initializedRef = React.useRef(!(persist || init))
       const [
         immerNextState,
         immerUpdate,
@@ -124,11 +125,11 @@ export const createStoreProvider = <T extends any>(
         mutableNextState,
         updateState,
         mutableUpdateSettings,
-      ] = useUpdate<T>(value)
+      ] = useUpdate(value)
       const mutableUpdate = React.useCallback((updateCallback) => {
         updateState(updateCallback)
       }, [])
-      
+
       let nextState = immer ? immerNextState : mutableNextState
       const update = immer ? immerUpdate : mutableUpdate
       const updateSettings = immer ? immerUpdateSettings : mutableUpdateSettings
@@ -148,29 +149,32 @@ export const createStoreProvider = <T extends any>(
         storeSubject.next(nextState)
       }
       storeRef.current.state = nextState
-      
+
       if (initializedRef.current) {
         persistor?.set(nextState)
       }
-      
+
       React.useEffect(
         () => {
           const initialize = async () => {
             const persistedValue = await persistor?.get()
             initializedRef.current = true
-            const mergedValue = await init(
+            const mergedValue = await init?.(
               // @ts-ignore
               R.mergeDeepRight(value, persistedValue! ?? {}),
             )
+            // @ts-ignore
             updateSettings.set(mergedValue)
           }
-          initialize()
+          if (!initializedRef.current) {
+            initialize()
+          }
         },
         [],
       )
       return initializedRef.current
         ? <Context.Provider value={storeRef.current}>{children}</Context.Provider>
-        : fallback
+        : (providerFallback ?? fallback) as React.ReactElement
     },
     useSelector: <Y extends any>(
       selector: (state: T) => Y,
@@ -188,6 +192,8 @@ export const createStoreProvider = <T extends any>(
         selectedState,
         setSelectedState,
       }
+      const initializedRef = useInitializedRef()
+
       const subscription = React.useMemo(
         () => {
           if (!R.is(Function, selector)) {
@@ -207,7 +213,15 @@ export const createStoreProvider = <T extends any>(
               R.isFalse,
               () => {
                 ref.current.selectedState = newSelectedState as Y
-                ref.current.setSelectedState(newSelectedState as Y)
+                // TODO: CHECK LATER: cannot update a component while rendering a different component
+                if (!initializedRef.current) {
+                  ref.current.setSelectedState(newSelectedState as Y)
+                } else {
+                  setTimeout(
+                    () => ref.current.setSelectedState(newSelectedState as Y),
+                    0,
+                  )
+                }
               },
             )(isEqual)
           })

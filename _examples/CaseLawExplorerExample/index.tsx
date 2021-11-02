@@ -99,7 +99,22 @@ const populate = (times, data) => ({
   )
 })
 
-const data = prepareData(defaultData)
+export const createMockData = (nodeSize: number, edgeSize: number) => {
+  const nodes = R.range(0, nodeSize).map((index) => ({ id: `node-${index}` }) )
+  const edges = R.range(0, edgeSize).map((index) => ({ 
+    id: `edge-${index}`,
+    source: `node-${Math.floor(Math.random() * nodeSize)}`,
+    target: `node-${Math.floor(Math.random() * nodeSize)}`,
+  }))
+  return {
+    nodes,
+    edges
+  }
+}
+const COUNT = 1000
+const data = createMockData(COUNT, COUNT)
+
+// const data = prepareData(defaultData)
 // const data = populate(4,prepareData(defaultData))
 
 console.log('NODES:', data.nodes.length, )
@@ -312,21 +327,21 @@ const AppContainer = ({
     // edges: [],
     // events: RECORDED_EVENTS,
     graphConfig: {
-      // layout: Graph.Layouts.cose,
+      layout: Graph.Layouts.circle,
       zoom: 0.2,
       nodes: {},
       clusters: [
-        {
-          id: '123',
-          name: 'SimpleCluster',
-          ids: [
-             'http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:XX:2010:BL0510'
-            // 'http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2015:3019',
-            // 'http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2015:644',
-            // 'http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2014:3519'
-          ],
-          childClusterIds: []
-        },
+        // {
+        //   id: '123',
+        //   name: 'SimpleCluster',
+        //   ids: [
+        //      'http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:XX:2010:BL0510'
+        //     // 'http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2015:3019',
+        //     // 'http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2015:644',
+        //     // 'http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2014:3519'
+        //   ],
+        //   childClusterIds: []
+        // },
         // {
         //   id: '1234',
         //   name: 'SimpleCluster2',
@@ -415,15 +430,15 @@ const AppContainer = ({
             selectedItem
           } = getSelectedElementInfo(draft, graphEditor)
           let elementData = null
-          try {
-            elementData = await API.getElementData({ id: selectedItem.data.ecli });
-          } catch (error) {
-            alertRef.current.alert({
-              text: JSON.stringify(error),
-              type: 'error'
-            })
-            console.error(error)
-          }
+          // try {
+          //   elementData = await API.getElementData({ id: selectedItem.data.ecli });
+          // } catch (error) {
+          //   alertRef.current.alert({
+          //     text: JSON.stringify(error),
+          //     type: 'error'
+          //   })
+          //   console.error(error)
+          // }
           if (elementData && !R.isEmpty(elementData)) {
             selectedItem.data = elementData
           } else {
