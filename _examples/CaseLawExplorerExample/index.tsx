@@ -44,7 +44,7 @@ import { QueryBuilder } from './QueryBuilder'
 import { HelpModal } from './HelpModal'
 import { TermsOfService } from './TermsOfService'
 // import { Data } from '../../components/Graph/Default'
-import { Auth } from 'aws-amplify'
+// import { Auth } from 'aws-amplify'
 import { useUser } from './useUser'
 import GraphLayouts from '../../src/core/layouts'
 
@@ -173,15 +173,15 @@ const AUTO_CREATED_SCHEMA = {
 
 
 const DataBarHeader = () => {
-  const [user] = useUser()
+  // const [user] = useUser()
   return (
     <View
       style={{ flexDirection: 'row', justifyContent: 'space-between' }}
     >
-      <Typography>{user?.attributes?.email}</Typography>
+      {/* <Typography>{user?.attributes?.email}</Typography> */}
       <Button
         color="secondary"
-        onClick={() => Auth.signOut()}
+        // onClick={() => Auth.signOut()}
       >
         Signout
       </Button>
@@ -196,7 +196,6 @@ const AppContainer = ({
   height,
   ...rest
 }) => {
-  const [user] = useUser()
   const alertRef= React.useRef(null)
   const configRef = React.useRef({
     visualization: {

@@ -91,7 +91,11 @@ export const ModalComponent = (props: ModalComponentProps) => {
             </Form>
           </Paper>
         )
-        : <Component />
+        : (
+          <>
+            {render?.({})}
+          </>
+        )
       }
 
     </Modal>

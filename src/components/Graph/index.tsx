@@ -4,7 +4,7 @@ import { useGraph } from '@hooks'
 import { Stage } from '@inlet/react-pixi'
 import {
   DrawLine, EdgeData, GraphConfig,
-  GraphRef, NodeData, RenderEdge, RenderNode, ViewportRef,
+  GraphRef, NodeData, RenderEdge, RenderNode,
   RenderClusterNode,
 } from '@type'
 import {

@@ -8,7 +8,6 @@ import { Clusters } from '@core/clusters'
 import { GraphEditorProvider } from '@hooks/useGraphEditor'
 import {
   Backdrop, Box, CircularProgress,
-  Modal,
 } from '@material-ui/core'
 import {
   EditorMode, EventHistory, EventInfo, EventType, GraphConfig, GraphEditorConfig, GraphEditorRef, GraphEditorRenderEdge,
@@ -32,7 +31,6 @@ import { PreferencesModal, PreferencesModalProps } from './PreferencesModal'
 import { RecordedEventsModal } from './RecordedEventsModal'
 import { SettingsBar, SettingsBarProps } from './SettingsBar'
 import { ModalComponent, ModalComponentProps } from './ModalComponent'
-import { ElementSettingsModal } from './modals/ElementSettingsModal'
 
 type RenderElementAdditionalInfo = {
   // label: string;
@@ -137,14 +135,14 @@ const GraphEditorElement = (
         y: 0,
       },
     },
-    isLoading: true,
+    isLoading: false,
   })
   localDataRef.current.props = props
   React.useEffect(() => {
     localDataRef.current.initialized = true
-    setTimeout(() => updateState((draft) => {
-      draft.isLoading = false
-    }), 2200)
+    // setTimeout(() => updateState((draft) => {
+    //   draft.isLoading = false
+    // }), 2200)
   }, [])
   const graphId = React.useMemo<string>(
     () => graphConfig?.graphId ?? R.uuid(),
@@ -741,6 +739,7 @@ const GraphEditorElement = (
       {
         Object.keys(modals).map((modalName) => (
           <ModalComponent
+            key={modalName}
             {...(modals[modalName] ?? {})}
             name={modalName}
           />
