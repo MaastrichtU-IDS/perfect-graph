@@ -111,7 +111,7 @@ export const createMockData = (nodeSize: number, edgeSize: number) => {
     edges
   }
 }
-const COUNT = 800
+const COUNT = 1000
 const data = createMockData(COUNT, COUNT)
 
 // const data = prepareData(defaultData)
