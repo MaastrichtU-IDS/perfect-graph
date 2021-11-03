@@ -3,19 +3,21 @@ import {
   DefaultRenderNode, Graph, GraphProps,
 } from '@components'
 import { ContextMenu } from '@components/ContextMenu'
-import { EDITOR_MODE, EVENT, CYTOSCAPE_EVENT } from '@constants'
+import { EDITOR_MODE, EVENT } from '@constants'
 import { Clusters } from '@core/clusters'
 import { GraphEditorProvider } from '@hooks/useGraphEditor'
 import {
   Backdrop, Box, CircularProgress,
 } from '@material-ui/core'
 import {
-  EditorMode, EventHistory, EventInfo, EventType, GraphConfig, GraphEditorConfig, GraphEditorRef, GraphEditorRenderEdge,
-  GraphEditorRenderNode, GraphLabelData, NetworkStatistics, NodeElement, OnEvent, OnEventLite, Playlist, RecordedEvent,
+  EditorMode, EventHistory, EventInfo, EventType,
+  GraphConfig, GraphEditorConfig, GraphEditorRef, GraphEditorRenderEdge,
+  GraphEditorRenderNode, GraphLabelData, NetworkStatistics,
+  NodeElement, OnEvent, OnEventLite, Playlist, RecordedEvent,
 } from '@type'
 import {
-  getLabel, getSelectedItemByElement,
-  throttle, getEventClientPosition,
+  getEventClientPosition, getLabel, getSelectedItemByElement,
+  throttle,
 } from '@utils'
 import { calculateStatistics } from '@utils/networkStatistics'
 import { useTimeoutManager } from '@utils/useTimeoutManager'
@@ -26,11 +28,11 @@ import * as R from 'colay/ramda'
 import React from 'react'
 import { ActionBar, ActionBarProps } from './ActionBar'
 import { DataBar, DataBarProps } from './DataBar'
+import { ModalComponent, ModalComponentProps } from './ModalComponent'
 import { MouseIcon } from './MouseIcon'
 import { PreferencesModal, PreferencesModalProps } from './PreferencesModal'
 import { RecordedEventsModal } from './RecordedEventsModal'
 import { SettingsBar, SettingsBarProps } from './SettingsBar'
-import { ModalComponent, ModalComponentProps } from './ModalComponent'
 
 type RenderElementAdditionalInfo = {
   // label: string;

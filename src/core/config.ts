@@ -28,15 +28,15 @@ cytoscape.use(cola)
 cytoscape.use(d3Force)
 
 // HIGH
-PIXI.settings.ROUND_PIXELS = true
-// @ts-ignore
-PIXI.settings.PRECISION_FRAGMENT = PIXI.PRECISION.HIGH
-PIXI.settings.RESOLUTION = 32// 64// window.devicePixelRatio
-PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.LINEAR
+// PIXI.settings.ROUND_PIXELS = true
+// // @ts-ignore
+// PIXI.settings.PRECISION_FRAGMENT = PIXI.PRECISION.HIGH
+// PIXI.settings.RESOLUTION = 32// 64// window.devicePixelRatio
+// PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.LINEAR
 
 // LOW
-// PIXI.settings.ROUND_PIXELS = false// true
-// // @ts-ignore
-// PIXI.settings.PRECISION_FRAGMENT = PIXI.PRECISION.LOW
-// PIXI.settings.RESOLUTION = 1// 32// 64// window.devicePixelRatio
-// PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST
+PIXI.settings.ROUND_PIXELS = false// true
+// @ts-ignore
+PIXI.settings.PRECISION_FRAGMENT = PIXI.PRECISION.LOW
+PIXI.settings.RESOLUTION = 1// 32// 64// window.devicePixelRatio
+PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST

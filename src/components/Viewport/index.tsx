@@ -16,6 +16,12 @@ import { drawGraphics } from '@components/Graphics'
 import { ViewportType } from '@type'
 import { Simple } from 'pixi-cull'
 
+const QUALITY_LEVEL = {
+  HIGH: 2,
+  MEDIUM: 1,
+  LOW: 0,
+} as const
+
 type NativeViewportProps = {
   app: PIXI.Application;
   width: number;
@@ -63,6 +69,7 @@ const ReactViewportComp = PixiComponent('Viewport', {
       app: {
         renderer,
         ticker,
+        stage,
       },
       height,
       width,
@@ -86,7 +93,10 @@ const ReactViewportComp = PixiComponent('Viewport', {
     viewport
       .drag({ pressDrag: false })
       .pinch()
-      .wheel({ trackpadPinch: true, wheelZoom: false })
+      .wheel({
+        trackpadPinch: true,
+        wheelZoom: false,
+      })
     const localDataRef = {
       current: {
         boxSelection: {
@@ -198,6 +208,27 @@ const ReactViewportComp = PixiComponent('Viewport', {
       // @ts-ignore
       data.event.preventDefault()
     })
+    // viewport.on('drag', () => {
+    //   console.log('DRAG')
+    // })
+    // viewport.on('drag-end', () => {
+    //   console.log('DRAG_END')
+    // })
+    // viewport.on('pinch-end', () => {
+    //   console.log('pinch_END')
+    // })
+    // viewport.on('snap-end', () => {
+    //   console.log('snap_END')
+    // })
+    // viewport.on('zoom-end', () => {
+    //   console.log('zoom_END')
+    // })
+    // viewport.on('snap-zoom-end', () => {
+    //   console.log('snap-zoom_END')
+    // })
+    // viewport.on('wheel-end', () => {
+    //   console.log('wheel_END')
+    // })
 
     // PIXI CULL
     const cull = new Simple({
@@ -216,6 +247,68 @@ const ReactViewportComp = PixiComponent('Viewport', {
           }
         })
         viewport.dirty = false
+      }
+      // PERFORMANCE
+      const visibleChildren = viewport.children.filter((child) => child.visible)
+      const objectCount = visibleChildren.length
+      const qualityLevel = objectCount < 150
+        ? QUALITY_LEVEL.HIGH
+        : (
+          objectCount < 400
+            ? QUALITY_LEVEL.MEDIUM
+            : QUALITY_LEVEL.LOW
+        )
+      const traverse = (displayObject: PIXI.DisplayObject) => {
+        if (displayObject instanceof PIXI.Sprite) {
+          displayObject.forceToRender()
+        }
+        if (displayObject.children) {
+          displayObject.children.forEach((child) => {
+            traverse(child)
+          })
+        }
+      }
+      const update = () => {
+        visibleChildren.forEach((child) => {
+          traverse(child)
+        })
+      }
+      if (viewport.qualityLevel !== qualityLevel) {
+        viewport.oldQualityLevel = viewport.qualityLevel
+        viewport.qualityLevel = qualityLevel
+        viewport.qualityChanged = true
+        switch (qualityLevel) {
+          case QUALITY_LEVEL.HIGH:
+            // HIGH
+            PIXI.settings.ROUND_PIXELS = true
+            // @ts-ignore
+            PIXI.settings.PRECISION_FRAGMENT = PIXI.PRECISION.HIGH
+            PIXI.settings.RESOLUTION = 32// 64// window.devicePixelRatio
+            PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.LINEAR
+            break
+          case QUALITY_LEVEL.MEDIUM:
+            PIXI.settings.ROUND_PIXELS = false// true
+            // @ts-ignore
+            PIXI.settings.PRECISION_FRAGMENT = PIXI.PRECISION.MEDIUM
+            PIXI.settings.RESOLUTION = 12// 32// 64// window.devicePixelRatio
+            PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST
+            break
+          case QUALITY_LEVEL.LOW:
+            PIXI.settings.ROUND_PIXELS = false
+            // @ts-ignore
+            PIXI.settings.PRECISION_FRAGMENT = PIXI.PRECISION.LOW
+            PIXI.settings.RESOLUTION = 0.8// 32// 64// window.devicePixelRatio
+            PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST
+            break
+          default:
+            break
+        }
+      }
+      if (viewport.qualityChanged && !viewport.moving) {
+        viewport.qualityChanged = false
+        if (viewport.oldQualityLevel < viewport.qualityLevel) {
+          update()
+        }
       }
     })
     // PIXI CULL

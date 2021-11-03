@@ -93,6 +93,7 @@ const TextPIXI = PixiComponent<TextPIXIProps & ThemeProps, PIXI.Text>('PIXIText'
     const {
       style = {},
     } = props
+    instance.forceToRender = props.forceToRender
     const { text: _, textStyle: __, ...oldPropsRest } = processTextProps(oldProps)
     const {
       text = '', textStyle = {}, isSprite, ...propsRest
@@ -131,11 +132,13 @@ const TextElement = (
 ) => {
   const { children, ...rest } = props
   const theme = useTheme()
+  const [count, setCount] = React.useState(0)
   return (
     <TextPIXI
       ref={forwardedRef}
       text={children}
       theme={theme}
+      forceToRender={() => setCount((c) => c + 1)}
       {...rest}
     />
   )

@@ -44,8 +44,8 @@
     "n3": "1.7.0",
     "pixi-cull": "2.0.1",
     "pixi-flex-layout": "1.0.3",
-    "pixi-viewport": "4.32.0",
-    "pixi.js": "6.1.3",
+    "pixi-viewport": "4.34.0",
+    "pixi.js": "6.2.0",
     "rdf-literal": "1.2.0",
     "rdflib": "2.1.3",
     "yoga-layout-prebuilt": "1.10.0"
