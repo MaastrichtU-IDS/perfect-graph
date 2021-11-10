@@ -13,7 +13,7 @@
   "keywords": [],
   "homepage": "http://maastrichtu-ids.github.io/perfect-graph",
   "scripts": {
-    "web": "expo web",
+    "web": "EXPO_BETA=1 expo web",
     "dev": "next dev",
     "docs": "start-storybook -p 9009",
     "build-docs": "build-storybook -o docs-build",
