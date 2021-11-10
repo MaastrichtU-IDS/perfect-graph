@@ -13,6 +13,7 @@ import {
 import { View } from 'colay-ui/components/View'
 import React from 'react'
 import { OnEventLite } from '@type'
+import * as R from 'colay/ramda'
 
 export type GlobalNetworkStatisticsProps = {
   data?: any;
@@ -110,7 +111,7 @@ export const GlobalNetworkStatistics = (props: GlobalNetworkStatisticsProps) => 
               >
                 {`${key}${value ? ': ' : ''}`}
               </Typography>
-              {value
+              {!R.isNil(value)
                 ? (
                   <Typography
                     variant="subtitle1"

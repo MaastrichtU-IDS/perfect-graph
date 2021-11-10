@@ -11,6 +11,7 @@ import {
 } from 'colay-ui'
 import { View } from 'colay-ui/components/View'
 import React from 'react'
+import * as R from 'colay/ramda'
 
 export type LocalNetworkStatisticsProps = {
   data?: any;
@@ -107,7 +108,7 @@ export const LocalNetworkStatistics = (props: LocalNetworkStatisticsProps) => {
               >
                 {`${key}${value ? ': ' : ''}`}
               </Typography>
-              {value
+              {!R.isNil(value)
                 ? (
                   <Typography
                     variant="subtitle1"
