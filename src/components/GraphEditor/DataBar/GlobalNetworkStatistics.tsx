@@ -5,7 +5,7 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-} from '@material-ui/core'
+} from '@mui/material'
 import { EVENT } from '@constants'
 import {
   JSONViewer,

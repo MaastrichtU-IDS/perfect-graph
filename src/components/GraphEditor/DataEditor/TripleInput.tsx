@@ -4,7 +4,7 @@ import {
   TextField, Typography,
   TypographyProps,
   ClickAwayListener,
-} from '@material-ui/core'
+} from '@mui/material'
 import {
   useForwardRef,
   wrapComponent,

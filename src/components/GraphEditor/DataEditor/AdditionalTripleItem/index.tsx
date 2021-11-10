@@ -1,6 +1,6 @@
 import {
   Box,
-} from '@material-ui/core'
+} from '@mui/material'
 import { DataItem, OnEventLite } from '@type'
 import { DATA_TYPE, EVENT } from '@constants'
 import * as R from 'colay/ramda'

@@ -4,7 +4,7 @@ import { useGraphEditor } from '@hooks'
 import {
   Accordion, AccordionDetails, AccordionSummary, Button, Divider,
   IconButton, Paper, Typography,
-} from '@material-ui/core'
+} from '@mui/material'
 import { FormProps } from '@rjsf/core'
 import Form from '@rjsf/material-ui'
 import {

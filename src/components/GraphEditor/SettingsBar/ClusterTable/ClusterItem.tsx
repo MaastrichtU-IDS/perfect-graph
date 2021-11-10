@@ -8,7 +8,7 @@ export default {}
 //   ListItemSecondaryAction,
 //   ListItemAvatar,
 //   Checkbox,
-// } from '@material-ui/core'
+// } from '@mui/material'
 // import {
 //   EventHistory,
 //   OnEventLite,
@@ -21,9 +21,9 @@ export default {}
 // } from 'colay-ui'
 // import React from 'react'
 // import * as R from 'colay/ramda'
-// import Accordion from '@material-ui/core/Accordion'
-// import AccordionSummary from '@material-ui/core/AccordionSummary'
-// import AccordionDetails from '@material-ui/core/AccordionDetails'
+// import Accordion from '@mui/material/Accordion'
+// import AccordionSummary from '@mui/material/AccordionSummary'
+// import AccordionDetails from '@mui/material/AccordionDetails'
 
 // export type EventHistoryTableProps = {
 //   isOpen?: boolean;

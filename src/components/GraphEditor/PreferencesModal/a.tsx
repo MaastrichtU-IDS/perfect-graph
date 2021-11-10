@@ -1,8 +1,8 @@
 export default {}
-// import Box from '@material-ui/core/Box'
-// import Drawer from '@material-ui/core/Drawer'
-// import Toolbar from '@material-ui/core/Toolbar'
-// import Typography from '@material-ui/core/Typography'
+// import Box from '@mui/material/Box'
+// import Drawer from '@mui/material/Drawer'
+// import Toolbar from '@mui/material/Toolbar'
+// import Typography from '@mui/material/Typography'
 // import * as React from 'react'
 
 // const drawerWidth = 240

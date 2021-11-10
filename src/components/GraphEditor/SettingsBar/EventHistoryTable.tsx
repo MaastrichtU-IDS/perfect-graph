@@ -6,10 +6,10 @@ import { useGraphEditor } from '@hooks'
 import {
   Card, Checkbox, IconButton, List,
   ListItem, ListItemAvatar, ListItemText, Typography,
-} from '@material-ui/core'
-import Accordion from '@material-ui/core/Accordion'
-import AccordionDetails from '@material-ui/core/AccordionDetails'
-import AccordionSummary from '@material-ui/core/AccordionSummary'
+} from '@mui/material'
+import Accordion from '@mui/material/Accordion'
+import AccordionDetails from '@mui/material/AccordionDetails'
+import AccordionSummary from '@mui/material/AccordionSummary'
 import {
   View,
   wrapComponent,

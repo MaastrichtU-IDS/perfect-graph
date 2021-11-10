@@ -17,7 +17,7 @@ Then,
 ```js
 expo init my-project
 cd my-project
-yarn add perfect-graph unitx-ui unitx
+yarn add perfect-graph colay colay-ui
 ```
 
 After you can write this command to the terminal in your project directory
@@ -46,3 +46,58 @@ function MyGraph() {
 ```
 
 Furthermore please refer to the Components Section.
+
+To use Graph : yarn add colay colay-ui immer
+ 
+To use GraphEditor you need to install material-ui packages. We use the latest version: yarn add @mui/icons-material @mui/material @mui/styles @emotion/react @emotion/styled react-beautiful-dnd @rjsf/core @rjsf/material-ui
+
+To have json editor: yarn add brace jsoneditor jsoneditor-react
+
+To use rdf based operation please install the required dependencies: yarn add jsonld jsonld-context-parser n3 rdf-literal rdflib
+
+To use layouts, please install the required dependencies:
+yarn add cytoscape-avsdf cytoscape-cise cytoscape-cola cytoscape-d3-force cytoscape-dagre cytoscape-euler cytoscape-fcose cytoscape-klay cytoscape-spread
+
+To support material-ui v5 with @rjsf/material-ui, we need to add some special configuration until they have fully support for v5
+
+// webpack.config.js
+const createExpoWebpackConfigAsync = require('@expo/webpack-config');
+
+module.exports = async function (env, argv) {
+  const config = await createExpoWebpackConfigAsync({
+    ...env,
+    babel: {
+        dangerouslyAddModulePathsToTranspile: ['@rjsf/material-ui']
+    }
+}, argv);
+  return config;
+};
+
+// babel.config.js
+module.exports = function(api) {
+  api.cache(true);
+  return {
+    presets: ['babel-preset-expo'],
+    "plugins": [
+      [
+        "module-resolver",
+        {
+          "extensions": [
+            ".js",
+            ".jsx",
+            ".es",
+            ".es6",
+            ".mjs",
+            ".ts",
+            ".tsx",
+          ],
+          "alias": {
+            '@material-ui/core': '@mui/material',
+            '@material-ui/icons': '@mui/icons-material',
+            '@material-ui/styles': '@mui/styles',
+          }
+        }
+      ],
+    ]
+  };
+};

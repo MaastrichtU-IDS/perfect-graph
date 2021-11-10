@@ -8,7 +8,7 @@ import { Clusters } from '@core/clusters'
 import { GraphEditorProvider } from '@hooks/useGraphEditor'
 import {
   Backdrop, Box, CircularProgress,
-} from '@material-ui/core'
+} from '@mui/material'
 import {
   EditorMode, EventHistory, EventInfo, EventType,
   GraphConfig, GraphEditorConfig, GraphEditorRef, GraphEditorRenderEdge,

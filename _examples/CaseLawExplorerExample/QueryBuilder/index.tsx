@@ -2,8 +2,8 @@
 import React from 'react'
 import Form from '@rjsf/material-ui'
 import * as API from '../API'
-import { Modal, Button, Box, Typography, TextField, Paper,IconButton } from '@material-ui/core'
-import CloseIcon from '@material-ui/icons/Close'
+import { Modal, Button, Box, Typography, TextField, Paper,IconButton } from '@mui/material'
+import CloseIcon from '@mui/icons-material/Close'
 import { getQueryBuilderSchema } from './constants'
 
 export type QueryBuilderProps = {

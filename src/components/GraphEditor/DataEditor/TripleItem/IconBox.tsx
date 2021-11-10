@@ -1,6 +1,6 @@
 import { Icon } from '@components/Icon'
 import { EVENT } from '@constants'
-import { Box, Divider, IconButton } from '@material-ui/core'
+import { Box, Divider, IconButton } from '@mui/material'
 import { OnEventLite } from '@type'
 import React from 'react'
 import { TRIPLE_INPUT_HEIGHT } from '../TripleInput'

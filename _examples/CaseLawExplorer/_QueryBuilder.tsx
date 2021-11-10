@@ -2,7 +2,7 @@ import React from 'react'
 import Form from '@rjsf/material-ui'
 import { getQueryBuilderSchema } from './constants'
 import * as API from './API'
-import { Modal, Button, Box, Typography, TextField, Paper } from '@material-ui/core'
+import { Modal, Button, Box, Typography, TextField, Paper } from '@mui/material'
 
 export type QueryBuilderProps = {
   query: any;

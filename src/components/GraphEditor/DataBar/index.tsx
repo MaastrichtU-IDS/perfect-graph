@@ -4,7 +4,7 @@ import {
   Accordion, AccordionDetails,
   AccordionSummary, Divider, IconButton, Paper, Typography,
   Button,
-} from '@material-ui/core'
+} from '@mui/material'
 import { EVENT, SIDE_PANEL_DEFAULT_WIDTH } from '@constants'
 import { EdgeElement } from '@type'
 import {

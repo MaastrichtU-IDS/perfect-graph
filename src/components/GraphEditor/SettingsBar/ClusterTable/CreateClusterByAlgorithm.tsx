@@ -3,7 +3,7 @@ import { Clusters } from '@core/clusters'
 import { useGraphEditor } from '@hooks'
 import {
   InputLabel, MenuItem, Select
-} from '@material-ui/core'
+} from '@mui/material'
 import Form from '@rjsf/material-ui'
 import {
   View

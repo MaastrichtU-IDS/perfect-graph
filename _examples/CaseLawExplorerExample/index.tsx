@@ -15,7 +15,7 @@ import {
   Snackbar,
   Alert,
   AlertTitle,
-} from '@material-ui/core'
+} from '@mui/material'
 import { View, useForwardRef, useMeasure } from 'colay-ui'
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import {

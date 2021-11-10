@@ -1,7 +1,7 @@
 import React from 'react'
 import App from './_examples/CaseLawExplorerExample'
 import ProfilesApp from './_examples/Profiles'
-import { ThemeProvider, createTheme } from '@material-ui/core'
+import { ThemeProvider, createTheme } from '@mui/material'
 import { useMeasure,View } from 'colay-ui'
 
 const theme = createTheme()

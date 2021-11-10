@@ -1,6 +1,6 @@
 import React from 'react'
 import { getEventClientPosition } from '@utils'
-// import { Icon } from '@material-ui/core'
+// import { Icon } from '@mui/material'
 
 export type MouseIconProps = {
   name?: string|null;

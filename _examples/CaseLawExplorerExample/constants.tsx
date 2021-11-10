@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Slider, Typography } from '@material-ui/core'
+import { Button, Slider, Typography } from '@mui/material'
 
 const SliderUIField = ({ formData, schema, onChange, name }) => {
 

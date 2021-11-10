@@ -12,14 +12,14 @@ import {
   Link,
   Breadcrumbs,
   Collapse,
-} from '@material-ui/core'
+} from '@mui/material'
 import { Icon } from '@components/Icon'
 import { useGraphEditor } from '@hooks'
 import { EVENT } from '@constants'
 import { View, DataRender } from 'colay-ui'
 import Form from '@rjsf/material-ui'
-import ExpandLess from '@material-ui/icons/ExpandLess'
-import ExpandMore from '@material-ui/icons/ExpandMore'
+import ExpandLess from '@mui/icons-material/ExpandLess'
+import ExpandMore from '@mui/icons-material/ExpandMore'
 import * as R from 'colay/ramda'
 
 type SidebarItemData = {

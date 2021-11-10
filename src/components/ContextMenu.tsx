@@ -5,7 +5,7 @@ import {
   Menu,
   MenuItem,
   Portal,
-} from '@material-ui/core'
+} from '@mui/material'
 
 export type ContextMenuProps = {
   onSelect?: (value: string) => void;

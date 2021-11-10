@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, IconButton } from '@material-ui/core'
+import { Box, IconButton } from '@mui/material'
 import { Icon } from '@components/Icon'
 import * as R from 'colay/ramda'
 import { EVENT } from '@constants'

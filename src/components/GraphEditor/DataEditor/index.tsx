@@ -2,7 +2,7 @@ import React from 'react'
 import { DataItem } from '@type'
 import {
   Container, List, ListItem, Divider, BoxProps,
-} from '@material-ui/core'
+} from '@mui/material'
 import * as R from 'colay/ramda'
 import { EVENT, ELEMENT_DATA_FIELDS } from '@constants'
 import { NewTripleItem } from './NewTripleItem'

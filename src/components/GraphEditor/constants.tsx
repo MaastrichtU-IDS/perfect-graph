@@ -1,5 +1,5 @@
 import React from 'react'
-import { IconButton, Typography } from '@material-ui/core'
+import { IconButton, Typography } from '@mui/material'
 import { Icon } from '@components/Icon'
 import { DATA_TYPE } from '@constants'
 

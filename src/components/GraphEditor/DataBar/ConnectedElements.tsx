@@ -8,7 +8,7 @@ import {
   List,
   ListItemText,
   ListItemIcon,
-} from '@material-ui/core'
+} from '@mui/material'
 import {
   Icon,
 } from '@components/Icon'

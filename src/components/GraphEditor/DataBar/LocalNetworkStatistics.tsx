@@ -4,7 +4,7 @@ import {
   AccordionDetails,
   AccordionSummary, IconButton,
   Typography,
-} from '@material-ui/core'
+} from '@mui/material'
 import { OnEventLite } from '@type'
 import {
   JSONViewer,

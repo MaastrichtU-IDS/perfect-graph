@@ -3,7 +3,7 @@ import {
   Modal,
   Button,
   Paper,
-} from '@material-ui/core'
+} from '@mui/material'
 import { FormProps } from '@rjsf/core'
 import Form from '@rjsf/material-ui'
 import * as R from 'colay/ramda'

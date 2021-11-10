@@ -6,7 +6,7 @@ import { useGraphEditor } from '@hooks'
 import {
   Box, Button, FormControl, IconButton, InputLabel, Menu,
   MenuItem, Select, useTheme, SelectProps,
-} from '@material-ui/core'
+} from '@mui/material'
 import {
   EditorMode, OnEventLite,
 } from '@type'

@@ -2,7 +2,7 @@ import {
   Box, Button, Popover,
   Backdrop,
   Portal,
-} from '@material-ui/core'
+} from '@mui/material'
 import Form from '@rjsf/material-ui'
 import { EVENT } from '@constants'
 import { OnEventLite } from '@type'

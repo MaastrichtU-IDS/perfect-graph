@@ -39,8 +39,8 @@ import {
   UnfoldMore,
   MyLocation,
   DragHandle,
-} from '@material-ui/icons'
-import { IconProps as MUIIconProps } from '@material-ui/core'
+} from '@mui/icons-material'
+import { IconProps as MUIIconProps } from '@mui/material'
 
 const ICONS = {
   assessment: Assessment,

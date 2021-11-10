@@ -2,7 +2,7 @@ import {
   Button,
   CircularProgress, Modal,
   Paper, Typography, CircularProgressProps,
-} from '@material-ui/core'
+} from '@mui/material'
 import { TimeoutManager } from '@utils/TimeoutManager'
 import { View } from 'colay-ui'
 import React from 'react'

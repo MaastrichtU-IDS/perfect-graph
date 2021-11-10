@@ -5,7 +5,7 @@ import {
   Popper,
   TextField,
   Typography
-} from '@material-ui/core'
+} from '@mui/material'
 import { utils, WidgetProps } from '@rjsf/core'
 import { useDisclosure, View } from 'colay-ui'
 import React from 'react'
