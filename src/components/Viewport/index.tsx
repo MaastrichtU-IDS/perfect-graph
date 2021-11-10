@@ -259,10 +259,19 @@ const ReactViewportComp = PixiComponent('Viewport', {
             : QUALITY_LEVEL.LOW
         )
       const traverse = (displayObject: PIXI.DisplayObject) => {
-        if (displayObject instanceof PIXI.Sprite) {
+        // if (displayObject instanceof PIXI.Sprite) {
+        //   displayObject.forceToRender()
+        // }
+        const qualityLevelChanged = (
+          displayObject.qualityLevel ?? QUALITY_LEVEL.LOW
+        ) < viewport.qualityLevel
+        if (
+          displayObject instanceof PIXI.Sprite
+          && qualityLevelChanged) {
+          displayObject.qualityLevel = viewport.qualityLevel
           displayObject.forceToRender()
         }
-        if (displayObject.children) {
+        if (displayObject.children && qualityLevelChanged) {
           displayObject.children.forEach((child) => {
             traverse(child)
           })
@@ -276,7 +285,7 @@ const ReactViewportComp = PixiComponent('Viewport', {
       if (viewport.qualityLevel !== qualityLevel) {
         viewport.oldQualityLevel = viewport.qualityLevel
         viewport.qualityLevel = qualityLevel
-        viewport.qualityChanged = true
+        // viewport.qualityChanged = true
         switch (qualityLevel) {
           case QUALITY_LEVEL.HIGH:
             // HIGH
@@ -304,11 +313,14 @@ const ReactViewportComp = PixiComponent('Viewport', {
             break
         }
       }
-      if (viewport.qualityChanged && !viewport.moving) {
-        viewport.qualityChanged = false
-        if (viewport.oldQualityLevel < viewport.qualityLevel) {
-          update()
-        }
+      // if (viewport.qualityChanged && !viewport.moving) {
+      //   viewport.qualityChanged = false
+      //   if (viewport.oldQualityLevel < viewport.qualityLevel) {
+      //     update()
+      //   }
+      // }
+      if (!viewport.moving) {
+        update()
       }
     })
     // PIXI CULL
