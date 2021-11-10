@@ -1,31 +1,31 @@
-import '@utils/addFlexLayout'
+// import '@utils/addFlexLayout'
 import cytoscape from 'cytoscape'
 import * as PIXI from 'pixi.js'
 // @ts-ignore
-import euler from 'cytoscape-euler'
+// import euler from 'cytoscape-euler'
 // @ts-ignore
-import cise from 'cytoscape-cise'
+// import cise from 'cytoscape-cise'
 // @ts-ignore
-import d3Force from 'cytoscape-d3-force'
+// import d3Force from 'cytoscape-d3-force'
 // @ts-ignore
-import cola from 'cytoscape-cola'
+// import cola from 'cytoscape-cola'
 // @ts-ignore
-import avsdf from 'cytoscape-avsdf'
+// import avsdf from 'cytoscape-avsdf'
 // @ts-ignore
-import dagre from 'cytoscape-dagre'
+// import dagre from 'cytoscape-dagre'
 // @ts-ignore
-import spread from 'cytoscape-spread'
+// import spread from 'cytoscape-spread'
 // @ts-ignore
-import klay from 'cytoscape-klay'
+// import klay from 'cytoscape-klay'
 
-cytoscape.use(klay)
-spread(cytoscape)
-cytoscape.use(dagre)
-cytoscape.use(avsdf)
-cytoscape.use(euler)
-cytoscape.use(cise)
-cytoscape.use(cola)
-cytoscape.use(d3Force)
+// cytoscape.use(klay)
+// spread(cytoscape)
+// cytoscape.use(dagre)
+// cytoscape.use(avsdf)
+// cytoscape.use(euler)
+// cytoscape.use(cise)
+// cytoscape.use(cola)
+// cytoscape.use(d3Force)
 
 // HIGH
 // PIXI.settings.ROUND_PIXELS = true
