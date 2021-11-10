@@ -102,9 +102,12 @@ export default (props: Props): Result => {
       element.on(CYTOSCAPE_EVENT.mouseover, onHover)
       element.on(CYTOSCAPE_EVENT.mouseout, onHoverExit)
       return () => {
-        element.off(CYTOSCAPE_EVENT.position, `#${element.id()}`, onPositionChange)
-        element.off(CYTOSCAPE_EVENT.mouseover, `#${element.id()}`, onHover)
-        element.off(CYTOSCAPE_EVENT.mouseout, `#${element.id()}`, onHoverExit)
+        // element.off(CYTOSCAPE_EVENT.position, `#${element.id()}`, onPositionChange)
+        // element.off(CYTOSCAPE_EVENT.mouseover, `#${element.id()}`, onHover)
+        // element.off(CYTOSCAPE_EVENT.mouseout, `#${element.id()}`, onHoverExit)
+        element.removeListener(CYTOSCAPE_EVENT.position)
+        element.removeListener(CYTOSCAPE_EVENT.mouseover)
+        element.removeListener(CYTOSCAPE_EVENT.mouseout)
         cy!.remove(element!)
       }
     }, // destroy
