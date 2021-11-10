@@ -262,6 +262,11 @@ const ReactViewportComp = PixiComponent('Viewport', {
         // if (displayObject instanceof PIXI.Sprite) {
         //   displayObject.forceToRender()
         // }
+        // if (displayObject.children) {
+        //   displayObject.children.forEach((child) => {
+        //     traverse(child)
+        //   })
+        // }
         const qualityLevelChanged = (
           displayObject.qualityLevel ?? QUALITY_LEVEL.LOW
         ) < viewport.qualityLevel
