@@ -86,6 +86,9 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
   const graphRef = useForwardRef<GraphRef>(ref, { cy })
   const graphLayoutRef = React.useRef<cytoscape.Layouts>(null)
   React.useEffect(() => {
+    if (!graphRef.current.app && !config.layout) {
+      graphRef.current.viewport.dirty = true
+    }
     graphRef.current.app = stageRef.current?.app!
     if (graphRef.current.app) {
       graphRef.current.app.view.addEventListener('contextmenu', (e) => {
