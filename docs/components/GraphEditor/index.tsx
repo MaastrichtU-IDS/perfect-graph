@@ -2,10 +2,10 @@
 import React from 'react'
 import { GraphEditor, } from 'perfect-graph/components/GraphEditor'
 import { useController } from 'perfect-graph/plugins/controller'
-import { EVENT, EDITOR_MODE } from 'perfect-graph/utils/constants'
+import { EVENT, EDITOR_MODE } from 'perfect-graph/constants'
 import { useSubscription, } from 'colay-ui'
 import { View } from 'react-native-web'
-import { useLayout } from './Online/useLayout'
+import { useLayout } from 'colay-ui'
 
 
 

@@ -8,7 +8,7 @@ export default function Animation() {
   })
   return (
     <Graph
-        style={{ width: '100%', height: 600 }}
+        style={{ width: 600, height: 600 }}
         config={{
           nodes
         }}
@@ -37,9 +37,7 @@ export default function Animation() {
         edges={[
           { id:'JerryElaine', target: 'Jerry', source: 'Elaine' },
           { id:'ElaineJerry', target: 'Elaine', source: 'Jerry' },
-          { id:'JerryElaine', target: 'Jerry', source: 'Elaine' },
           { id:'GeorgeJerry', source: 'George', target: 'Jerry' },
-          { id:'GeorgeJerry', target: 'George', source: 'Jerry' },
           { id:'KramerGeorge', target: 'Kramer', source: 'George' },
           { id:'KramerJerry', target: 'Kramer', source: 'Jerry' },
           { id:'JerryKramer', target: 'Jerry', source: 'Kramer' },
