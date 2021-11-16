@@ -19,7 +19,6 @@
     "target": "ES5",
     "declaration": true,
     "outDir": "dist",
-    "emitDeclarationOnly": true,
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "isolatedModules": true,

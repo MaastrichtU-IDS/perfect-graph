@@ -31,7 +31,7 @@ import {
 
 type UseControllerData = Pick<
 GraphEditorProps,
-'nodes'| 'edges' | 'mode'
+'nodes' | 'edges' | 'mode'
 | 'actionBar' | 'dataBar' | 'settingsBar'
 | 'graphConfig' | 'events' | 'label' | 'playlists' | 'selectedElementIds'
 | 'modals'
@@ -81,10 +81,10 @@ export const useController = (
   type UpdateFunction = (draft: UseControllerData, config: {
     graphEditorRef: React.MutableRefObject<GraphEditorRef>
   }) => void
-  const update = React.useCallback(async (updater: UpdateFunction) => {
-    await updateState(async (draft) => {
+  const update = React.useCallback( (updater: UpdateFunction) => {
+    updateState(async (draft) => {
       // @ts-ignore
-      await updater(draft, { graphEditorRef })
+      updater(draft, { graphEditorRef })
     })
   }, [updateState, graphEditorRef])
   const onEvent = React.useCallback((eventInfo: EventInfo) => {
@@ -142,7 +142,7 @@ export const useController = (
             event,
           })
         }
-        const isAllowedToProcess = await controllerConfig.onEvent?.({
+        const isAllowedToProcess =  controllerConfig.onEvent?.({
           ...eventInfo,
           graphEditor,
           // @ts-ignore
@@ -198,7 +198,7 @@ export const useController = (
             const {
               itemIds = [],
             } = payload as {
-              itemIds: {id: string} []
+              itemIds: { id: string } []
             }
             // const itemIds = items.map((item) => item.id)
             // const itemIndex = draft.nodes.findIndex((node) => node.id === item.id)
@@ -235,7 +235,7 @@ export const useController = (
             const {
               itemIds = [],
             } = payload as {
-              itemIds: {id: string} []
+              itemIds: { id: string } []
             }
             // const itemIds = items.map((item) => item.id)
             draft.edges = draft.edges.filter((edgeItem) => !itemIds.includes(edgeItem.id))
@@ -685,10 +685,10 @@ export const useController = (
             switch (name) { 
               case 'Visualization':
 
-                break;
+                break
             
               default:
-                break;
+                break
             }
             break
           }
