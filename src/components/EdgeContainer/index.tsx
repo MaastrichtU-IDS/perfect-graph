@@ -231,7 +231,6 @@ const EdgeContainerElement = (
         mouseout={() => {
           element.emit(CYTOSCAPE_EVENT.mouseout)
         }}
-        // pointertap={() => console.log('ONPRESS')}
       >
         {
           children({
@@ -254,7 +253,6 @@ const EdgeContainerElement = (
         alpha={opacity}
         // interactive
         // buttonMode
-        // pointertap={() => console.log('ONPRESS')}
       />
     </>
   )

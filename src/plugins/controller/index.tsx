@@ -156,7 +156,6 @@ export const useController = (
           item: eventRelatedItem,
         } = (element && getSelectedItemByElement(element, draft)) ?? {}
         const targetDataList = eventRelatedItem?.data!// getSelectedItemByElement(element, draft).data
-        console.log('A', eventInfo)
         switch (type) {
           case EVENT.REDO_EVENT:
             eventHistory.redo()
@@ -715,7 +714,6 @@ export const useController = (
               name,
               value,
             } = payload
-            console.log('v', name, value)
             // draft.modals.ElementSettings.isOpen = true
             switch (name) { 
               case 'Visualization':
@@ -742,7 +740,6 @@ export const useController = (
       }
     })
   }, [state])
-  console.log('USE_CONTROLLER', state)
 
   return [
     // @ts-ignore

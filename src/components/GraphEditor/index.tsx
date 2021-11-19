@@ -113,7 +113,6 @@ const GraphEditorElement = (
     isFocusMode = false,
     ...rest
   } = props
-  console.log('GraphEditor0' )
 
   const localDataRef = React.useRef({
     initialized: false,
@@ -130,7 +129,6 @@ const GraphEditorElement = (
       itemIds: [],
     },
   })
-  console.log('GraphEditor1')
   const [state, updateState] = useImmer({
     eventsModal: {
       visible: false,
@@ -144,7 +142,6 @@ const GraphEditorElement = (
     },
     isLoading: false,
   })
-  console.log('GraphEditor2')
   localDataRef.current.props = props
   React.useEffect(() => {
     localDataRef.current.initialized = true
@@ -156,7 +153,6 @@ const GraphEditorElement = (
     () => graphConfig?.graphId ?? R.uuid(),
     [graphConfig?.graphId],
   )
-  console.log('GraphEditor3')
   const graphEditorRef = useForwardRef(ref)
   // @TODO: DANGER
   React.useEffect(() => {
@@ -188,7 +184,6 @@ const GraphEditorElement = (
 
     [nodes, edges, selectedElementIds],
   )
-  console.log('GraphEditor4')
   const selectedItem = selectedElement && getSelectedItemByElement(
     selectedElement, { nodes, edges },
   ).item
@@ -263,7 +258,6 @@ const GraphEditorElement = (
       ),
     })
   }, [onEventCallback, selectedItem?.id])
-  console.log('GraphEditor5')
   const eventTimeoutsManager = useTimeoutManager(
     (events ?? []).map((event, index) => ({
       ...event,
@@ -283,7 +277,6 @@ const GraphEditorElement = (
       autostart: false,
     },
   )
-  console.log('GraphEditor6')
   React.useMemo(() => {
     localDataRef.current.networkStatistics.local = networkStatistics?.local
   }, [networkStatistics?.local])
@@ -305,7 +298,6 @@ const GraphEditorElement = (
   //     )
   //   }
   // }, [nodes, edges, networkStatistics?.local, config.enableNetworkStatistics])
-  console.log('GraphEditor8')
   React.useEffect(() => {
     localDataRef.current.targetNode = null
   }, [mode])
@@ -344,7 +336,6 @@ const GraphEditorElement = (
     nodes,
     edges,
   ])
-  console.log('GraphEditor9')
   if (graphEditorRef.current) {
     graphEditorRef.current.context = graphEditorValue
   }

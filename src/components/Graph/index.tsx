@@ -89,11 +89,9 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
   const graphLayoutRef = React.useRef<cytoscape.Layouts>(null)
   React.useMemo(() => {
     const objectCount  = nodes.length + edges.length
-    console.log('adjustVisualQualityStart' )
 
     if (graphRef.current.viewport){
       adjustVisualQuality(objectCount, graphRef.current.viewport)
-      console.log('adjustVisualQuality', objectCount)
     }
   }, [nodes, edges])
   React.useEffect(() => {
@@ -168,7 +166,6 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
     cyUnselectAll(cy)
     onPress?.(e)
   }, [cy, onPress])
-  console.log('RENDER_GRAPH')
   return (
     <View
       style={style}

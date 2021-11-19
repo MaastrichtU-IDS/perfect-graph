@@ -13,7 +13,6 @@ export const createSchema = (itemList: any[]) => {
     title: 'Filter',
   }
   // const allOf = itemList.map((item) => {
-  //   console.log('b', item)
   //   let baseSchema
   //   try {
   //     baseSchema = toJSONSchema(item, options)
