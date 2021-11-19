@@ -17,8 +17,9 @@ export const DefaultRenderEdge: RenderEdge = ({
     }}
   >
     <GraphText
-      isSprite
-      text={R.last(item.id.split('/'))?.substring(0, 10) ?? item.id}
+      // isSprite
+      // text={R.last(item.id.split('/'))?.substring(0, 10) ?? item.id}
+      text={'Heyy'}
     />
   </GraphView>
 )
