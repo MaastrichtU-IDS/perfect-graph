@@ -70,10 +70,10 @@ export const Container = PixiComponent<ContainerProps, PIXI.Container>(
     },
     applyProps: (mutableInstance: PIXI.Container, oldProps, _props) => {
       const props = preprocessProps(_props)
-      const {
-        width,
-        height,
-      } = props
+      // const {
+      //   width,
+      //   height,
+      // } = props
       applyDefaultProps(
         mutableInstance,
         oldProps,
@@ -82,8 +82,8 @@ export const Container = PixiComponent<ContainerProps, PIXI.Container>(
           isFlex: false,
         },
       )
-      width && (mutableInstance.width = width)
-      height && (mutableInstance.height = height)
+      // width && (mutableInstance.width = width)
+      // height && (mutableInstance.height = height)
 
     },
   },

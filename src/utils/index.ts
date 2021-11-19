@@ -153,18 +153,14 @@ export const applyEvents = (
   
 }
 
-const processProps = (props: Record<string, any>, mutableInstance) => {
-  return props
-}
+const processProps = (props: Record<string, any>, mutableInstance) => props
 
 type ApplyDefaultPropsConfig = {
   isFlex?: boolean;
   rescaleToYoga?: boolean;
 }
 
-export const preprocessProps = <T extends Record<string, any>>(props: T): T => ({
-  ...props,
-})
+export const preprocessProps = <T extends Record<string, any>>(props: T): T => props
 
 export const IS_FLEX_DEFAULT = false
 
