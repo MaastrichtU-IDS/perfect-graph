@@ -32,15 +32,9 @@ export const DefaultRenderNode: RenderNode = ({
       }}
     >
       <GraphText
-        style={{
-          position: 'absolute',
-          top: -40,
-          color: 'black',
-        }}
         isSprite
-      >
-        {R.last(item.id.split('/'))?.substring(0, 10) ?? item.id}
-      </GraphText>
+        text={R.last(item.id.split('/'))?.substring(0, 10) ?? item.id}
+      />
     </GraphView>
   )
 }

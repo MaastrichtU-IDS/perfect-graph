@@ -12,13 +12,6 @@ export const DefaultRenderEdge: RenderEdge = ({
 }) => (
   <GraphView
     style={{
-      // width: 20,
-      // height: 20,
-      position: 'absolute',
-
-      justifyContent: 'center',
-      alignItems: 'center',
-      display: 'flex',
       // backgroundColor: DefaultTheme.palette.background.paper,
       // element.selected()
       //   ? DefaultTheme.palette.primary.main
@@ -31,16 +24,8 @@ export const DefaultRenderEdge: RenderEdge = ({
     }}
   >
     <GraphText
-      style={{
-        // position: 'absolute',
-        // top: -40,
-        // backgroundColor: DefaultTheme.palette.background.paper,
-        color: 'black',
-        fontSize: 12,
-      }}
       isSprite
-    >
-      {R.last(item.id.split('/'))?.substring(0, 10) ?? item.id}
-    </GraphText>
+      text={R.last(item.id.split('/'))?.substring(0, 10) ?? item.id}
+    />
   </GraphView>
 )

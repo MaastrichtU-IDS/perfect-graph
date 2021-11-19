@@ -1,9 +1,8 @@
 import React from 'react'
 import * as PIXI from 'pixi.js'
-import * as R from 'colay/ramda'
 import { wrapComponent } from 'colay-ui'
 import { PropsWithRef } from 'colay-ui/type'
-import { PixiComponent } from '@inlet/react-pixi'
+import { PixiComponent, Text as ReactPIXIText } from '@inlet/react-pixi'
 import { useTheme, ThemeProps } from '@core/theme'
 import * as C from 'colay/color'
 import { applyDefaultProps } from '@utils'
@@ -22,64 +21,68 @@ type TextPIXIProps = {
 // dropShadowBlur
 // dropShadowColor
 // dropShadowDistance
-const PositionStyleKeys = ['left', 'top', 'width', 'height']
-const processTextProps = (props: TextPIXIProps) => {
-  const { style = {} } = props
-  return {
-    ...props,
-    style: R.pick(PositionStyleKeys)(style),
-    textStyle: R.pipe(
-      // @ts-ignore
-      R.toPairs,
-      R.map(
-        ([key, value]: [string, any]) => R.cond([
-          [R.equals('color'), () => (['fill', C.rgbNumber(value)])],
-          [R.equals('textShadowColor'), () => (['dropShadowColor', C.rgbNumber(value)])],
-          [R.equals('textShadowRadius'), () => (['dropShadowBlur', C.rgbNumber(value)])],
-          [R.equals('textShadowOffset'), () => (['dropShadowDistance', R.values(value)?.[0]])],
-          [R.T, R.always([key, value])],
-          // @ts-ignore
-        ])(key),
-      ),
-      R.fromPairs,
-      R.cond([
-        [
-          R.anyPass([
-            R.has('dropShadowColor'),
-            R.has('dropShadowBlur'),
-            R.has('dropShadowDistance'),
-          ]),
-          R.set(R.lensProp('dropShadow'), true),
-        ],
-        [
-          R.T,
-          R.identity,
-        ],
-      ]),
-      // @ts-ignore
-    )(R.omit([PositionStyleKeys])({ ...style })),
-  }
-}
+// const PositionStyleKeys = ['left', 'top', 'width', 'height']
+// const processTextProps = (props: TextPIXIProps) => {
+//   const { style = {} } = props
+//   return {
+//     ...props,
+//     style: R.pick(PositionStyleKeys)(style),
+//     textStyle: R.pipe(
+//       // @ts-ignore
+//       R.toPairs,
+//       R.map(
+//         ([key, value]: [string, any]) => R.cond([
+//           [R.equals('color'), () => (['fill', C.rgbNumber(value)])],
+//           [R.equals('textShadowColor'), () => (['dropShadowColor', C.rgbNumber(value)])],
+//           [R.equals('textShadowRadius'), () => (['dropShadowBlur', C.rgbNumber(value)])],
+//           [R.equals('textShadowOffset'), () => (['dropShadowDistance', R.values(value)?.[0]])],
+//           [R.T, R.always([key, value])],
+//           // @ts-ignore
+//         ])(key),
+//       ),
+//       R.fromPairs,
+//       R.cond([
+//         [
+//           R.anyPass([
+//             R.has('dropShadowColor'),
+//             R.has('dropShadowBlur'),
+//             R.has('dropShadowDistance'),
+//           ]),
+//           R.set(R.lensProp('dropShadow'), true),
+//         ],
+//         [
+//           R.T,
+//           R.identity,
+//         ],
+//       ]),
+//       // @ts-ignore
+//     )(R.omit([PositionStyleKeys])({ ...style })),
+//   }
+// }
 
 // @ts-ignore
 const TextPIXI = PixiComponent<TextPIXIProps & ThemeProps, PIXI.Text>('PIXIText', {
   create: (props) => {
     const {
       style = {},
+      text = '', 
+      isSprite,
     } = props
-    const {
-      text = '', textStyle = {}, isSprite,
-    } = processTextProps({
-      ...props,
-      style: {
-        color: props.theme.palette.text.primary,
-        ...style,
-      },
+    // processTextProps({
+    //   ...props,
+    //   style: {
+    //     color: props.theme.palette.text.primary,
+    //     ...style,
+    //   },
+    // })
+    const pixiText = new PIXI.Text(text, {
+      ...style,
+      fill: C.rgbNumber(style.fill ?? props.theme.palette.text.primary ),
     })
-    const pixiText = new PIXI.Text(text, textStyle)
     if (isSprite) {
       pixiText.updateText(false)
       const spriteText = new PIXI.Sprite(pixiText.texture)
+      spriteText.pixiText = pixiText
       // spriteText.text = pixiText
       return spriteText
     }
@@ -92,30 +95,31 @@ const TextPIXI = PixiComponent<TextPIXIProps & ThemeProps, PIXI.Text>('PIXIText'
   ) => {
     const {
       style = {},
+      text = '', 
+      isSprite,
     } = props
     instance.forceToRender = props.forceToRender
-    const { text: _, textStyle: __, ...oldPropsRest } = processTextProps(oldProps)
-    const {
-      text = '', textStyle = {}, isSprite, ...propsRest
-    } = processTextProps({
-      ...props,
-      style: {
-        color: props.theme.palette.text.primary,
-        ...style,
-      },
-    })
     applyDefaultProps(
       instance,
-      oldPropsRest,
-      propsRest,
+      oldProps,
+      props,
     )
+    const newStyle = {
+      ...style,
+      fill: C.rgbNumber(style.fill ?? props.theme.palette.text.primary ),
+    }
     if (isSprite) {
-      const pixiText = new PIXI.Text(text, textStyle)
-      pixiText.updateText(false)
+      // const pixiText = new PIXI.Text(text, {
+      //   ...style,
+      //   fill: C.rgbNumber(style.fill ?? props.theme.palette.text.primary ),
+      // })
+      // pixiText.updateText(false)
+      instance.pixiText.text = text
+      instance.style = newStyle
       instance.texture = pixiText.texture
     } else {
       instance.text = text
-      instance.style = textStyle
+      instance.style = newStyle
     }
   },
 })
@@ -144,6 +148,7 @@ const TextElement = (
   )
 }
 
-export const Text = wrapComponent<
-PropsWithRef<PIXI.Text, TextProps>
->(TextElement, { isForwardRef: true })
+export const Text = ReactPIXIText
+// export const Text = wrapComponent<
+// PropsWithRef<PIXI.Text, TextProps>
+// >(TextElement, { isForwardRef: true })

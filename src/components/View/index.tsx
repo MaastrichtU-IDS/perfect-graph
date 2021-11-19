@@ -38,16 +38,16 @@ const ViewPIXI = PixiComponent<ViewProps & ThemeProps, PIXI.Graphics>('View', {
       style: {
         width = instance.width,
         height = instance.height,
-        backgroundColor, //= props.theme!.palette.background.paper,
+        backgroundColor = 0xffffff, 
         borderRadius = 0,
         borderWidth = 0,
-        borderColor = 'black',
+        borderColor = 0xffffff,
       } = {},
     } = props
     instance.clear()
     if (backgroundColor) {
-      instance.beginFill(C.rgbNumber(backgroundColor), C.getAlpha(backgroundColor))
-      instance.lineStyle(borderWidth, C.rgbNumber(borderColor))
+      instance.beginFill(backgroundColor, C.getAlpha(backgroundColor))
+      instance.lineStyle(borderWidth, borderColor)
       const radius = width / 2
       if ((width === height) && (borderRadius >= radius)) {
         instance.drawCircle(radius, radius, radius)

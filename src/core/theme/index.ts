@@ -1,180 +1,360 @@
 import { createProvider } from 'colay-ui'
+import * as C from  'colay/color'
+// export const DefaultTheme = {
+//   palette: {
+//     common: {
+//       black: '#000',
+//       white: '#fff',
+//     },
+//     // mode: 'light',
+//     primary: {
+//       light: '#7986cb',
+//       main: '#3f51b5',
+//       dark: '#303f9f',
+//       contrastText: '#fff',
+//     },
+//     secondary: {
+//       light: '#ff4081',
+//       main: '#f50057',
+//       dark: '#c51162',
+//       contrastText: '#fff',
+//     },
+//     error: {
+//       light: '#e57373',
+//       main: '#f44336',
+//       dark: '#d32f2f',
+//       contrastText: '#fff',
+//     },
+//     warning: {
+//       light: '#ffb74d',
+//       main: '#ff9800',
+//       dark: '#f57c00',
+//       contrastText: 'rgba(0, 0, 0, 0.87)',
+//     },
+//     info: {
+//       light: '#64b5f6',
+//       main: '#2196f3',
+//       dark: '#1976d2',
+//       contrastText: '#fff',
+//     },
+//     success: {
+//       light: '#81c784',
+//       main: '#4caf50',
+//       dark: '#388e3c',
+//       contrastText: 'rgba(0, 0, 0, 0.87)',
+//     },
+//     grey: {
+//       50: '#fafafa',
+//       100: '#f5f5f5',
+//       200: '#eeeeee',
+//       300: '#e0e0e0',
+//       400: '#bdbdbd',
+//       500: '#9e9e9e',
+//       600: '#757575',
+//       700: '#616161',
+//       800: '#424242',
+//       900: '#212121',
+//       A100: '#d5d5d5',
+//       A200: '#aaaaaa',
+//       A400: '#303030',
+//       A700: '#616161',
+//     },
+//     // contrastThreshold: 3,
+//     // tonalOffset: 0.2,
+//     text: {
+//       primary: 'rgba(0, 0, 0, 0.87)',
+//       secondary: 'rgba(0, 0, 0, 0.54)',
+//       disabled: 'rgba(0, 0, 0, 0.38)',
+//     },
+//     divider: 'rgba(0, 0, 0, 0.12)',
+//     background: {
+//       paper: 'rgb(153, 153, 153)',
+//       default: '#fafafa',
+//     },
+//     action: {
+//       active: 'rgba(0, 0, 0, 0.54)',
+//       hover: 'rgba(0, 0, 0, 0.04)',
+//       // hoverOpacity: 0.04,
+//       selected: 'rgba(0, 0, 0, 0.08)',
+//       // selectedOpacity: 0.08,
+//       disabled: 'rgba(0, 0, 0, 0.26)',
+//       disabledBackground: 'rgba(0, 0, 0, 0.12)',
+//       // disabledOpacity: 0.38,
+//       focus: 'rgba(0, 0, 0, 0.12)',
+//       // focusOpacity: 0.12,
+//       // activatedOpacity: 0.12,
+//     },
+//   },
+// }
 
-export const DefaultTheme = {
-  palette: {
-    common: {
-      black: '#000',
-      white: '#fff',
-    },
-    mode: 'light',
-    primary: {
-      light: '#7986cb',
-      main: '#3f51b5',
-      dark: '#303f9f',
-      contrastText: '#fff',
-    },
-    secondary: {
-      light: '#ff4081',
-      main: '#f50057',
-      dark: '#c51162',
-      contrastText: '#fff',
-    },
-    error: {
-      light: '#e57373',
-      main: '#f44336',
-      dark: '#d32f2f',
-      contrastText: '#fff',
-    },
-    warning: {
-      light: '#ffb74d',
-      main: '#ff9800',
-      dark: '#f57c00',
-      contrastText: 'rgba(0, 0, 0, 0.87)',
-    },
-    info: {
-      light: '#64b5f6',
-      main: '#2196f3',
-      dark: '#1976d2',
-      contrastText: '#fff',
-    },
-    success: {
-      light: '#81c784',
-      main: '#4caf50',
-      dark: '#388e3c',
-      contrastText: 'rgba(0, 0, 0, 0.87)',
-    },
-    grey: {
-      50: '#fafafa',
-      100: '#f5f5f5',
-      200: '#eeeeee',
-      300: '#e0e0e0',
-      400: '#bdbdbd',
-      500: '#9e9e9e',
-      600: '#757575',
-      700: '#616161',
-      800: '#424242',
-      900: '#212121',
-      A100: '#d5d5d5',
-      A200: '#aaaaaa',
-      A400: '#303030',
-      A700: '#616161',
-    },
-    contrastThreshold: 3,
-    tonalOffset: 0.2,
-    text: {
-      primary: 'rgba(0, 0, 0, 0.87)',
-      secondary: 'rgba(0, 0, 0, 0.54)',
-      disabled: 'rgba(0, 0, 0, 0.38)',
-    },
-    divider: 'rgba(0, 0, 0, 0.12)',
-    background: {
-      paper: 'rgb(153, 153, 153)',
-      default: '#fafafa',
-    },
-    action: {
-      active: 'rgba(0, 0, 0, 0.54)',
-      hover: 'rgba(0, 0, 0, 0.04)',
-      hoverOpacity: 0.04,
-      selected: 'rgba(0, 0, 0, 0.08)',
-      selectedOpacity: 0.08,
-      disabled: 'rgba(0, 0, 0, 0.26)',
-      disabledBackground: 'rgba(0, 0, 0, 0.12)',
-      disabledOpacity: 0.38,
-      focus: 'rgba(0, 0, 0, 0.12)',
-      focusOpacity: 0.12,
-      activatedOpacity: 0.12,
-    },
-  },
-}
+// export const DarkTheme = {
+//   palette: {
+//     common: {
+//       black: '#000',
+//       white: '#fff',
+//     },
+//     // mode: 'dark',
+//     primary: {
+//       light: '#7986cb',
+//       main: '#3f51b5',
+//       dark: '#303f9f',
+//       contrastText: '#fff',
+//     },
+//     secondary: {
+//       light: '#ff4081',
+//       main: '#f50057',
+//       dark: '#c51162',
+//       contrastText: '#fff',
+//     },
+//     error: {
+//       light: '#e57373',
+//       main: '#f44336',
+//       dark: '#d32f2f',
+//       contrastText: '#fff',
+//     },
+//     warning: {
+//       light: '#ffb74d',
+//       main: '#ff9800',
+//       dark: '#f57c00',
+//       contrastText: 'rgba(0, 0, 0, 0.87)',
+//     },
+//     info: {
+//       light: '#64b5f6',
+//       main: '#2196f3',
+//       dark: '#1976d2',
+//       contrastText: '#fff',
+//     },
+//     success: {
+//       light: '#81c784',
+//       main: '#4caf50',
+//       dark: '#388e3c',
+//       contrastText: 'rgba(0, 0, 0, 0.87)',
+//     },
+//     grey: {
+//       50: '#fafafa',
+//       100: '#f5f5f5',
+//       200: '#eeeeee',
+//       300: '#e0e0e0',
+//       400: '#bdbdbd',
+//       500: '#9e9e9e',
+//       600: '#757575',
+//       700: '#616161',
+//       800: '#424242',
+//       900: '#212121',
+//       A100: '#d5d5d5',
+//       A200: '#aaaaaa',
+//       A400: '#303030',
+//       A700: '#616161',
+//     },
+//     // contrastThreshold: 3,
+//     // tonalOffset: 0.2,
+//     text: {
+//       primary: '#fff',
+//       secondary: 'rgba(255, 255, 255, 0.7)',
+//       disabled: 'rgba(255, 255, 255, 0.5)',
+//       icon: 'rgba(255, 255, 255, 0.5)',
+//     },
+//     divider: 'rgba(255, 255, 255, 0.12)',
+//     background: {
+//       paper: '#808080', // #424242
+//       default: '#303030',
+//     },
+//     action: {
+//       active: '#fff',
+//       hover: 'rgba(255, 255, 255, 0.08)',
+//       // hoverOpacity: 0.08,
+//       selected: 'rgba(255, 255, 255, 0.16)',
+//       // selectedOpacity: 0.16,
+//       disabled: 'rgba(255, 255, 255, 0.3)',
+//       disabledBackground: 'rgba(255, 255, 255, 0.12)',
+//       // disabledOpacity: 0.38,
+//       focus: 'rgba(255, 255, 255, 0.12)',
+//       // focusOpacity: 0.12,
+//       // activatedOpacity: 0.24,
+//     },
+//   },
+// }
+
+// const write = (colors) => {
+//   const newColors = {
+//     palette: {
+
+//     },
+//   }
+//   Object.keys(colors.palette).forEach((menu) => {
+//     newColors.palette[menu] = {}
+//     if (typeof colors.palette[menu] === 'string'){
+//       newColors.palette[menu] = C.rgbNumber(colors.palette[menu])
+//     } else { 
+//       Object.keys(colors.palette[menu]).forEach((colorName) => {
+//         console.log(menu, colorName,colors.palette[menu][colorName])
+//         newColors.palette[menu][colorName] = C.rgbNumber(colors.palette[menu][colorName])
+//       })
+//     }
+//   })
+//   return newColors
+// }
+// console.log(write(DefaultTheme))
+// console.log(write(DarkTheme))
 
 export const DarkTheme = {
-  palette: {
-    common: {
-      black: '#000',
-      white: '#fff',
+  'palette': {
+    'common': {
+      'black': 0,
+      'white': 16777215,
     },
-    mode: 'dark',
-    primary: {
-      light: '#7986cb',
-      main: '#3f51b5',
-      dark: '#303f9f',
-      contrastText: '#fff',
+    'primary': {
+      'light': 7964363,
+      'main': 4149685,
+      'dark': 3162015,
+      'contrastText': 16777215,
     },
-    secondary: {
-      light: '#ff4081',
-      main: '#f50057',
-      dark: '#c51162',
-      contrastText: '#fff',
+    'secondary': {
+      'light': 16728193,
+      'main': 16056407,
+      'dark': 12915042,
+      'contrastText': 16777215,
     },
-    error: {
-      light: '#e57373',
-      main: '#f44336',
-      dark: '#d32f2f',
-      contrastText: '#fff',
+    'error': {
+      'light': 15037299,
+      'main': 16007990,
+      'dark': 13840175,
+      'contrastText': 16777215,
     },
-    warning: {
-      light: '#ffb74d',
-      main: '#ff9800',
-      dark: '#f57c00',
-      contrastText: 'rgba(0, 0, 0, 0.87)',
+    'warning': {
+      'light': 16758605,
+      'main': 16750592,
+      'dark': 16088064,
+      'contrastText': 0,
     },
-    info: {
-      light: '#64b5f6',
-      main: '#2196f3',
-      dark: '#1976d2',
-      contrastText: '#fff',
+    'info': {
+      'light': 6600182,
+      'main': 2201331,
+      'dark': 1668818,
+      'contrastText': 16777215,
     },
-    success: {
-      light: '#81c784',
-      main: '#4caf50',
-      dark: '#388e3c',
-      contrastText: 'rgba(0, 0, 0, 0.87)',
+    'success': {
+      'light': 8505220,
+      'main': 5025616,
+      'dark': 3706428,
+      'contrastText': 0,
     },
-    grey: {
-      50: '#fafafa',
-      100: '#f5f5f5',
-      200: '#eeeeee',
-      300: '#e0e0e0',
-      400: '#bdbdbd',
-      500: '#9e9e9e',
-      600: '#757575',
-      700: '#616161',
-      800: '#424242',
-      900: '#212121',
-      A100: '#d5d5d5',
-      A200: '#aaaaaa',
-      A400: '#303030',
-      A700: '#616161',
+    'grey': {
+      '50': 16448250,
+      '100': 16119285,
+      '200': 15658734,
+      '300': 14737632,
+      '400': 12434877,
+      '500': 10395294,
+      '600': 7697781,
+      '700': 6381921,
+      '800': 4342338,
+      '900': 2171169,
+      'A100': 14013909,
+      'A200': 11184810,
+      'A400': 3158064,
+      'A700': 6381921,
     },
-    contrastThreshold: 3,
-    tonalOffset: 0.2,
-    text: {
-      primary: '#fff',
-      secondary: 'rgba(255, 255, 255, 0.7)',
-      disabled: 'rgba(255, 255, 255, 0.5)',
-      icon: 'rgba(255, 255, 255, 0.5)',
+    'text': {
+      'primary': 16777215,
+      'secondary': 16777215,
+      'disabled': 16777215,
+      'icon': 16777215,
     },
-    divider: 'rgba(255, 255, 255, 0.12)',
-    background: {
-      paper: '#808080', // #424242
-      default: '#303030',
+    'divider': 16777215,
+    'background': {
+      'paper': 8421504,
+      'default': 3158064,
     },
-    action: {
-      active: '#fff',
-      hover: 'rgba(255, 255, 255, 0.08)',
-      hoverOpacity: 0.08,
-      selected: 'rgba(255, 255, 255, 0.16)',
-      selectedOpacity: 0.16,
-      disabled: 'rgba(255, 255, 255, 0.3)',
-      disabledBackground: 'rgba(255, 255, 255, 0.12)',
-      disabledOpacity: 0.38,
-      focus: 'rgba(255, 255, 255, 0.12)',
-      focusOpacity: 0.12,
-      activatedOpacity: 0.24,
+    'action': {
+      'active': 16777215,
+      'hover': 16777215,
+      'selected': 16777215,
+      'disabled': 16777215,
+      'disabledBackground': 16777215,
+      'focus': 16777215,
     },
   },
 }
 
+export const DefaultTheme = {
+  'palette': {
+    'common': {
+      'black': 0,
+      'white': 16777215,
+    },
+    'primary': {
+      'light': 7964363,
+      'main': 4149685,
+      'dark': 3162015,
+      'contrastText': 16777215,
+    },
+    'secondary': {
+      'light': 16728193,
+      'main': 16056407,
+      'dark': 12915042,
+      'contrastText': 16777215,
+    },
+    'error': {
+      'light': 15037299,
+      'main': 16007990,
+      'dark': 13840175,
+      'contrastText': 16777215,
+    },
+    'warning': {
+      'light': 16758605,
+      'main': 16750592,
+      'dark': 16088064,
+      'contrastText': 0,
+    },
+    'info': {
+      'light': 6600182,
+      'main': 2201331,
+      'dark': 1668818,
+      'contrastText': 16777215,
+    },
+    'success': {
+      'light': 8505220,
+      'main': 5025616,
+      'dark': 3706428,
+      'contrastText': 0,
+    },
+    'grey': {
+      '50': 16448250,
+      '100': 16119285,
+      '200': 15658734,
+      '300': 14737632,
+      '400': 12434877,
+      '500': 10395294,
+      '600': 7697781,
+      '700': 6381921,
+      '800': 4342338,
+      '900': 2171169,
+      'A100': 14013909,
+      'A200': 11184810,
+      'A400': 3158064,
+      'A700': 6381921,
+    },
+    'text': {
+      'primary': 0,
+      'secondary': 0,
+      'disabled': 0,
+    },
+    'divider': 0,
+    'background': {
+      'paper': 10066329,
+      'default': 16448250,
+    },
+    'action': {
+      'active': 0,
+      'hover': 0,
+      'selected': 0,
+      'disabled': 0,
+      'disabledBackground': 0,
+      'focus': 0,
+    },
+  },
+}
 const {
   Context,
   Provider,

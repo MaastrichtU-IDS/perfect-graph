@@ -658,13 +658,13 @@ const AppContainer = ({
         // {...R.omit(['eventHistory', ])(controllerProps)}
         payload={[configRef.current]}
         style={{ width, height }}
-        renderNode={(props) => (
-          <RenderNode
-            {...props}
-            {...configRef.current}
-          />
-        )}
-        renderEdge={RenderEdge}
+        // renderNode={(props) => (
+        //   <RenderNode
+        //     {...props}
+        //     {...configRef.current}
+        //   />
+        // )}
+        // renderEdge={RenderEdge}
         {...rest}
       />
       <QueryBuilder
