@@ -287,7 +287,7 @@ export const drawGraphics = (instance: PIXI.Graphics, props: {
     fill,
     radius = 0,
     lineWidth = 0,
-    lineFill = DefaultTheme.palette.background.paper,
+    lineFill,
     alpha = 1,
   } = props
   if (fill || lineFill) {

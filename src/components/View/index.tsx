@@ -33,29 +33,13 @@ const ViewPIXI = PixiComponent<ViewProps & ThemeProps, PIXI.Graphics>('View', {
   },
   applyProps: (instance: PIXI.Graphics, oldProps, _props) => {
     const props = preprocessProps(_props)
-    // const {
-    //   width = instance.width,
-    //   height = instance.height,
-    //   fill = 0xffffff, 
-    //   radius = 0,
-    //   lineWidth = 0,
-    //   lineFill = 0xffffff,
-    //   alpha = 1,
-    // } = props
-    // instance.clear()
-    // if (fill) {
-    //   instance.beginFill(fill, alpha)
-    //   instance.lineStyle(lineWidth, lineFill)
-    //   const maxRadius = width / 2
-    //   if ((width === height) && (radius >= maxRadius)) {
-    //     instance.drawCircle(maxRadius, maxRadius, maxRadius)
-    //   } else {
-    //     instance.drawRoundedRect(0, 0, width, height, radius)
-    //   }
-    // }
-    // instance.endFill()
     drawGraphics(instance, props)
-    applyDefaultProps(instance, R.omit(['fill'], oldProps), R.omit(['fill'], props))
+    const EXCLUDE_KEYS = ['fill', 'width', 'height']
+    applyDefaultProps(
+      instance, 
+      R.omit(EXCLUDE_KEYS, oldProps),
+      R.omit(EXCLUDE_KEYS, props),
+    )
   },
 })
 

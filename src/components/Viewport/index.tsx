@@ -195,6 +195,7 @@ const ReactViewportComp = PixiComponent('Viewport', {
           width: boundingBox.width,
           height: boundingBox.height,
           alpha: 0,
+          fill: theme.palette.text.primary,
           lineFill: theme.palette.text.primary,
           lineWidth: 1 / viewport.scale.x,
         })

@@ -664,8 +664,6 @@ const AppContainer = ({
         //   />
         // )}
         // renderEdge={RenderEdge}
-        renderEdge={() => null}
-        drawLine={()=> null}
         {...rest}
       />
       <QueryBuilder
