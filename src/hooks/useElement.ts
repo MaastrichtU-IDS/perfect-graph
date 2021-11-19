@@ -82,11 +82,11 @@ export const useElement = (props: Props): Result => {
       /// ***ADD SELECT_EDGE and SELECT_NODE Events
       return () => {
         renderEvents.forEach((eventName) => {
-          element.off(eventName)
+          element.removeListener(eventName)
         })
         /// ADD SELECT_EDGE and SELECT_NODE Events ***
-        element.off(CYTOSCAPE_EVENT.select)
-        element.off(CYTOSCAPE_EVENT.unselect)
+        element.removeListener(CYTOSCAPE_EVENT.select)
+        element.removeListener(CYTOSCAPE_EVENT.unselect)
         /// *** ADD SELECT_EDGE and SELECT_NODE Events
       }
     },

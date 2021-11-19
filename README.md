@@ -106,3 +106,6 @@ module.exports = function(api) {
 If the PIXI.js renderer takes a lot time to render all elements and blocks the UI then consider on:
   - Decreasing the view resolution and settings quality
 In example when a huge data chunk imported to perfect-graph, if the view quality is very high ; then PIXI.js will block (to render the elements with high view quality) the UI thread and cause strange issues. Set low view quality settings before importing the data chunk and let Adaptive Performance Optimizer do the rest of the optimization.
+
+- If there is an error: Can not set readonly 'x' of '#Object' 
+ That could be related with position ; If you use cy.$(id).position() in somewhere and store it that can cause an issue. Use cy.$(id).position().x , cy.$(id).position().y

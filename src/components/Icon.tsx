@@ -39,6 +39,7 @@ import {
   UnfoldMore,
   MyLocation,
   DragHandle,
+  CancelRounded,
 } from '@mui/icons-material'
 import { IconProps as MUIIconProps } from '@mui/material'
 
@@ -46,6 +47,7 @@ const ICONS = {
   assessment: Assessment,
   add_circle: AddCircle,
   addjust: Adjust,
+  cancel_rounded: CancelRounded,
   delete_rounded: DeleteRounded,
   record_voice_over_rounded: RecordVoiceOverRounded,
   build_circle_outlined: BuildCircleOutlined,

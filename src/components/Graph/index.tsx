@@ -8,7 +8,9 @@ import {
   RenderClusterNode,
 } from '@type'
 import {
-  calculateVisibilityByContext, contextUtils, cyUnselectAll, isPositionInBox,
+  calculateVisibilityByContext, 
+  contextUtils, cyUnselectAll, isPositionInBox,
+  adjustVisualQuality,
 } from '@utils'
 import { CYTOSCAPE_EVENT } from '@constants'
 import {
@@ -85,6 +87,15 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
   })
   const graphRef = useForwardRef<GraphRef>(ref, { cy })
   const graphLayoutRef = React.useRef<cytoscape.Layouts>(null)
+  React.useMemo(() => {
+    const objectCount  = nodes.length + edges.length
+    console.log('adjustVisualQualityStart' )
+
+    if (graphRef.current.viewport){
+      adjustVisualQuality(objectCount, graphRef.current.viewport)
+      console.log('adjustVisualQuality', objectCount)
+    }
+  }, [nodes, edges])
   React.useEffect(() => {
     if (!graphRef.current.app && !config.layout) {
       graphRef.current.viewport.dirty = true
@@ -157,6 +168,7 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
     cyUnselectAll(cy)
     onPress?.(e)
   }, [cy, onPress])
+  console.log('RENDER_GRAPH')
   return (
     <View
       style={style}
@@ -215,19 +227,21 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
               data={nodes}
               accessor={['children']}
               keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
-                <NodeContainer
-                  graphID={graphID}
-                  item={item}
-                  graphRef={graphRef}
-                  config={{
-                    ...(globalNodeConfig ?? {}),
-                    ...(nodeConfigIds?.[item.id] ?? {}),
-                  }}
-                >
-                  {renderNode}
-                </NodeContainer>
-              )}
+              renderItem={({ item }) => {
+                return (
+                  <NodeContainer
+                    graphID={graphID}
+                    item={item}
+                    graphRef={graphRef}
+                    config={{
+                      ...(globalNodeConfig ?? {}),
+                      ...(nodeConfigIds?.[item.id] ?? {}),
+                    }}
+                  >
+                    {renderNode}
+                  </NodeContainer>
+                )
+              }}
             />
             <DataRender
               extraData={[extraData, config.edges, config.clusters]}

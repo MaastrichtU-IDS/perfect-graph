@@ -34,7 +34,7 @@ GraphEditorProps,
 'nodes' | 'edges' | 'mode'
 | 'actionBar' | 'dataBar' | 'settingsBar'
 | 'graphConfig' | 'events' | 'label' | 'playlists' | 'selectedElementIds'
-| 'modals'
+| 'modals' | 'isFocusMode'
 > & {
   onEvent?: (info: EventInfo & {
     graphEditor: GraphEditorRef;
@@ -82,7 +82,7 @@ export const useController = (
     graphEditorRef: React.MutableRefObject<GraphEditorRef>
   }) => void
   const update = React.useCallback( (updater: UpdateFunction) => {
-    updateState(async (draft) => {
+    updateState( (draft) => {
       // @ts-ignore
       updater(draft, { graphEditorRef })
     })
@@ -104,7 +104,7 @@ export const useController = (
       : null
     // const isNode = element?.isNode()
     // const targetPath = isNode ? 'nodes' : 'edges'
-    update(async (draft) => {
+    update( (draft) => {
       try {
         if (!avoidHistoryRecording) {
           const {
@@ -156,6 +156,7 @@ export const useController = (
           item: eventRelatedItem,
         } = (element && getSelectedItemByElement(element, draft)) ?? {}
         const targetDataList = eventRelatedItem?.data!// getSelectedItemByElement(element, draft).data
+        console.log('A', eventInfo)
         switch (type) {
           case EVENT.REDO_EVENT:
             eventHistory.redo()
@@ -347,6 +348,40 @@ export const useController = (
               })
             }
 
+            break
+          }
+          case EVENT.FOCUS: {
+            const {
+              itemIds = [],
+            } = payload
+            if (!draft.previousDataList) {
+              draft.previousDataList = []
+            }
+            draft.previousDataList.push({
+              nodes: draft.nodes.map((node) => ({ ...node, position: {
+                x: graphEditor?.cy.$id(node.id).position().x,
+                y: graphEditor?.cy.$id(node.id).position().y,
+              }, 
+              })),
+              edges: draft.edges,
+            })
+            draft.nodes = draft.nodes.filter((nodeItem) => itemIds.includes(nodeItem.id))
+            draft.edges = draft.edges.filter(
+              (edgeItem) => itemIds.includes(edgeItem.source)
+              && itemIds.includes(edgeItem.target),
+            )
+            draft.isFocusMode = true
+            break
+          }
+          case EVENT.DEFOCUS: {
+            if (draft.previousDataList) {
+              const previousData =  draft.previousDataList.pop()
+              draft.nodes = previousData.nodes
+              draft.edges = previousData.edges
+              if (draft.previousDataList.length === 0) {
+                draft.isFocusMode = false
+              }
+            }
             break
           }
           case EVENT.MODE_CHANGED: {
@@ -707,6 +742,8 @@ export const useController = (
       }
     })
   }, [state])
+  console.log('USE_CONTROLLER', state)
+
   return [
     // @ts-ignore
     {

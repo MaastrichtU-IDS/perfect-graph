@@ -7419,10 +7419,10 @@ colay-docs@0.0.60:
     sass-loader "10.1.1"
     style-loader "2.0.0"
 
-colay-ui@0.0.133:
-  version "0.0.133"
-  resolved "https://registry.yarnpkg.com/colay-ui/-/colay-ui-0.0.133.tgz#6d8638e96059e6853d549a060d232f503af7fffe"
-  integrity sha512-0hdu5TJyi+yCI/TtYQ4T/653A1xjdKUwwjtWHsEoOj5JK8zFbNQiMW11U2sWTG7Ygyy3s2OJtRpsd55R2HZzsQ==
+colay-ui@0.0.136:
+  version "0.0.136"
+  resolved "https://registry.yarnpkg.com/colay-ui/-/colay-ui-0.0.136.tgz#688aedefc94a3ccd1b356e2260b96b2bde3bc706"
+  integrity sha512-a/jecMd+6YUK4odEf22wWTplLpOtFvEZtSIEWmj7yn2LvtrJ95mDvACRKd07LzDZD9rjWsEUBlR1Qon1UGVMmw==
   dependencies:
     react-error-boundary "3.1.4"
 

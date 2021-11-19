@@ -14,7 +14,8 @@ import {
   EdgeElement, NodeElement,
 } from '@type'
 import {
-  ELEMENT_DATA_FIELDS, PIXI_EVENT_NAMES, EVENT,
+  ELEMENT_DATA_FIELDS, EVENT,
+  QUALITY_LEVEL,
 } from '@constants'
 
 // type Result = {
@@ -141,35 +142,6 @@ export const processTextStyle = (style: {
     // wordWrapWidth: 440,
   })
 }
-// export const PIXI_EVENT_NAMES = {
-//   onAdded: 'added',
-//   onClick: 'pointertap',
-//   onMouseDown: 'mousedown',
-//   onMouseMove: 'mousemove',
-//   onMouseOut: 'mouseout',
-//   onMouseOver: 'mouseover',
-//   onMouseUp: 'mouseup',
-//   onMouseUpOutside: 'mouseupoutside',
-//   onPointerCancel: 'pointercancel',
-//   onPointerDown: 'pointerdown',
-//   onPointerMove: 'pointermove',
-//   onPointerOut: 'pointerout',
-//   onPointerOver: 'pointerover',
-//   onPointerTap: 'pointertap',
-//   onPointerUp: 'pointerup',
-//   onPointerUpOutside: 'pointerupoutside',
-//   onRemoved: 'removed',
-//   onRightClick: 'rightclick',
-//   onRightDown: 'rightdown',
-//   onRightUp: 'rightup',
-//   onRightUpOutside: 'rightupoutside',
-//   onTap: 'tap',
-//   onTouchCancel: 'touchcancel',
-//   onTouchEnd: 'touchend',
-//   onTouchEndoutside: 'touchendoutside',
-//   onTouchMove: 'touchmove',
-//   onTouchStart: 'touchstart',
-// }
 
 export type EventType = (e: PIXI.InteractionEvent) => void
 export type Events = EventMap
@@ -178,35 +150,11 @@ export const applyEvents = (
   instance: PIXI.DisplayObject,
   props: Record<string, any>,
 ) => {
-  Object
-    .keys(PIXI_EVENT_NAMES)
-    .map((eventName) => {
-      // @ts-ignore
-      const domEventName = PIXI_EVENT_NAMES[eventName]
-      const callback = props[eventName]
-      if (callback) {
-        // @ts-ignore
-        instance.on(domEventName, callback)
-      }
-    })
+  
 }
 
 const processProps = (props: Record<string, any>, mutableInstance) => {
-  const newProps = {
-    ...props,
-    // ...processStyle(props, mutableInstance),
-  }
-  Object
-    .keys(PIXI_EVENT_NAMES)
-    .map((eventName) => {
-      // @ts-ignore
-      const domEventName = PIXI_EVENT_NAMES[eventName]
-      const callback = props[eventName]
-      if (callback) {
-        newProps[domEventName] = callback
-      }
-    })
-  return newProps
+  return props
 }
 
 type ApplyDefaultPropsConfig = {
@@ -246,10 +194,6 @@ export const applyDefaultProps = <P extends Record<string, any> >(
     // @TODO: was true
     mutableInstance.yoga.rescaleToYoga = rescaleToYoga
     mutableInstance.yoga.fromConfig(style)
-    // mutableInstance.yoga.animationConfig = {
-    //   time: 200,
-    //   easing: (t) => t,
-    // }
   }
   // FOR CULLING
   mutableInstance._visible = newProps.visible
@@ -905,4 +849,45 @@ export const pauseEvent = (e) => {
   e.cancelBubble = true
   e.returnValue = false
   return false
+}
+
+export const adjustVisualQuality = (objectCount: number, viewport: ViewportRef)=>{
+  const qualityLevel = objectCount < 150
+    ? QUALITY_LEVEL.HIGH
+    : (
+      objectCount < 400
+        ? QUALITY_LEVEL.MEDIUM
+        : QUALITY_LEVEL.LOW
+    )
+  if (viewport.qualityLevel !== qualityLevel) {
+    viewport.oldQualityLevel = viewport.qualityLevel
+    viewport.qualityLevel = qualityLevel
+    // viewport.qualityChanged = true
+    switch (qualityLevel) {
+      case QUALITY_LEVEL.HIGH:
+        // HIGH
+        PIXI.settings.ROUND_PIXELS = true
+        // @ts-ignore
+        PIXI.settings.PRECISION_FRAGMENT = PIXI.PRECISION.HIGH
+        PIXI.settings.RESOLUTION = 32// 64// window.devicePixelRatio
+        PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.LINEAR
+        break
+      case QUALITY_LEVEL.MEDIUM:
+        PIXI.settings.ROUND_PIXELS = false// true
+        // @ts-ignore
+        PIXI.settings.PRECISION_FRAGMENT = PIXI.PRECISION.MEDIUM
+        PIXI.settings.RESOLUTION = 12// 32// 64// window.devicePixelRatio
+        PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST
+        break
+      case QUALITY_LEVEL.LOW:
+        PIXI.settings.ROUND_PIXELS = false
+        // @ts-ignore
+        PIXI.settings.PRECISION_FRAGMENT = PIXI.PRECISION.LOW
+        PIXI.settings.RESOLUTION = 0.8// 32// 64// window.devicePixelRatio
+        PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST
+        break
+      default:
+        break
+    }
+  }
 }

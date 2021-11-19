@@ -8,7 +8,6 @@ import {
   EVENT,
   DATA_TYPE,
   EDITOR_MODE,
-  PIXI_EVENT_NAMES,
   CYTOSCAPE_EVENT,
 } from '@constants'
 import { Viewport as ViewportNative } from 'pixi-viewport'
@@ -263,9 +262,7 @@ export type DisplayObjectWithYoga = PIXI.DisplayObject & {
   yoga: YogaLayout;
 }
 
-export type PIXIEvents = {
-  [k in keyof typeof PIXI_EVENT_NAMES]: (event: PIXI.InteractionEvent) => void
-}
+
 
 export type PIXIDisplayObjectProps = {
   interactive?: boolean;

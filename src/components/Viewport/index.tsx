@@ -10,17 +10,15 @@ import {
   getBoundingBox,
   getPointerPositionOnViewport,
   isMultipleTouches,
+  adjustVisualQuality,
 } from '@utils'
 import { Position, BoundingBox } from 'colay/type'
 import { drawGraphics } from '@components/Graphics'
+import { QUALITY_LEVEL } from '@constants'
 import { ViewportType } from '@type'
 import { Simple } from 'pixi-cull'
 
-const QUALITY_LEVEL = {
-  HIGH: 2,
-  MEDIUM: 1,
-  LOW: 0,
-} as const
+
 
 type NativeViewportProps = {
   app: PIXI.Application;
@@ -30,7 +28,7 @@ type NativeViewportProps = {
   onPress?: (c: {
     nativeEvent: PIXI.InteractionEvent;
     position: Position;
-  }) => void|undefined;
+  }) => void | undefined;
   zoom?: number;
   transform?: {
     x?: number;
@@ -208,126 +206,72 @@ const ReactViewportComp = PixiComponent('Viewport', {
       // @ts-ignore
       data.event.preventDefault()
     })
-    // viewport.on('drag', () => {
-    //   console.log('DRAG')
-    // })
-    // viewport.on('drag-end', () => {
-    //   console.log('DRAG_END')
-    // })
-    // viewport.on('pinch-end', () => {
-    //   console.log('pinch_END')
-    // })
-    // viewport.on('snap-end', () => {
-    //   console.log('snap_END')
-    // })
-    // viewport.on('zoom-end', () => {
-    //   console.log('zoom_END')
-    // })
-    // viewport.on('snap-zoom-end', () => {
-    //   console.log('snap-zoom_END')
-    // })
-    // viewport.on('wheel-end', () => {
-    //   console.log('wheel_END')
-    // })
 
-    // PIXI CULL
-    const cull = new Simple({
-      dirtyTest: false,
-    }) // new SpatialHash()
-    cull.addList(viewport.children)
-    cull.cull(viewport.getVisibleBounds())
+    // // PIXI CULL
+    // const cull = new Simple({
+    //   dirtyTest: false,
+    // }) // new SpatialHash()
+    // cull.addList(viewport.children)
+    // cull.cull(viewport.getVisibleBounds())
 
-    // cull whenever the viewport moves
-    PIXI.Ticker.shared.add(() => {
-      if (viewport.dirty) {
-        cull.cull(viewport.getVisibleBounds())
-        viewport.children.map((child) => {
-          if (R.isFalse(child._visible)) {
-            child.visible = child._visible
-          }
-        })
-        viewport.dirty = false
-      }
-      // PERFORMANCE
-      const visibleChildren = viewport.children.filter((child) => child.visible)
-      const objectCount = visibleChildren.length
-      const qualityLevel = objectCount < 150
-        ? QUALITY_LEVEL.HIGH
-        : (
-          objectCount < 400
-            ? QUALITY_LEVEL.MEDIUM
-            : QUALITY_LEVEL.LOW
-        )
-      const traverse = (displayObject: PIXI.DisplayObject) => {
-        // if (displayObject instanceof PIXI.Sprite) {
-        //   displayObject.forceToRender()
-        // }
-        // if (displayObject.children) {
-        //   displayObject.children.forEach((child) => {
-        //     traverse(child)
-        //   })
-        // }
-        const qualityLevelChanged = (
-          displayObject.qualityLevel ?? QUALITY_LEVEL.LOW
-        ) < viewport.qualityLevel
-        if (
-          displayObject instanceof PIXI.Sprite
-          && qualityLevelChanged) {
-          displayObject.qualityLevel = viewport.qualityLevel
-          displayObject.forceToRender()
-        }
-        if (displayObject.children && qualityLevelChanged) {
-          displayObject.children.forEach((child) => {
-            traverse(child)
-          })
-        }
-      }
-      const update = () => {
-        visibleChildren.forEach((child) => {
-          traverse(child)
-        })
-      }
-      if (viewport.qualityLevel !== qualityLevel) {
-        viewport.oldQualityLevel = viewport.qualityLevel
-        viewport.qualityLevel = qualityLevel
-        // viewport.qualityChanged = true
-        switch (qualityLevel) {
-          case QUALITY_LEVEL.HIGH:
-            // HIGH
-            PIXI.settings.ROUND_PIXELS = true
-            // @ts-ignore
-            PIXI.settings.PRECISION_FRAGMENT = PIXI.PRECISION.HIGH
-            PIXI.settings.RESOLUTION = 32// 64// window.devicePixelRatio
-            PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.LINEAR
-            break
-          case QUALITY_LEVEL.MEDIUM:
-            PIXI.settings.ROUND_PIXELS = false// true
-            // @ts-ignore
-            PIXI.settings.PRECISION_FRAGMENT = PIXI.PRECISION.MEDIUM
-            PIXI.settings.RESOLUTION = 12// 32// 64// window.devicePixelRatio
-            PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST
-            break
-          case QUALITY_LEVEL.LOW:
-            PIXI.settings.ROUND_PIXELS = false
-            // @ts-ignore
-            PIXI.settings.PRECISION_FRAGMENT = PIXI.PRECISION.LOW
-            PIXI.settings.RESOLUTION = 0.8// 32// 64// window.devicePixelRatio
-            PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST
-            break
-          default:
-            break
-        }
-      }
-      // if (viewport.qualityChanged && !viewport.moving) {
-      //   viewport.qualityChanged = false
-      //   if (viewport.oldQualityLevel < viewport.qualityLevel) {
-      //     update()
-      //   }
-      // }
-      if (!viewport.moving) {
-        update()
-      }
-    })
+    // // cull whenever the viewport moves
+    // PIXI.Ticker.shared.add(() => {
+    // Cull the viewport
+    // if (viewport.dirty) {
+    //   cull.cull(viewport.getVisibleBounds())
+    //   viewport.children.map((child) => {
+    //     if (R.isFalse(child._visible)) {
+    //       child.visible = child._visible
+    //     }
+    //   })
+    //   viewport.dirty = false
+    // }
+    // PERFORMANCE
+    // const visibleChildren = viewport.children.filter((child) => child.visible)
+    // const objectCount = visibleChildren.length
+    // adjustVisualQuality(objectCount, viewport)
+      
+        
+    // const traverse = (displayObject: PIXI.DisplayObject) => {
+    //   // if (displayObject instanceof PIXI.Sprite) {
+    //   //   displayObject.forceToRender()
+    //   // }
+    //   // if (displayObject.children) {
+    //   //   displayObject.children.forEach((child) => {
+    //   //     traverse(child)
+    //   //   })
+    //   // }
+    //   const qualityLevelChanged = (
+    //     displayObject.qualityLevel ?? QUALITY_LEVEL.LOW
+    //   ) < viewport.qualityLevel
+    //   if (
+    //     displayObject instanceof PIXI.Sprite
+    //     && qualityLevelChanged) {
+    //     displayObject.qualityLevel = viewport.qualityLevel
+    //     displayObject.forceToRender()
+    //   }
+    //   if (displayObject.children && qualityLevelChanged) {
+    //     displayObject.children.forEach((child) => {
+    //       traverse(child)
+    //     })
+    //   }
+    // }
+    // const update = () => {
+    //   visibleChildren.forEach((child) => {
+    //     traverse(child)
+    //   })
+    // }
+      
+    // // if (viewport.qualityChanged && !viewport.moving) {
+    // //   viewport.qualityChanged = false
+    // //   if (viewport.oldQualityLevel < viewport.qualityLevel) {
+    // //     update()
+    // //   }
+    // // }
+    // if (!viewport.moving) {
+    //   update()
+    // }
+    // })
     // PIXI CULL
     return viewport
   },
@@ -394,24 +338,7 @@ function ViewportElement(props: ViewportProps, ref: React.ForwardedRef<ViewportT
   } = props
   const app = useApp()
   const viewportRef = useForwardRef(ref, {})
-  // Culling
-  // const cull = React.useMemo(() => new Cull.Simple(), [])
-  // React.useEffect(() => {
-  //   cull.addList(viewportRef.current.children)
-  //   cull.cull(viewportRef.current.getVisibleBounds())
-  //   return () => {
-  //     cull.removeList(viewportRef.current.children)
-  //   }
-  // }, [children])
-  // React.useEffect(() => {
-  //   /// Culling
-  //   PIXI.Ticker.shared.add(() => {
-  //     if (viewportRef.current.dirty) {
-  //       cull.cull(viewportRef.current.getVisibleBounds())
-  //       viewportRef.current.dirty = false
-  //     }
-  //   })
-  // }, [])
+
   const keyboardRef = React.useRef({
     pressedKeys: {},
     intervalTimeout: null,

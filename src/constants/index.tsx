@@ -40,6 +40,7 @@ export const EVENT = {
   CREATE_CLUSTER_FORM_SUBMIT: 'CREATE_CLUSTER_FORM_SUBMIT',
   CREATE_CLUSTER: 'CREATE_CLUSTER',
   CREATE_PLAYLIST: 'CREATE_PLAYLIST',
+  DEFOCUS: 'DEFOCUS',
   DATA_VALUE_DOWN: 'DATA_VALUE_DOWN',
   DATA_VALUE_UP: 'DATA_VALUE_UP',
   DELETE_CLUSTER_ELEMENT: 'DELETE_CLUSTER_ELEMENT',
@@ -57,6 +58,7 @@ export const EVENT = {
   ELEMENT_SETTINGS: 'ELEMENT_SETTINGS',
   ELEMENT_SETTINGS_FORM_SUBMIT: 'ELEMENT_SETTINGS_FORM_SUBMIT',
   EXPORT_DATA: 'EXPORT_DATA',
+  FOCUS: 'FOCUS',
   IMPORT_DATA: 'IMPORT_DATA',
   IMPORT_EVENTS: 'IMPORT_EVENTS',
   LAYOUT_ANIMATION_DURATION_CHANGED: 'LAYOUT_ANIMATION_DURATION_CHANGED',
@@ -123,15 +125,7 @@ export const DATA_TYPE_BY_INDEX = [
 
 export const LAYOUT_NAMES = Object.keys(Layouts)
 
-export const PIXI_EVENT_NAMES = {
-  onPress: 'pointertap',
-  onHoverEnd: 'mouseout',
-  onHoverStart: 'mouseover',
-  onPressEnd: 'pointerup',
-  onPressMove: 'pointermove',
-  onPressStart: 'pointerdown',
-  onRightPress: 'rightclick',
-}
+
 
 export const SIDE_PANEL_DEFAULT_WIDTH = 330
 // export const eventHandlers = [
@@ -193,3 +187,9 @@ export const MOCK_DATA = {
     type: 'ELEMENT_SELECTED', elementId: 'http://deeplink.rechtspraak.nl/uitspraak?id=ECLI:NL:HR:2011:BR5215', event: { data: { originalEvent: { metaKey: false } } }, id: 'f522d845-000a-4583-9355-16c56cbd0d66', date: '2021-03-05T12:24:28.695Z',
   }] as EventInfo[],
 }
+
+export const  QUALITY_LEVEL = {
+  HIGH: 2,
+  MEDIUM: 1,
+  LOW: 0,
+} as const
