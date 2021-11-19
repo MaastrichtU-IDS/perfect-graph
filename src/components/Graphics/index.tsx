@@ -290,16 +290,18 @@ export const drawGraphics = (instance: PIXI.Graphics, props: {
     lineFill = DefaultTheme.palette.background.paper,
     alpha = 1,
   } = props
-  instance.clear()
-  instance.beginFill(fill, alpha)
-  instance.lineStyle(lineWidth, lineFill)
-  const maxRadius = width / 2
-  if ((width === height) && (radius >= maxRadius)) {
-    instance.drawCircle(maxRadius, maxRadius, maxRadius)
-  } else {
-    instance.drawRoundedRect(0, 0, width, height, radius)
+  if (fill || lineFill) {
+    instance.clear()
+    instance.beginFill(fill, alpha)
+    instance.lineStyle(lineWidth, lineFill)
+    const maxRadius = width / 2
+    if ((width === height) && (radius >= maxRadius)) {
+      instance.drawCircle(maxRadius, maxRadius, maxRadius)
+    } else {
+      instance.drawRoundedRect(0, 0, width, height, radius)
+    }
+    instance.endFill()
   }
-  instance.endFill()
 }
 
 // // @ts-ignore

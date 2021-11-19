@@ -56,7 +56,6 @@ const ViewPIXI = PixiComponent<ViewProps & ThemeProps, PIXI.Graphics>('View', {
     // instance.endFill()
     drawGraphics(instance, props)
     applyDefaultProps(instance, R.omit(['fill'], oldProps), R.omit(['fill'], props))
-    console.log('VIEW', instance.width, instance.height)
   },
 })
 
