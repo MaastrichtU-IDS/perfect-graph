@@ -111,7 +111,7 @@ export const createMockData = (nodeSize: number, edgeSize: number) => {
     edges
   }
 }
-const COUNT = 1000
+const COUNT = 2
 const data = createMockData(COUNT, COUNT)
 
 // const data = prepareData(defaultData)
@@ -655,7 +655,6 @@ const AppContainer = ({
     >
       <GraphEditor
         {...controllerProps}
-        // {...R.omit(['eventHistory', ])(controllerProps)}
         payload={[configRef.current]}
         style={{ width, height }}
         // renderNode={(props) => (
@@ -665,6 +664,8 @@ const AppContainer = ({
         //   />
         // )}
         // renderEdge={RenderEdge}
+        renderEdge={() => null}
+        drawLine={()=> null}
         {...rest}
       />
       <QueryBuilder

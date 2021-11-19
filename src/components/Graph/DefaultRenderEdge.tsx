@@ -11,13 +11,6 @@ export const DefaultRenderEdge: RenderEdge = ({
   element,
 }) => (
   <GraphView
-    style={{
-      // backgroundColor: DefaultTheme.palette.background.paper,
-      // element.selected()
-      //   ? DefaultTheme.palette.primary.main
-      //   : DefaultTheme.palette.background.paper,
-      // borderRadius: 50,
-    }}
     pointertap={() => {
       cyUnselectAll(cy)
       element.select()

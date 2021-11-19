@@ -100,11 +100,6 @@ const EdgeContainerElement = (
   const theme = useTheme()
   const graphicsRef = React.useRef<PIXI.Graphics>(null)
   const containerRef = React.useRef<ContainerRef>(null)
-  // const edgeID = React.useMemo(() => _item.id ?? R.uuid(), [])
-  // const item = {
-  //   ..._item,
-  //   id: edgeID,
-  // }
   const drawLineCallback = React.useCallback(({
     element,
     cy,
@@ -142,13 +137,11 @@ const EdgeContainerElement = (
       theme,
       sourceElement,
       targetElement,
-      fill: C.rgbNumber(
-        element.selected()
-          ? theme.palette.primary.main
-          : (element.source().selected() || element.target().selected())
-            ? theme.palette.secondary.main
-            : theme.palette.background.paper,
-      ),
+      fill: element.selected()
+        ? theme.palette.primary.main
+        : (element.source().selected() || element.target().selected())
+          ? theme.palette.secondary.main
+          : theme.palette.background.paper,
       graphics: graphicsRef.current!,
       to: targetElementContext.boundingBox,
       from: sourceElementContext.boundingBox,
@@ -209,21 +202,20 @@ const EdgeContainerElement = (
 
   const targetElement = element.target()
   const sourceElement = element.source()
+
   return (
     <>
       <Container
         ref={containerRef}
         alpha={opacity}
         visible={visible}
-        style={{
-          left: midpointPosition.x + (
-            edgeGroupInfo.sortedIndex * undirectedNormVector.x * DEFAULT_DISTANCE
-          ),
-          top: midpointPosition.y + (
-            edgeGroupInfo.sortedIndex * undirectedNormVector.y * DEFAULT_DISTANCE
-          ),
-          zIndex: EDGE_CONTAINER_Z_INDEX,
-        }}
+        x={midpointPosition.x + (
+          edgeGroupInfo.sortedIndex * undirectedNormVector.x * DEFAULT_DISTANCE
+        )}
+        y={midpointPosition.y + (
+          edgeGroupInfo.sortedIndex * undirectedNormVector.y * DEFAULT_DISTANCE
+        )}
+        zIndex={EDGE_CONTAINER_Z_INDEX}
         interactive
         mouseover={() => {
           element.emit(CYTOSCAPE_EVENT.mouseover)

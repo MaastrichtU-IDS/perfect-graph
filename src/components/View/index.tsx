@@ -1,16 +1,15 @@
-import React from 'react'
+import { ThemeProps, useTheme } from '@core/theme'
 import { PixiComponent } from '@inlet/react-pixi'
-import { PropsWithRef } from 'colay-ui/type'
-import { wrapComponent } from 'colay-ui'
-import { useTheme, ThemeProps } from '@core/theme'
-import * as PIXI from 'pixi.js'
-import * as C from 'colay/color'
+import { PIXIBasicProps, PIXIBasicStyle, PIXIShapeStyle } from '@type'
 import {
   applyDefaultProps, preprocessProps,
 } from '@utils'
-import {
-  PIXIBasicStyle, PIXIShapeStyle, PIXIBasicProps,
-} from '@type'
+import { wrapComponent } from 'colay-ui'
+import { PropsWithRef } from 'colay-ui/type'
+import * as PIXI from 'pixi.js'
+import React from 'react'
+import * as R from 'colay/ramda'
+import { drawGraphics } from '@components/Graphics'
 
 export type ViewProps = PIXIBasicProps & {
   style?: PIXIBasicStyle & PIXIShapeStyle;
@@ -34,29 +33,30 @@ const ViewPIXI = PixiComponent<ViewProps & ThemeProps, PIXI.Graphics>('View', {
   },
   applyProps: (instance: PIXI.Graphics, oldProps, _props) => {
     const props = preprocessProps(_props)
-    const {
-      style: {
-        width = instance.width,
-        height = instance.height,
-        backgroundColor = 0xffffff, 
-        borderRadius = 0,
-        borderWidth = 0,
-        borderColor = 0xffffff,
-      } = {},
-    } = props
-    instance.clear()
-    if (backgroundColor) {
-      instance.beginFill(backgroundColor, C.getAlpha(backgroundColor))
-      instance.lineStyle(borderWidth, borderColor)
-      const radius = width / 2
-      if ((width === height) && (borderRadius >= radius)) {
-        instance.drawCircle(radius, radius, radius)
-      } else {
-        instance.drawRoundedRect(0, 0, width, height, borderRadius)
-      }
-    }
-    instance.endFill()
-    applyDefaultProps(instance, oldProps, props)
+    // const {
+    //   width = instance.width,
+    //   height = instance.height,
+    //   fill = 0xffffff, 
+    //   radius = 0,
+    //   lineWidth = 0,
+    //   lineFill = 0xffffff,
+    //   alpha = 1,
+    // } = props
+    // instance.clear()
+    // if (fill) {
+    //   instance.beginFill(fill, alpha)
+    //   instance.lineStyle(lineWidth, lineFill)
+    //   const maxRadius = width / 2
+    //   if ((width === height) && (radius >= maxRadius)) {
+    //     instance.drawCircle(maxRadius, maxRadius, maxRadius)
+    //   } else {
+    //     instance.drawRoundedRect(0, 0, width, height, radius)
+    //   }
+    // }
+    // instance.endFill()
+    drawGraphics(instance, props)
+    applyDefaultProps(instance, R.omit(['fill'], oldProps), R.omit(['fill'], props))
+    console.log('VIEW', instance.width, instance.height)
   },
 })
 
@@ -78,8 +78,3 @@ const ViewElement = (
 export const View = wrapComponent<
 PropsWithRef<PIXI.Container, ViewProps>
 >(ViewElement, { isForwardRef: true })
-// >
-//   <FlexContainer style={rest.style}>
-//     {children}
-//   </FlexContainer>
-// </ViewPIXI>

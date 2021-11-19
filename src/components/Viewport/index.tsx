@@ -1,23 +1,22 @@
+import { drawGraphics } from '@components/Graphics'
 import { PixiComponent, useApp } from '@inlet/react-pixi'
-import * as R from 'colay/ramda'
-import { Viewport as ViewportNative } from 'pixi-viewport'
-import * as PIXI from 'pixi.js'
-import * as V from 'colay/vector'
-// import Cull from 'pixi-cull'
-import React from 'react'
-import { wrapComponent, useForwardRef } from 'colay-ui'
+import { ViewportType } from '@type'
 import {
   getBoundingBox,
   getPointerPositionOnViewport,
   isMultipleTouches,
-  adjustVisualQuality,
 } from '@utils'
-import { Position, BoundingBox } from 'colay/type'
-import { drawGraphics } from '@components/Graphics'
-import { QUALITY_LEVEL } from '@constants'
-import { ViewportType } from '@type'
-import { Simple } from 'pixi-cull'
-
+import { useForwardRef, wrapComponent } from 'colay-ui'
+import * as R from 'colay/ramda'
+import { BoundingBox, Position } from 'colay/type'
+import * as V from 'colay/vector'
+import { Viewport as ViewportNative } from 'pixi-viewport'
+import * as PIXI from 'pixi.js'
+// import Cull from 'pixi-cull'
+import React from 'react'
+import {
+  useTheme,
+} from '@core/theme'
 
 
 type NativeViewportProps = {
@@ -69,6 +68,7 @@ const ReactViewportComp = PixiComponent('Viewport', {
         ticker,
         stage,
       },
+      theme,
       height,
       width,
       onCreate,
@@ -192,13 +192,11 @@ const ReactViewportComp = PixiComponent('Viewport', {
         boxElement.x = boundingBox.x
         boxElement.y = boundingBox.y
         drawGraphics(boxElement, {
-          style: {
-            width: boundingBox.width,
-            height: boundingBox.height,
-            backgroundColor: 'rgba(0,0,0,0)',
-            borderColor: 'rgba(0,0,0,0.7)',
-            borderWidth: 1 / viewport.scale.x,
-          },
+          width: boundingBox.width,
+          height: boundingBox.height,
+          alpha: 0,
+          lineFill: theme.palette.text.primary,
+          lineWidth: 1 / viewport.scale.x,
         })
       }
     })
@@ -206,7 +204,7 @@ const ReactViewportComp = PixiComponent('Viewport', {
       // @ts-ignore
       data.event.preventDefault()
     })
-
+    // TODO: CULL and Adaptive Performance Optimizer
     // // PIXI CULL
     // const cull = new Simple({
     //   dirtyTest: false,
@@ -273,6 +271,7 @@ const ReactViewportComp = PixiComponent('Viewport', {
     // }
     // })
     // PIXI CULL
+    // TODO: CULL and Adaptive Performance Optimizer
     return viewport
   },
   applyProps: (
@@ -338,7 +337,7 @@ function ViewportElement(props: ViewportProps, ref: React.ForwardedRef<ViewportT
   } = props
   const app = useApp()
   const viewportRef = useForwardRef(ref, {})
-
+  const theme = useTheme()
   const keyboardRef = React.useRef({
     pressedKeys: {},
     intervalTimeout: null,
@@ -407,6 +406,7 @@ function ViewportElement(props: ViewportProps, ref: React.ForwardedRef<ViewportT
     <ReactViewportComp
       ref={viewportRef}
       app={app}
+      theme={theme}
       {...rest}
     >
       {children}

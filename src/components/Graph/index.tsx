@@ -141,7 +141,7 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
     }
   }, [config.layout])
   const backgroundColor = React.useMemo(
-    () => C.rgbNumber(theme.palette.background.default),
+    () => theme.palette.background.default,
     [theme.palette.background.default],
   )
   React.useEffect(() => {
@@ -245,20 +245,22 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
               data={edges}
               accessor={['children']}
               keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
-                <EdgeContainer
-                  graphID={graphID}
-                  item={item}
-                  graphRef={graphRef}
-                  drawLine={drawLine}
-                  config={{
-                    ...(globalEdgeConfig ?? {}),
-                    ...(edgeConfigIds?.[item.id] ?? {}),
-                  }}
-                >
-                  {renderEdge}
-                </EdgeContainer>
-              )}
+              renderItem={({ item }) => {
+                return (
+                  <EdgeContainer
+                    graphID={graphID}
+                    item={item}
+                    graphRef={graphRef}
+                    drawLine={drawLine}
+                    config={{
+                      ...(globalEdgeConfig ?? {}),
+                      ...(edgeConfigIds?.[item.id] ?? {}),
+                    }}
+                  >
+                    {renderEdge}
+                  </EdgeContainer>
+                )
+              }}
             />
             <DataRender
               extraData={[extraData]}

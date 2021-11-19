@@ -6,7 +6,8 @@ import {
 import * as PIXI from 'pixi.js'
 import { dragTrack } from '@core/utils/events'
 import {
-  applyDefaultProps, preprocessProps,
+  applyDefaultProps,
+  preprocessProps,
   getEventClientPosition,
 } from '@utils'
 import {
@@ -19,7 +20,7 @@ import { Position, PropsWithRef } from 'colay-ui/type'
 import { Enumerable } from 'colay/type'
 
 export type ContainerProps = PIXIBasicProps & PIXIDisplayObjectProps
-& Omit<React.ComponentProps<typeof PIXIReactContainer>, 'children'> &{
+& Omit<React.ComponentProps<typeof PIXIReactContainer>, 'children'> & {
   style: PIXIFlexStyle & PIXIBasicStyle;
   children: Enumerable<React.ReactNode>;
   draggable?: boolean;
@@ -65,17 +66,14 @@ export const Container = PixiComponent<ContainerProps, PIXI.Container>(
             onMove({ x, y })
           })
       }
-      // applyEvents(instance, props)
       return instance
     },
     applyProps: (mutableInstance: PIXI.Container, oldProps, _props) => {
       const props = preprocessProps(_props)
       const {
-        left = 0,
-        top = 0,
         width,
         height,
-      } = props.style ?? {}
+      } = props
       applyDefaultProps(
         mutableInstance,
         oldProps,
@@ -84,10 +82,9 @@ export const Container = PixiComponent<ContainerProps, PIXI.Container>(
           isFlex: false,
         },
       )
-      mutableInstance.x = left
-      mutableInstance.y = top
       width && (mutableInstance.width = width)
       height && (mutableInstance.height = height)
+
     },
   },
 ) as unknown as ContainerType

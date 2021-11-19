@@ -4,7 +4,6 @@ import * as R from 'colay/ramda'
 import React from 'react'
 import { Text as GraphText } from '../Text'
 import { View as GraphView } from '../View'
-import { CYTOSCAPE_EVENT } from '@constants'
 
 export const DefaultRenderNode: RenderNode = ({
   item, element, cy, theme,
@@ -12,19 +11,14 @@ export const DefaultRenderNode: RenderNode = ({
   const hasSelectedEdge = element.connectedEdges(':selected').length > 0
   return (
     <GraphView
-      style={{
-        width: 50,
-        height: 50,
-        justifyContent: 'center',
-        alignItems: 'center',
-        display: 'flex',
-        backgroundColor: hasSelectedEdge
-          ? theme.palette.secondary.main
-          : (element.selected()
-            ? theme.palette.primary.main
-            : theme.palette.background.paper),
-        borderRadius: 50,
-      }}
+      width={50}
+      height={50}
+      fill={hasSelectedEdge
+        ? theme.palette.secondary.main
+        : (element.selected()
+          ? theme.palette.primary.main
+          : theme.palette.background.paper)}
+      radius={50}
       interactive
       pointertap={() => {
         cyUnselectAll(cy)

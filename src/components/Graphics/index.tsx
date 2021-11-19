@@ -4,10 +4,10 @@ import { BoundingBox, NodeElement } from '@type'
 import * as PIXI from 'pixi.js'
 import {
   PixiComponent,
+  Graphics as ReactPIXIGraphics,
 } from '@inlet/react-pixi'
 import * as R from 'colay/ramda'
 import * as V from 'colay/vector'
-import * as C from 'colay/color'
 import { applyDefaultProps, preprocessProps } from '@utils'
 import { DefaultTheme } from '@core/theme'
 import { wrapComponent } from 'colay-ui'
@@ -131,7 +131,7 @@ export const drawLine = (
   const {
     from: fromBoundingBox,
     to: toBoundingBox,
-    fill = C.rgbNumber(DefaultTheme.palette.background.paper),
+    fill = DefaultTheme.palette.background.paper,
     directed,
     type, //= 'bezier',
     graphics,
@@ -185,150 +185,148 @@ export const drawLine = (
       ...arrowHead,
     })
   }
-
-  R.cond([
-    [
-      R.equals('bezier'),
-      () => {
+  switch (type) {
+    case 'bezier':{
+      const controlPoints = controlPointsCreator.bezier({
+        from,
+        to,
+        count: 2,
+        distance: 100,
+        unitVector: undirectedUnitVector,
+        normVector: undirectedNormVector,
+      })
+      controlPoints.map(
+        ({
+          start,
+          end,
+          control1,
+          control2,
+        }: BezierLinePoints) => {
+          graphics.moveTo(start.x, start.y)
+          graphics.bezierCurveTo(
+            control1.x, control1.y, control2.x, control2.y, end.x, end.y,
+          )
+        },
+      )
+      break
+    }
+    case 'segments': {
+      const controlPoints = controlPointsCreator.bezier({
+        from,
+        to,
+        count: 4,
+        distance: 100,
+        unitVector: undirectedUnitVector,
+        normVector: undirectedNormVector,
+      })
+      controlPoints.map(
+        ({
+          start,
+          mid,
+          end,
+        }: BezierLinePoints) => {
+          graphics.moveTo(start.x, start.y)
+          graphics.lineTo(
+            mid.x, mid.y,
+          )
+          graphics.moveTo(mid.x, mid.y)
+          graphics.lineTo(
+            end.x, end.y,
+          )
+        },
+      )
+      break
+    }
+      
+  
+    default:{
+      if (distance) {
         const controlPoints = controlPointsCreator.bezier({
           from,
           to,
-          count: 2,
-          distance: 100,
+          count: 1,
+          distance,
           unitVector: undirectedUnitVector,
           normVector: undirectedNormVector,
         })
-        R.map(
+        controlPoints.map(
           ({
+            mid,
             start,
             end,
-            control1,
-            control2,
           }: BezierLinePoints) => {
             graphics.moveTo(start.x, start.y)
             graphics.bezierCurveTo(
-              control1.x, control1.y, control2.x, control2.y, end.x, end.y,
+              start.x, start.y, mid.x, mid.y, end.x, end.y,
             )
           },
-        )(controlPoints)
-      },
-    ],
-    [
-      R.equals('segments'),
-      () => {
-        const controlPoints = controlPointsCreator.bezier({
-          from,
-          to,
-          count: 4,
-          distance: 100,
-          unitVector: undirectedUnitVector,
-          normVector: undirectedNormVector,
-        })
-        R.map(
-          ({
-            start,
-            mid,
-            end,
-          }: BezierLinePoints) => {
-            graphics.moveTo(start.x, start.y)
-            graphics.lineTo(
-              mid.x, mid.y,
-            )
-            graphics.moveTo(mid.x, mid.y)
-            graphics.lineTo(
-              end.x, end.y,
-            )
-          },
-        )(controlPoints)
-      },
-    ],
-    [
-      R.T,
-      () => {
-        if (distance) {
-          const controlPoints = controlPointsCreator.bezier({
-            from,
-            to,
-            count: 1,
-            distance,
-            unitVector: undirectedUnitVector,
-            normVector: undirectedNormVector,
-          })
-          R.map(
-            ({
-              mid,
-              start,
-              end,
-            }: BezierLinePoints) => {
-              graphics.moveTo(start.x, start.y)
-              graphics.bezierCurveTo(
-                start.x, start.y, mid.x, mid.y, end.x, end.y,
-              )
-            },
-          )(controlPoints)
-        } else {
-          graphics.moveTo(from.x, from.y)
-          graphics.lineTo(to.x, to.y)
-        }
-      },
-    ],
-  ])(type)
+        )
+      } else {
+        graphics.moveTo(from.x, from.y)
+        graphics.lineTo(to.x, to.y)
+      }
+      break
+    }
+  }
   graphics.endFill()
   graphics.zIndex = EDGE_LINE_Z_INDEX
 }
 
 export const drawGraphics = (instance: PIXI.Graphics, props: {
-  style: any
+  width?: number;
+  height?: number;
+  fill?: number;
+  radius?: number;
+  lineWidth?: number;
+  lineFill?: number;
+  alpha?: number;
 }) => {
   const {
-    style: {
-      width = 0,
-      height = 0,
-      backgroundColor = 'black',
-      borderRadius = 0,
-      borderWidth = 0,
-      borderColor = 'black',
-    } = {},
+    width = 0,
+    height = 0,
+    fill,
+    radius = 0,
+    lineWidth = 0,
+    lineFill = DefaultTheme.palette.background.paper,
+    alpha = 1,
   } = props
   instance.clear()
-  instance.beginFill(C.rgbNumber(backgroundColor), C.getAlpha(backgroundColor))
-  instance.lineStyle(borderWidth, C.rgbNumber(borderColor))
-  const radius = width / 2
-  if ((width === height) && (borderRadius >= radius)) {
-    instance.drawCircle(radius, radius, radius)
+  instance.beginFill(fill, alpha)
+  instance.lineStyle(lineWidth, lineFill)
+  const maxRadius = width / 2
+  if ((width === height) && (radius >= maxRadius)) {
+    instance.drawCircle(maxRadius, maxRadius, maxRadius)
   } else {
-    instance.drawRoundedRect(0, 0, width, height, borderRadius)
+    instance.drawRoundedRect(0, 0, width, height, radius)
   }
   instance.endFill()
 }
 
-// @ts-ignore
-const GraphicsPIXI = PixiComponent<GraphProps, PIXI.Graphics>('Graphics2', {
-  create: (props: GraphProps) => {
-    const instance = new PIXI.Graphics()
-    return instance
-  },
-  applyProps: (mutableInstance: PIXI.Graphics, oldProps, _props) => {
-    const props = preprocessProps(_props)
-    const {
-      ...restProps
-    } = props
+// // @ts-ignore
+// const GraphicsPIXI = PixiComponent<GraphProps, PIXI.Graphics>('Graphics2', {
+//   create: (props: GraphProps) => {
+//     const instance = new PIXI.Graphics()
+//     return instance
+//   },
+//   applyProps: (mutableInstance: PIXI.Graphics, oldProps, _props) => {
+//     const props = preprocessProps(_props)
 
-    applyDefaultProps(mutableInstance, oldProps, restProps)
-  },
-})
+//     applyDefaultProps(mutableInstance, oldProps, props)
+//   },
+// })
 
-function GraphicsElement(props: GraphProps, forwardRef: any) {
-  return (
-    <GraphicsPIXI
-      ref={forwardRef}
-      {...props}
-    />
-  )
-}
+// function GraphicsElement(props: GraphProps, forwardRef: any) {
+//   return (
+//     <GraphicsPIXI
+//       ref={forwardRef}
+//       {...props}
+//     />
+//   )
+// }
 
-export const Graphics = wrapComponent<GraphProps>(
-  GraphicsElement, {
-    isForwardRef: true,
-  },
-)
+export const Graphics = ReactPIXIGraphics
+// wrapComponent<GraphProps>(
+//   GraphicsElement, {
+//     isForwardRef: true,
+//   },
+// )

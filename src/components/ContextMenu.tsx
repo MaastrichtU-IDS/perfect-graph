@@ -1,11 +1,11 @@
-import React from 'react'
-import { Position } from 'colay/type'
-import { GraphEditorRef } from '@type'
 import {
   Menu,
   MenuItem,
-  Portal,
+  Portal
 } from '@mui/material'
+import { GraphEditorRef } from '@type'
+import { Position } from 'colay/type'
+import React from 'react'
 
 export type ContextMenuProps = {
   onSelect?: (value: string) => void;
@@ -18,16 +18,12 @@ export type ContextMenuProps = {
   graphEditorRef: React.MutableRefObject<GraphEditorRef>
 }
 
-const DEFAULT_FONT_SIZE = 20
-const WIDTH = 540
 export const ContextMenu = (props: ContextMenuProps) => {
   const {
-    children,
     onSelect,
     items = [],
     open,
     position = { x: 0, y: 0 },
-    graphEditorRef,
   } = props
   return (
     <Portal container={document.body}>

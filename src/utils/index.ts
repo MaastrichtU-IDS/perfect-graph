@@ -268,7 +268,7 @@ export const getTextureFromProps = (elementType: string, pureProps: Record<strin
 
 export const getSelectedItemByElement = (
   element: Element,
-  info: { nodes: NodeData[]; edges: EdgeData[]},
+  info: { nodes: NodeData[]; edges: EdgeData[] },
 ) => {
   const id = element.id()
   const isNode = element.isNode()
@@ -375,23 +375,15 @@ export const getClusterVisibility = (id: string, clusters: Cluster[] = []) => {
   })
   return visible
 }
-// export const calculateDisplayObjectBounds = (object: PIXI.Container) => {
-//   const box = object.getLocalBounds()
-//   box.width = 45
-//   box.height = 45
-//   return {
-//     // x: object.x + (box.x - object.pivot.x) * object.scale.x,
-//     // y: object.y + (box.y - object.pivot.y) * object.scale.y,
-//     width: box.width * object.scale.x,
-//     height: box.height * object.scale.y,
-//     x: object.x * object.scale.x,
-//     y: object.y * object.scale.y,}
-//   }
 
 export const calculateVisibilityByContext = (
-  element: EdgeElement|NodeElement,
+  element: EdgeElement | NodeElement,
 ): boolean => {
   const context = contextUtils.get(element)
+  // const visibility = Object.values(context.settings.visibility).reduce(
+  //   (acc, curr) => acc && curr,
+  //   true,
+  // )
   const visibility = R.all(R.isTrue)(Object.values(context.settings.visibility))
   // if (element.isEdge()) {
   //   const target = element.target()

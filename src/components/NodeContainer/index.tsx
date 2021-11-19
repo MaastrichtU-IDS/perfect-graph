@@ -67,13 +67,12 @@ const NodeContainerElement = (
   const opacity = context.settings.filtered
     ? 1
     : (config.filter?.settings?.opacity ?? 0.2)
+
   return (
     <Container
       ref={containerRef}
-      style={{
-        left: x,
-        top: y,
-      }}
+      x={x}
+      y={y}
       alpha={opacity}
       visible={visible}
       draggable
