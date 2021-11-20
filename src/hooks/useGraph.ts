@@ -38,30 +38,6 @@ export default (props: Props) => {
       elements: [],
       headless: true,
       styleEnabled: true,
-      // container: createCanvas(),
-      // style: [ // the stylesheet for the graph
-      //   {
-      //     selector: 'node',
-      //     style: {
-      //       'background-color': '#666',
-      //       label: 'data(id)',
-      //       width: 100,
-      //       height: 100,
-      //     },
-      //   },
-
-      //   {
-      //     selector: 'edge',
-      //     style: {
-      //       width: 3,
-      //       'line-color': '#ccc',
-      //       'target-arrow-color': '#ccc',
-      //       'target-arrow-shape': 'triangle',
-      //       // 'curve-style': 'bezier',
-      //     },
-      //   },
-      // ],
-
     })
     mutableGraphMap[id] = {
       cy: cyInstance,

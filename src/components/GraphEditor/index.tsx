@@ -432,7 +432,7 @@ const GraphEditorElement = (
           onBoxSelection={(event) => {
             const { mode } = localDataRef.current.props
             const {
-              elementIds,
+              itemIds,
             } = event
             if (EDITOR_MODE.ADD_CLUSTER_ELEMENT === mode) {
               onEvent({
@@ -445,26 +445,30 @@ const GraphEditorElement = (
               return
             }
             // TODO: DANGER**
-            localDataRef.current.newClusterBoxSelection.elementIds = elementIds
-            if (elementIds.length > 0) {
-              localDataRef.current.contextMenu.itemIds = elementIds
-              updateState((draft) => {
-                const e = event.event.data.originalEvent
-                draft.contextMenu.visible = true
-                draft.contextMenu.position = getEventClientPosition(e)
+            localDataRef.current.newClusterBoxSelection.elementIds = itemIds
+            if (itemIds.length > 0) {
+              localDataRef.current.contextMenu.itemIds = itemIds
+              updateState(
+                (draft) => {
+                  const e = event.event.data.originalEvent
+                  draft.contextMenu.visible = true
+                  draft.contextMenu.position = getEventClientPosition(e)
                 // getPointerPositionOnViewport(
                 //   graphEditorRef.current.viewport,
                 //   // @ts-ignore
                 //   event.event.data.originalEvent,
                 // )
-              })
-              // TODO: **DANGER
-              onEvent({
-                type: EVENT.BOX_SELECTION,
-                payload: {
-                  elementIds,
                 },
-              })
+                () => {
+                  onEvent({
+                    type: EVENT.BOX_SELECTION,
+                    payload: {
+                      itemIds,
+                    },
+                  })
+                },
+              )
+              
             }
           }}
           renderNode={({ item, element, ...rest }) => {

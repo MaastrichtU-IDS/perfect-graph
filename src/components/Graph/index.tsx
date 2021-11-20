@@ -47,7 +47,7 @@ export type GraphProps = {
   onBoxSelection?: (c: {
     event: PIXI.InteractionEvent,
     elements: cytoscape.Collection,
-    elementIds: string[],
+    itemIds: string[],
     boundingBox: BoundingBox;
   }) => void;
   selectedElementIds?: string[]
@@ -106,10 +106,12 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
     }
   }, [stageRef.current])
   React.useEffect(() => {
-    cyUnselectAll(cy)
-    selectedElementIds.forEach((id) => {
-      cy.$id(id).select()
-    })
+    if (selectedElementIds?.length > 0) {
+      cyUnselectAll(cy)
+      selectedElementIds.forEach((id) => {
+        cy.$id(id).select()
+      })
+    }
   }, [selectedElementIds, cy])
   React.useEffect(() => {
     if (stageRef.current && config.layout) {
@@ -198,16 +200,16 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
               event,
               boundingBox,
             }) => {
-              cyUnselectAll(cy)
-              const elementIds: string[] = []
+              // cyUnselectAll(cy)
+              const itemIds: string[] = []
               const selectedCollection = cy.nodes().filter((element) => {
                 const elementPosition = element.position()
-                const elementContext = contextUtils.get(element)
+                // const elementContext = contextUtils.get(element)
                 const selected = calculateVisibilityByContext(element)
                   && isPositionInBox(elementPosition, boundingBox)
                 if (selected) {
-                  element.select()
-                  elementIds.push(element.id())
+                  // element.select()
+                  itemIds.push(element.id())
                 }
                 return selected
               })
@@ -215,7 +217,7 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
                 boundingBox,
                 elements: selectedCollection,
                 event,
-                elementIds,
+                itemIds,
               })
             }}
           >

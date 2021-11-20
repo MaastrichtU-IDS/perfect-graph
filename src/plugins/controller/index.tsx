@@ -307,6 +307,13 @@ export const useController = (
 
             break
           }
+          case EVENT.BOX_SELECTION: {
+            const {
+              itemIds,
+            } = payload
+            draft.selectedElementIds = itemIds
+            break
+          }
           case EVENT.ELEMENT_SELECTED: {
             const {
               itemIds,
