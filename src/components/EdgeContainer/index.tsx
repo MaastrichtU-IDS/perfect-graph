@@ -132,12 +132,7 @@ const EdgeContainerElement = (
       undirectedUnitVector,
       undirectedNormVector,
     } = vectorInfo
-    containerRef.current!.x = midpointPosition.x + (
-      edgeGroupInfo.sortedIndex * undirectedNormVector.x * DEFAULT_DISTANCE
-    )
-    containerRef.current!.y = midpointPosition.y + (
-      edgeGroupInfo.sortedIndex * undirectedNormVector.y * DEFAULT_DISTANCE
-    )
+    
     const sourceElementContext = contextUtils.getNodeContext(sourceElement)
     const targetElementContext = contextUtils.getNodeContext(targetElement)
     // calculate sortedIndex
@@ -177,6 +172,12 @@ const EdgeContainerElement = (
     const vectorInfo = calculateVectorInfo(
       element.source(), 
       element.target(),
+    )
+    containerRef.current!.x = vectorInfo.midpointPosition.x + (
+      edgeGroupInfo.sortedIndex * vectorInfo.undirectedNormVector.x * DEFAULT_DISTANCE
+    )
+    containerRef.current!.y = vectorInfo.midpointPosition.y + (
+      edgeGroupInfo.sortedIndex * vectorInfo.undirectedNormVector.y * DEFAULT_DISTANCE
     )
     drawLineCallback({
       cy,
@@ -237,7 +238,6 @@ const EdgeContainerElement = (
     : (config?.filter?.settings?.opacity ?? 0.2)
 
   
-
   return (
     <>
       <Container

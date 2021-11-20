@@ -24,6 +24,8 @@ type Result = {
 
 }
 
+const DEFAULT_RENDER_EVENTS = [] as string[]
+
 export const useElement = (props: Props): Result => {
   const {
     // cy,
@@ -33,7 +35,7 @@ export const useElement = (props: Props): Result => {
     item,
   } = props
   const {
-    renderEvents = [],
+    renderEvents = DEFAULT_RENDER_EVENTS,
   } = config
   const initializedRef = useInitializedRef()
   // Update data
