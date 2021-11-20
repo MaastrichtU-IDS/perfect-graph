@@ -123,7 +123,7 @@ export const createMockData = (nodeSize: number, edgeSize: number) => {
     edges
   }
 }
-const COUNT = 2
+const COUNT = 1000
 const data = createMockData(COUNT, COUNT)
 const nextData = {
   edges: [{ id: 'edge-20', source: 'node-0', target: 'node-1' }],
@@ -664,12 +664,12 @@ const AppContainer = ({
     // }, 1000)
 }, [])
   React.useEffect(() => {
-    setTimeout(() => {
-      controller.update((draft, { graphEditorRef }) => {
-        draft.nodes = draft.nodes.concat(nextData.nodes)
-        draft.edges = draft.edges.concat(nextData.edges)
-      })
-    }, 1500)
+    // setTimeout(() => {
+    //   controller.update((draft, { graphEditorRef }) => {
+    //     draft.nodes = draft.nodes.concat(nextData.nodes)
+    //     draft.edges = draft.edges.concat(nextData.edges)
+    //   })
+    // }, 1500)
 }, [])
 
   return (

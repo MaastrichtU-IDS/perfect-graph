@@ -112,13 +112,16 @@ const EdgeContainerElement = (
   const drawLineCallback = React.useCallback(({
     element,
     cy,
+    vectorInfo,
+    edgeGroupInfo,
   }: {
-    cy: cytoscape.Core,
-    element: EdgeElement,
+    cy: cytoscape.Core;
+    element: EdgeElement;
+    vectorInfo: any;
+    edgeGroupInfo: any;
   }) => {
     const targetElement = element.target()
     const sourceElement = element.source()
-    const edgeGroupInfo = calculateEdgeGroupInfo(element)
     const {
       distanceVector,
       // fromPosition,
@@ -128,7 +131,7 @@ const EdgeContainerElement = (
       unitVector,
       undirectedUnitVector,
       undirectedNormVector,
-    } = calculateVectorInfo(sourceElement, targetElement)
+    } = vectorInfo
     containerRef.current!.x = midpointPosition.x + (
       edgeGroupInfo.sortedIndex * undirectedNormVector.x * DEFAULT_DISTANCE
     )
@@ -170,9 +173,16 @@ const EdgeContainerElement = (
     })
   }, [containerRef, graphicsRef])
   const onPositionChange = React.useCallback(({ element }) => {
+    const edgeGroupInfo = calculateEdgeGroupInfo(element)
+    const vectorInfo = calculateVectorInfo(
+      element.source(), 
+      element.target(),
+    )
     drawLineCallback({
       cy,
       element,
+      edgeGroupInfo,
+      vectorInfo,
     })
   }, [drawLineCallback])
   const { element, cy, context } = useEdge({
@@ -181,14 +191,6 @@ const EdgeContainerElement = (
     config,
     item,
   })
-  React.useEffect(
-    () => {
-      drawLineCallback({
-        cy,
-        element,
-      })
-    },
-  )
   // React.useEffect(() => {
   //   const sourceId = element.source().id()
   //   const targetId = element.target().id()
@@ -204,22 +206,37 @@ const EdgeContainerElement = (
     },
     [],
   )
+  const sourceElement = element.source()
+  const targetElement = element.target()
   const edgeGroupInfo = calculateEdgeGroupInfo(element)
+  const vectorInfo = calculateVectorInfo(
+    sourceElement, 
+    targetElement,
+  )
+  React.useEffect(
+    () => {
+      drawLineCallback({
+        cy,
+        element,
+        edgeGroupInfo,
+        vectorInfo,
+      })
+    },
+  )
   const {
     // normVector,
     midpointPosition,
     toPosition,
     fromPosition,
     undirectedNormVector,
-  } = calculateVectorInfo(element.source(), element.target())
+  } = vectorInfo
   const visible = calculateVisibilityByContext(element)
   const filtered = context.settings.filtered && context.settings.nodeFiltered
   const opacity = filtered
     ? 1
     : (config?.filter?.settings?.opacity ?? 0.2)
 
-  const targetElement = element.target()
-  const sourceElement = element.source()
+  
 
   return (
     <>
