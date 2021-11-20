@@ -5,7 +5,7 @@ import Vector from 'victor'
 import * as PIXI from 'pixi.js'
 import { useTheme } from '@core/theme'
 import { useEdge } from '@hooks'
-import { contextUtils, calculateVisibilityByContext } from '@utils'
+import { contextUtils, calculateVisibilityByContext, vectorMidpoint } from '@utils'
 import { EDGE_CONTAINER_Z_INDEX, CYTOSCAPE_EVENT } from '@constants'
 import {
   RenderEdge,
@@ -15,7 +15,6 @@ import {
   NodeElement,
   GraphRef,
 } from '@type'
-import * as V from 'colay/vector'
 import { Graphics, drawLine as defaultDrawLine } from '../Graphics'
 import { Container, ContainerRef } from '../Container'
 
@@ -40,9 +39,10 @@ export const calculateEdgeGroupInfo = (edge: EdgeElement) => {
   const betweenEdgesCount = betweenEdges.length
   const betweenEdgesMedian = Math.floor(betweenEdgesCount / 2)
   let edgeIndex = 0
-  betweenEdges.forEach((edgeEl, i) => {
+  betweenEdges.some((edgeEl, i) => {
     if (edgeEl.id() === edgeID) {
       edgeIndex = i
+      return true
     }
   })
   let sortedIndex = 0
@@ -58,13 +58,14 @@ export const calculateEdgeGroupInfo = (edge: EdgeElement) => {
     count: betweenEdgesCount,
   }
 }
+
 export const calculateVectorInfo = (
   source: NodeElement,
   to: NodeElement,
 ) => {
-  const fromPosition = source.position()
-  const toPosition = to.position()
-  const distanceVector = Vector.fromObject(toPosition).subtract(fromPosition)
+  const fromPosition = Vector.fromObject(source.position())
+  const toPosition = Vector.fromObject(to.position())
+  const distanceVector = toPosition.clone().subtract(fromPosition)
   // V.subtract(fromPosition)(toPosition)
   // const distanceVector = R.pipe(
   //   V.subtract(fromPosition),
@@ -73,7 +74,11 @@ export const calculateVectorInfo = (
   // V.normalize(distanceVector)
   const normVector = unitVector.clone().rotate(Math.PI / 2)
   // V.rotate(Math.PI / 2)(unitVector)
-  const midpointPosition = V.midpoint(fromPosition)(toPosition)
+  const midpointPosition = vectorMidpoint(
+    fromPosition,
+    toPosition,
+  )
+  // V.midpoint(fromPosition)(toPosition)
   const sign = source.id() > to.id() ? 1 : -1
   return {
     fromPosition,
@@ -184,6 +189,15 @@ const EdgeContainerElement = (
       })
     },
   )
+  // React.useEffect(() => {
+  //   const sourceId = element.source().id()
+  //   const targetId = element.target().id()
+  //   cy.elements(`edge[source = "${sourceId}"][target = "${targetId}"], edge[source = "${targetId}"][target = "${sourceId}"]`)
+  //     .on('add remove', (event)=>{
+  //       console.log('ADD or REMOVE', event)
+  //     })
+  //   console.log('EDGE', cy.elements(`edge[source = "${sourceId}"][target = "${targetId}"], edge[source = "${targetId}"][target = "${sourceId}"]`))
+  // }, [])
   React.useEffect(
     () => {
       containerRef.current!.zIndex = EDGE_CONTAINER_Z_INDEX

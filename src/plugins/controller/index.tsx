@@ -9,6 +9,7 @@ import {
   getSelectedItemByElement,
   getUndoEvents,
   getSelectedElementInfo,
+  vectorMidpoint,
 } from '@utils'
 import {
   EDITOR_MODE, EVENT,
@@ -20,7 +21,7 @@ import { download } from 'colay-ui/utils'
 import * as R from 'colay/ramda'
 import * as PIXI from 'pixi.js'
 import React from 'react'
-import * as V from 'colay/vector'
+import Vector from 'victor'
 import {
   ElementSettingsModal,
 } from '@components/GraphEditor/modals/ElementSettingsModal'
@@ -282,9 +283,10 @@ export const useController = (
               if (selectedElement.isNode()) {
                 position = selectedElement.position()
               } else {
-                position = V.midpoint(
-                  selectedElement.source().position(),
-                )(selectedElement.target().position())
+                position = vectorMidpoint(
+                  Vector.fromObject(selectedElement.source().position()),
+                  Vector.fromObject(selectedElement.target().position()),
+                )
               }
               const center = {
                 x: position.x + TARGET_SIZE / 4,

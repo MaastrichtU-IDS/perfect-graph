@@ -101,19 +101,34 @@ const populate = (times, data) => ({
 
 export const createMockData = (nodeSize: number, edgeSize: number) => {
   const nodes = R.range(0, nodeSize).map((index) => ({ id: `node-${index}` }) )
-  const edges = R.range(0, edgeSize).map((index) => ({ 
-    id: `edge-${index}`,
-    source: `node-${Math.floor(Math.random() * nodeSize)}`,
-    target: `node-${Math.floor(Math.random() * nodeSize)}`,
-  }))
+  
+  const edges = R.range(0, edgeSize).map((index) => {
+    let edge
+    do {
+      const sourceId= Math.floor(Math.random() * nodeSize)
+      const targetId= Math.floor(Math.random() * nodeSize)
+      if (sourceId !== targetId) {
+        edge =  { 
+          id: `edge-${index}`,
+          source: `node-${sourceId}`,
+          target: `node-${targetId}`,
+        }
+        break
+      }
+    }while(true)
+    return edge
+  })
   return {
     nodes,
     edges
   }
 }
-const COUNT = 1000
+const COUNT = 2
 const data = createMockData(COUNT, COUNT)
-
+const nextData = {
+  edges: [{ id: 'edge-20', source: 'node-0', target: 'node-1' }],
+  nodes: []
+}
 // const data = prepareData(defaultData)
 // const data = populate(4,prepareData(defaultData))
 
@@ -647,6 +662,14 @@ const AppContainer = ({
     //     }
     //   })
     // }, 1000)
+}, [])
+  React.useEffect(() => {
+    setTimeout(() => {
+      controller.update((draft, { graphEditorRef }) => {
+        draft.nodes = draft.nodes.concat(nextData.nodes)
+        draft.edges = draft.edges.concat(nextData.edges)
+      })
+    }, 1500)
 }, [])
 
   return (

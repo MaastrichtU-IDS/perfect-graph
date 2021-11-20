@@ -17,7 +17,7 @@ import {
   ELEMENT_DATA_FIELDS, EVENT,
   QUALITY_LEVEL,
 } from '@constants'
-
+import Vector from 'victor'
 // type Result = {
 //   x: number;
 //   y: number;
@@ -174,30 +174,30 @@ export const applyDefaultProps = <P extends Record<string, any> >(
     rescaleToYoga: false,
   },
 ) => {
-  const mutableInstance = instance as DisplayObjectWithYoga
+  instance = instance as DisplayObjectWithYoga
   const {
     isFlex = IS_FLEX_DEFAULT,
     rescaleToYoga = false,
   } = config
-  const { style = {}, ...restProps } = newProps
   if (isFlex) {
-    mutableInstance.flex = true // display === 'flex'
-    mutableInstance.yoga.flexDirection = style?.flexDirection ?? 'column'
-    mutableInstance.yoga.keepAspectRatio = R.equals(
+    const { style = {} } = newProps
+    instance.flex = true // display === 'flex'
+    instance.yoga.flexDirection = style?.flexDirection ?? 'column'
+    instance.yoga.keepAspectRatio = R.equals(
       newProps.resizeMode,
       'contain',
     )
     // @TODO: was true
-    mutableInstance.yoga.rescaleToYoga = rescaleToYoga
-    mutableInstance.yoga.fromConfig(style)
+    instance.yoga.rescaleToYoga = rescaleToYoga
+    instance.yoga.fromConfig(style)
   }
   // FOR CULLING
-  mutableInstance._visible = newProps.visible
+  instance._visible = newProps.visible
   // FOR CULLING
   return nativeApplyDefaultProps(
-    mutableInstance,
-    processProps(oldProps, mutableInstance),
-    processProps(restProps, mutableInstance),
+    instance,
+    processProps(oldProps, instance),
+    processProps(newProps, instance),
   )
 }
 
@@ -376,17 +376,10 @@ export const calculateVisibilityByContext = (
   element: EdgeElement | NodeElement,
 ): boolean => {
   const context = contextUtils.get(element)
-  // const visibility = Object.values(context.settings.visibility).reduce(
-  //   (acc, curr) => acc && curr,
-  //   true,
-  // )
-  const visibility = R.all(R.isTrue)(Object.values(context.settings.visibility))
-  // if (element.isEdge()) {
-  //   const target = element.target()
-  //   const source = element.source()
-  //   return visibility && calculateVisibilityByContext(target)
-  //   && calculateVisibilityByContext(source)
-  // }
+  const visibility = Object.values(context.settings.visibility).reduce(
+    (acc, curr) => acc && curr,
+    true,
+  ) as boolean
   return visibility
 }
 
@@ -394,12 +387,19 @@ export const calculateVisibilityByContext = (
 export const filterEdges = (nodes: NodeData[]) => (
   edges: EdgeData[],
 ) => {
-  const nodeMap = R.groupBy(R.prop('id'), nodes)
-  return R.filter(
+  const nodeMap = nodes.reduce(
+    (acc, curr) => {
+      acc[curr.id] = curr
+      return acc
+    },
+    {},
+  ) as Record<string, NodeData>
+  console.log('AA', nodeMap)
+  // R.groupBy(R.prop('id'), nodes)
+  return edges.filter(
     (
       edge: EdgeData,
     ) => !!(nodeMap[edge.source] && nodeMap[edge.target]),
-    edges,
   )
 }
 
@@ -878,4 +878,11 @@ export const adjustVisualQuality = (objectCount: number, viewport: ViewportRef)=
         break
     }
   }
+}
+
+export const vectorMidpoint = (from: Vector, to: Vector) => {
+  return to.clone()
+    .subtract(from)
+    .divideScalar(2)
+    .add(from)
 }

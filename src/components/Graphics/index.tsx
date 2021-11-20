@@ -92,8 +92,10 @@ const drawArrowHead = ({
     new PIXI.Point(rightControlPoint.x, rightControlPoint.y),
     new PIXI.Point(topControlPoint.x, topControlPoint.y),
   )
+  // TODO: Dont remove the endFill
   graphics.endFill()
-  graphics.isSprite = true
+  // TODO: Check the performance effect of this later
+  // graphics.isSprite = true
 }
 export const drawLine = (
   config: {
