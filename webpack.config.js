@@ -6,6 +6,7 @@ module.exports = async function (env, argv) {
     babel: {
         dangerouslyAddModulePathsToTranspile: ['@rjsf/material-ui']
     }
-}, argv);
+  }, argv);
+  delete config.devtool
   return config;
 };
