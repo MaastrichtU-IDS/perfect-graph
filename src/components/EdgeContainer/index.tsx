@@ -1,7 +1,7 @@
 import React from 'react'
 import { wrapComponent } from 'colay-ui'
 import * as R from 'colay/ramda'
-import * as C from 'colay/color'
+import Vector from 'victor'
 import * as PIXI from 'pixi.js'
 import { useTheme } from '@core/theme'
 import { useEdge } from '@hooks'
@@ -64,13 +64,15 @@ export const calculateVectorInfo = (
 ) => {
   const fromPosition = source.position()
   const toPosition = to.position()
-  const distanceVector = V.subtract(fromPosition)(toPosition)
+  const distanceVector = Vector.fromObject(toPosition).subtract(fromPosition)
+  // V.subtract(fromPosition)(toPosition)
   // const distanceVector = R.pipe(
   //   V.subtract(fromPosition),
   // )(toPosition)
-  const unitVector = V.normalize(distanceVector)
-  const normVector = V.rotate(Math.PI / 2)(unitVector)
-  // V.multiplyScalar(sortedIndex > 0 ? 1 : -1)(V.rotate(Math.PI / 2)(unitVector))
+  const unitVector = distanceVector.clone().normalize()
+  // V.normalize(distanceVector)
+  const normVector = unitVector.clone().rotate(Math.PI / 2)
+  // V.rotate(Math.PI / 2)(unitVector)
   const midpointPosition = V.midpoint(fromPosition)(toPosition)
   const sign = source.id() > to.id() ? 1 : -1
   return {
@@ -80,8 +82,10 @@ export const calculateVectorInfo = (
     unitVector,
     normVector,
     midpointPosition,
-    undirectedUnitVector: V.multiplyScalar(sign)(unitVector),
-    undirectedNormVector: V.multiplyScalar(sign)(normVector),
+    undirectedUnitVector: unitVector.clone().multiplyScalar(sign),
+    // V.multiplyScalar(sign)(unitVector),
+    undirectedNormVector: normVector.clone().multiplyScalar(sign),
+    // V.multiplyScalar(sign)(normVector),
   }
 }
 const EdgeContainerElement = (

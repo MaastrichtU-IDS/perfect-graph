@@ -6,6 +6,7 @@ import {
   getPointerPositionOnViewport,
   isMultipleTouches,
 } from '@utils'
+import Vector from  'victor'
 import { useForwardRef, wrapComponent } from 'colay-ui'
 import * as R from 'colay/ramda'
 import { BoundingBox, Position } from 'colay/type'
@@ -154,11 +155,15 @@ const ReactViewportComp = PixiComponent('Viewport', {
       // const { metaKey } = e.data.originalEvent
       if (localDataRef.current.boxSelection.startPosition && !localDataRef.current.boxSelection.boxElement) {
         const position = getPointerPositionOnViewport(viewport, e.data.originalEvent)
+        // R.pipe(
+        //   V.subtract(localDataRef.current.boxSelection.startPosition),
+        //   V.length,
+        // )(position)
         if (
-          R.pipe(
-            V.subtract(localDataRef.current.boxSelection.startPosition),
-            V.length,
-          )(position) > 20) {
+          Vector.fromObject(position)
+            .subtract(Vector.fromObject(localDataRef.current.boxSelection.startPosition))
+            .length()  > 20
+        ) {
           const boxElement = new PIXI.Graphics()
           viewport.addChild(boxElement!)
           localDataRef.current.boxSelection.boxElement = boxElement

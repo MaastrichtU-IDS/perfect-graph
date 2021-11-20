@@ -1,5 +1,6 @@
 import { Position } from 'colay/type'
 import * as V from 'colay/vector'
+import Vector from 'victor'
 
 type OnDragResult = {
   keepDragging?: boolean;
@@ -15,8 +16,11 @@ export function dragTrack(
   }
   const onMove = (position: Position) => {
     if (mutableData.position) {
-      const result = (onDrag(
-        V.subtract(mutableData.position!)(position)) ?? {}
+      const result = (
+        onDrag(
+          Vector.fromObject(position).subtract(Vector.fromObject(mutableData.position)),
+        // V.subtract(mutableData.position!)(position)
+        ) ?? {}
       ) as OnDragResult
       mutableData.position = position
       if (result?.keepDragging === false) {

@@ -1,17 +1,19 @@
-import React from 'react'
 import { Position } from 'colay-ui/type'
 import { BoundingBox, NodeElement } from '@type'
 import * as PIXI from 'pixi.js'
 import {
-  PixiComponent,
   Graphics as ReactPIXIGraphics,
 } from '@inlet/react-pixi'
 import * as R from 'colay/ramda'
-import * as V from 'colay/vector'
-import { applyDefaultProps, preprocessProps } from '@utils'
 import { DefaultTheme } from '@core/theme'
-import { wrapComponent } from 'colay-ui'
 import { EDGE_LINE_Z_INDEX } from '@constants'
+import Vector from 'victor'
+// import { applyDefaultProps, preprocessProps } from '@utils'
+// import React from 'react'
+// import { wrapComponent } from 'colay-ui'
+// import {
+//   PixiComponent,
+// } from '@inlet/react-pixi'
 
 export type GraphicsProps = {
 
@@ -39,36 +41,27 @@ const controlPointsCreator = {
       unitVector,
       normVector,
     } = config
-    const upperVector = V.multiplyScalar(distance)(normVector)
-    const lowerVector = V.multiplyScalar(-1)(upperVector)
-    const chunkDistanceVector = R.pipe(
-      V.subtract(from),
-      V.divideScalar(count),
-    )(to)
-    const semiChunkDistanceVector = V.divideScalar(2)(chunkDistanceVector)
-    return R.mapIndexed(
+    const upperVector = Vector.fromObject(normVector).multiplyScalar(distance)
+    const lowerVector = Vector.fromObject(upperVector).multiplyScalar(-1)
+    const chunkDistanceVector = to.clone().subtract(from).divideScalar(count)
+    const semiChunkDistanceVector = chunkDistanceVector.clone().divideScalar(2)
+    return R.range(0, count).map(
       (_, index: number) => {
         const isUpper = index % 2 === 0
-        const startVec = R.pipe(
-          V.multiplyScalar(index),
-          V.add(from),
-        )(chunkDistanceVector)
-        const endVec = V.add(startVec)(chunkDistanceVector)
-        const midVec = R.pipe(
-          V.add(semiChunkDistanceVector),
-          V.add(isUpper ? upperVector : lowerVector),
-        )(startVec)
+        const startVec = chunkDistanceVector.clone().multiplyScalar(index).add(from)
+        const endVec = chunkDistanceVector.clone().add(startVec)
+        const midVec = startVec.clone().add(
+          isUpper ? upperVector : lowerVector,
+        ).add(semiChunkDistanceVector)
         return {
           start: startVec,
           mid: midVec,
           end: endVec,
           upperVector,
-          midVec: R.pipe(
-            V.add(semiChunkDistanceVector),
-          )(startVec),
+          midVec: semiChunkDistanceVector.clone().add(startVec).toObject(),
         }
       },
-    )(R.range(0, count))
+    )
   },
 }
 const drawArrowHead = ({
@@ -84,17 +77,15 @@ const drawArrowHead = ({
   radius?: number;
   fill: number;
 }) => {
-  const bottomCenter = to
-  const unitDistanceVec = V.multiplyScalar(radius)(unitVector)
-  const perpendicularUnitDistanceVec = V.rotate(-Math.PI / 2)(unitDistanceVec)
-  const leftControlPoint = R.pipe(
-    V.multiplyScalar(-1),
-    V.add(bottomCenter),
-  )(perpendicularUnitDistanceVec)
-  const rightControlPoint = R.pipe(
-    V.add(bottomCenter),
-  )(perpendicularUnitDistanceVec)
-  const topControlPoint = V.add(unitDistanceVec)(to)
+  const bottomCenter = Vector.fromObject(to)
+  const unitDistanceVec = Vector.fromObject(unitVector).multiplyScalar(radius)
+  const perpendicularUnitDistanceVec = unitDistanceVec.clone().rotate(-Math.PI / 2)
+  const leftControlPoint = perpendicularUnitDistanceVec
+    .clone()
+    .multiplyScalar(-1)
+    .add(bottomCenter)
+  const rightControlPoint = perpendicularUnitDistanceVec.clone().add(bottomCenter)
+  const topControlPoint = bottomCenter.clone().add(unitDistanceVec)
   graphics.beginFill(fill)
   graphics.drawPolygon(
     new PIXI.Point(leftControlPoint.x, leftControlPoint.y),
@@ -151,28 +142,47 @@ export const drawLine = (
     undirectedNormVector,
     // distanceVector,
   } = config
-  const marginVector = {
+  const marginVector = Vector.fromObject({
     x: undirectedNormVector.x * margin.x,
     y: undirectedNormVector.y * margin.y,
-  }
+  })
   const radiusFrom = Math.hypot(fromBoundingBox.width, fromBoundingBox.height) / 2
   const radiusTo = Math.hypot(toBoundingBox.width, toBoundingBox.height) / 2
-  const centerOfFrom = V.add(
-    fromBoundingBox.width / 2,
-    fromBoundingBox.height / 2,
-  )(fromBoundingBox)
-  const centerOfTo = V.add(
-    toBoundingBox.width / 2,
-    toBoundingBox.height / 2,
-  )(toBoundingBox)
-  const from = R.pipe(
-    V.add(V.multiplyScalar(radiusFrom)(unitVector)),
-    V.add(marginVector),
-  )(centerOfFrom)
-  const to = R.pipe(
-    V.subtract(V.multiplyScalar(radiusTo)(unitVector)),
-    V.add(marginVector),
-  )(centerOfTo)
+  const centerOfFrom = Vector.fromObject(fromBoundingBox).add(
+    new Vector(
+      fromBoundingBox.width / 2,
+      fromBoundingBox.height / 2,
+    ),
+  )
+  // V.add(
+  //   fromBoundingBox.width / 2,
+  //   fromBoundingBox.height / 2,
+  // )(fromBoundingBox)
+  const centerOfTo = Vector.fromObject(toBoundingBox).add(
+    new Vector(
+      toBoundingBox.width / 2,
+      toBoundingBox.height / 2,
+    ),
+  )
+  // V.add(
+  //   toBoundingBox.width / 2,
+  //   toBoundingBox.height / 2,
+  // )(toBoundingBox)
+  const from = centerOfFrom.clone()
+    .add(Vector.fromObject(unitVector).multiplyScalar(radiusFrom))
+    .add(marginVector)
+  
+  // R.pipe(
+  //   V.add(V.multiplyScalar(radiusFrom)(unitVector)),
+  //   V.add(marginVector),
+  // )(centerOfFrom)
+  const to = centerOfTo.clone()
+    .subtract(Vector.fromObject(unitVector).multiplyScalar(radiusTo))
+    .add(marginVector)
+  // R.pipe(
+  //   V.subtract(V.multiplyScalar(radiusTo)(unitVector)),
+  //   V.add(marginVector),
+  // )(centerOfTo)
   graphics.clear()
   graphics.lineStyle(width, fill, alpha)
 
@@ -192,8 +202,8 @@ export const drawLine = (
         to,
         count: 2,
         distance: 100,
-        unitVector: undirectedUnitVector,
-        normVector: undirectedNormVector,
+        unitVector: Vector.fromObject(undirectedUnitVector),
+        normVector: Vector.fromObject(undirectedNormVector),
       })
       controlPoints.map(
         ({
@@ -216,8 +226,8 @@ export const drawLine = (
         to,
         count: 4,
         distance: 100,
-        unitVector: undirectedUnitVector,
-        normVector: undirectedNormVector,
+        unitVector: Vector.fromObject(undirectedUnitVector),
+        normVector: Vector.fromObject(undirectedNormVector),
       })
       controlPoints.map(
         ({
@@ -246,8 +256,8 @@ export const drawLine = (
           to,
           count: 1,
           distance,
-          unitVector: undirectedUnitVector,
-          normVector: undirectedNormVector,
+          unitVector: Vector.fromObject(undirectedUnitVector),
+          normVector: Vector.fromObject(undirectedNormVector),
         })
         controlPoints.map(
           ({
