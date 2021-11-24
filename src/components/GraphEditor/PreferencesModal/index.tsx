@@ -1,33 +1,24 @@
-import React from 'react'
 import {
-  Modal,
-  Paper,
-  Typography,
-  Divider,
-  Slide,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Link,
-  Breadcrumbs,
-  Button,
-  Collapse,
-} from '@mui/material'
+  ColorPicker
+} from '@components/GraphEditor/ColorPicker'
 import { Icon } from '@components/Icon'
-import { useGraphEditor } from '@hooks'
 import { EVENT } from '@constants'
-import {
-  View, DataRender, dataRenderPath, isReact,
-} from 'colay-ui'
-import Form from '@rjsf/material-ui'
+import { useGraphEditor } from '@hooks'
 import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
-import * as R from 'colay/ramda'
-import { useImmer } from 'colay-ui/hooks/useImmer'
 import {
-  ColorPicker,
-} from '@components/GraphEditor/ColorPicker'
+  Button,
+  Collapse, Divider, List,
+  ListItem,
+  ListItemIcon,
+  ListItemText, Modal,
+  Paper, Slide, Typography
+} from '@mui/material'
+import Form from '@rjsf/material-ui'
+import { DataRender, dataRenderPath, isReact, View } from 'colay-ui'
+import { useImmer } from 'colay-ui/hooks/useImmer'
+import * as R from 'colay/ramda'
+import React from 'react'
 
 type SidebarItemData = {
   label: string;
@@ -104,7 +95,6 @@ export const PreferencesModal = (props: PreferencesModalProps) => {
   const isComponent = isReact.compatible(Component)
   if (!isComponent && components[state.componentId]) {
     form = components[state.componentId](graphConfig)
-    console.log('AA', form)
   }
   const isExist = components[state.componentId]
   const onSubmitCallback = ({ formData }) => {
@@ -117,8 +107,6 @@ export const PreferencesModal = (props: PreferencesModalProps) => {
       },
     })
   }
-  console.log(state.componentId, state.selectedPath, 
-    isComponent, Component, form)
   return (
     <Modal
       open={isOpen}
@@ -251,7 +239,6 @@ const createDrawer = (params: CreateDrawerParams) => {
             const {
               children,
             } = params
-            // console.log('DATARENDER', params)
             const item = params.item as unknown as SidebarItemData
             return (
               <SidebarItem
@@ -442,7 +429,7 @@ const MOCK_COMPONENTS = {
               title: 'Selected',
               'type': 'number',
             },
-            'edgeSelected': {
+            'nodeSelected': {
               title: 'Node Selected',
               'type': 'number',
             },
@@ -451,7 +438,7 @@ const MOCK_COMPONENTS = {
             'default',
             'hovered',
             'selected',
-            'edgeSelected',
+            'nodeSelected',
           ],
         },
         'labelVisible': {
@@ -461,8 +448,6 @@ const MOCK_COMPONENTS = {
       },
       'required': [
         'width',
-        'height',
-        'radius',
         'fill',
         'labelVisible',
       ],
@@ -485,33 +470,29 @@ const MOCK_COMPONENTS = {
     },
     formData: R.omit(['ids'], graphConfig.edges.view),
   }),
-  GeneralUI: () => ({
-    schema: {
-      type: 'object',
-      required: [
-        'historyTabVisible',
-        'playlistTabVisible',
-      ],
-      properties: {
-        labelTextSize: {
-          type: 'number',
-          title: 'Label Text Size',
-        },
-        historyTabVisible: {
-          type: 'boolean',
-          title: 'History Tab Visible',
-        },
-        playlistTabVisible: {
-          type: 'boolean',
-          title: 'Playlist Tab Visible',
-        },
-      },
-    },
-  }),
-  UI: () => <div>Visualization</div>,
-  Filter: () => <div>Filter</div>,
-  History: () => <div>History</div>,
-  Settings: () => <div>Settings</div>,
+  // GeneralUI: () => ({
+  //   schema: {
+  //     type: 'object',
+  //     required: [
+  //       'historyTabVisible',
+  //       'playlistTabVisible',
+  //     ],
+  //     properties: {
+  //       historyTabVisible: {
+  //         type: 'boolean',
+  //         title: 'History Tab Visible',
+  //       },
+  //       playlistTabVisible: {
+  //         type: 'boolean',
+  //         title: 'Playlist Tab Visible',
+  //       },
+  //     },
+  //   },
+  // }),
+  // UI: () => <div>Visualization</div>,
+  // Filter: () => <div>Filter</div>,
+  // History: () => <div>History</div>,
+  // Settings: () => <div>Settings</div>,
 }
 
 const MOCK_SIDEBAR_DATA = [
@@ -520,26 +501,26 @@ const MOCK_SIDEBAR_DATA = [
     icon: <Icon name="settings" />,
     label: 'General',
     children: [
-      { id: 'GeneralUI' },
+      // { id: 'GeneralUI' },
       { id: 'NodeView' },
       { id: 'EdgeView' },
     ],
   },
-  {
-    id:  'Bookmarks',
-    icon: <Icon name="bookmark" />,
-    label: 'Bookmarks',
-    children: [
-      {
-        id:  'Filter',
-        icon: <Icon name="filter" />,
-        label: 'Filter',
-        children: [
-          'History',
-        ],
-      },
-      'Settings',
-    ],
-  },
+  // {
+  //   id:  'Bookmarks',
+  //   icon: <Icon name="bookmark" />,
+  //   label: 'Bookmarks',
+  //   children: [
+  //     {
+  //       id:  'Filter',
+  //       icon: <Icon name="filter" />,
+  //       label: 'Filter',
+  //       children: [
+  //         'History',
+  //       ],
+  //     },
+  //     'Settings',
+  //   ],
+  // },
 ]
 

@@ -339,6 +339,7 @@ type MoreOptionsProps = {
 } & Pick<ActionBarProps, 'renderMoreAction' | 'onAction' | 'theming'>
 
 const OPTIONS = {
+  Preferences: 'Preferences',
   Import: 'Import',
   Export: 'Export',
   ImportEvents: 'Import Events',
@@ -360,6 +361,12 @@ const MoreOptions = (props: MoreOptionsProps) => {
     onClose()
     const action = Object.values(OPTIONS)[index]
     switch (action) {
+      case OPTIONS.Preferences: {
+        onEvent({
+          type: EVENT.TOGGLE_PREFERENCES_MODAL,
+        })
+        break
+      }
       case OPTIONS.Import: {
         const result = await DocumentPicker.getDocumentAsync({ type: 'application/json' })
         if (result.type === 'success') {

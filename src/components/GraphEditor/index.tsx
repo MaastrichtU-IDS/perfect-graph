@@ -447,11 +447,6 @@ const GraphEditorElement = (
                   const e = event.event.data.originalEvent
                   draft.contextMenu.visible = true
                   draft.contextMenu.position = getEventClientPosition(e)
-                // getPointerPositionOnViewport(
-                //   graphEditorRef.current.viewport,
-                //   // @ts-ignore
-                //   event.event.data.originalEvent,
-                // )
                 },
                 () => {
                   onEvent({
@@ -469,9 +464,6 @@ const GraphEditorElement = (
             return (
               <Graph.View
                 interactive
-                // rightdown={(event) => {
-                //   event.stopPropagation()
-                // }}
                 rightclick={(event) => {
                   localDataRef.current.contextMenu.itemIds = [element.id()]
                   updateState((draft) => {

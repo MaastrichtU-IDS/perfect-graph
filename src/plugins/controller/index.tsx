@@ -13,6 +13,8 @@ import {
 } from '@utils'
 import {
   EDITOR_MODE, EVENT,
+  DEFAULT_EDGE_CONFIG,
+  DEFAULT_NODE_CONFIG,
 } from '@constants'
 import { createHistory } from '@utils/createHistory'
 import { useImmer } from 'colay-ui/hooks/useImmer'
@@ -833,6 +835,8 @@ const DEFAULT_CONTROLLER_CONFIG: UseControllerData = {
   selectedElementIds: [] as string[] | undefined,
   graphConfig: {
     clusters: [],
+    nodes: DEFAULT_NODE_CONFIG,
+    edges: DEFAULT_EDGE_CONFIG,
   },
   playlists: [
     // {
@@ -847,9 +851,9 @@ const DEFAULT_CONTROLLER_CONFIG: UseControllerData = {
     // },
   ],
   modals: {
-    ElementSettings: {
-      isOpen: false,
-      render: ElementSettingsModal,
-    },
+    // ElementSettings: {
+    //   isOpen: false,
+    //   render: ElementSettingsModal,
+    // },
   },
 }

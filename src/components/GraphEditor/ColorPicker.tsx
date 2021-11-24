@@ -1,20 +1,19 @@
 import React from 'react'
 import { SketchPicker } from 'react-color'
-import { Typography } from '@mui/material'
-import * as C from 'colay/color'
+import { Typography, Divider } from '@mui/material'
+import Color from 'color'
 
-
-export const ColorPicker = ({ formData, schema, onChange, name }) => {
-  
+export const ColorPicker = ({ value, schema, onChange, name, ...rest }) => {
   return (
     <>
       <Typography id={`${schema.title}-color-picker`} gutterBottom>
           {schema.title ?? name}
       </Typography>
+      <Divider />
       <SketchPicker
-       color={C.rgb(formData)} 
-       onChange={(color) => {
-         return onChange(C.rgbNumber(color.hex))
+       color={Color(value).hex()} 
+       onChangeComplete={(color) => {
+         return onChange(Color(color.hex).rgbNumber())
        }}
       />
     </>
