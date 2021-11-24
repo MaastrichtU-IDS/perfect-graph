@@ -23,7 +23,7 @@ export type EdgeContainerProps = {
   item: any;
   graphID: string;
   drawLine?: DrawLine;
-  config?: EdgeConfig;
+  config: EdgeConfig;
   graphRef: React.RefObject<GraphRef>;
 }
 
@@ -66,19 +66,13 @@ export const calculateVectorInfo = (
   const fromPosition = Vector.fromObject(source.position())
   const toPosition = Vector.fromObject(to.position())
   const distanceVector = toPosition.clone().subtract(fromPosition)
-  // V.subtract(fromPosition)(toPosition)
-  // const distanceVector = R.pipe(
-  //   V.subtract(fromPosition),
-  // )(toPosition)
+
   const unitVector = distanceVector.clone().normalize()
-  // V.normalize(distanceVector)
   const normVector = unitVector.clone().rotate(Math.PI / 2)
-  // V.rotate(Math.PI / 2)(unitVector)
   const midpointPosition = vectorMidpoint(
     fromPosition,
     toPosition,
   )
-  // V.midpoint(fromPosition)(toPosition)
   const sign = source.id() > to.id() ? 1 : -1
   return {
     fromPosition,
@@ -88,9 +82,7 @@ export const calculateVectorInfo = (
     normVector,
     midpointPosition,
     undirectedUnitVector: unitVector.clone().multiplyScalar(sign),
-    // V.multiplyScalar(sign)(unitVector),
     undirectedNormVector: normVector.clone().multiplyScalar(sign),
-    // V.multiplyScalar(sign)(normVector),
   }
 }
 const EdgeContainerElement = (
@@ -103,7 +95,7 @@ const EdgeContainerElement = (
     graphID,
     children,
     drawLine = defaultDrawLine,
-    config = {},
+    config,
     graphRef,
   } = props
   const theme = useTheme()
@@ -136,19 +128,30 @@ const EdgeContainerElement = (
     const sourceElementContext = contextUtils.getNodeContext(sourceElement)
     const targetElementContext = contextUtils.getNodeContext(targetElement)
     // calculate sortedIndex
+    const {
+      view: {
+        lineType,
+        fill,
+        width,
+        alpha,
+      },
+    } = config
     return drawLine({
       item,
       element,
       // cy,
+      type: lineType,
       graphRef,
       theme,
       sourceElement,
       targetElement,
       fill: element.selected()
-        ? theme.palette.primary.main
+        ? fill.selected
         : (element.source().selected() || element.target().selected())
-          ? theme.palette.secondary.main
-          : theme.palette.background.paper,
+          ? fill.nodeSelected
+          : fill.default,
+      alpha,
+      width,
       graphics: graphicsRef.current!,
       to: targetElementContext.boundingBox,
       from: sourceElementContext.boundingBox,
@@ -166,7 +169,7 @@ const EdgeContainerElement = (
       ...edgeGroupInfo,
       cy,
     })
-  }, [containerRef, graphicsRef])
+  }, [containerRef, graphicsRef, config])
   const onPositionChange = React.useCallback(({ element }) => {
     const edgeGroupInfo = calculateEdgeGroupInfo(element)
     const vectorInfo = calculateVectorInfo(
@@ -271,6 +274,7 @@ const EdgeContainerElement = (
             ...edgeGroupInfo,
             targetElement,
             sourceElement,
+            config,
           })
         }
       </Container>

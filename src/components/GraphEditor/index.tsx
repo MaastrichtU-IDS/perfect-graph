@@ -2,6 +2,7 @@ import {
   DefaultRenderEdge,
   DefaultRenderNode, Graph, GraphProps,
 } from '@components'
+import { DEFAULT_EDGE_CONFIG, DEFAULT_NODE_CONFIG } from '@constants'
 import { ContextMenu } from '@components/ContextMenu'
 import { EDITOR_MODE, EVENT } from '@constants'
 import { Clusters } from '@core/clusters'
@@ -20,7 +21,7 @@ import {
   getEventClientPosition, getLabel, getSelectedItemByElement,
   throttle,
 } from '@utils'
-import { calculateStatistics } from '@utils/networkStatistics'
+// import { calculateStatistics } from '@utils/networkStatistics'
 import { useTimeoutManager } from '@utils/useTimeoutManager'
 import { useForwardRef, wrapComponent } from 'colay-ui'
 import { useImmer } from 'colay-ui/hooks/useImmer'
@@ -92,7 +93,7 @@ const GraphEditorElement = (
     onEvent: onEventCallback = DEFAULT_HANDLER,
     renderEdge,
     renderNode,
-    graphConfig,
+    graphConfig: _graphConfig,
     style,
     settingsBar,
     actionBar,
@@ -114,6 +115,13 @@ const GraphEditorElement = (
     ...rest
   } = props
 
+  const graphConfig = React.useMemo(() =>{ 
+    return {
+      ...(_graphConfig ?? {}),
+      nodes: R.mergeAll([DEFAULT_NODE_CONFIG, _graphConfig?.nodes ?? {} ]),
+      edges: R.mergeAll([DEFAULT_EDGE_CONFIG, _graphConfig?.edges ?? {} ]),
+    }
+  }, [_graphConfig?.nodes, _graphConfig?.edges])
   const localDataRef = React.useRef({
     initialized: false,
     targetNode: null as NodeElement | null,
@@ -168,20 +176,6 @@ const GraphEditorElement = (
         ? null
         : collection
     },
-    // if (!localDataRef.current.initialized) {
-    //   const callback = () => {
-    //     setTimeout(() => {
-    //       if (graphEditorRef.current.cy) {
-
-    //       } else {
-    //         callback()
-    //       }
-    //     }, 1000)
-    //   }
-    // } else if (selectedElementIds?.length > 0) {
-    //   return graphEditorRef.current.cy && graphEditorRef.current.cy.$id(R.last(selectedElementIds))
-    // }
-
     [nodes, edges, selectedElementIds],
   )
   const selectedItem = selectedElement && getSelectedItemByElement(

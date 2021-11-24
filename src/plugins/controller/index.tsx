@@ -35,7 +35,7 @@ GraphEditorProps,
 'nodes' | 'edges' | 'mode'
 | 'actionBar' | 'dataBar' | 'settingsBar'
 | 'graphConfig' | 'events' | 'label' | 'playlists' | 'selectedElementIds'
-| 'modals' | 'isFocusMode'
+| 'modals' | 'isFocusMode' | 'preferencesModal'
 > & {
   onEvent?: (info: EventInfo & {
     graphEditor: GraphEditorRef;
@@ -466,6 +466,9 @@ export const useController = (
           case EVENT.TOGGLE_FILTER_BAR:
             draft.settingsBar!.isOpen = !draft.settingsBar?.isOpen
             break
+          case EVENT.TOGGLE_PREFERENCES_MODAL:
+            draft.preferencesModal.isOpen = !draft.preferencesModal?.isOpen
+            break
           case EVENT.TOGGLE_DATA_BAR:
             draft.dataBar!.isOpen = !draft.dataBar?.isOpen
             break
@@ -727,6 +730,31 @@ export const useController = (
             switch (name) { 
               case 'Visualization':
 
+                break
+            
+              default:
+                break
+            }
+            break
+          }
+          case EVENT.PREFERENCES_FORM_SUBMIT: {
+            const {
+              value,
+              preferenceId,
+            } = payload
+            // draft.modals.ElementSettings.isOpen = true
+            switch (preferenceId) { 
+              case 'NodeView':
+                draft.graphConfig.nodes.view = {
+                  ...draft.graphConfig.nodes.view,
+                  ...value,
+                }
+                break
+              case 'EdgeView':
+                draft.graphConfig.edges.view = {
+                  ...draft.graphConfig.edges.view,
+                  ...value,
+                }
                 break
             
               default:

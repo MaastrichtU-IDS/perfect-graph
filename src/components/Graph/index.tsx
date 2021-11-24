@@ -5,21 +5,21 @@ import { Stage } from '@inlet/react-pixi'
 import {
   DrawLine, EdgeData, GraphConfig,
   GraphRef, NodeData, RenderEdge, RenderNode,
-  RenderClusterNode,
+  RenderClusterNode, 
 } from '@type'
 import {
   calculateVisibilityByContext, 
   contextUtils, cyUnselectAll, isPositionInBox,
   adjustVisualQuality,
 } from '@utils'
-import { CYTOSCAPE_EVENT } from '@constants'
+import { DEFAULT_EDGE_CONFIG, DEFAULT_NODE_CONFIG } from '@constants'
 import {
-  DataRender, useForwardRef,
+  DataRender, 
+  useForwardRef,
   View,
   ViewProps, wrapComponent,
 } from 'colay-ui'
 import { PropsWithRef } from 'colay-ui/type'
-import * as C from 'colay/color'
 import * as R from 'colay/ramda'
 import { BoundingBox } from 'colay/type'
 import React from 'react'
@@ -152,17 +152,17 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
   const {
     ids: nodeConfigIds,
     ...globalNodeConfig
-  } = {
-    ...DEFAULT_NODE_CONFIG,
-    ...(config.nodes ?? {}),
-  }
+  } = React.useMemo(
+    () => R.mergeDeepAll([DEFAULT_NODE_CONFIG, config.nodes ?? {}]),
+    [config.nodes],
+  )
   const {
     ids: edgeConfigIds,
     ...globalEdgeConfig
-  } = {
-    ...DEFAULT_EDGE_CONFIG,
-    ...(config.edges ?? {}),
-  }
+  } =  React.useMemo(
+    () => R.mergeDeepAll([DEFAULT_EDGE_CONFIG, config.edges ?? {}]),
+    [config.edges],
+  )
 
   const onPressCallback = React.useCallback((e) => {
     cyUnselectAll(cy)
@@ -226,61 +226,44 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
               data={nodes}
               accessor={['children']}
               keyExtractor={(item) => item.id}
-              renderItem={({ item }) => {
-                return (
-                  <NodeContainer
-                    graphID={graphID}
-                    item={item}
-                    graphRef={graphRef}
-                    config={{
-                      ...(globalNodeConfig ?? {}),
-                      ...(nodeConfigIds?.[item.id] ?? {}),
-                    }}
-                  >
-                    {renderNode}
-                  </NodeContainer>
-                )
-              }}
+              renderItem={(args) => (
+                <RenderNodeContainer 
+                  {...args}
+                  graphID={graphID}
+                  graphRef={graphRef}
+                  globalNodeConfig={globalNodeConfig}
+                  nodeConfigIds={nodeConfigIds}
+                  renderNode={renderNode}
+                />
+              )}
             />
             <DataRender
               extraData={[extraData, config.edges, config.clusters]}
               data={edges}
               accessor={['children']}
               keyExtractor={(item) => item.id}
-              renderItem={({ item }) => {
-                return (
-                  <EdgeContainer
-                    graphID={graphID}
-                    item={item}
-                    graphRef={graphRef}
-                    drawLine={drawLine}
-                    config={{
-                      ...(globalEdgeConfig ?? {}),
-                      ...(edgeConfigIds?.[item.id] ?? {}),
-                    }}
-                  >
-                    {renderEdge}
-                  </EdgeContainer>
-                )
-              }}
+              renderItem={(args) => (
+                <RenderEdgeContainer 
+                  {...args} 
+                  graphID={graphID}
+                  graphRef={graphRef}
+                  drawLine={drawLine}
+                  globalEdgeConfig={globalEdgeConfig}
+                  edgeConfigIds={edgeConfigIds}
+                  renderEdge={renderEdge}
+                />
+              )}
             />
             <DataRender
               extraData={[extraData]}
               data={config.clusters ?? []}
               accessor={['children']}
               keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
-                <ClusterNodeContainer
-                  graphID={graphID}
-                  item={item}
-                  graphRef={graphRef}
-                  config={{
-                    ...(globalNodeConfig ?? {}),
-                    ...(nodeConfigIds?.[item.id] ?? {}),
-                  }}
-                >
-                  {renderClusterNode}
-                </ClusterNodeContainer>
+              renderItem={(args) => (
+                <RenderClusterNodeContainer 
+                  {...args}
+
+                />
               )}
             />
             {children}
@@ -291,27 +274,82 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
   )
 }
 
-const DEFAULT_NODE_CONFIG = {
-  renderEvents: [
-    CYTOSCAPE_EVENT.select,
-    CYTOSCAPE_EVENT.unselect,
-    CYTOSCAPE_EVENT.selectEdge,
-    CYTOSCAPE_EVENT.unselectEdge,
-    CYTOSCAPE_EVENT.mouseover,
-    CYTOSCAPE_EVENT.mouseout,
-  ],
+const RenderNodeContainer = ({
+  graphID,
+  item,
+  graphRef,
+  globalNodeConfig,
+  nodeConfigIds,
+  renderNode,
+}) => {
+  const config = React.useMemo(
+    () => R.mergeDeepAll([globalNodeConfig, nodeConfigIds?.[item.id] ?? {}]),
+    [globalNodeConfig, nodeConfigIds?.[item.id]],
+  )
+  return (
+        <NodeContainer
+          graphID={graphID}
+          item={item}
+          graphRef={graphRef}
+          config={config}
+        >
+          {renderNode}
+        </NodeContainer>
+  )
 }
 
-const DEFAULT_EDGE_CONFIG = {
-  renderEvents: [
-    CYTOSCAPE_EVENT.select,
-    CYTOSCAPE_EVENT.unselect,
-    CYTOSCAPE_EVENT.selectNode,
-    CYTOSCAPE_EVENT.unselectNode,
-    CYTOSCAPE_EVENT.mouseover,
-    CYTOSCAPE_EVENT.mouseout,
-  ],
+const RenderEdgeContainer  = ({ 
+  item,
+  graphID,
+  graphRef,
+  drawLine,
+  globalEdgeConfig,
+  edgeConfigIds,
+  renderEdge,
+}) => {
+  const config = React.useMemo(
+    () => R.mergeDeepAll([globalEdgeConfig, edgeConfigIds?.[item.id] ?? {}]),
+    [globalEdgeConfig, edgeConfigIds?.[item.id]],
+  )
+  return (
+    <EdgeContainer
+      graphID={graphID}
+      item={item}
+      graphRef={graphRef}
+      drawLine={drawLine}
+      config={config}
+    >
+      {renderEdge}
+    </EdgeContainer>
+  )
 }
+
+const RenderClusterNodeContainer = ({
+  graphID,
+  item,
+  graphRef,
+  globalNodeConfig,
+  nodeConfigIds,
+  renderClusterNode,
+}) => {
+  const config = React.useMemo(
+    () => R.mergeDeepAll([globalNodeConfig, nodeConfigIds?.[item.id] ?? {}]),
+    [globalNodeConfig, nodeConfigIds?.[item.id]],
+  )
+  return (
+    <ClusterNodeContainer
+    graphID={graphID}
+    item={item}
+    graphRef={graphRef}
+    config={config}
+  >
+    {renderClusterNode}
+  </ClusterNodeContainer>
+  )
+}
+
+
+
 
 const DEFAULT_CONFIG = {
   theme: DefaultTheme,

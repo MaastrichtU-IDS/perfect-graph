@@ -9,17 +9,29 @@ export const DefaultRenderEdge: RenderEdge = ({
   cy,
   item,
   element,
-}) => (
+  config,
+}) => {
+  const {
+    view: {
+      labelVisible,
+    },
+  } = config
+  return (
   <GraphView
     pointertap={() => {
       cyUnselectAll(cy)
       element.select()
     }}
   >
-    <GraphText
-      // isSprite
-      // text={R.last(item.id.split('/'))?.substring(0, 10) ?? item.id}
-      text={'Heyy'}
-    />
+    {
+      labelVisible && (
+        <GraphText
+          // isSprite
+          // text={R.last(item.id.split('/'))?.substring(0, 10) ?? item.id}
+          text={'Heyy'}
+        />
+      )
+    }
   </GraphView>
-)
+  )
+}

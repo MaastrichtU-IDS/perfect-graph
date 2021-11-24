@@ -1,6 +1,7 @@
 // import { Icon, Text, TouchableOpacity } from 'unitx-ui'
 import Layouts from '@core/layouts'
-import { EventInfo } from '@type'
+import { EventInfo, NodeConfig, EdgeConfig } from '@type'
+import { DefaultTheme } from '@core/theme'
 
 export const THEME = {
   backgroundColor: '#3287a8',
@@ -194,3 +195,60 @@ export const  QUALITY_LEVEL = {
   MEDIUM: 1,
   LOW: 0,
 } as const
+
+export const DEFAULT_NODE_CONFIG: NodeConfig = {
+  view: {
+    width: 50,
+    height: 50,
+    radius: 50,
+    fill: {
+      default: DefaultTheme.palette.background.paper,
+      hovered: DefaultTheme.palette.secondary.main,
+      selected: DefaultTheme.palette.primary.main,
+      edgeSelected: DefaultTheme.palette.secondary.main,
+    },
+    labelVisible: true,
+  },
+  filter: {
+    settings: {
+      opacity: 0.2,
+    },
+    // test: () => true,
+  },
+  renderEvents: [
+    CYTOSCAPE_EVENT.select,
+    CYTOSCAPE_EVENT.unselect,
+    CYTOSCAPE_EVENT.selectEdge,
+    CYTOSCAPE_EVENT.unselectEdge,
+    CYTOSCAPE_EVENT.mouseover,
+    CYTOSCAPE_EVENT.mouseout,
+  ],
+}
+
+export const DEFAULT_EDGE_CONFIG: EdgeConfig = {
+  view: {
+    lineType: 'line',
+    width: 2,
+    alpha: 1,
+    fill: {
+      default: DefaultTheme.palette.background.paper,
+      hovered: DefaultTheme.palette.secondary.main,
+      selected: DefaultTheme.palette.primary.main,
+      nodeSelected: DefaultTheme.palette.secondary.main,
+    },
+    labelVisible: true,
+  },
+  filter: {
+    settings: {
+      opacity: 0.2,
+    },
+  },
+  renderEvents: [
+    CYTOSCAPE_EVENT.select,
+    CYTOSCAPE_EVENT.unselect,
+    CYTOSCAPE_EVENT.selectNode,
+    CYTOSCAPE_EVENT.unselectNode,
+    CYTOSCAPE_EVENT.mouseover,
+    CYTOSCAPE_EVENT.mouseout,
+  ],
+}

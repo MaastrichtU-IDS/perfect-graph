@@ -1,5 +1,5 @@
 import { Position } from 'colay-ui/type'
-import { BoundingBox, NodeElement } from '@type'
+import { BoundingBox, NodeElement, EdgeConfig } from '@type'
 import * as PIXI from 'pixi.js'
 import {
   Graphics as ReactPIXIGraphics,
@@ -38,11 +38,10 @@ const controlPointsCreator = {
       to,
       distance,
       count,
-      unitVector,
       normVector,
     } = config
-    const upperVector = Vector.fromObject(normVector).multiplyScalar(distance)
-    const lowerVector = Vector.fromObject(upperVector).multiplyScalar(-1)
+    const upperVector = normVector.clone().multiplyScalar(distance)
+    const lowerVector = upperVector.clone().multiplyScalar(-1)
     const chunkDistanceVector = to.clone().subtract(from).divideScalar(count)
     const semiChunkDistanceVector = chunkDistanceVector.clone().divideScalar(2)
     return R.range(0, count).map(
@@ -58,7 +57,7 @@ const controlPointsCreator = {
           mid: midVec,
           end: endVec,
           upperVector,
-          midVec: semiChunkDistanceVector.clone().add(startVec).toObject(),
+          midVec: semiChunkDistanceVector.clone().add(startVec),
         }
       },
     )
@@ -119,17 +118,15 @@ export const drawLine = (
     };
     distance?: number;
     margin?: Position;
+    config: EdgeConfig;
   },
 ) => {
   const {
     from: fromBoundingBox,
     to: toBoundingBox,
-    fill = DefaultTheme.palette.background.paper,
     directed,
-    type, //= 'bezier',
+    type,
     graphics,
-    width = 6,
-    alpha = 1,
     arrowHead = {
       radius: 2,
     },
@@ -139,9 +136,11 @@ export const drawLine = (
       y: 0,
     },
     unitVector,
-    normVector,
     undirectedUnitVector,
     undirectedNormVector,
+    width,
+    fill,
+    alpha,
     // distanceVector,
   } = config
   const marginVector = Vector.fromObject({
@@ -156,35 +155,18 @@ export const drawLine = (
       fromBoundingBox.height / 2,
     ),
   )
-  // V.add(
-  //   fromBoundingBox.width / 2,
-  //   fromBoundingBox.height / 2,
-  // )(fromBoundingBox)
   const centerOfTo = Vector.fromObject(toBoundingBox).add(
     new Vector(
       toBoundingBox.width / 2,
       toBoundingBox.height / 2,
     ),
   )
-  // V.add(
-  //   toBoundingBox.width / 2,
-  //   toBoundingBox.height / 2,
-  // )(toBoundingBox)
   const from = centerOfFrom.clone()
-    .add(Vector.fromObject(unitVector).multiplyScalar(radiusFrom))
+    .add(unitVector.clone().multiplyScalar(radiusFrom))
     .add(marginVector)
-  
-  // R.pipe(
-  //   V.add(V.multiplyScalar(radiusFrom)(unitVector)),
-  //   V.add(marginVector),
-  // )(centerOfFrom)
   const to = centerOfTo.clone()
-    .subtract(Vector.fromObject(unitVector).multiplyScalar(radiusTo))
+    .subtract(unitVector.clone().multiplyScalar(radiusTo))
     .add(marginVector)
-  // R.pipe(
-  //   V.subtract(V.multiplyScalar(radiusTo)(unitVector)),
-  //   V.add(marginVector),
-  // )(centerOfTo)
   graphics.clear()
   graphics.lineStyle(width, fill, alpha)
 
@@ -204,19 +186,22 @@ export const drawLine = (
         to,
         count: 2,
         distance: 100,
-        unitVector: Vector.fromObject(undirectedUnitVector),
-        normVector: Vector.fromObject(undirectedNormVector),
+        unitVector: undirectedUnitVector,
+        normVector: undirectedNormVector,
       })
+      console.log('AA, bezier',controlPoints )
       controlPoints.map(
         ({
           start,
           end,
-          control1,
-          control2,
+          // control1,
+          // control2,
+          midVec,
+          mid,
         }: BezierLinePoints) => {
           graphics.moveTo(start.x, start.y)
           graphics.bezierCurveTo(
-            control1.x, control1.y, control2.x, control2.y, end.x, end.y,
+            start.x, start.y, mid.x, mid.y, end.x, end.y,
           )
         },
       )
@@ -228,8 +213,8 @@ export const drawLine = (
         to,
         count: 4,
         distance: 100,
-        unitVector: Vector.fromObject(undirectedUnitVector),
-        normVector: Vector.fromObject(undirectedNormVector),
+        unitVector: undirectedUnitVector,
+        normVector: undirectedNormVector,
       })
       controlPoints.map(
         ({
@@ -258,8 +243,8 @@ export const drawLine = (
           to,
           count: 1,
           distance,
-          unitVector: Vector.fromObject(undirectedUnitVector),
-          normVector: Vector.fromObject(undirectedNormVector),
+          unitVector: undirectedUnitVector,
+          normVector: undirectedNormVector,
         })
         controlPoints.map(
           ({

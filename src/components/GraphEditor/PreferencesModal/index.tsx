@@ -25,6 +25,9 @@ import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
 import * as R from 'colay/ramda'
 import { useImmer } from 'colay-ui/hooks/useImmer'
+import {
+  ColorPicker,
+} from '@components/GraphEditor/ColorPicker'
 
 type SidebarItemData = {
   label: string;
@@ -52,11 +55,13 @@ export const PreferencesModal = (props: PreferencesModalProps) => {
     {
       onEvent,
       graphEditorLocalDataRef,
+      graphConfig,
     },
   ] = useGraphEditor(
     (editor) => ({
       onEvent: editor.onEvent,
       graphEditorLocalDataRef: editor.localDataRef,
+      graphConfig: editor.graphConfig,
     }),
   )
   const sidebar = React.useMemo(() => {
@@ -70,7 +75,7 @@ export const PreferencesModal = (props: PreferencesModalProps) => {
       return {
         label: sidebar.id,
         ...sidebar,
-        children: sidebar.children?.map((item) => normalize(item)) ?? [],
+        children: sidebar.children?.map((item) => normalize(item)),
       }
     }
     return sidebar_?.map((item) => normalize(item)) ?? []
@@ -95,21 +100,24 @@ export const PreferencesModal = (props: PreferencesModalProps) => {
     selectedPath: state.selectedPath,
   }), [sidebar, components, state.selectedPath])
   const Component = components[state.componentId] ?? React.Fragment
-  const form = components[state.componentId]
+  let form = components[state.componentId]
   const isComponent = isReact.compatible(Component)
+  if (!isComponent && components[state.componentId]) {
+    form = components[state.componentId](graphConfig)
+    console.log('AA', form)
+  }
   const isExist = components[state.componentId]
   const onSubmitCallback = ({ formData }) => {
     onEvent({
-      type: EVENT.ELEMENT_SETTINGS_FORM_SUBMIT,
+      type: EVENT.PREFERENCES_FORM_SUBMIT,
       payload: {
-        name: state.componentId,
         value: formData,
         preferenceId: state.componentId,
         preferencePath: state.selectedPath,
       },
     })
   }
-  console.log(state.componentId, state.selectedPath, isExist,
+  console.log(state.componentId, state.selectedPath, 
     isComponent, Component, form)
   return (
     <Modal
@@ -243,7 +251,7 @@ const createDrawer = (params: CreateDrawerParams) => {
             const {
               children,
             } = params
-            console.log('DATARENDER', params)
+            // console.log('DATARENDER', params)
             const item = params.item as unknown as SidebarItemData
             return (
               <SidebarItem
@@ -317,7 +325,167 @@ const SidebarItem = (props: SidebarItemProps) => {
 }
 
 const MOCK_COMPONENTS = {
-  General:{
+  NodeView: (graphConfig) => ({
+    schema: {
+      'type': 'object',
+      'properties': {
+        'width': {
+          title: 'Width',
+          'type': 'number',
+        },
+        'height': {
+          title: 'Height',
+          'type': 'number',
+        },
+        'radius': {
+          title: 'Radius',
+          'type': 'number',
+        },
+        'fill': {
+          title: 'Fill',
+          'type': 'object',
+          'properties': {
+            'default': {
+              title: 'Default',
+              'type': 'number',
+            },
+            'hovered': {
+              title: 'Hovered',
+              'type': 'number',
+            },
+            'selected': {
+              title: 'Selected',
+              'type': 'number',
+            },
+            'edgeSelected': {
+              title: 'Edge Selected',
+              'type': 'number',
+            },
+          },
+          'required': [
+            'default',
+            'hovered',
+            'selected',
+            'edgeSelected',
+          ],
+        },
+        'labelVisible': {
+          title: 'Label Visible',
+          'type': 'boolean',
+        },
+      },
+      'required': [
+        'width',
+        'height',
+        'radius',
+        'fill',
+        'labelVisible',
+      ],
+    },
+    uiSchema: {
+      fill: {
+        selected: {
+          'ui:widget': ColorPicker,
+        },
+        hovered: {
+          'ui:widget': ColorPicker,
+        },
+        edgeSelected: {
+          'ui:widget': ColorPicker,
+        },
+        default: {
+          'ui:widget': ColorPicker,
+        },
+      },
+    },
+    formData: R.omit(['ids'], graphConfig.nodes.view),
+  }),
+  EdgeView: (graphConfig) => ({
+    schema: {
+      'type': 'object',
+      'properties': {
+        'width': {
+          'title': 'Width',
+          'type': 'number',
+        },
+        'alpha': {
+          'title': 'Alpha',
+          'type': 'number',
+        },
+        'lineType': {
+          'title': 'Line Type',
+          'type': 'string',
+          'enum': [
+            'line',
+            'bezier',
+            'segments',
+          ],
+          'enumNames': [
+            'Line',
+            'Bezier',
+            'Segments',
+          ],
+        },
+        'fill': {
+          'title': 'Fill',
+          'type': 'object',
+          'properties': {
+            'default': {
+              title: 'Default',
+              'type': 'number',
+            },
+            'hovered': {
+              title: 'Hovered',
+              'type': 'number',
+            },
+            'selected': {
+              title: 'Selected',
+              'type': 'number',
+            },
+            'edgeSelected': {
+              title: 'Node Selected',
+              'type': 'number',
+            },
+          },
+          'required': [
+            'default',
+            'hovered',
+            'selected',
+            'edgeSelected',
+          ],
+        },
+        'labelVisible': {
+          title: 'Label Visible',
+          'type': 'boolean',
+        },
+      },
+      'required': [
+        'width',
+        'height',
+        'radius',
+        'fill',
+        'labelVisible',
+      ],
+    },
+    uiSchema: {
+      fill: {
+        selected: {
+          'ui:widget': ColorPicker,
+        },
+        hovered: {
+          'ui:widget': ColorPicker,
+        },
+        nodeSelected: {
+          'ui:widget': ColorPicker,
+        },
+        default: {
+          'ui:widget': ColorPicker,
+        },
+      },
+    },
+    formData: R.omit(['ids'], graphConfig.edges.view),
+  }),
+  GeneralUI: () => ({
     schema: {
       type: 'object',
       required: [
@@ -339,50 +507,7 @@ const MOCK_COMPONENTS = {
         },
       },
     },
-  },
-  Visualization: {
-    schema: {
-      type: 'object',
-      properties: {
-        size: {
-          title: 'Size',
-          type: 'integer',
-          minimum: 10,
-          maximum: 50,
-        },
-        fontSize: {
-          title: 'Font Size',
-          type: 'integer',
-          minimum: 10,
-          maximum: 50,
-        },
-        backgroundColor: {
-          type: 'string',
-          title: 'color picker',
-          default: '#151ce6',
-        },
-        textColor: {
-          type: 'string',
-          title: 'color picker',
-          default: '#151ce6',
-        },
-      },
-    },
-    uiSchema: {
-      size: {
-        'ui:widget': 'range',
-      },
-      fontSize: {
-        'ui:widget': 'range',
-      },
-      backgroundColor: {
-        'ui:widget': 'color',
-      },
-      textColor: {
-        'ui:widget': 'color',
-      },
-    },
-  },
+  }),
   UI: () => <div>Visualization</div>,
   Filter: () => <div>Filter</div>,
   History: () => <div>History</div>,
@@ -395,7 +520,9 @@ const MOCK_SIDEBAR_DATA = [
     icon: <Icon name="settings" />,
     label: 'General',
     children: [
-      'UI',
+      { id: 'GeneralUI' },
+      { id: 'NodeView' },
+      { id: 'EdgeView' },
     ],
   },
   {

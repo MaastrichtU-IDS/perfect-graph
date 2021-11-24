@@ -17,7 +17,7 @@ export type NodeContainerProps = {
   item: any;
   graphID: string;
   graphRef: React.RefObject<GraphRef>;
-  config?: NodeConfig;
+  config: NodeConfig;
 }
 
 export type NodeContainerType = React.ForwardedRef<NodeContainerProps>
@@ -30,7 +30,7 @@ const NodeContainerElement = (
     item,
     graphID,
     children,
-    config = {} as NodeConfig,
+    config,
     graphRef,
   } = props
   const containerRef = React.useRef(null)
@@ -67,7 +67,6 @@ const NodeContainerElement = (
   const opacity = context.settings.filtered
     ? 1
     : (config.filter?.settings?.opacity ?? 0.2)
-
   return (
     <Container
       ref={containerRef}
@@ -95,6 +94,7 @@ const NodeContainerElement = (
         theme,
         graphRef,
         context,
+        config,
       })}
     </Container>
   )

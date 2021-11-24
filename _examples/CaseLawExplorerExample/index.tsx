@@ -123,7 +123,7 @@ export const createMockData = (nodeSize: number, edgeSize: number) => {
     edges
   }
 }
-const COUNT = 1000
+const COUNT = 10
 const data = createMockData(COUNT, COUNT)
 const nextData = {
   edges: [{ id: 'edge-20', source: 'node-0', target: 'node-1' }],
@@ -345,6 +345,13 @@ const AppContainer = ({
       layout: Graph.Layouts.circle,
       zoom: 0.2,
       nodes: {},
+      config: {
+        nodes:{
+          view: {
+            size: 12
+          },
+        },
+      },
       clusters: [
         // {
         //   id: '123',
@@ -378,7 +385,7 @@ const AppContainer = ({
     //   }
     // },
     preferencesModal: {
-      // isOpen: true,
+      isOpen: true,
     },
     settingsBar: {
       opened: true,

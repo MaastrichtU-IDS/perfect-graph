@@ -1,35 +1,54 @@
 import { RenderNode } from '@type'
 import { cyUnselectAll } from '@utils'
-import * as R from 'colay/ramda'
 import React from 'react'
 import { Text as GraphText } from '../Text'
 import { View as GraphView } from '../View'
 
 export const DefaultRenderNode: RenderNode = ({
-  item, element, cy, theme,
+  item, element,
+  cy,
+  config,
 }) => {
   const hasSelectedEdge = element.connectedEdges(':selected').length > 0
+  const {
+    view: {
+      width,
+      height,
+      radius,
+      fill,
+      labelVisible,
+    },
+  } = config
   return (
     <GraphView
-      width={50}
-      height={50}
+      width={width}
+      height={height}
       fill={hasSelectedEdge
-        ? theme.palette.secondary.main
+        ? fill.edgeSelected
         : (element.selected()
-          ? theme.palette.primary.main
-          : theme.palette.background.paper)}
-      radius={50}
+          ? fill.selected
+          : (
+            element.hovered()
+              ? fill.hovered
+              : fill.default
+          )
+        )}
+      radius={radius}
       interactive
       pointertap={() => {
         cyUnselectAll(cy)
         element.select()
       }}
     >
-      <GraphText
-        // isSprite
-        // text={R.last(item.id.split('/'))?.substring(0, 10) ?? item.id}
-        text={'Node'}
-      />
+      {
+        labelVisible && (
+          <GraphText
+            // isSprite
+            // text={R.last(item.id.split('/'))?.substring(0, 10) ?? item.id}
+            text={'Node'}
+          />
+        )
+      }
     </GraphView>
   )
 }

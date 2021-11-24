@@ -18,7 +18,7 @@ import GraphLayouts from '@core/layouts'
 import type { GraphEditorProps } from '@components/GraphEditor'
 import type * as PIXIType from './pixi'
 
-export type Style = {[k: string]: any}
+export type Style = { [k: string]: any }
 // export type OnLayout = (event: LayoutChangeEvent) => void
 export type ElementContext<T = (NodeElementSettings | EdgeElementSettings)> = {
   render: (callback?: () => void) => void;
@@ -120,11 +120,13 @@ export type RenderEdge<Additional extends Record<string, any> = {}> = (c: {
   sortedIndex: number;
   index: number;
   count: number;
+  config: EdgeConfig;
 } & RenderElementParams & Additional) => React.ReactElement
 
 export type RenderNode<Additional extends Record<string, any> = {}> = (c: {
   item: NodeData;
   element: NodeElement;
+  config: NodeConfig;
 } & RenderElementParams & Additional) => React.ReactElement
 
 export type RenderClusterNode<Additional extends Record<string, any> = {}> = (c: {
@@ -193,22 +195,48 @@ export type {
 export type CytoscapeEvent = keyof typeof CYTOSCAPE_EVENT
 
 export type ElementFilterOption<E> = {
-  test:(
-    params: {element: E; item: (NodeData | EdgeData) }
+  test?:(
+    params: { element: E; item: (NodeData | EdgeData) }
   ) => boolean
-  settings?: {
-    opacity?: number
+  settings: {
+    opacity: number
   }
 }
-export type ElementConfig<T = (NodeElement| EdgeElement)> = {
-  renderEvents?: CytoscapeEvent[];
-  filter?: ElementFilterOption<T>
+export type ElementConfig<T = (NodeElement | EdgeElement)> = {
+  renderEvents: CytoscapeEvent[];
+  filter: ElementFilterOption<T>;
 }
 export type NodeConfig = {
   position?: Position;
+  view: {
+    width: number;
+    height: number;
+    radius: number;
+    fill: {
+      hovered: number;
+      selected: number;
+      default: number;
+      edgeSelected: number;
+    };
+    labelVisible: boolean;
+  }
 } & ElementConfig<NodeElement>
 
+export type EdgeLineType = 'bezier' | 'segments' | 'line'
+
 export type EdgeConfig = {
+  view: {
+    lineType: EdgeLineType;
+    width: number;
+    alpha: number;
+    fill: {
+      hovered: number;
+      selected: number;
+      default: number;
+      nodeSelected: number;
+    };
+    labelVisible: boolean;
+  }
 } & ElementConfig<EdgeElement>
 
 export type Cluster = {
@@ -238,16 +266,12 @@ export type GraphConfig = {
     pivotX?: number;
     pivotY?: number;
   };
-  nodes?: {
-    filter?: ElementFilterOption<NodeElement>
-    renderEvents?: CytoscapeEvent[];
+  nodes?: NodeConfig & {
     ids?: {
       [id: string]: NodeConfig;
     }
   };
-  edges?: {
-    filter?: ElementFilterOption<EdgeElement>
-    renderEvents?: CytoscapeEvent[];
+  edges?: EdgeConfig & {
     ids?: {
       [id: string]: EdgeConfig;
     }
@@ -379,7 +403,7 @@ export type GraphEditorContext = {
     initialized: boolean;
     targetNode: NodeElement | null;
     props: GraphEditorProps;
-    issuedClusterId: string|null;
+    issuedClusterId: string | null;
     newClusterBoxSelection: {
       elementIds: string[];
     };
