@@ -49,7 +49,7 @@ Furthermore please refer to the Components Section.
 
 To use Graph : yarn add colay colay-ui immer
  
-To use GraphEditor you need to install material-ui packages. We use the latest version: yarn add @mui/icons-material @mui/material @mui/styles @emotion/react @emotion/styled react-beautiful-dnd @rjsf/core @rjsf/material-ui
+To use GraphEditor you need to install material-ui packages. We use the latest version: yarn add @mui/icons-material @mui/material @mui/styles @emotion/react @emotion/styled react-beautiful-dnd @rjsf/core @rjsf/material-ui react-color
 
 To have json editor: yarn add brace jsoneditor jsoneditor-react
 
