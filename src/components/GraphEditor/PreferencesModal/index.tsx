@@ -78,7 +78,7 @@ export const PreferencesModal = (props: PreferencesModalProps) => {
     const selectedPath = getSelectedPath(sidebar[0], [getId(sidebar[0])])
     const selectedItem = dataRenderPath(['children'], selectedPath, sidebar)
     const componentId = getId(selectedItem)
-    console.log('A',selectedPath, selectedItem,componentId)
+    console.log('A', selectedPath, selectedItem, componentId)
     return [componentId, selectedPath]
   }, [])
   const [state, update] = useImmer({
@@ -164,7 +164,7 @@ export const PreferencesModal = (props: PreferencesModalProps) => {
         </View>
         <View
           style={{
-            maxWidth: '70%',
+            flex: 1,
           }}
         >
           {/* <Breadcrumbs aria-label="breadcrumb">
@@ -185,8 +185,8 @@ export const PreferencesModal = (props: PreferencesModalProps) => {
         !isComponent ? (
           <Paper
             style={{
-              width: '80%',
-              height: '90%',
+              width: '97%',
+              height: '97%',
               overflow: 'scroll',
               padding: 2,
             }}
