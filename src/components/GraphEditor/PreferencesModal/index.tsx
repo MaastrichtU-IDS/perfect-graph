@@ -1,5 +1,5 @@
 import {
-  ColorPicker
+  ColorPicker,
 } from '@components/GraphEditor/ColorPicker'
 import { Icon } from '@components/Icon'
 import { EVENT } from '@constants'
@@ -12,7 +12,7 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText, Modal,
-  Paper, Slide, Typography
+  Paper, Slide, Typography,
 } from '@mui/material'
 import Form from '@rjsf/material-ui'
 import { DataRender, dataRenderPath, isReact, View } from 'colay-ui'
@@ -71,9 +71,19 @@ export const PreferencesModal = (props: PreferencesModalProps) => {
     }
     return sidebar_?.map((item) => normalize(item)) ?? []
   }, [sidebar_])
+  const [
+    initialComponentId,
+    initialSelectedPath,
+  ] = React.useMemo(()=>{
+    const selectedPath = getSelectedPath(sidebar[0], [getId(sidebar[0])])
+    const selectedItem = dataRenderPath(['children'], selectedPath, sidebar)
+    const componentId = getId(selectedItem)
+    console.log('A',selectedPath, selectedItem,componentId)
+    return [componentId, selectedPath]
+  }, [])
   const [state, update] = useImmer({
-    componentId: getId(sidebar[0]),
-    selectedPath: [getId(sidebar[0])],
+    componentId: initialComponentId,
+    selectedPath: initialSelectedPath,
   })
 
   const onSelect = React.useCallback((path) => {
@@ -262,6 +272,13 @@ type SidebarItemProps = {
   children: React.ReactNode;
   onSelect: (name: string)=>void
 }
+const getSelectedPath = (item, path = []) => {
+  const firstChild = item?.children?.[0]
+  if (firstChild) {
+    return getSelectedPath(firstChild, [...path,  getId(firstChild)])
+  }
+  return path
+}
 const SidebarItem = (props: SidebarItemProps) => {
   const {
     children,
@@ -276,7 +293,7 @@ const SidebarItem = (props: SidebarItemProps) => {
     id: propItem,
   } : propItem) as Exclude<SidebarItemData, string>
   const handleClick = () => {
-    onSelect(path)
+    onSelect(getSelectedPath(propItem, path))
     setOpen(!open)
   }
   const hasChildren = !!item.children
