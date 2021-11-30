@@ -532,6 +532,7 @@ export const useController = (
               })
             }
             draft.graphConfig!.layout = layout
+
             break
           }
           case EVENT.SET_POSITIONS_IMPERATIVELY: {

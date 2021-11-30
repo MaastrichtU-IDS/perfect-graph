@@ -115,31 +115,42 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
   }, [selectedElementIds, cy])
   React.useEffect(() => {
     if (stageRef.current && config.layout) {
-      const { hitArea } = graphRef.current.viewport
-      const boundingBox = {
-        x1: hitArea.x,
-        y1: hitArea.y,
-        w: hitArea.width,
-        h: hitArea.height,
-      }
-      graphLayoutRef.current?.stop()
-      // @ts-ignore
-      graphLayoutRef.current = cy.createLayout({
-        boundingBox,
-        ...config.layout,
-      })
-      graphLayoutRef.current.on('layoutstop', () => {
+      const {
+        expansion = 1,
+      } = config.layout
+      graphRef.current.viewport.setZoom(expansion)
+      console.log('LAYOUT', expansion)
+      // if (expansion > 0) {
+        
+      //   return
+      // }
+      setTimeout(() => {
+        const { hitArea } = graphRef.current.viewport
+        const boundingBox = {
+          x1: hitArea.x,
+          y1: hitArea.y,
+          w: hitArea.width,
+          h: hitArea.height,
+        }
+        graphLayoutRef.current?.stop()
         // @ts-ignore
-        graphLayoutRef.current = null
-        // Fix the edge lines
-        cy.edges().forEach((edge) => {
-          const edgeContext = contextUtils.get(edge)
-          edgeContext.onPositionChange()
+        graphLayoutRef.current = cy.createLayout({
+          boundingBox,
+          ...config.layout,
         })
-        // FOR CULLING
-        graphRef.current.viewport.dirty = true
-      })
-      graphLayoutRef.current.start()
+        graphLayoutRef.current.on('layoutstop', () => {
+        // @ts-ignore
+          graphLayoutRef.current = null
+          // Fix the edge lines
+          cy.edges().forEach((edge) => {
+            const edgeContext = contextUtils.get(edge)
+            edgeContext.onPositionChange()
+          })
+          // FOR CULLING
+          graphRef.current.viewport.dirty = true
+        })
+        graphLayoutRef.current.start()
+      }, 200)
     }
   }, [config.layout])
   const backgroundColor = React.useMemo(

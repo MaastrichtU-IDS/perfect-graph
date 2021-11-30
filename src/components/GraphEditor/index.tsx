@@ -121,7 +121,7 @@ const GraphEditorElement = (
       nodes: R.mergeAll([DEFAULT_NODE_CONFIG, _graphConfig?.nodes ?? {} ]),
       edges: R.mergeAll([DEFAULT_EDGE_CONFIG, _graphConfig?.edges ?? {} ]),
     }
-  }, [_graphConfig?.nodes, _graphConfig?.edges])
+  }, [_graphConfig])
   const localDataRef = React.useRef({
     initialized: false,
     targetNode: null as NodeElement | null,

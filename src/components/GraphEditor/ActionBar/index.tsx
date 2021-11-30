@@ -87,7 +87,7 @@ const ActionBarElement = (props: ActionBarProps) => {
     right: RightComponent,
     theming = {
       options: [
-        { name: 'Default', value: 'Default' },
+        { name: 'Light', value: 'Default' },
         { name: 'Dark', value: 'Dark' },
       ],
       value: 'Default',

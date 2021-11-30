@@ -320,6 +320,11 @@ export const getFormProps = () => ({
         minimum: 0,
         maximum: 1000,
       },
+      expansion: {
+        type: 'number',
+        minimum: 0,
+        maximum: 1,
+      },
     },
   },
   uiSchema: {

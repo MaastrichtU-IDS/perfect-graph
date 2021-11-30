@@ -385,7 +385,7 @@ const AppContainer = ({
     //   }
     // },
     preferencesModal: {
-      isOpen: true,
+      // isOpen: true,
     },
     settingsBar: {
       opened: true,
@@ -678,7 +678,6 @@ const AppContainer = ({
     //   })
     // }, 1500)
 }, [])
-
   return (
     <View
       style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%' }}
