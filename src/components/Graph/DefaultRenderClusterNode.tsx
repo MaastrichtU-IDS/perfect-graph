@@ -6,40 +6,50 @@ import { Text as GraphText } from '../Text'
 import { View as GraphView } from '../View'
 
 export const DefaultRenderClusterNode: RenderNode = ({
-  item, element, cy, theme,
+  item, element,
+  cy,
+  config,
 }) => {
   const hasSelectedEdge = element.connectedEdges(':selected').length > 0
+  const {
+    view: {
+      width,
+      height,
+      radius,
+      fill,
+      labelVisible,
+    },
+  } = config
   return (
     <GraphView
-      style={{
-        width: 150,
-        height: 150,
-        justifyContent: 'center',
-        alignItems: 'center',
-        display: 'flex',
-        backgroundColor: hasSelectedEdge
-          ? theme.palette.secondary.main
-          : (element.selected()
-            ? theme.palette.primary.main
-            : theme.palette.warning.main),
-        borderRadius: 20,
-      }}
+      width={150}
+      height={150}
+      fill={hasSelectedEdge
+        ? fill.edgeSelected
+        : (element.selected()
+          ? fill.selected
+          : (
+            element.hovered()
+              ? fill.hovered
+              : fill.default
+          )
+        )}
+      radius={10}
       interactive
       pointertap={() => {
         cyUnselectAll(cy)
         element.select()
       }}
     >
-      <GraphText
-        style={{
-          position: 'absolute',
-          top: -90,
-          color: 'black',
-        }}
-        isSprite
-      >
-        {R.last(item.id.split('/'))?.substring(0, 10) ?? item.id}
-      </GraphText>
+      {
+        labelVisible && (
+          <GraphText
+            // isSprite
+            // text={R.last(item.id.split('/'))?.substring(0, 10) ?? item.id}
+            text={'Node'}
+          />
+        )
+      }
     </GraphView>
   )
 }

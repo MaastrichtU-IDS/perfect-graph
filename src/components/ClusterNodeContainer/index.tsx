@@ -10,6 +10,7 @@ import {
   calculateVisibilityByContext,
 } from '@utils'
 import { useTheme } from '@core/theme'
+import { CYTOSCAPE_EVENT } from '@constants'
 import { Container, ContainerRef } from '../Container'
 
 export type ClusterNodeContainerProps = {
@@ -55,7 +56,7 @@ const ClusterNodeContainerElement = (
       }
       element.position(calculatedPosition)
     }
-  }, [item.ids])
+  }, [])
   const { element, context, cy } = useNode({
     graphID,
     config,
@@ -90,15 +91,19 @@ const ClusterNodeContainerElement = (
     : (config.filter?.settings?.opacity ?? 0.2)
   return (
     <Container
-      ref={containerRef}
-      style={{
-        left: x,
-        top: y,
-      }}
+    ref={containerRef}
+      x={x}
+      y={y}
       alpha={opacity}
       visible={visible}
       draggable
       onDrag={onDrag}
+      mouseover={() => {
+        element.emit(CYTOSCAPE_EVENT.mouseover)
+      }}
+      mouseout={() => {
+        element.emit(CYTOSCAPE_EVENT.mouseout)
+      }}
       // onRightPress={(event) => {
       //   event.data.originalEvent.preventDefault()
       //   event.data.originalEvent.stopPropagation()
@@ -110,6 +115,8 @@ const ClusterNodeContainerElement = (
         cy,
         theme,
         graphRef,
+        context,
+        config,
       })}
     </Container>
   )

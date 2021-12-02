@@ -270,12 +270,18 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
               data={config.clusters ?? []}
               accessor={['children']}
               keyExtractor={(item) => item.id}
-              renderItem={(args) => (
-                <RenderClusterNodeContainer 
-                  {...args}
-
-                />
-              )}
+              renderItem={(args) => {
+                return (
+                  <RenderClusterNodeContainer 
+                    {...args}
+                    graphID={graphID}
+                    graphRef={graphRef}
+                    globalNodeConfig={globalNodeConfig}
+                    nodeConfigIds={nodeConfigIds}
+                    renderClusterNode={renderClusterNode}
+                  />
+                )
+              }}
             />
             {children}
           </Viewport>
@@ -298,14 +304,14 @@ const RenderNodeContainer = ({
     [globalNodeConfig, nodeConfigIds?.[item.id]],
   )
   return (
-        <NodeContainer
-          graphID={graphID}
-          item={item}
-          graphRef={graphRef}
-          config={config}
-        >
-          {renderNode}
-        </NodeContainer>
+    <NodeContainer
+      graphID={graphID}
+      item={item}
+      graphRef={graphRef}
+      config={config}
+    >
+      {renderNode}
+    </NodeContainer>
   )
 }
 
@@ -349,13 +355,13 @@ const RenderClusterNodeContainer = ({
   )
   return (
     <ClusterNodeContainer
-    graphID={graphID}
-    item={item}
-    graphRef={graphRef}
-    config={config}
-  >
-    {renderClusterNode}
-  </ClusterNodeContainer>
+      graphID={graphID}
+      item={item}
+      graphRef={graphRef}
+      config={config}
+    >
+      {renderClusterNode}
+    </ClusterNodeContainer>
   )
 }
 

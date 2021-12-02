@@ -388,7 +388,7 @@ const AppContainer = ({
       // isOpen: true,
     },
     settingsBar: {
-      opened: true,
+      isOpen: true,
       // forms: [AUTO_CREATED_SCHEMA,FETCH_SCHEMA, VIEW_CONFIG_SCHEMA, {...FILTER_SCHEMA,  formData: configRef.current.filtering}, ],
       forms: [{ ...FETCH_SCHEMA, formData: configRef.current.fetching }, VIEW_CONFIG_SCHEMA, { ...FILTER_SCHEMA, formData: configRef.current.filtering },],
       createClusterForm: {
@@ -437,6 +437,7 @@ const AppContainer = ({
       const {
         cy,
       } = graphEditor
+      console.log(`onEvent: ${type}`, payload)
       const element = cy.$id(elementId)
       // const {
       //   item: eventRelatedItem,
@@ -476,16 +477,18 @@ const AppContainer = ({
             name,
             formData,
           } = payload
+
           const {
             year,
             degree,
             indegree,
             outdegree
           } = formData
+
           const clusterItemIds = draft.nodes.filter((item) => {
             const element = cy.$id(item.id)
             return (
-              R.inBetween(year[0], year[1])(item.data.year)
+              R.inBetween(year[0], year[1])(item.data?.year)
               && R.inBetween(degree[0], degree[1])(element.degree())
               && R.inBetween(indegree[0], indegree[1])(element.indegree())
               && R.inBetween(outdegree[0], outdegree[1])(element.outdegree())
@@ -678,6 +681,7 @@ const AppContainer = ({
     //   })
     // }, 1500)
 }, [])
+console.log('CaseLaw,', controllerProps)
   return (
     <View
       style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%' }}

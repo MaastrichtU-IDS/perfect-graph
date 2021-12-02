@@ -73,16 +73,22 @@ export default (props: Props): Result => {
       hovered: false,
     },
   } as NodeContext)
-  const element = React.useMemo(() => cy!.add({
-    data: {
-      id,
-      [ELEMENT_DATA_FIELDS.CONTEXT]: contextRef.current,
-      [ELEMENT_DATA_FIELDS.DATA]: item?.data,
-    }, // ...(parentID ? { parent: parentID } : {}),
-    position: { ...position },
-    group: 'nodes',
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }) as NodeSingular, [cy, id])
+  const element = React.useMemo(() => {
+    let _element = cy.$id(id)[0]
+    if (!_element) {
+      _element = cy!.add({
+        data: {
+          id,
+          [ELEMENT_DATA_FIELDS.CONTEXT]: contextRef.current,
+          [ELEMENT_DATA_FIELDS.DATA]: item?.data,
+        }, // ...(parentID ? { parent: parentID } : {}),
+        position: { ...position },
+        group: 'nodes',
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+      }) as NodeSingular
+    }
+    return _element
+  }, [cy, id])
   React.useEffect(
     () => {
       const {
