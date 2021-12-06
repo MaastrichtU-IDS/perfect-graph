@@ -10,6 +10,7 @@ import {
   getUndoEvents,
   getSelectedElementInfo,
   vectorMidpoint,
+  getHitAreaCenter,
 } from '@utils'
 import {
   EDITOR_MODE, EVENT,
@@ -615,7 +616,9 @@ export const useController = (
             const {
               items = [],
             } = payload
-            draft.graphConfig!.clusters = draft.graphConfig?.clusters?.concat(items)
+            draft.graphConfig!.clusters = (
+              draft.graphConfig?.clusters?.concat(items) ?? []
+            ).map((cluster) => ({ ...cluster, position: getHitAreaCenter(graphEditor) }))
             break
           }
           case EVENT.PRESS_ADD_CLUSTER_ELEMENT: {

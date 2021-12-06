@@ -10,7 +10,7 @@ import {
 import {
   calculateVisibilityByContext, 
   contextUtils, cyUnselectAll, isPositionInBox,
-  adjustVisualQuality,
+  adjustVisualQuality, isFiltered,
 } from '@utils'
 import { DEFAULT_EDGE_CONFIG, DEFAULT_NODE_CONFIG } from '@constants'
 import {
@@ -211,15 +211,13 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
               event,
               boundingBox,
             }) => {
-              // cyUnselectAll(cy)
               const itemIds: string[] = []
               const selectedCollection = cy.nodes().filter((element) => {
                 const elementPosition = element.position()
-                // const elementContext = contextUtils.get(element)
                 const selected = calculateVisibilityByContext(element)
+                  && isFiltered(element)
                   && isPositionInBox(elementPosition, boundingBox)
                 if (selected) {
-                  // element.select()
                   itemIds.push(element.id())
                 }
                 return selected

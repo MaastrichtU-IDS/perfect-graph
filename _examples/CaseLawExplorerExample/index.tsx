@@ -35,6 +35,7 @@ import { getFilterSchema, getFetchSchema, VIEW_CONFIG_SCHEMA, RECORDED_EVENTS } 
 import { EVENT } from '../../src/constants'
 import { useController } from '../../src/plugins/controller'
 import { createSchema } from '../../src/plugins/createSchema'
+import { getHitAreaCenter } from '../../src/utils'
 import { getSelectedItemByElement, getSelectedElementInfo } from '../../src/utils'
 import { calculateStatistics } from './utils/networkStatistics'
 import { RenderNode } from './RenderNode'
@@ -499,7 +500,8 @@ const AppContainer = ({
             id: R.uuid(),
             name,
             ids: clusterItemIds,
-            childClusterIds: []
+            childClusterIds: [],
+            position: getHitAreaCenter(graphEditor)
           })
           return false
         }
@@ -519,7 +521,7 @@ const AppContainer = ({
                   outdegree
                 } = payload.value
                 return (
-                  R.inBetween(year[0], year[1])(item.data.year)
+                  R.inBetween(year[0], year[1])(item.data?.year)
                   && R.inBetween(degree[0], degree[1])(element.degree())
                   && R.inBetween(indegree[0], indegree[1])(element.indegree())
                   && R.inBetween(outdegree[0], outdegree[1])(element.outdegree())

@@ -12,6 +12,7 @@ import {
   Cluster, EventInfo, GraphEditorRef, ControllerState,
   ViewportRef, LightEventInfo,
   EdgeElement, NodeElement,
+  GraphRef,
 } from '@type'
 import {
   ELEMENT_DATA_FIELDS, EVENT,
@@ -885,4 +886,16 @@ export const vectorMidpoint = (from: Vector, to: Vector) => {
     .subtract(from)
     .divideScalar(2)
     .add(from)
+}
+
+export const getHitAreaCenter = (graphRef: GraphRef) => {
+  const { hitArea } = graphRef.viewport
+  return {
+    x: hitArea.x + hitArea.width / 2,
+    y: hitArea.y + hitArea.height / 2,
+  }
+}
+
+export const isFiltered = (element: Element) => {
+  return contextUtils.get(element).settings.filtered
 }

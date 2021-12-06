@@ -8,6 +8,7 @@ import {
 import {
   calculateObjectBoundsWithoutChildren,
   calculateVisibilityByContext,
+  isFiltered,
 } from '@utils'
 import { useTheme } from '@core/theme'
 import { Container } from '../Container'
@@ -64,7 +65,7 @@ const NodeContainerElement = (
   })
   const theme = useTheme()
   const visible = calculateVisibilityByContext(element)
-  const opacity = context.settings.filtered
+  const opacity = isFiltered(element)
     ? 1
     : (config.filter?.settings?.opacity ?? 0.2)
   return (
