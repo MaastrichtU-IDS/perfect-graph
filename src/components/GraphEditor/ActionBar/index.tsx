@@ -5,7 +5,7 @@ import { EDITOR_MODE, EVENT } from '@constants'
 import { useGraphEditor } from '@hooks'
 import {
   Box, Button, FormControl, IconButton, InputLabel, Menu,
-  MenuItem, Select, useTheme, SelectProps,
+  MenuItem, Select, useTheme, SelectProps, Divider,
 } from '@mui/material'
 import {
   EditorMode, OnEventLite,
@@ -425,6 +425,7 @@ const MoreOptions = (props: MoreOptionsProps) => {
             {option}
           </MenuItem>
         ))}
+        <Divider />
         <FormControl fullWidth>
           <InputLabel id="theme-select-label">Theme</InputLabel>
           <Select
