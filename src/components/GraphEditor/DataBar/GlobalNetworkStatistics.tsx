@@ -9,7 +9,7 @@ import {
 import { EVENT } from '@constants'
 import {
   JSONViewer,
-} from 'colay-ui'
+} from './JSONViewer'
 import { View } from 'colay-ui/components/View'
 import React from 'react'
 import { OnEventLite } from '@type'
@@ -24,6 +24,7 @@ export const GlobalNetworkStatistics = (props: GlobalNetworkStatisticsProps) => 
   const {
     data,
     onEvent,
+    sort = -1,
   } = props
   return (
     <Accordion
@@ -74,9 +75,19 @@ export const GlobalNetworkStatistics = (props: GlobalNetworkStatisticsProps) => 
         </View>
       </AccordionSummary>
       <AccordionDetails>
-        <JSONViewer
+      <JSONViewer
           data={data}
-          sort={-1}
+          sort={sort}
+          />
+      </AccordionDetails>
+    </Accordion>
+  )
+}
+
+
+{/* <JSONViewer
+          data={data}
+          sort={sort}
           left={({ collapsed, onCollapse, noChild }) => (
             <IconButton
               size="small"
@@ -123,8 +134,4 @@ export const GlobalNetworkStatistics = (props: GlobalNetworkStatisticsProps) => 
                 : null}
             </View>
           )}
-        />
-      </AccordionDetails>
-    </Accordion>
-  )
-}
+        /> */}

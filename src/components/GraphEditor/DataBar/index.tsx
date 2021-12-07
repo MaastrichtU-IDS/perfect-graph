@@ -8,7 +8,6 @@ import {
 import { EVENT, SIDE_PANEL_DEFAULT_WIDTH } from '@constants'
 import { EdgeElement } from '@type'
 import {
-  JSONViewer,
   useAnimation,
 } from 'colay-ui'
 import { View } from 'colay-ui/components/View'
@@ -23,6 +22,7 @@ import { JSONEditor } from './JSONEditor'
 import { GlobalNetworkStatistics } from './GlobalNetworkStatistics'
 import { LocalNetworkStatistics } from './LocalNetworkStatistics'
 import { ConnectedElements } from './ConnectedElements'
+import { JSONViewer } from './JSONViewer'
 
 export type DataBarProps = {
   editable?: boolean;
@@ -74,6 +74,7 @@ export const DataBar = (props: DataBarProps) => {
         networkStatistics: {
           local: localDataRef.current!.networkStatistics!.local?.[selectedItem?.id!],
           global: networkStatistics?.global?.[selectedItem?.id!],
+          sort: networkStatistics?.sort,
         },
         selectedElement,
       }
@@ -193,136 +194,12 @@ export const DataBar = (props: DataBarProps) => {
           )
           : (
             <JSONViewer
-              extraData={[localLabel, globalLabel]}
-              data={item?.data}
               sort={sort}
-              left={(props) => {
-                const {
-                  item: { path },
-                  collapsed, onCollapse, noChild,
-                } = props
-                const isLocalLabel = R.equals(path, localLabel)
-                const isGlobalLabel = R.equals(path, globalLabel)
-                return (
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      height: 32,
-                    }}
-                  >
-
-                    <IconButton
-                      size="small"
-                      sx={{ height: ICON_SIZE }}
-                      onClick={() => onEvent(
-                        isLocalLabel
-                          ? {
-                            type: EVENT.CLEAR_NODE_LOCAL_LABEL,
-                          }
-                          : {
-                            type: EVENT.SET_NODE_LOCAL_LABEL,
-                            payload: {
-                              value: path,
-                            },
-                          },
-                      )}
-                    >
-                      <Icon
-                        style={{
-                          fontSize: ICON_SIZE,
-                          textDecoration: !isGlobalLabelFirst ? 'underline' : '',
-                        }}
-                        name={
-                          isLocalLabel ? 'bookmark' : 'bookmark_border'
-                        }
-                      />
-                    </IconButton>
-                    <IconButton
-                      size="small"
-                      sx={{ height: ICON_SIZE }}
-                      onClick={() => onEvent(
-                        isGlobalLabel
-                          ? {
-                            type: EVENT.CLEAR_NODE_GLOBAL_LABEL,
-                          }
-                          : {
-                            type: EVENT.SET_NODE_GLOBAL_LABEL,
-                            payload: {
-                              value: path,
-                            },
-                          },
-                      )}
-                    >
-                      <Icon
-                        style={{
-                          fontSize: ICON_SIZE,
-                          textDecoration: isGlobalLabelFirst ? 'underline' : '',
-                        }}
-                        name={
-                          isGlobalLabel ? 'bookmarks' : 'bookmark_border'
-  }
-                      />
-                    </IconButton>
-                    <IconButton
-                      size="small"
-                      sx={{ height: ICON_SIZE }}
-                      disabled={noChild}
-                      onClick={() => onCollapse(!collapsed)}
-                    >
-                      <Icon
-                        style={{
-                          fontSize: ICON_SIZE, // noChild ? 12 : ICON_SIZE,
-                        }}
-                        name={
-                      noChild
-                        ? 'fiber_manual_record'
-                        : collapsed
-                          ? 'arrow_drop_down_rounded'
-                          : 'arrow_drop_up_rounded'
-}
-                      />
-                    </IconButton>
-                  </View>
-                )
-              }}
-              renderItem={({ item: { key, value } }) => (
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    width: '100%',
-                    alignItems: 'center',
-                  }}
-                >
-                  <Typography
-                    variant="subtitle1"
-                    style={{
-                      alignContent: 'center',
-                      flexDirection: 'row',
-                      width: '100%',
-                      wordWrap: 'break-word',
-                    }}
-                  >
-                    {`${key}${value ? ': ' : ''}`}
-                    {value
-                      ? (
-                        <Typography
-                          variant="subtitle1"
-                          component={isValidURL(value) ? 'a' : 'span'}
-                          align="center"
-                          href={value}
-                          target="_blank"
-                          style={{ wordWrap: 'break-word' }}
-                        >
-                          {value}
-                        </Typography>
-                      )
-                      : null}
-                  </Typography>
-
-                </View>
-              )}
+              localLabel={localLabel}
+              globalLabel={globalLabel}
+              isGlobalLabelFirst={isGlobalLabelFirst}
+              data={item?.data}
+              onEvent={onEvent}
             />
           )
       }
@@ -346,6 +223,7 @@ export const DataBar = (props: DataBarProps) => {
           networkStatistics.global && (
             <GlobalNetworkStatistics
               data={networkStatistics.global}
+              sort={networkStatistics.sort?.global}
               onEvent={onEvent}
             />
           )
@@ -355,6 +233,7 @@ export const DataBar = (props: DataBarProps) => {
           networkStatistics.local && (
             <LocalNetworkStatistics
               data={networkStatistics.local}
+              sort={networkStatistics.sort?.local}
               onEvent={onEvent}
             />
           )

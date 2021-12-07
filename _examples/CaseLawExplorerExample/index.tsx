@@ -101,7 +101,17 @@ const populate = (times, data) => ({
 })
 
 export const createMockData = (nodeSize: number, edgeSize: number) => {
-  const nodes = R.range(0, nodeSize).map((index) => ({ id: `node-${index}` }) )
+  const nodes = R.range(0, nodeSize).map((index) => ({ 
+    id: `node-${index}` ,
+    data: {
+      name: 'perfect-graph',
+      address: {
+        city: 'Maastricht',
+        country: 'Netherlands',
+      },
+      type: 'package',
+    }
+  }) )
   
   const edges = R.range(0, edgeSize).map((index) => {
     let edge
@@ -399,7 +409,7 @@ const AppContainer = ({
       },
     },
     dataBar: {
-      // isOpen: true,
+      isOpen: true,
       editable: true,
       header: DataBarHeader,
     },

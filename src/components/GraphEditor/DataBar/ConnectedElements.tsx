@@ -26,6 +26,9 @@ export type ConnectedElementsProps = {
 
 }
 
+const ICON_SIZE = 12
+const TEXT_VARIANT = 'subtitle2'
+
 export const ConnectedElements = () => {
   const [
     {
@@ -90,9 +93,21 @@ export const ConnectedElements = () => {
             })}
           >
             <ListItemIcon>
-              <Icon name="chevron_right" />
+              <Icon name="chevron_right" sx={{ fontSize: ICON_SIZE }}/>
             </ListItemIcon>
-            <ListItemText primary={item.id} />
+            <ListItemText 
+              primary={
+                <Typography
+                  style={{
+                    width: '100%',
+                    wordWrap: 'break-word',
+                  }}
+                  variant={TEXT_VARIANT}
+                >
+                  {item.id}
+                </Typography>
+              }
+             />
           </ListItem>
         ))
       }
