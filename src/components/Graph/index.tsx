@@ -11,6 +11,7 @@ import {
   calculateVisibilityByContext, 
   contextUtils, cyUnselectAll, isPositionInBox,
   adjustVisualQuality, isFiltered,
+  getViewportZoom,
 } from '@utils'
 import { DEFAULT_EDGE_CONFIG, DEFAULT_NODE_CONFIG } from '@constants'
 import {
@@ -116,14 +117,11 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
   React.useEffect(() => {
     if (stageRef.current && config.layout) {
       const {
-        expansion = 1,
+        expansion, // = getViewportZoom(graphRef.current)
       } = config.layout
-      graphRef.current.viewport.setZoom(expansion, true)
-      console.log('LAYOUT', expansion)
-      // if (expansion > 0) {
-        
-      //   return
-      // }
+      if (expansion) {
+        graphRef.current.viewport.setZoom(expansion, true)
+      }
       setTimeout(() => {
         const { hitArea } = graphRef.current.viewport
         const boundingBox = {

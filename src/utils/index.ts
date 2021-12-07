@@ -899,3 +899,8 @@ export const getHitAreaCenter = (graphRef: GraphRef) => {
 export const isFiltered = (element: Element) => {
   return contextUtils.get(element).settings.filtered
 }
+
+export const getViewportZoom = (graphRef: GraphRef) => {
+  const { viewport } = graphRef
+  return viewport.scale.x
+}
