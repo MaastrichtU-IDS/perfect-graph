@@ -3,7 +3,7 @@ import { EVENT, SIDE_PANEL_DEFAULT_WIDTH } from '@constants'
 import { useGraphEditor } from '@hooks'
 import {
   Accordion, AccordionDetails, AccordionSummary, Button, Divider,
-  IconButton, Paper, Typography,
+  IconButton, Paper, Typography, Box,
 } from '@mui/material'
 import { FormProps } from '@rjsf/core'
 import Form from '@rjsf/material-ui'
@@ -25,7 +25,7 @@ type SettingsForm = {
 } & Partial<
 Pick<
 FormProps<any>,
-'onChange'|'onSubmit'|'formData'| 'uiSchema' | 'children'
+'onChange' | 'onSubmit' | 'formData' | 'uiSchema' | 'children'
 >
 >
 export type SettingsBarProps = {
@@ -94,18 +94,29 @@ const SettingsBarElement = (props: SettingsBarProps) => {
     },
   })
   return (
-    <Paper
+    <Box
       ref={containerRef}
       style={{
         position: 'absolute',
-        height: '100%',
+        height: '60%',
         top: 0,
-        left: 0,
-        display: 'flex',
-        flexDirection: 'row',
+        left: 2,
         ...animationStyle,
       }}
     >
+      <Paper
+        sx={{ 
+          boxShadow: 2,
+          borderColor: 'grey.500',
+          borderRadius: 5,
+          borderWidth: 2,
+          overflow: 'hidden',
+          height: '100%',
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'row',
+        }}
+      >
       <View
         style={{
           // @ts-ignore
@@ -236,6 +247,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
       <ResizeDivider
         onMouseDown={onMouseDown}
       />
+      </Paper>
       <IconButton
         style={styles.icon}
         onClick={() => {
@@ -249,7 +261,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
           name="settings"
         />
       </IconButton>
-    </Paper>
+    </Box>
   )
 }
 

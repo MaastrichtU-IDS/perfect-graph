@@ -3,7 +3,7 @@ import { useGraphEditor } from '@hooks'
 import {
   Accordion, AccordionDetails,
   AccordionSummary, Divider, IconButton, Paper, Typography,
-  Button,
+  Button, Box,
 } from '@mui/material'
 import { EVENT, SIDE_PANEL_DEFAULT_WIDTH } from '@constants'
 import { EdgeElement } from '@type'
@@ -112,19 +112,31 @@ export const DataBar = (props: DataBarProps) => {
     },
   })
   return (
-    <Paper
+    <Box
       ref={containerRef}
       style={{
         position: 'absolute',
-        height: '100%',
-        top: 0,
-        display: 'flex',
-        flexDirection: 'row',
-        right: 0,
+        height: '60%',
+        top: 2,
+        right: 2,
         // width: animationStyle.right,
         ...animationStyle,
       }}
+      
     >
+      <Paper
+        sx={{ 
+          boxShadow: 2,
+          borderColor: 'grey.500',
+          borderRadius: 5,
+          borderWidth: 2,
+          overflow: 'hidden',
+          height: '100%',
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'row',
+        }}
+      >
       <ResizeDivider
         onMouseDown={onMouseDown}
       />
@@ -244,6 +256,7 @@ export const DataBar = (props: DataBarProps) => {
         {FooterComponent && <FooterComponent />}
       </View>
 
+      </Paper>
       <IconButton
         style={{
           position: 'absolute',
@@ -262,7 +275,7 @@ export const DataBar = (props: DataBarProps) => {
           name="info_outlined"
         />
       </IconButton>
-    </Paper>
+    </Box>
   )
 }
 
