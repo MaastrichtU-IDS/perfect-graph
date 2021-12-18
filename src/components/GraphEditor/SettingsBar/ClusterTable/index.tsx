@@ -1,4 +1,9 @@
 import { Icon } from '@components/Icon'
+import { 
+  Collapsible,
+  CollapsibleContainer,
+  CollapsibleTitle,
+} from '@components/Collapsible'
 import { SortableList } from '@components/SortableList'
 import { SpeedDialCreator } from '@components/SpeedDialCreator'
 import { TabPanel } from '@components/TabPanel'
@@ -55,7 +60,7 @@ export const ClusterTable = (props: ClusterTableProps) => {
     }),
   )
   const [state, updateState] = useImmer({
-    expanded: true,
+    isOpen: true,
     selectedClusterIds: [] as string[],
     currentTab: 0,
     formData: {},
@@ -73,21 +78,11 @@ export const ClusterTable = (props: ClusterTableProps) => {
   } = useDisclosure({})
   return (
     <>
-      <Accordion
-        expanded={state.expanded}
-        onChange={(e, expanded) => updateState((draft) => {
-          draft.expanded = expanded
-        })}
-      >
-        <AccordionSummary
-          aria-controls="panel1a-content"
-        >
+    <Collapsible>
+      {
+        () => (
+          <>
           <View
-            style={{
-              width: '100%',
-            }}
-          >
-            <View
               style={{
                 flexDirection: 'row',
                 justifyContent: 'space-between',
@@ -101,11 +96,13 @@ export const ClusterTable = (props: ClusterTableProps) => {
                   alignItems: 'center',
                 }}
               >
-                <Typography
-                  variant="h6"
+                <CollapsibleTitle
+                  onClick={() => updateState((draft) => {
+                    draft.isOpen = !draft.isOpen
+                  })}
                 >
                   Clusters
-                </Typography>
+                </CollapsibleTitle>
               </View>
               <IconButton
                 onClick={(e) => {
@@ -149,7 +146,7 @@ export const ClusterTable = (props: ClusterTableProps) => {
                     event.stopPropagation()
                     updateState((draft) => {
                       draft.currentTab = 1
-                      draft.expanded = true
+                      draft.isOpen = true
                     })
                     onClose()
                   }}
@@ -163,7 +160,7 @@ export const ClusterTable = (props: ClusterTableProps) => {
                     event.stopPropagation()
                     updateState((draft) => {
                       draft.currentTab = 2
-                      draft.expanded = true
+                      draft.isOpen = true
                     })
                     onClose()
                   }}
@@ -171,9 +168,9 @@ export const ClusterTable = (props: ClusterTableProps) => {
                   By Algorithm
                 </MenuItem>
               </Menu>
-            </View>
-            {
-            state.expanded && hasSelected && (
+          </View>
+          {
+            state.isOpen && hasSelected && (
               <Card
                 style={{
                   display: 'flex',
@@ -223,11 +220,10 @@ export const ClusterTable = (props: ClusterTableProps) => {
               </Card>
             )
           }
-          </View>
-
-        </AccordionSummary>
-        <AccordionDetails>
-          <TabPanel
+          {
+            state.isOpen && (
+              <CollapsibleContainer>
+               <TabPanel
             value={state.currentTab}
             index={0}
           >
@@ -355,7 +351,7 @@ export const ClusterTable = (props: ClusterTableProps) => {
                                   onEvent({
                                     type: EVENT.ELEMENT_SELECTED,
                                     payload: {
-                                      itemIds: [elementId]
+                                      itemIds: [elementId],
                                     },
                                     avoidHistoryRecording: true,
                                   })
@@ -416,8 +412,13 @@ export const ClusterTable = (props: ClusterTableProps) => {
               }}
             />
           </TabPanel>
-        </AccordionDetails>
-      </Accordion>
+          </CollapsibleContainer>
+            )
+          }
+          </>
+        )
+      }
+    </Collapsible>
       <Dialog
         onClose={() => updateState((draft) => {
           draft.createClusterDialog.visible = false
@@ -499,6 +500,21 @@ const SpeedDialActionsView = (props: SpeedDialActionsViewProps) => {
               type: EVENT.DELETE_CLUSTER,
               payload: {
                 itemIds: [cluster.id],
+              },
+            })
+          },
+        },
+        {
+          name: 'Focus',
+          icon: {
+            name: 'center_focus_strong',
+          },
+          onClick: (e) => {
+            e.stopPropagation()
+            onEvent({
+              type: EVENT.FOCUS,
+              payload: {
+                itemIds: cluster.ids,
               },
             })
           },

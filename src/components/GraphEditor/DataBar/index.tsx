@@ -5,19 +5,23 @@ import {
   AccordionSummary, Divider, IconButton, Paper, Typography,
   Button, Box,
 } from '@mui/material'
-import { EVENT, SIDE_PANEL_DEFAULT_WIDTH } from '@constants'
+import { EVENT, SIDE_PANEL_DEFAULT_WIDTH, SIDE_PANEL_DEFAULT_HEIGHT } from '@constants'
 import { EdgeElement } from '@type'
 import {
   useAnimation,
 } from 'colay-ui'
 import { View } from 'colay-ui/components/View'
-import * as R from 'colay/ramda'
 import React from 'react'
 // import {
 //   DataEditor,
 // } from '../DataEditor'
 import { useDrag } from '@hooks/useDrag'
 import { ResizeDivider } from '@components/ResizeDivider'
+import { 
+  Collapsible,
+  CollapsibleContainer,
+  CollapsibleTitle,
+ } from '@components/Collapsible'
 import { JSONEditor } from './JSONEditor'
 import { GlobalNetworkStatistics } from './GlobalNetworkStatistics'
 import { LocalNetworkStatistics } from './LocalNetworkStatistics'
@@ -82,6 +86,7 @@ export const DataBar = (props: DataBarProps) => {
   )
   const localDataRef = React.useRef({
     width: SIDE_PANEL_DEFAULT_WIDTH,
+    height: SIDE_PANEL_DEFAULT_HEIGHT,
   })
   const {
     style: animationStyle,
@@ -106,9 +111,12 @@ export const DataBar = (props: DataBarProps) => {
   const onMouseDown = useDrag({
     ref: containerRef,
     onDrag: ({ x, y }, rect) => {
+      // localDataRef.current.width = rect.width - x
       localDataRef.current.width = rect.width + x
+      localDataRef.current.height = rect.height - y
       const target = containerRef.current
       target.style.width = `${localDataRef.current.width}px`
+      target.style.height = `${localDataRef.current.height}px`
     },
   })
   return (
@@ -128,7 +136,7 @@ export const DataBar = (props: DataBarProps) => {
         sx={{ 
           boxShadow: 2,
           borderColor: 'grey.500',
-          borderRadius: 5,
+          // borderRadius: 5,
           borderWidth: 2,
           overflow: 'hidden',
           height: '100%',
@@ -137,9 +145,6 @@ export const DataBar = (props: DataBarProps) => {
           flexDirection: 'row',
         }}
       >
-      <ResizeDivider
-        onMouseDown={onMouseDown}
-      />
       <View
         style={{
           height: '100%',
@@ -151,21 +156,24 @@ export const DataBar = (props: DataBarProps) => {
       >
         {HeaderComponent && <HeaderComponent />}
         {item && (
-        <Accordion
-          defaultExpanded
+        <Collapsible
+          defaultIsOpen={ true}
         >
-          <AccordionSummary>
-            <Typography
-              variant="h6"
+          {
+            ({ isOpen, onToggle}) => (
+              <>
+            <CollapsibleTitle
               style={{
                 wordBreak: 'break-word',
                 padding: 2,
               }}
+              onClick={onToggle}
             >
               {` id: ${item?.id}`}
-            </Typography>
-          </AccordionSummary>
-          <AccordionDetails>
+            </CollapsibleTitle>
+              {
+                isOpen && (
+                  <CollapsibleContainer>
             <View style={{
               width: '100%',
               height: hasStatistics ? '70%' : '100%',
@@ -217,8 +225,13 @@ export const DataBar = (props: DataBarProps) => {
       }
 
             </View>
-          </AccordionDetails>
-        </Accordion>
+          </CollapsibleContainer>
+                )
+              }
+              </>
+            )
+          }
+        </Collapsible>
 
         )}
         <Divider />
@@ -255,26 +268,12 @@ export const DataBar = (props: DataBarProps) => {
       }
         {FooterComponent && <FooterComponent />}
       </View>
-
+      <ResizeDivider
+        onMouseDown={onMouseDown}
+        isRight={false}
+      />
       </Paper>
-      <IconButton
-        style={{
-          position: 'absolute',
-          left: -34,
-          top: 0,
-          fontSize: 24,
-        }}
-        onClick={() => {
-          onEvent({
-            type: EVENT.TOGGLE_DATA_BAR,
-            avoidHistoryRecording: true,
-          })
-        }}
-      >
-        <Icon
-          name="info_outlined"
-        />
-      </IconButton>
+      
     </Box>
   )
 }

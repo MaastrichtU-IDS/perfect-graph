@@ -129,7 +129,8 @@ export const LAYOUT_NAMES = Object.keys(Layouts)
 
 
 
-export const SIDE_PANEL_DEFAULT_WIDTH = 330
+export const SIDE_PANEL_DEFAULT_WIDTH = 260
+export const SIDE_PANEL_DEFAULT_HEIGHT = 530
 // export const eventHandlers = [
 //   'click',
 //   'mousedown',

@@ -313,7 +313,7 @@ const ActionBarElement = (props: ActionBarProps) => {
         />
       </Box>
       {RightComponent && <RightComponent />}
-      {
+      {/* {
         !autoOpen && (
           <IconButton
             style={styles.icon}
@@ -329,7 +329,7 @@ const ActionBarElement = (props: ActionBarProps) => {
             />
           </IconButton>
         )
-      }
+      } */}
 
     </Box>
   )

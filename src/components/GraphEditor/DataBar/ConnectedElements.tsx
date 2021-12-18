@@ -1,14 +1,16 @@
 import React from 'react'
 import {
   Typography,
-  AccordionDetails,
-  Accordion,
-  AccordionSummary,
   ListItem,
   List,
   ListItemText,
   ListItemIcon,
 } from '@mui/material'
+import {
+  Collapsible,
+  CollapsibleContainer,
+  CollapsibleTitle,
+} from '@components/Collapsible'
 import {
   Icon,
 } from '@components/Icon'
@@ -65,55 +67,64 @@ export const ConnectedElements = () => {
     )
   }
   return (
-    <Accordion
-      defaultExpanded
+    <Collapsible
+      defaultIsOpen
     >
-      <AccordionSummary>
-        <Typography
-          variant="h6"
+      {
+        ({ isOpen, onToggle }) => (
+          <>
+            <CollapsibleTitle
+          onClick={onToggle}
         >
           {`Connected ${isNode ? 'Edges' : 'Nodes'}`}
-        </Typography>
-      </AccordionSummary>
-      <AccordionDetails>
-        <List
-          dense
-        >
-          {
-        itemList.map((item) => (
-          <ListItem
-            key={item.id}
-            button
-            onClick={() => onEvent({
-              type: EVENT.ELEMENT_SELECTED_WITH_ZOOM,
-              payload: {
-                itemIds: [item.id],
-              },
-              avoidHistoryRecording: true,
-            })}
+          </CollapsibleTitle>
+            {
+              isOpen && (
+                <CollapsibleContainer>
+          <List
+            dense
           >
-            <ListItemIcon>
-              <Icon name="chevron_right" sx={{ fontSize: ICON_SIZE }}/>
-            </ListItemIcon>
-            <ListItemText 
-              primary={
-                <Typography
-                  style={{
-                    width: '100%',
-                    wordWrap: 'break-word',
-                  }}
-                  variant={TEXT_VARIANT}
-                >
-                  {item.id}
-                </Typography>
-              }
-             />
-          </ListItem>
-        ))
+            {
+          itemList.map((item) => (
+            <ListItem
+              key={item.id}
+              button
+              onClick={() => onEvent({
+                type: EVENT.ELEMENT_SELECTED_WITH_ZOOM,
+                payload: {
+                  itemIds: [item.id],
+                },
+                avoidHistoryRecording: true,
+              })}
+            >
+              <ListItemIcon>
+                <Icon name="chevron_right" sx={{ fontSize: ICON_SIZE }}/>
+              </ListItemIcon>
+              <ListItemText 
+                primary={
+                  <Typography
+                    style={{
+                      width: '100%',
+                      wordWrap: 'break-word',
+                    }}
+                    variant={TEXT_VARIANT}
+                  >
+                    {item.id}
+                  </Typography>
+                }
+              />
+            </ListItem>
+          ))
+        }
+          </List>
+      </CollapsibleContainer>
+              )
+          }
+          </>
+        )
       }
-        </List>
-      </AccordionDetails>
-    </Accordion>
+      
+    </Collapsible>
 
   )
 }

@@ -40,6 +40,7 @@ import {
   MyLocation,
   DragHandle,
   CancelRounded,
+  CenterFocusStrong,
 } from '@mui/icons-material'
 import { IconProps as MUIIconProps } from '@mui/material'
 
@@ -53,6 +54,7 @@ const ICONS = {
   build_circle_outlined: BuildCircleOutlined,
   more_vert: MoreVert,
   edit: Edit,
+  center_focus_strong: CenterFocusStrong,
   build_circle: BuildCircle,
   repeat_one: RepeatOne,
   sort_by_alpha: SortByAlpha,

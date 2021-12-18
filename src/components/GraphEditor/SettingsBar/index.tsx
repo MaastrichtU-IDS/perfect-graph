@@ -1,9 +1,12 @@
+import { Collapsible, CollapsibleTitle, CollapsibleContainer, } from '@components/Collapsible'
 import { Icon } from '@components/Icon'
-import { EVENT, SIDE_PANEL_DEFAULT_WIDTH } from '@constants'
+import { ResizeDivider } from '@components/ResizeDivider'
+import { EVENT, SIDE_PANEL_DEFAULT_HEIGHT, SIDE_PANEL_DEFAULT_WIDTH } from '@constants'
 import { useGraphEditor } from '@hooks'
+import { useDrag } from '@hooks/useDrag'
 import {
-  Accordion, AccordionDetails, AccordionSummary, Button, Divider,
-  IconButton, Paper, Typography, Box,
+  Box, Button, Divider,
+  IconButton, Paper, Typography,
 } from '@mui/material'
 import { FormProps } from '@rjsf/core'
 import Form from '@rjsf/material-ui'
@@ -12,10 +15,8 @@ import {
   View, wrapComponent,
 } from 'colay-ui'
 import { useImmer } from 'colay-ui/hooks/useImmer'
-import React from 'react'
 import * as R from 'colay/ramda'
-import { useDrag } from '@hooks/useDrag'
-import { ResizeDivider } from '@components/ResizeDivider'
+import React from 'react'
 import { ClusterTable } from './ClusterTable'
 import { EventHistoryTable } from './EventHistoryTable'
 import { PlaylistTable } from './PlaylistTable'
@@ -62,6 +63,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
   )
   const localDataRef = React.useRef({
     width: SIDE_PANEL_DEFAULT_WIDTH,
+    height: SIDE_PANEL_DEFAULT_HEIGHT,
   })
   const {
     style: animationStyle,
@@ -74,7 +76,9 @@ const SettingsBarElement = (props: SettingsBarProps) => {
       width: localDataRef.current.width,
     },
     autoPlay: false,
-  }, [localDataRef.current.width])
+  }, [
+    localDataRef.current.width,
+  ])
   React.useEffect(() => {
     animationRef.current.play(isOpen)
   }, [animationRef, isOpen])
@@ -89,8 +93,10 @@ const SettingsBarElement = (props: SettingsBarProps) => {
     ref: containerRef,
     onDrag: ({ x, y }, rect) => {
       localDataRef.current.width = rect.width - x
+      localDataRef.current.height = rect.height - y
       const target = containerRef.current
       target.style.width = `${localDataRef.current.width}px`
+      target.style.height = `${localDataRef.current.height}px`
     },
   })
   return (
@@ -108,7 +114,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
         sx={{ 
           boxShadow: 2,
           borderColor: 'grey.500',
-          borderRadius: 5,
+          // borderRadius: 5,
           borderWidth: 2,
           overflow: 'hidden',
           height: '100%',
@@ -131,47 +137,57 @@ const SettingsBarElement = (props: SettingsBarProps) => {
           const title = form.schema?.title ?? `Form-${index}`
           return (
             <React.Fragment key={title}>
-              <Accordion>
-                <AccordionSummary>
-                  <Typography
-                    variant="h6"
-                  >
-                    {title}
-                  </Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <Form
-              // schema={schema}
-              // {...formProps}
-                    {...form}
-                    schema={R.omit(['title'])(form.schema)}
-                    onSubmit={(
-                      e,
-                    ) => onEvent({
-                      type: EVENT.SETTINGS_FORM_CHANGED,
-                      payload: { form, value: e.formData, index },
-                    })}
-                  >
-                    {
-                      form.children ?? (
-                      <Button
-                        type="submit"
-                        fullWidth
-                        variant="contained"
-                      >
-                        Apply
-                      </Button>
-                      )
-}
-                  </Form>
-                </AccordionDetails>
-              </Accordion>
+              <Collapsible>
+                {
+                  ({
+                    isOpen,
+                    onToggle,
+                  }) => (
+                    <>
+                      <CollapsibleTitle
+                          onClick={onToggle}
+                        >
+                          {title}
+                        </CollapsibleTitle>
+                      {
+                        isOpen && (
+                          <CollapsibleContainer
+                          >
+                            <Form
+                            {...form}
+                            schema={R.omit(['title'])(form.schema)}
+                            onSubmit={(
+                              e,
+                            ) => onEvent({
+                              type: EVENT.SETTINGS_FORM_CHANGED,
+                              payload: { form, value: e.formData, index },
+                            })}
+                          >
+                            {
+                              form.children ?? (
+                              <Button
+                                type="submit"
+                                fullWidth
+                                variant="contained"
+                              >
+                                Apply
+                              </Button>
+                              )
+        }
+                          </Form>
+                          </CollapsibleContainer>
+                        )
+                      }
+                    </>
+                  )
+                }
+              </Collapsible>
               <View style={{ marginTop: 5, marginBottom: 5 }} />
             </React.Fragment>
           )
         })
       }
-        <Divider />
+        {/* <Divider /> */}
         {
         eventHistory && (
         <>
@@ -188,11 +204,11 @@ const SettingsBarElement = (props: SettingsBarProps) => {
               })}
             />
           </View>
-          <Divider style={{ marginTop: 5, marginBottom: 5 }} />
+          {/* <Divider style={{ marginTop: 5, marginBottom: 5 }} /> */}
         </>
         )
       }
-        <Divider />
+        {/* <Divider /> */}
         {
           playlists && (
           <PlaylistTable
@@ -225,7 +241,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
 
           )
         }
-        <Divider />
+        {/* <Divider /> */}
         {
         clusters && (
         <>
@@ -248,19 +264,61 @@ const SettingsBarElement = (props: SettingsBarProps) => {
         onMouseDown={onMouseDown}
       />
       </Paper>
-      <IconButton
-        style={styles.icon}
-        onClick={() => {
-          onEvent({
-            type: EVENT.TOGGLE_FILTER_BAR,
-            avoidHistoryRecording: true,
-          })
+
+      <View
+        style={{
+          flexDirection: 'row',
+          position: 'absolute',
+          right: -112,
+          top: 2,
         }}
       >
-        <Icon
-          name="settings"
-        />
-      </IconButton>
+        <IconButton
+          style={{
+            fontSize: 24,
+          }}
+          onClick={() => {
+            onEvent({
+              type: EVENT.TOGGLE_FILTER_BAR,
+              avoidHistoryRecording: true,
+            })
+          }}
+        >
+          <Icon
+            name="build_circle_outlined"
+          />
+        </IconButton>
+        <IconButton
+          style={{
+            fontSize: 24,
+          }}
+          onClick={() => {
+            onEvent({
+              type: EVENT.TOGGLE_DATA_BAR,
+              avoidHistoryRecording: true,
+            })
+          }}
+        >
+          <Icon
+            name="info_outlined"
+          />
+        </IconButton>
+        <IconButton
+            style={{
+              fontSize: 24,
+            }}
+            onClick={() => {
+              onEvent({
+                type: EVENT.TOGGLE_ACTION_BAR,
+                avoidHistoryRecording: true,
+              })
+            }}
+          >
+            <Icon
+              name="settings"
+            />
+          </IconButton>
+      </View>
     </Box>
   )
 }
@@ -269,9 +327,6 @@ export const SettingsBar = wrapComponent<SettingsBarProps>(SettingsBarElement, {
 
 const styles = {
   icon: {
-    position: 'absolute',
-    right: -36,
-    top: 2,
     fontSize: 24,
   },
 } as const

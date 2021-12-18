@@ -2,9 +2,6 @@ import { Icon } from '@components/Icon'
 import {
   IconButton,
   Typography,
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
 } from '@mui/material'
 import { EVENT } from '@constants'
 import {
@@ -13,8 +10,11 @@ import {
 import { View } from 'colay-ui/components/View'
 import React from 'react'
 import { OnEventLite } from '@type'
-import * as R from 'colay/ramda'
-
+import { 
+  Collapsible,
+  CollapsibleContainer,
+  CollapsibleTitle,
+} from '@components/Collapsible'
 export type GlobalNetworkStatisticsProps = {
   data?: any;
   onEvent: OnEventLite;
@@ -27,13 +27,13 @@ export const GlobalNetworkStatistics = (props: GlobalNetworkStatisticsProps) => 
     sort = -1,
   } = props
   return (
-    <Accordion
-      defaultExpanded
+    <Collapsible
+      defaultIsOpen
     >
-      <AccordionSummary
-        aria-controls="panel1a-content"
-      >
-        <View
+      {
+        ({ isOpen, onToggle }) => (
+          <>
+            <View
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
@@ -47,11 +47,11 @@ export const GlobalNetworkStatistics = (props: GlobalNetworkStatisticsProps) => 
               alignItems: 'center',
             }}
           >
-            <Typography
-              variant="h6"
+            <CollapsibleTitle
+              onClick={onToggle}
             >
               Global Network Statistics
-            </Typography>
+            </CollapsibleTitle>
           </View>
           <View
             style={{
@@ -73,14 +73,21 @@ export const GlobalNetworkStatistics = (props: GlobalNetworkStatisticsProps) => 
             </IconButton>
           </View>
         </View>
-      </AccordionSummary>
-      <AccordionDetails>
-      <JSONViewer
-          data={data}
-          sort={sort}
-          />
-      </AccordionDetails>
-    </Accordion>
+        {
+          isOpen && (
+            <CollapsibleContainer>
+          <JSONViewer
+            data={data}
+            sort={sort}
+            />
+        </CollapsibleContainer>
+          )
+        }
+          </>
+        )
+      }
+
+    </Collapsible>
   )
 }
 
