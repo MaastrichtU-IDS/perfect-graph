@@ -19,6 +19,11 @@ export const DefaultRenderNode: RenderNode = ({
       labelVisible,
     },
   } = config
+  // const isThereSelected = cy.elements(':selected').length > 0
+  const alpha = 1
+  // isThereSelected && (hasSelectedEdge || element.selected())
+  //   ? 1
+  //   : 0.5
   return (
     <GraphView
       width={width}
@@ -35,6 +40,7 @@ export const DefaultRenderNode: RenderNode = ({
         )}
       radius={radius}
       interactive
+      alpha={alpha}
       pointertap={() => {
         cyUnselectAll(cy)
         element.select()

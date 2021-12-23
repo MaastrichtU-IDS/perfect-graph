@@ -1,4 +1,4 @@
-import { Collapsible, CollapsibleTitle, CollapsibleContainer, } from '@components/Collapsible'
+import { Collapsible, CollapsibleTitle, CollapsibleContainer } from '@components/Collapsible'
 import { Icon } from '@components/Icon'
 import { ResizeDivider } from '@components/ResizeDivider'
 import { EVENT, SIDE_PANEL_DEFAULT_HEIGHT, SIDE_PANEL_DEFAULT_WIDTH } from '@constants'
@@ -20,6 +20,11 @@ import React from 'react'
 import { ClusterTable } from './ClusterTable'
 import { EventHistoryTable } from './EventHistoryTable'
 import { PlaylistTable } from './PlaylistTable'
+import { LayoutOptions } from './LayoutOptions'
+
+type DefaultsOption = {
+  visible?: boolean;
+}
 
 type SettingsForm = {
   schema: FormProps<any>['schema'];
@@ -33,6 +38,9 @@ export type SettingsBarProps = {
   isOpen?: boolean;
   forms?: SettingsForm[];
   createClusterForm?: FormProps<any>;
+  defaults: {
+    layout: DefaultsOption;
+  }
 }
 
 const SettingsBarElement = (props: SettingsBarProps) => {
@@ -41,6 +49,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
     // schema = {},
     forms = [],
     createClusterForm,
+    defaults = {},
     // children,
     // ...formProps
   } = props
@@ -50,6 +59,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
       eventHistory,
       clusters,
       playlists,
+      layout,
     },
   ] = useGraphEditor(
     (editor) => ({
@@ -57,6 +67,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
       eventHistory: editor.eventHistory,
       playlists: editor.playlists,
       clusters: editor.graphConfig?.clusters,
+      layout: editor.graphConfig?.layout,
       // editorMode: editor.mode,
       // graphEditorLocalDataRef: editor.localDataRef,
     }),
@@ -187,6 +198,11 @@ const SettingsBarElement = (props: SettingsBarProps) => {
           )
         })
       }
+      <LayoutOptions
+        layout={layout}
+        onEvent={onEvent}
+        {...(defaults.layout ?? {})}
+      />
         {/* <Divider /> */}
         {
         eventHistory && (

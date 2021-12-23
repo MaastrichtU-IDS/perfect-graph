@@ -78,7 +78,7 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
                 }}
               >
                 <CollapsibleTitle
-                  onChange={() => updateState((draft) => {
+                  onClick={() => updateState((draft) => {
                     draft.isOpen = !draft.isOpen
                   })}
                 >

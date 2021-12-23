@@ -294,7 +294,6 @@ const LayoutCard = (props: LayoutCardProps) => {
 }
 export const getFormProps = () => ({
   schema: {
-    title: 'Layout',
     properties: {
       name: {
         type: 'string',

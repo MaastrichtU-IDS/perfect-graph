@@ -17,11 +17,15 @@ import {
 import {
   useGraphEditor,
 } from '@hooks'
+import { 
+  View,
+} from 'colay-ui'
 import {
   EVENT,
 } from '@constants'
 import {
   getItemFromElement,
+  isValidURL,
 } from '@utils'
 
 export type ConnectedElementsProps = {
@@ -86,34 +90,16 @@ export const ConnectedElements = () => {
           >
             {
           itemList.map((item) => (
-            <ListItem
-              key={item.id}
-              button
-              onClick={() => onEvent({
-                type: EVENT.ELEMENT_SELECTED_WITH_ZOOM,
-                payload: {
-                  itemIds: [item.id],
-                },
-                avoidHistoryRecording: true,
-              })}
-            >
-              <ListItemIcon>
-                <Icon name="chevron_right" sx={{ fontSize: ICON_SIZE }}/>
-              </ListItemIcon>
-              <ListItemText 
-                primary={
-                  <Typography
-                    style={{
-                      width: '100%',
-                      wordWrap: 'break-word',
-                    }}
-                    variant={TEXT_VARIANT}
-                  >
-                    {item.id}
-                  </Typography>
-                }
+            <ConnectedElementItem 
+                item={item}
+                onClick={() => onEvent({
+                  type: EVENT.ELEMENT_SELECTED_WITH_ZOOM,
+                  payload: {
+                    itemIds: [item.id],
+                  },
+                  avoidHistoryRecording: true,
+                })}
               />
-            </ListItem>
           ))
         }
           </List>
@@ -128,3 +114,64 @@ export const ConnectedElements = () => {
 
   )
 }
+
+const ConnectedElementItem = (props: any) => {
+  const {
+    onClick,
+    item,
+  } = props
+  return (
+    <View
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+      }}
+    >
+    <Icon name="chevron_right" sx={{ fontSize: ICON_SIZE }}/>
+    <Typography
+      variant={'subtitle2'}
+      component={'a'}
+      align="center"
+      href={item.id}
+      style={{ wordWrap: 'break-word' }}
+      onClick={(e) => {
+        onClick?.()
+        e.preventDefault()
+      }}
+    >
+      {item.id}
+    </Typography>
+    </View>
+
+  )
+}
+
+
+{/* <ListItem
+  key={item.id}
+  button
+  onClick={() => onEvent({
+    type: EVENT.ELEMENT_SELECTED_WITH_ZOOM,
+    payload: {
+      itemIds: [item.id],
+    },
+    avoidHistoryRecording: true,
+  })}
+>
+  <ListItemIcon>
+    <Icon name="chevron_right" sx={{ fontSize: ICON_SIZE }}/>
+  </ListItemIcon>
+  <ListItemText 
+    primary={
+      <Typography
+        style={{
+          width: '100%',
+          wordWrap: 'break-word',
+        }}
+        variant={TEXT_VARIANT}
+      >
+        {item.id}
+      </Typography>
+    }
+  />
+</ListItem> */}

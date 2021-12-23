@@ -17,7 +17,6 @@ import { Recorder } from 'colay-ui/components/Recorder'
 // import Form from 'unitx-ui/components/Form'
 import * as R from 'colay/ramda'
 import React from 'react'
-import { LayoutOptions } from './LayoutOptions'
 // export const ACTION = {
 //   EXPORT_DATA: 'EXPORT_DATA',
 // }
@@ -50,7 +49,6 @@ export type ActionBarProps = {
     options: {
       actions: { import: ActionOption };
     };
-    layout: ActionOption;
   };
   onAction: (action: { type: string; value?: any }) => void;
 }
@@ -250,7 +248,7 @@ const ActionBarElement = (props: ActionBarProps) => {
           </Button>
           )
         }
-        {
+        {/* {
           actions.layout.visible && (
           <LayoutOptions
             layout={graphConfig?.layout}
@@ -258,7 +256,7 @@ const ActionBarElement = (props: ActionBarProps) => {
             {...actions.layout}
           />
           )
-        }
+        } */}
         {
           actions.recordEvents.visible && (
           <IconButton

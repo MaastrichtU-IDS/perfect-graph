@@ -16,6 +16,7 @@ export const DefaultRenderEdge: RenderEdge = ({
       labelVisible,
     },
   } = config
+  
   return (
   <GraphView
     pointertap={() => {

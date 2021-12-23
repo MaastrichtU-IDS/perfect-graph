@@ -20,10 +20,15 @@ export const DefaultRenderClusterNode: RenderNode = ({
       labelVisible,
     },
   } = config
+  // const isThereSelected = cy.elements(':selected').length > 0
+  const alpha = 1
+  // isThereSelected && (hasSelectedEdge || element.selected())
+  //   ? 1
+  //   : 0.5
   return (
     <GraphView
-      width={150}
-      height={150}
+      width={220}
+      height={220}
       fill={hasSelectedEdge
         ? fill.edgeSelected
         : (element.selected()
@@ -34,7 +39,8 @@ export const DefaultRenderClusterNode: RenderNode = ({
               : fill.default
           )
         )}
-      radius={10}
+      radius={30}
+      alpha={alpha}
       interactive
       pointertap={() => {
         cyUnselectAll(cy)
