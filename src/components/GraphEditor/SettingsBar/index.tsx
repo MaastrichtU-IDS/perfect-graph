@@ -1,4 +1,4 @@
-import { Collapsible, CollapsibleTitle, CollapsibleContainer } from '@components/Collapsible'
+import { Collapsible, CollapsibleContainer, CollapsibleTitle } from '@components/Collapsible'
 import { Icon } from '@components/Icon'
 import { ResizeDivider } from '@components/ResizeDivider'
 import { EVENT, SIDE_PANEL_DEFAULT_HEIGHT, SIDE_PANEL_DEFAULT_WIDTH } from '@constants'
@@ -6,21 +6,21 @@ import { useGraphEditor } from '@hooks'
 import { useDrag } from '@hooks/useDrag'
 import {
   Box, Button, Divider,
-  IconButton, Paper, Typography,
+  IconButton, Paper
 } from '@mui/material'
 import { FormProps } from '@rjsf/core'
 import Form from '@rjsf/material-ui'
 import {
   useAnimation,
-  View, wrapComponent,
+  View, wrapComponent
 } from 'colay-ui'
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import * as R from 'colay/ramda'
 import React from 'react'
 import { ClusterTable } from './ClusterTable'
 import { EventHistoryTable } from './EventHistoryTable'
-import { PlaylistTable } from './PlaylistTable'
 import { LayoutOptions } from './LayoutOptions'
+import { PlaylistTable } from './PlaylistTable'
 
 type DefaultsOption = {
   visible?: boolean;
@@ -38,8 +38,8 @@ export type SettingsBarProps = {
   isOpen?: boolean;
   forms?: SettingsForm[];
   createClusterForm?: FormProps<any>;
-  defaults: {
-    layout: DefaultsOption;
+  defaults?: {
+    layout?: DefaultsOption;
   }
 }
 
@@ -99,13 +99,13 @@ const SettingsBarElement = (props: SettingsBarProps) => {
     },
     selectedEventIds: [] as string[],
   })
-  const containerRef = React.useRef()
+  const containerRef = React.useRef<HTMLDivElement>()
   const onMouseDown = useDrag({
     ref: containerRef,
     onDrag: ({ x, y }, rect) => {
       localDataRef.current.width = rect.width - x
       localDataRef.current.height = rect.height - y
-      const target = containerRef.current
+      const target = containerRef.current!
       target.style.width = `${localDataRef.current.width}px`
       target.style.height = `${localDataRef.current.height}px`
     },
@@ -340,9 +340,3 @@ const SettingsBarElement = (props: SettingsBarProps) => {
 }
 
 export const SettingsBar = wrapComponent<SettingsBarProps>(SettingsBarElement, {})
-
-const styles = {
-  icon: {
-    fontSize: 24,
-  },
-} as const

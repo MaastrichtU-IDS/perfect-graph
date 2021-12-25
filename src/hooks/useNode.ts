@@ -7,6 +7,7 @@ import {
   NodeConfig,
   Cluster,
   NodeData,
+  NodeElement,
 } from '@type'
 import { getClusterVisibility, calculateVisibilityByContext, contextUtils } from '@utils'
 import { CYTOSCAPE_EVENT, ELEMENT_DATA_FIELDS } from '@constants'
@@ -18,7 +19,7 @@ export type Props = {
   graphID: string;
   position: Position;
   isCluster?: boolean;
-  onPositionChange?: (c: {element: NodeSingular; context: NodeContext }) => void|any;
+  onPositionChange?: (c: { element: NodeSingular; context: NodeContext }) => void | any;
   config?: NodeConfig;
   item: NodeData;
 }
@@ -42,7 +43,7 @@ export default (props: Props): Result => {
     position,
     onPositionChange,
     graphID,
-    config = {},
+    config = {} as NodeConfig,
     item,
     isCluster = false,
   } = props
@@ -56,7 +57,7 @@ export default (props: Props): Result => {
     : clustersByNodeId[id]
   const [, setState] = useStateWithCallback({}, () => {})
   const contextRef = React.useRef<NodeContext>({
-    render: (callback: () => {}) => setState({}, callback),
+    render: (callback: () => void) => setState({}, callback),
     onPositionChange: () => {
       onPositionChange?.({ element, context: contextRef.current })
       element.connectedEdges().forEach((mutableEdge) => {
@@ -73,8 +74,8 @@ export default (props: Props): Result => {
       hovered: false,
     },
   } as NodeContext)
-  const element = React.useMemo(() => {
-    let _element = cy.$id(id)[0]
+  const element: NodeElement = React.useMemo(() => {
+    let _element: NodeElement = cy.$id(id)[0]
     if (!_element) {
       _element = cy!.add({
         data: {
@@ -85,7 +86,7 @@ export default (props: Props): Result => {
         position: { ...position },
         group: 'nodes',
         // eslint-disable-next-line react-hooks/exhaustive-deps
-      }) as NodeSingular
+      }) as unknown as NodeElement
     }
     return _element
   }, [cy, id])

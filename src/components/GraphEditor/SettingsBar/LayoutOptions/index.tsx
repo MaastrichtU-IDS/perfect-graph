@@ -1,19 +1,12 @@
-import {
-  Box, Button, Popover,
-  Backdrop,
-  Portal,
-} from '@mui/material'
-import Form from '@rjsf/material-ui'
+import { Collapsible, CollapsibleContainer, CollapsibleTitle } from '@components/Collapsible'
 import { EVENT } from '@constants'
+import Form from '@rjsf/material-ui'
 import { OnEventLite } from '@type'
-import { useDisclosure } from 'colay-ui'
+import * as R from 'colay/ramda'
 import React from 'react'
 import {
   getFormProps,
-  WIDTH,
 } from './getFormProps'
-import * as R from 'colay/ramda'
-import { Collapsible, CollapsibleTitle, CollapsibleContainer } from '@components/Collapsible'
 
 type LayoutOptionsValue = {
   name?: string;
@@ -53,7 +46,7 @@ export const LayoutOptions = (props: LayoutOptionsProps) => {
   return (
     <Collapsible>
         {
-          ({ isOpen, onToggle}) => (
+          ({ isOpen, onToggle }) => (
             <>
             <CollapsibleTitle
               onClick={onToggle}

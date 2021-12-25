@@ -1,4 +1,5 @@
 import { drawGraphics } from '@components/Graphics'
+import { Theme, useTheme } from '@core/theme'
 import { PixiComponent, useApp } from '@inlet/react-pixi'
 import { ViewportType } from '@type'
 import {
@@ -6,24 +7,21 @@ import {
   getPointerPositionOnViewport,
   isMultipleTouches,
 } from '@utils'
-import Vector from  'victor'
 import { useForwardRef, wrapComponent } from 'colay-ui'
 import * as R from 'colay/ramda'
 import { BoundingBox, Position } from 'colay/type'
-import * as V from 'colay/vector'
 import { Viewport as ViewportNative } from 'pixi-viewport'
 import * as PIXI from 'pixi.js'
 // import Cull from 'pixi-cull'
 import React from 'react'
-import {
-  useTheme,
-} from '@core/theme'
+import Vector from 'victor'
 
 
 type NativeViewportProps = {
   app: PIXI.Application;
   width: number;
   height: number;
+  theme: Theme;
   onCreate?: (v: ViewportNative) => void;
   onPress?: (c: {
     nativeEvent: PIXI.InteractionEvent;
@@ -67,7 +65,6 @@ const ReactViewportComp = PixiComponent('Viewport', {
       app: {
         renderer,
         ticker,
-        stage,
       },
       theme,
       height,
@@ -149,6 +146,7 @@ const ReactViewportComp = PixiComponent('Viewport', {
         viewport.removeChild(boxElement!)
         boxElement?.destroy()
       }
+      // @ts-ignore
       localDataRef.current.boxSelection = {}
     })
     viewport.on('pointermove', (e) => {
@@ -336,7 +334,7 @@ export type ViewportProps = {
   children?: React.ReactNode;
 } & Omit<NativeViewportProps, 'app'>
 
-function ViewportElement(props: ViewportProps, ref: React.ForwardedRef<ViewportType>) {
+function ViewportElement(props: Omit<ViewportProps, 'theme'>, ref: React.ForwardedRef<ViewportType>) {
   const {
     children,
     ...rest
@@ -345,11 +343,11 @@ function ViewportElement(props: ViewportProps, ref: React.ForwardedRef<ViewportT
   const viewportRef = useForwardRef(ref, {})
   const theme = useTheme()
   const keyboardRef = React.useRef({
-    pressedKeys: {},
-    intervalTimeout: null,
+    pressedKeys: {} as Record<string, boolean>,
+    intervalTimeout: null as number | null,
   })
   React.useEffect(() => {
-    const keyDownListener = (e) => {
+    const keyDownListener = (e: KeyboardEvent) => {
       if (document.body === e.target) {
         keyboardRef.current.pressedKeys[e.key] = true
         if (!keyboardRef.current.intervalTimeout) {
@@ -391,13 +389,13 @@ function ViewportElement(props: ViewportProps, ref: React.ForwardedRef<ViewportT
             const newCenter = new PIXI.Point(center.x + pointer.x, center.y + pointer.y)
             viewportRef.current.center = newCenter
           }, 5)
-          keyboardRef.current.intervalTimeout = interval
+          keyboardRef.current.intervalTimeout = interval as unknown as number
         }
         // viewportRef.current.center =
       }
     }
-    const keyUpListener = (e) => {
-      clearInterval(keyboardRef.current.intervalTimeout)
+    const keyUpListener = () => {
+      clearInterval(keyboardRef.current.intervalTimeout!)
       keyboardRef.current.intervalTimeout = null
       keyboardRef.current.pressedKeys = {}
     }

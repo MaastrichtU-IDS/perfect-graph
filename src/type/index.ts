@@ -18,6 +18,45 @@ import GraphLayouts from '@core/layouts'
 import type { GraphEditorProps } from '@components/GraphEditor'
 import type * as PIXIType from './pixi'
 
+declare module 'pixi.js' {
+  interface DisplayObject extends PIXI.DisplayObject {
+    yoga: YogaLayout;
+
+    /**
+         * Internal property for fast checking if object has yoga
+         */
+    __hasYoga: boolean;
+
+    _visible: boolean;
+
+    flex: boolean;
+
+    /**
+         * Applies yoga layout to DisplayObject
+         */
+    updateYogaLayout(): void;
+
+    /**
+         * Checks boundaries of DisplayObject and emits NEED_LAYOUT_UPDATE if needed
+         */
+    checkIfBoundingBoxChanged(): void;
+    _yogaLayoutHash: number;
+    _prevYogaLayoutHash: number;
+    __yoga: YogaLayout;
+  }
+}
+
+declare module 'cytoscape' {
+  interface NodeSingular extends cytoscape.NodeSingular {
+    hovered: () => boolean;
+    filtered: () => boolean;
+  }
+  interface EdgeSingular extends cytoscape.EdgeSingular  {
+    hovered: () => boolean;
+    filtered: () => boolean;
+  }
+}
+
 export type Style = { [k: string]: any }
 // export type OnLayout = (event: LayoutChangeEvent) => void
 export type ElementContext<T = (NodeElementSettings | EdgeElementSettings)> = {
@@ -77,6 +116,7 @@ export type EdgeElement = EdgeSingular
 export type NodeElement = NodeSingular
 
 export type Element = EdgeElement | NodeElement
+
 export type ElementData = NodeData | EdgeData
 
 export type NodeData = {
@@ -127,6 +167,7 @@ export type RenderNode<Additional extends Record<string, any> = {}> = (c: {
   item: NodeData;
   element: NodeElement;
   config: NodeConfig;
+  context: NodeContext;
 } & RenderElementParams & Additional) => React.ReactElement
 
 export type RenderClusterNode<Additional extends Record<string, any> = {}> = (c: {
@@ -291,7 +332,7 @@ export type DisplayObjectWithYoga = PIXI.DisplayObject & {
 export type PIXIDisplayObjectProps = {
   interactive?: boolean;
   buttonMode?: boolean;
-} & Partial<PIXIEvents>
+}
 
 export type GraphLabelData = {
   global: { nodes: string[]; edges: string[] };
@@ -339,7 +380,9 @@ export type DrawLine = (
 export type ViewportType = PIXI.DisplayObject & ViewportNative & {
   clickEvent: any;
   isClick: boolean;
-  hitArea: BoundingBox
+  hitArea: BoundingBox;
+  qualityLevel: number;
+  oldQualityLevel: number;
 }
 export type ViewportRef = ViewportType
 
@@ -350,7 +393,7 @@ export type GraphRef = {
 }
 
 export type GraphEditorRef = GraphRef & {
-  context: GraphEditorContext;
+  context: GraphEditorContextType;
 }
 
 export type RecordedEvent = EventInfo
@@ -369,11 +412,19 @@ export type Playlist = {
 
 export type ControllerState = {
   label: GraphLabelData;
+  onEvent: (
+    eventInfo: EventInfo & {
+      graphEditor: GraphEditorRef;
+    },
+    draft: ControllerState
+  ) => boolean | void
 } & Pick<
 GraphEditorProps,
 'nodes' | 'edges' | 'mode' | 'selectedElementIds'
 | 'actionBar' | 'dataBar' | 'settingsBar'
-| 'graphConfig'
+| 'graphConfig' | 'playlists' | 'isLoading' | 'modals' | 'events'
+| 'preferencesModal' | 'isFocusMode' | 'previousDataList'
+
 >
 
 export type GraphEditorConfig = {
@@ -389,7 +440,7 @@ export type NetworkStatistics = {
   local?: any
 }
 
-export type GraphEditorContext = {
+export type GraphEditorContextType = {
   onEvent: OnEventLite;
   graphConfig?: GraphConfig;
   config?: GraphEditorConfig;
@@ -416,3 +467,4 @@ export type GraphEditorContext = {
   nodes: NodeData[]
   edges: EdgeData[]
 }
+

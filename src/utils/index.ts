@@ -12,7 +12,7 @@ import {
   Cluster, EventInfo, GraphEditorRef, ControllerState,
   ViewportRef, LightEventInfo,
   EdgeElement, NodeElement,
-  GraphRef,
+  GraphRef, Playlist, 
 } from '@type'
 import {
   ELEMENT_DATA_FIELDS, EVENT,
@@ -60,13 +60,13 @@ import Vector from 'victor'
 //   return newStyle
 // }
 
-export const processStyle = (props: any = {}, mutableInstance): any => {
+export const processStyle = (props: any = {}, mutableInstance: PIXI.DisplayObject): any => {
   const { parent } = mutableInstance
   const {
     style = {},
   } = props
   const newProps: any = {}
-  R.forEachObjIndexed((val: any, key: string) => {
+  R.forEachObjIndexed<Record<string, any>>((val: any, key: string) => {
     let isNumber = true
     if (R.is(String)(val) && R.includes(val, '%')) {
       isNumber = false
@@ -154,7 +154,7 @@ export const applyEvents = (
   
 }
 
-const processProps = (props: Record<string, any>, mutableInstance) => props
+const processProps = (props: Record<string, any>, _mutableInstance: PIXI.DisplayObject) => props
 
 type ApplyDefaultPropsConfig = {
   isFlex?: boolean;
@@ -283,7 +283,7 @@ export const getSelectedElementInfo = (
   const itemIds = controllerState.selectedElementIds
   const selectedItemId = R.last(itemIds ?? [])
   const selectedElement = selectedItemId
-    ? graphEditor.cy.$id(`${selectedItemId}`)
+    ? graphEditor.cy.$id(`${selectedItemId}`) as  EdgeElement | NodeElement
     : null
   if (!selectedElement) {
     return {}
@@ -393,7 +393,7 @@ export const filterEdges = (nodes: NodeData[]) => (
       acc[curr.id] = curr
       return acc
     },
-    {},
+    {} as Record<string, NodeData>,
   ) as Record<string, NodeData>
   console.log('AA', nodeMap)
   // R.groupBy(R.prop('id'), nodes)
@@ -423,7 +423,6 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
       } = event
       const oldSelectedElementIds = controllerState.selectedElementIds
       const {
-        selectedElement,
         selectedItem,
       } = getSelectedElementInfo(controllerState, graphEditor)
       switch (type) {
@@ -490,7 +489,7 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
             {
               type: EVENT.DELETE_PLAYLIST,
               payload: {
-                itemIds: payload.items?.map((item) => item.id),
+                itemIds: payload.items?.map((item: Playlist) => item.id),
               },
             },
           ]
@@ -499,7 +498,7 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
             {
               type: EVENT.DELETE_CLUSTER,
               payload: {
-                itemIds: payload.items?.map((item) => item.id),
+                itemIds: payload.items?.map((item: Cluster) => item.id),
               },
             },
           ]
@@ -570,7 +569,7 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
               type: EVENT.CREATE_PLAYLIST,
               payload: {
                 items: controllerState.playlists!.filter(
-                  (playlist) => payload.itemIds.includes(playlist.id),
+                  (playlist: Playlist) => payload.itemIds.includes(playlist.id),
                 ),
               },
             },
@@ -695,7 +694,7 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
               type: EVENT.SET_POSITIONS_IMPERATIVELY,
               payload: {
                 oldLayout: controllerState.graphConfig?.layout,
-                positions: payload.positions.map(({ elementId }) => {
+                positions: payload.positions.map(({ elementId }: { elementId: string }) => {
                   const element = graphEditor.cy.$id(`${elementId}`)
                   return {
                     position: {
@@ -782,7 +781,7 @@ export const getElementsCollectionByIds = (cy: cytoscape.Core, ids: string[]) =>
 
 export const getPointerPositionOnViewport = (
   viewport: ViewportRef,
-  event: MouseEvent,
+  event: TouchEvent,
 ) => {
   const position = getEventClientPosition(event)
   // @ts-ignore
@@ -797,7 +796,7 @@ export const getPointerPositionOnViewport = (
   return position
 }
 
-export const getEventClientPosition = (e) => {
+export const getEventClientPosition = (e: TouchEvent) => {
   const event = e.touches?.[0] ?? e.changedTouches?.[0] ?? e
   return {
     x: event.clientX,
@@ -805,7 +804,7 @@ export const getEventClientPosition = (e) => {
   }
 }
 
-export const isMultipleTouches = (e) => {
+export const isMultipleTouches = (e: TouchEvent) => {
   const touches = e.touches ?? e.changedTouches
   return touches && touches.length > 0
 }
@@ -832,7 +831,7 @@ export const getItemFromElement = (element: Element) => ({
   data: getElementData(element),
 })
 
-export const pauseEvent = (e) => {
+export const pauseEvent = (e: Event) => {
   if (e.stopPropagation) e.stopPropagation()
   if (e.preventDefault) e.preventDefault()
   e.cancelBubble = true

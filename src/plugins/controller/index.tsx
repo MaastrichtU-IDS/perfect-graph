@@ -4,6 +4,7 @@ import GraphLayouts from '@core/layouts'
 import {
   ControllerState, DataItem, EditorMode, EventInfo,
   GraphEditorRef, GraphLabelData, RDFType, RecordedEvent,
+  EventHistory,
 } from '@type'
 import {
   getSelectedItemByElement,
@@ -25,30 +26,26 @@ import * as R from 'colay/ramda'
 import * as PIXI from 'pixi.js'
 import React from 'react'
 import Vector from 'victor'
-import {
-  ElementSettingsModal,
-} from '@components/GraphEditor/modals/ElementSettingsModal'
+// import {
+//   ElementSettingsModal,
+// } from '@components/GraphEditor/modals/ElementSettingsModal'
 
 // type ControllerOptions = {
 //   // onEvent?: (info: EventInfo, draft: ControllerState) => boolean;
 // }
 
-type UseControllerData = Pick<
-GraphEditorProps,
-'nodes' | 'edges' | 'mode'
-| 'actionBar' | 'dataBar' | 'settingsBar'
-| 'graphConfig' | 'events' | 'label' | 'playlists' | 'selectedElementIds'
-| 'modals' | 'isFocusMode' | 'preferencesModal'
-> & {
-  onEvent?: (info: EventInfo & {
-    graphEditor: GraphEditorRef;
-  }, draft: ControllerState) => boolean;
-}
-
-// export type UseControllerResult = [
-//   UseControllerData,
-//   {},
-// ]
+type UseControllerData = ControllerState
+// Pick<
+// GraphEditorProps,
+// 'nodes' | 'edges' | 'mode'
+// | 'actionBar' | 'dataBar' | 'settingsBar'
+// | 'graphConfig' | 'events' | 'label' | 'playlists' | 'selectedElementIds'
+// | 'modals' | 'isFocusMode' | 'preferencesModal' | 'previousDataList'
+// > & {
+//   onEvent?: (info: EventInfo & {
+//     graphEditor: GraphEditorRef;
+//   }, draft: ControllerState) => boolean;
+// }
 
 const closeAllBars = (draft:UseControllerData) => {
   draft.actionBar!.isOpen = false
@@ -82,7 +79,7 @@ export const useController = (
     // targetNode: null,
   })
   const [state, updateState] = useImmer(controllerConfig)
-  type UpdateFunction = (draft: UseControllerData, config: {
+  type UpdateFunction = (draft: ControllerState, config: {
     graphEditorRef: React.MutableRefObject<GraphEditorRef>
   }) => void
   const update = React.useCallback( (updater: UpdateFunction) => {
@@ -202,7 +199,7 @@ export const useController = (
             const {
               itemIds = [],
             } = payload as {
-              itemIds: { id: string } []
+              itemIds: string[]
             }
             // const itemIds = items.map((item) => item.id)
             // const itemIndex = draft.nodes.findIndex((node) => node.id === item.id)
@@ -387,8 +384,8 @@ export const useController = (
           case EVENT.DEFOCUS: {
             if (draft.previousDataList) {
               const previousData =  draft.previousDataList.pop()
-              draft.nodes = previousData.nodes
-              draft.edges = previousData.edges
+              draft.nodes = previousData!.nodes
+              draft.edges = previousData!.edges
               if (draft.previousDataList.length === 0) {
                 draft.isFocusMode = false
               }
@@ -470,7 +467,7 @@ export const useController = (
             draft.settingsBar!.isOpen = !draft.settingsBar?.isOpen
             break
           case EVENT.TOGGLE_PREFERENCES_MODAL:
-            draft.preferencesModal.isOpen = !draft.preferencesModal?.isOpen
+            draft.preferencesModal!.isOpen = !draft.preferencesModal?.isOpen
             break
           case EVENT.TOGGLE_DATA_BAR:
             draft.dataBar!.isOpen = !draft.dataBar?.isOpen
@@ -478,15 +475,17 @@ export const useController = (
           case EVENT.TOGGLE_ACTION_BAR:
             draft.actionBar!.isOpen = !draft.actionBar?.isOpen
             break
-          case EVENT.IMPORT_DATA:
+          case EVENT.IMPORT_DATA:{
 
             R.mapObjIndexed((value, key) => {
               // @ts-ignore
               draft[key] = value
-            })(payload.value)
+            })(payload.value) 
             const {
               eventHistory: eventHistoryData,
-            } = payload.value ?? {}
+            } = (payload.value ?? {}) as unknown  as {
+              eventHistory: EventHistory;
+            }
             eventHistory.set({
               currentIndex: eventHistoryData.events.length,
               items: eventHistoryData.events.map((event, i) => ({
@@ -496,6 +495,7 @@ export const useController = (
               })),
             })
             break
+          }
           case EVENT.IMPORT_EVENTS:
             closeAllBars(draft)
             draft.events = [...(payload.value ?? [])]
@@ -730,7 +730,7 @@ export const useController = (
           case EVENT.ELEMENT_SETTINGS_FORM_SUBMIT: {
             const {
               name,
-              value,
+              // value,
             } = payload
             // draft.modals.ElementSettings.isOpen = true
             switch (name) { 
@@ -751,14 +751,14 @@ export const useController = (
             // draft.modals.ElementSettings.isOpen = true
             switch (preferenceId) { 
               case 'NodeView':
-                draft.graphConfig.nodes.view = {
-                  ...draft.graphConfig.nodes.view,
+                draft.graphConfig!.nodes!.view = {
+                  ...draft.graphConfig?.nodes?.view,
                   ...value,
                 }
                 break
               case 'EdgeView':
-                draft.graphConfig.edges.view = {
-                  ...draft.graphConfig.edges.view,
+                draft.graphConfig!.edges!.view = {
+                  ...draft.graphConfig?.edges?.view,
                   ...value,
                 }
                 break
@@ -771,7 +771,8 @@ export const useController = (
           case EVENT.CLOSE_MODAL: {
             const {
               name,
-            } = payload
+            } = payload as { name: string }
+            // @ts-ignore
             draft.modals[name].isOpen = false
             break
           }
@@ -813,7 +814,7 @@ export const useController = (
 
 const getValueByType = (type: RDFType, value: string) => value
 
-const DEFAULT_CONTROLLER_CONFIG: UseControllerData = {
+const DEFAULT_CONTROLLER_CONFIG: ControllerState = {
   nodes: [],
   edges: [],
   isLoading: false,

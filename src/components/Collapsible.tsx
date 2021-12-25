@@ -8,7 +8,7 @@ import {
 } from 'colay-ui'
 
 export type CollapsibleProps = {
-  children: (params: { isOpen: boolean; onOpen: () =>void; onClose: () => void; onToggle: () => void }) => React.ReactNode
+  children: (params: { isOpen: boolean; onOpen: () =>void; onClose: () => void; onToggle: () => void }) => React.ReactElement
   isOpen?: boolean;
   defaultIsOpen?: boolean;
 }

@@ -11,15 +11,15 @@ type OnDragResult = {
 }
 
 export const useDragInfo = (
-  onDrag: (pos: Position) => {keepDragging?: boolean; position?: Position }|void,
+  onDrag: (pos: Position) => { keepDragging?: boolean; position?: Position } | void,
 ) => {
-  const mutableData: { position: Position | null} = React.useRef({
-    position: null,
-    boundingClientRect: null as null | any,
+  const mutableData = React.useRef({
+    position: null as Position | null,
+    boundingClientRect: null as DOMRect | null,
   }).current
-  const onDown = (position: Position, e: MouseEvent) => {
+  const onDown = (position: Position, e: TouchEvent) => {
     mutableData.position = position
-    mutableData.boundingClientRect = e.target.getBoundingClientRect()
+    mutableData.boundingClientRect = (e.target! as Element).getBoundingClientRect()
   }
   const onMove = React.useCallback((position: Position) => {
     if (mutableData.position) {
@@ -33,29 +33,34 @@ export const useDragInfo = (
       }
       return result
     }
+    return undefined
   }, [])
   React.useEffect(() => {
     const mouseUpOnDocument = () => {
       mutableData.position = null
     }
-    const mouseMoveOnDocument = (e) => {
+    const mouseMoveOnDocument = (e: TouchEvent) => {
       if (mutableData.position) {
         const {
           boundingClientRect,
           position,
         } = mutableData
-        const clientPosition = getEventClientPosition(e)
+        const clientPosition = getEventClientPosition(e )
         onMove(V.add({
-          x: clientPosition.x - boundingClientRect.left,
-          y: clientPosition.y - boundingClientRect.top,
+          x: clientPosition.x - boundingClientRect!.left,
+          y: clientPosition.y - boundingClientRect!.top,
         })(position))
       }
     }
-    document.addEventListener('mouseup', mouseUpOnDocument)
-    document.addEventListener('mousemove', mouseMoveOnDocument)
+    document.addEventListener('touchend', mouseUpOnDocument)
+    document.addEventListener('touchmove', mouseMoveOnDocument)
+    // document.addEventListener('mouseup', mouseUpOnDocument)
+    // document.addEventListener('mousemove', mouseMoveOnDocument)
     return () => {
-      document.removeEventListener('mouseup', mouseUpOnDocument)
-      document.removeEventListener('mousemove', mouseMoveOnDocument)
+      document.removeEventListener('touchend', mouseUpOnDocument)
+      document.removeEventListener('touchmove', mouseMoveOnDocument)
+      // document.removeEventListener('mouseup', mouseUpOnDocument)
+      // document.removeEventListener('mousemove', mouseMoveOnDocument)
     }
   }, [])
   return {

@@ -1,5 +1,5 @@
 import { createProvider } from 'colay-ui'
-import * as C from  'colay/color'
+// import * as C from  'colay/color'
 // export const DefaultTheme = {
 //   palette: {
 //     common: {

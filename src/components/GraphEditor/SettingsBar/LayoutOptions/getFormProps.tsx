@@ -1,10 +1,8 @@
 import { LAYOUT_NAMES } from '@constants'
 import {
   Card,
-  CardActionArea, CardContent, CardMedia, MenuItem,
-  Popper,
-  TextField,
-  Typography
+  CardActionArea, CardContent, CardMedia, MenuItem, TextField,
+  Typography,
 } from '@mui/material'
 import { utils, WidgetProps } from '@rjsf/core'
 import { useDisclosure, View } from 'colay-ui'
@@ -170,13 +168,13 @@ const LayoutNameItem = (props: LayoutNameItemProps) => {
   const {
     label,
     value,
-    openInfo = {},
+    // openInfo = {},
   } = props
-  const {
-    isOpen,
-    anchorEl,
-  } = openInfo
-  const info = LAYOUT_INFO[value as keyof typeof LAYOUT_INFO]
+  // const {
+  //   isOpen,
+  //   anchorEl,
+  // } = openInfo
+  // const info = LAYOUT_INFO[value as keyof typeof LAYOUT_INFO]
   return (
     <>
       <View
@@ -217,7 +215,8 @@ const LayoutNameItem = (props: LayoutNameItemProps) => {
 }
 
 type LayoutCardProps = typeof LAYOUT_INFO['breadthfirst']
-const LayoutCard = (props: LayoutCardProps) => {
+
+export const LayoutCard = (props: LayoutCardProps) => {
   const {
     content,
     image,

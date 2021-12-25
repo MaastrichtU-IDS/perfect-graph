@@ -9,7 +9,7 @@ import { SpeedDialCreator } from '@components/SpeedDialCreator'
 import { TabPanel } from '@components/TabPanel'
 import { EDITOR_MODE, EVENT } from '@constants'
 import { useGraphEditor } from '@hooks'
-import { GraphEditorContext } from '@hooks/useGraphEditor'
+import { GraphEditorContextType } from '@type'
 import { Cluster } from '@type'
 import {
   Button,
@@ -472,9 +472,9 @@ export const ClusterTable = (props: ClusterTableProps) => {
 }
 
 type SpeedDialActionsViewProps = {
-  graphEditorLocalDataRef: GraphEditorContext['localDataRef'];
-  editorMode: GraphEditorContext['mode'];
-  onEvent: GraphEditorContext['onEvent'];
+  graphEditorLocalDataRef: GraphEditorContextType['localDataRef'];
+  editorMode: GraphEditorContextType['mode'];
+  onEvent: GraphEditorContextType['onEvent'];
   item: Cluster;
 }
 

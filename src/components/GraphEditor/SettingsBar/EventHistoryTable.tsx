@@ -1,23 +1,20 @@
-import { Icon } from '@components/Icon'
-import { 
+import {
   Collapsible,
   CollapsibleContainer,
-  CollapsibleTitle,
- } from '@components/Collapsible'
+  CollapsibleTitle
+} from '@components/Collapsible'
+import { Icon } from '@components/Icon'
 import { SortableList } from '@components/SortableList'
 import { SpeedDialCreator } from '@components/SpeedDialCreator'
 import { EVENT } from '@constants'
 import { useGraphEditor } from '@hooks'
 import {
   Card, Checkbox, IconButton, List,
-  ListItem, ListItemAvatar, ListItemText, Typography,
+  ListItem, ListItemAvatar, ListItemText, Typography
 } from '@mui/material'
-import Accordion from '@mui/material/Accordion'
-import AccordionDetails from '@mui/material/AccordionDetails'
-import AccordionSummary from '@mui/material/AccordionSummary'
 import {
   View,
-  wrapComponent,
+  wrapComponent
 } from 'colay-ui'
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import * as R from 'colay/ramda'

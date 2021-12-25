@@ -21,7 +21,7 @@ import { Enumerable } from 'colay/type'
 
 export type ContainerProps = PIXIBasicProps & PIXIDisplayObjectProps
 & Omit<React.ComponentProps<typeof PIXIReactContainer>, 'children'> & {
-  style: PIXIFlexStyle & PIXIBasicStyle;
+  style?: PIXIFlexStyle & PIXIBasicStyle;
   children: Enumerable<React.ReactNode>;
   draggable?: boolean;
   onDrag?: (param: Position) => void;

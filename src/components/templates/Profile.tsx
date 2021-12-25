@@ -1,13 +1,8 @@
-import React from 'react'
-import { wrapComponent } from 'colay-ui'
-import {
-  NodeData,
-} from '@type'
-import { Position } from 'colay-ui/type'
-import { Pressable } from '@components/Pressable'
 import { Image } from '@components/Image'
 import { Text } from '@components/Text'
 import { View, ViewProps } from '@components/View'
+import { wrapComponent } from 'colay-ui'
+import React from 'react'
 
 export type ProfileProps = {
   name: string;
@@ -40,8 +35,8 @@ const ProfileElement = (
         flexDirection: 'row',
         borderRadius: 30,
         backgroundColor: '#304e57',
-        paddingLeft: 10,
-        paddingTop: 10,
+        // paddingLeft: 10,
+        // paddingTop: 10,
       }}
       >
         <Image

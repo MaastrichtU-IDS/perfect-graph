@@ -21,7 +21,7 @@ export type Props<T> = {
 }
 
 type Result<T> = {
-  element: EdgeSingular;
+  element: EdgeElement;
   context: EdgeContext;
   cy: Core;
 }
@@ -30,7 +30,7 @@ export default <T>(props: Props<T>): Result<T> => {
   const {
     onPositionChange,
     graphID,
-    config = {},
+    config = {} as EdgeConfig,
     item,
   } = props
   const {
@@ -42,7 +42,7 @@ export default <T>(props: Props<T>): Result<T> => {
   const [, setState] = useStateWithCallback({}, () => {
   })
   const contextRef = React.useRef<EdgeContext>({
-    render: (callback: () => {}) => {
+    render: (callback: () => void) => {
       setState({}, callback)
     },
     onPositionChange: () => {

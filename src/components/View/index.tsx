@@ -33,6 +33,7 @@ const ViewPIXI = PixiComponent<ViewProps & ThemeProps, PIXI.Graphics>('View', {
   },
   applyProps: (instance: PIXI.Graphics, oldProps, _props) => {
     const props = preprocessProps(_props)
+    // @ts-ignore
     drawGraphics(instance, props)
     const EXCLUDE_KEYS = ['fill', 'width', 'height']
     applyDefaultProps(

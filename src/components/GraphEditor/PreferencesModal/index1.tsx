@@ -1,26 +1,19 @@
-import React from 'react'
-import {
-  Modal,
-  Paper,
-  Typography,
-  Divider,
-  Slide,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Link,
-  Breadcrumbs,
-  Collapse,
-} from '@mui/material'
 import { Icon } from '@components/Icon'
-import { useGraphEditor } from '@hooks'
 import { EVENT } from '@constants'
-import { View, DataRender } from 'colay-ui'
-import Form from '@rjsf/material-ui'
+import { useGraphEditor } from '@hooks'
 import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
+import {
+  Breadcrumbs,
+  Collapse, Divider, Link, List,
+  ListItem,
+  ListItemIcon,
+  ListItemText, Modal,
+  Paper, Slide, Typography
+} from '@mui/material'
+import { DataRender, View } from 'colay-ui'
 import * as R from 'colay/ramda'
+import React from 'react'
 
 type SidebarItemData = {
   label: string;
@@ -34,7 +27,7 @@ export type PreferencesModalProps = {
   components?: Record<string, React.ReactNode>;
 }
 
-const getId = (sidebarItem: SidebarItemData) => sidebarItem?.id ?? sidebarItem
+// const getId = (sidebarItem: SidebarItemData) => sidebarItem?.id ?? sidebarItem
 
 
 export const PreferencesModal = (props: PreferencesModalProps) => {

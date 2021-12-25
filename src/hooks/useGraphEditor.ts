@@ -1,7 +1,7 @@
 import { createStoreProvider } from 'colay-ui'
 // import { createStoreProvider } from '@root/components/GraphEditor/createStoreProvider'
 import {
-  GraphEditorContext as GraphEditorContextType,
+  GraphEditorContextType,
 } from '@type'
 
 const {

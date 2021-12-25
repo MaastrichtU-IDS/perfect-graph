@@ -5,7 +5,6 @@ import {
   Graphics as ReactPIXIGraphics,
 } from '@inlet/react-pixi'
 import * as R from 'colay/ramda'
-import { DefaultTheme } from '@core/theme'
 import { EDGE_LINE_Z_INDEX } from '@constants'
 import Vector from 'victor'
 // import { applyDefaultProps, preprocessProps } from '@utils'
@@ -26,12 +25,12 @@ type BezierLinePoints = {
 }
 const controlPointsCreator = {
   bezier: (config: {
-    from: Position;
-    to: Position;
+    from: Vector;
+    to: Vector;
     unitVector: Position;
     distance: number;
     count: number;
-    normVector: Position;
+    normVector: Vector;
   }): BezierLinePoints[] => {
     const {
       from,
@@ -103,7 +102,7 @@ export const drawLine = (
     targetElement: NodeElement;
     from: BoundingBox;
     to: BoundingBox;
-    unitVector: Position;
+    unitVector: Vector;
     distanceVector: Position;
     normVector: Position;
     undirectedUnitVector:Position;
@@ -168,14 +167,14 @@ export const drawLine = (
     .subtract(unitVector.clone().multiplyScalar(radiusTo))
     .add(marginVector)
   graphics.clear()
-  graphics.lineStyle(width, fill, alpha)
+  graphics.lineStyle(( width as number), fill, alpha)
 
   if (directed) {
     drawArrowHead({
       graphics,
       unitVector,
       to,
-      fill,
+      fill: fill!,
       ...arrowHead,
     })
   }
@@ -196,7 +195,7 @@ export const drawLine = (
           end,
           // control1,
           // control2,
-          midVec,
+          // midVec,
           mid,
         }: BezierLinePoints) => {
           graphics.moveTo(start.x, start.y)

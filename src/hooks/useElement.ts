@@ -111,8 +111,8 @@ export const useElement = (props: Props): Result => {
 
   // Add fields
   React.useMemo(() => {
-    element.hovered = () => contextRef.current?.settings.hovered
-    element.filtered = () => contextRef.current?.settings.filtered
+    element.hovered = () => !!contextRef.current?.settings.hovered
+    element.filtered = () => !!contextRef.current?.settings.filtered
   }, [element])
   return {
 

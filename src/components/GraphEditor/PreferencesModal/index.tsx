@@ -16,6 +16,7 @@ import {
 } from '@mui/material'
 import Form from '@rjsf/material-ui'
 import { DataRender, dataRenderPath, isReact, View } from 'colay-ui'
+import { GraphConfig } from '@type'
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import * as R from 'colay/ramda'
 import React from 'react'
@@ -214,6 +215,7 @@ export const PreferencesModal = (props: PreferencesModalProps) => {
             </Form>
           </Paper>
         )
+        // @ts-ignore
           : <Component />
       )
       }
@@ -271,8 +273,11 @@ type SidebarItemProps = {
   item: SidebarItemData;
   children: React.ReactNode;
   onSelect: (name: string)=>void
+  selectedPath: string[];
+  path: string[];
 }
-const getSelectedPath = (item, path = []) => {
+const getSelectedPath = (item: SidebarItemData, path: string[] = []): string[] => {
+  // @ts-ignore
   const firstChild = item?.children?.[0]
   if (firstChild) {
     return getSelectedPath(firstChild, [...path,  getId(firstChild)])
@@ -329,7 +334,7 @@ const SidebarItem = (props: SidebarItemProps) => {
 }
 
 export const DefaultComponents = {
-  NodeView: (graphConfig) => ({
+  NodeView: (graphConfig: GraphConfig) => ({
     schema: {
       'type': 'object',
       'properties': {
@@ -404,7 +409,7 @@ export const DefaultComponents = {
     },
     formData: R.omit(['ids'], graphConfig.nodes.view),
   }),
-  EdgeView: (graphConfig) => ({
+  EdgeView: (graphConfig: GraphConfig) => ({
     schema: {
       'type': 'object',
       'properties': {

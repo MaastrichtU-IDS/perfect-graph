@@ -1,7 +1,9 @@
 import React from 'react'
 import { ReactHTMLElementProps } from 'colay-ui/type'
 
-export type ResizeDividerProps = ReactHTMLElementProps<HTMLDivElement>
+export type ResizeDividerProps = ReactHTMLElementProps<HTMLDivElement> & {
+  isRight?: boolean
+}
 export const ResizeDivider = (props: ResizeDividerProps) => {
   const {
     isRight = true,
@@ -24,12 +26,10 @@ export const ResizeDivider = (props: ResizeDividerProps) => {
         borderColor: 'black',
         borderStyle: 'double',
         borderTopWidth: 0,
-        borderLeftWidth: 0,
-        borderRightWidth: 0,
         ...(
           isRight
-            ? { borderRightWidth: thickness }
-            : { borderLeftWidth: thickness }
+            ? { borderRightWidth: thickness, borderLeftWidth: 0 }
+            : { borderLeftWidth: thickness, borderRightWidth: 0 }
         ),
         borderBottomWidth: thickness,
         ...(props?.style ?? {}),

@@ -16,6 +16,7 @@ import {
   GraphConfig, GraphEditorConfig, GraphEditorRef, GraphEditorRenderEdge,
   GraphEditorRenderNode, GraphLabelData, NetworkStatistics,
   NodeElement, OnEvent, OnEventLite, Playlist, RecordedEvent,
+  NodeData, EdgeData,
 } from '@type'
 import {
   getEventClientPosition, getLabel, getSelectedItemByElement,
@@ -63,6 +64,10 @@ export type GraphEditorProps = {
   modals?: {
     ElementSettings?: ModalComponentProps
   };
+  previousDataList?: {
+    nodes: NodeData[];
+    edges: EdgeData[];
+  }[]
 } & Omit<
 GraphProps,
 'config' | 'onPress' | 'renderNode' | 'renderEdge'

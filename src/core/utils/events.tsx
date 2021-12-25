@@ -30,6 +30,7 @@ export function dragTrack(
       }
       return result
     }
+    return undefined
   }
   document.addEventListener('pointerup', () => {
     mutableData.position = null
