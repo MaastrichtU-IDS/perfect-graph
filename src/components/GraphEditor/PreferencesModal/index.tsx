@@ -37,8 +37,8 @@ const getId = (sidebarItem: SidebarItemData) => sidebarItem?.id ?? sidebarItem
 
 export const PreferencesModal = (props: PreferencesModalProps) => {
   const {
-    sidebar: sidebar_ = MOCK_SIDEBAR_DATA,
-    components = MOCK_COMPONENTS,
+    sidebar: sidebar_ = DefaultSidebarData,
+    components = DefaultComponents,
     isOpen = false,
   } = props
 
@@ -328,7 +328,7 @@ const SidebarItem = (props: SidebarItemProps) => {
   )
 }
 
-const MOCK_COMPONENTS = {
+export const DefaultComponents = {
   NodeView: (graphConfig) => ({
     schema: {
       'type': 'object',
@@ -512,7 +512,7 @@ const MOCK_COMPONENTS = {
   // Settings: () => <div>Settings</div>,
 }
 
-const MOCK_SIDEBAR_DATA = [
+export const DefaultSidebarData = [
   {
     id:  'General',
     icon: <Icon name="settings" />,
