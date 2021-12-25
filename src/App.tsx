@@ -23,9 +23,7 @@ export default () => (
     renderNode={({ item }) => {
       const data = item.data as Record<string, any>
       return (
-        <Graph.View
-          style={{ width: 100, height: 100, backgroundColor: data.color }}
-        >
+        <Graph.View>
           <Graph.Text
             style={{ fontSize: 20 }}
           >

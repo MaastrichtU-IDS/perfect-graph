@@ -5,13 +5,15 @@ import { Stage } from '@inlet/react-pixi'
 import {
   DrawLine, EdgeData, GraphConfig,
   GraphRef, NodeData, RenderEdge, RenderNode,
-  RenderClusterNode, 
+  RenderClusterNode,  NodeConfig, EdgeConfig,
+  ViewportType,
+  GraphNodesConfig,
+  GraphEdgesConfig,
 } from '@type'
 import {
   calculateVisibilityByContext, 
   contextUtils, cyUnselectAll, isPositionInBox,
   adjustVisualQuality, isFiltered,
-  getViewportZoom,
 } from '@utils'
 import { DEFAULT_EDGE_CONFIG, DEFAULT_NODE_CONFIG } from '@constants'
 import {
@@ -164,14 +166,14 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
   } = React.useMemo(
     () => R.mergeDeepAll([DEFAULT_NODE_CONFIG, config.nodes ?? {}]),
     [config.nodes],
-  )
+  ) as GraphNodesConfig
   const {
     ids: edgeConfigIds,
     ...globalEdgeConfig
   } =  React.useMemo(
     () => R.mergeDeepAll([DEFAULT_EDGE_CONFIG, config.edges ?? {}]),
     [config.edges],
-  )
+  ) as GraphEdgesConfig
 
   const onPressCallback = React.useCallback((e) => {
     cyUnselectAll(cy)
@@ -199,7 +201,7 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
         >
           <Viewport
             onCreate={(viewport) => {
-              graphRef.current.viewport = viewport
+              graphRef.current.viewport = viewport as ViewportType
             }}
             onPress={onPressCallback}
             zoom={config.zoom}
@@ -294,11 +296,11 @@ const RenderNodeContainer = ({
   globalNodeConfig,
   nodeConfigIds,
   renderNode,
-}) => {
+}: any) => {
   const config = React.useMemo(
     () => R.mergeDeepAll([globalNodeConfig, nodeConfigIds?.[item.id] ?? {}]),
     [globalNodeConfig, nodeConfigIds?.[item.id]],
-  )
+  ) as NodeConfig
   return (
     <NodeContainer
       graphID={graphID}
@@ -319,11 +321,11 @@ const RenderEdgeContainer  = ({
   globalEdgeConfig,
   edgeConfigIds,
   renderEdge,
-}) => {
+}: any) => {
   const config = React.useMemo(
     () => R.mergeDeepAll([globalEdgeConfig, edgeConfigIds?.[item.id] ?? {}]),
     [globalEdgeConfig, edgeConfigIds?.[item.id]],
-  )
+  ) as EdgeConfig
   return (
     <EdgeContainer
       graphID={graphID}
@@ -344,11 +346,11 @@ const RenderClusterNodeContainer = ({
   globalNodeConfig,
   nodeConfigIds,
   renderClusterNode,
-}) => {
+}: any) => {
   const config = React.useMemo(
     () => R.mergeDeepAll([globalNodeConfig, nodeConfigIds?.[item.id] ?? {}]),
     [globalNodeConfig, nodeConfigIds?.[item.id]],
-  )
+  ) as NodeConfig
   return (
     <ClusterNodeContainer
       graphID={graphID}

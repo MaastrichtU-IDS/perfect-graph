@@ -1,23 +1,23 @@
-import { Icon } from '@components/Icon'
 import {
-  IconButton,
-  Typography,
-} from '@mui/material'
-import { EVENT } from '@constants'
-import {
-  JSONViewer,
-} from './JSONViewer'
-import { View } from 'colay-ui/components/View'
-import React from 'react'
-import { OnEventLite } from '@type'
-import { 
   Collapsible,
   CollapsibleContainer,
   CollapsibleTitle,
 } from '@components/Collapsible'
+import { Icon } from '@components/Icon'
+import { EVENT } from '@constants'
+import {
+  IconButton,
+} from '@mui/material'
+import { OnEventLite } from '@type'
+import { View } from 'colay-ui/components/View'
+import React from 'react'
+import {
+  JSONViewer,
+} from './JSONViewer'
 export type GlobalNetworkStatisticsProps = {
   data?: any;
   onEvent: OnEventLite;
+  sort?: any;
 }
 
 export const GlobalNetworkStatistics = (props: GlobalNetworkStatisticsProps) => {

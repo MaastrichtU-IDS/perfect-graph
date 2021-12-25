@@ -1,21 +1,17 @@
 import { RenderNode } from '@type'
 import { cyUnselectAll } from '@utils'
-import * as R from 'colay/ramda'
 import React from 'react'
 import { Text as GraphText } from '../Text'
 import { View as GraphView } from '../View'
 
 export const DefaultRenderClusterNode: RenderNode = ({
-  item, element,
+  element,
   cy,
   config,
 }) => {
   const hasSelectedEdge = element.connectedEdges(':selected').length > 0
   const {
     view: {
-      width,
-      height,
-      radius,
       fill,
       labelVisible,
     },

@@ -236,10 +236,12 @@ export const useController = (
             const {
               itemIds = [],
             } = payload as {
-              itemIds: { id: string } []
+              itemIds: string[]
             }
             // const itemIds = items.map((item) => item.id)
-            draft.edges = draft.edges.filter((edgeItem) => !itemIds.includes(edgeItem.id))
+            draft.edges = draft.edges.filter(
+              (edgeItem) => !itemIds.includes(edgeItem.id),
+            )
             if (draft.mode === EDITOR_MODE.DELETE) {
               draft.mode = EDITOR_MODE.DEFAULT
             }
@@ -814,7 +816,7 @@ export const useController = (
 
 const getValueByType = (type: RDFType, value: string) => value
 
-const DEFAULT_CONTROLLER_CONFIG: ControllerState = {
+const DEFAULT_CONTROLLER_CONFIG: Partial<ControllerState> = {
   nodes: [],
   edges: [],
   isLoading: false,

@@ -19,9 +19,10 @@ import {
 
 export type ModalComponentProps = {
   isOpen?: boolean;
-  render?: () => React.ReactElement;
+  render?: (props: any) => React.ReactElement;
   form?: FormProps<any>
   onClose?: () => void
+  name: string;
 }
 
 export const ModalComponent = (props: ModalComponentProps) => {
@@ -32,7 +33,7 @@ export const ModalComponent = (props: ModalComponentProps) => {
     onClose,
     name,
   } = props
-  const Component = render
+  // const Component = render
   const [
     {
       onEvent,

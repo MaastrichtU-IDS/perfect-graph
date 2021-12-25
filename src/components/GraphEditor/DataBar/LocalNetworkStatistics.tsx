@@ -1,18 +1,19 @@
 import {
   Collapsible,
   CollapsibleContainer,
-  CollapsibleTitle
+  CollapsibleTitle,
 } from '@components/Collapsible'
 import { OnEventLite } from '@type'
 import { View } from 'colay-ui/components/View'
 import React from 'react'
 import {
-  JSONViewer
+  JSONViewer,
 } from './JSONViewer'
 
 export type LocalNetworkStatisticsProps = {
   data?: any;
   onEvent: OnEventLite;
+  sort?: any;
 }
 
 export const LocalNetworkStatistics = (props: LocalNetworkStatisticsProps) => {

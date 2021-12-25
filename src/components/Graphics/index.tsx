@@ -106,7 +106,7 @@ export const drawLine = (
     distanceVector: Position;
     normVector: Position;
     undirectedUnitVector:Position;
-    undirectedNormVector:Position;
+    undirectedNormVector:Vector;
     fill?: number;
     directed?: boolean;
     type?: 'bezier' | 'segments' | 'straight';
@@ -188,7 +188,6 @@ export const drawLine = (
         unitVector: undirectedUnitVector,
         normVector: undirectedNormVector,
       })
-      console.log('AA, bezier',controlPoints )
       controlPoints.map(
         ({
           start,

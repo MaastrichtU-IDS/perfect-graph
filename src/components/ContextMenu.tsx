@@ -1,7 +1,7 @@
 import {
   Menu,
   MenuItem,
-  Portal
+  Portal,
 } from '@mui/material'
 import { GraphEditorRef } from '@type'
 import { Position } from 'colay/type'
@@ -28,8 +28,8 @@ export const ContextMenu = (props: ContextMenuProps) => {
   return (
     <Portal container={document.body}>
       <Menu
-        open={open}
-        onClose={() => onSelect?.()}
+        open={!!open}
+        onClose={() => onSelect?.('')}
         anchorReference="anchorPosition"
         anchorPosition={{
           left: position.x,

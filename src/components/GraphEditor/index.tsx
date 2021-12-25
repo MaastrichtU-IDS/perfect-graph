@@ -16,7 +16,7 @@ import {
   GraphConfig, GraphEditorConfig, GraphEditorRef, GraphEditorRenderEdge,
   GraphEditorRenderNode, GraphLabelData, NetworkStatistics,
   NodeElement, OnEvent, OnEventLite, Playlist, RecordedEvent,
-  NodeData, EdgeData,
+  NodeData, EdgeData, GraphEditorContextType, Element,
 } from '@type'
 import {
   getEventClientPosition, getLabel, getSelectedItemByElement,
@@ -115,7 +115,7 @@ const GraphEditorElement = (
     playlists,
     networkStatistics,
     isLoading = false,
-    modals,
+    modals = {},
     isFocusMode = false,
     ...rest
   } = props
@@ -125,7 +125,7 @@ const GraphEditorElement = (
       ...(_graphConfig ?? {}),
       nodes: R.mergeAll([DEFAULT_NODE_CONFIG, _graphConfig?.nodes ?? {} ]),
       edges: R.mergeAll([DEFAULT_EDGE_CONFIG, _graphConfig?.edges ?? {} ]),
-    }
+    } as GraphConfig
   }, [_graphConfig])
   const localDataRef = React.useRef({
     initialized: false,
@@ -139,7 +139,7 @@ const GraphEditorElement = (
       local: null,
     },
     contextMenu: {
-      itemIds: [],
+      itemIds: [] as string[],
     },
   })
   const [state, updateState] = useImmer({
@@ -179,7 +179,7 @@ const GraphEditorElement = (
       const collection = graphEditorRef.current?.cy?.$id(R.last(selectedElementIds)!)
       return collection?.length === 0
         ? null
-        : collection
+        : collection as Element
     },
     [nodes, edges, selectedElementIds],
   )
@@ -300,7 +300,7 @@ const GraphEditorElement = (
   React.useEffect(() => {
     localDataRef.current.targetNode = null
   }, [mode])
-  const graphEditorValue = React.useMemo(() => ({
+  const graphEditorValue: GraphEditorContextType = React.useMemo(() => ({
     config,
     eventHistory,
     events,
@@ -394,6 +394,7 @@ const GraphEditorElement = (
             label,
             extraData: rest.extraData,
           }}
+          // @ts-ignore
           config={{
             ...graphConfig,
             graphId,
@@ -754,7 +755,8 @@ const GraphEditorElement = (
         Object.keys(modals).map((modalName) => (
           <ModalComponent
             key={modalName}
-            {...(modals[modalName] ?? {})}
+            // @ts-ignore
+            {...(modals[modalName]! ?? {})}
             name={modalName}
           />
         ))

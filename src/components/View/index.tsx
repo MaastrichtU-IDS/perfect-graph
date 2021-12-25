@@ -1,19 +1,19 @@
+import { drawGraphics } from '@components/Graphics'
 import { ThemeProps, useTheme } from '@core/theme'
-import { PixiComponent } from '@inlet/react-pixi'
-import { PIXIBasicProps, PIXIBasicStyle, PIXIShapeStyle } from '@type'
+import { Graphics as InletGraphics, PixiComponent } from '@inlet/react-pixi'
 import {
-  applyDefaultProps, preprocessProps,
+  applyDefaultProps, preprocessProps
 } from '@utils'
 import { wrapComponent } from 'colay-ui'
 import { PropsWithRef } from 'colay-ui/type'
+import * as R from 'colay/ramda'
 import * as PIXI from 'pixi.js'
 import React from 'react'
-import * as R from 'colay/ramda'
-import { drawGraphics } from '@components/Graphics'
 
-export type ViewProps = PIXIBasicProps & {
-  style?: PIXIBasicStyle & PIXIShapeStyle;
+export type ViewProps = React.ComponentProps<typeof InletGraphics> & {
   children?: React.ReactNode;
+  fill?: number
+  radius?: number
 }
 
 export type ViewType = React.FC<ViewProps>
@@ -61,4 +61,5 @@ const ViewElement = (
 
 export const View = wrapComponent<
 PropsWithRef<PIXI.Container, ViewProps>
+// @ts-ignore
 >(ViewElement, { isForwardRef: true })

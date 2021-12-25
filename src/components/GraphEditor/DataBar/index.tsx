@@ -1,32 +1,27 @@
-import { Icon } from '@components/Icon'
-import { useGraphEditor } from '@hooks'
 import {
-  Accordion, AccordionDetails,
-  AccordionSummary, Divider, IconButton, Paper, Typography,
-  Button, Box,
-} from '@mui/material'
-import { EVENT, SIDE_PANEL_DEFAULT_WIDTH, SIDE_PANEL_DEFAULT_HEIGHT } from '@constants'
+  Collapsible,
+  CollapsibleContainer,
+  CollapsibleTitle,
+} from '@components/Collapsible'
+import { ResizeDivider } from '@components/ResizeDivider'
+import { SIDE_PANEL_DEFAULT_HEIGHT, SIDE_PANEL_DEFAULT_WIDTH } from '@constants'
+import { useGraphEditor } from '@hooks'
+// import {
+//   DataEditor,
+// } from '../DataEditor'
+import { useDrag } from '@hooks/useDrag'
+import { Box, Button, Divider, Paper, Typography } from '@mui/material'
 import { EdgeElement } from '@type'
 import {
   useAnimation,
 } from 'colay-ui'
 import { View } from 'colay-ui/components/View'
 import React from 'react'
-// import {
-//   DataEditor,
-// } from '../DataEditor'
-import { useDrag } from '@hooks/useDrag'
-import { ResizeDivider } from '@components/ResizeDivider'
-import { 
-  Collapsible,
-  CollapsibleContainer,
-  CollapsibleTitle,
- } from '@components/Collapsible'
-import { JSONEditor } from './JSONEditor'
-import { GlobalNetworkStatistics } from './GlobalNetworkStatistics'
-import { LocalNetworkStatistics } from './LocalNetworkStatistics'
 import { ConnectedElements } from './ConnectedElements'
+import { GlobalNetworkStatistics } from './GlobalNetworkStatistics'
+import { JSONEditor } from './JSONEditor'
 import { JSONViewer } from './JSONViewer'
+import { LocalNetworkStatistics } from './LocalNetworkStatistics'
 
 export type DataBarProps = {
   editable?: boolean;
@@ -36,8 +31,6 @@ export type DataBarProps = {
   sort?: any;
 } // & Omit<DataEditorProps, 'data'>
 
-const ICON_SIZE = 16
-
 export const DataBar = (props: DataBarProps) => {
   const {
     editable = true,
@@ -45,7 +38,6 @@ export const DataBar = (props: DataBarProps) => {
     sort = -1,
     header: HeaderComponent,
     footer: FooterComponent,
-    ...rest
   } = props
 
   const [
@@ -56,7 +48,6 @@ export const DataBar = (props: DataBarProps) => {
       globalLabel,
       localLabel,
       isGlobalLabelFirst,
-      selectedElement,
     },
   ] = useGraphEditor(
     (editor) => {
@@ -68,16 +59,17 @@ export const DataBar = (props: DataBarProps) => {
         networkStatistics,
       } = editor
       const targetPath = selectedElement?.isNode() ? 'nodes' : 'edges'
+      const selectedItemId = selectedItem?.id!
       return {
         graphEditorConfig: editor.config,
         item: editor.selectedItem,
-        localLabel: selectedElement && (label?.[targetPath][selectedItem?.id!]),
+        localLabel: selectedElement && (label?.[targetPath][selectedItemId]),
         globalLabel: label?.global?.[targetPath],
         isGlobalLabelFirst: label?.isGlobalFirst?.[targetPath],
         onEvent: editor.onEvent,
         networkStatistics: {
-          local: localDataRef.current!.networkStatistics!.local?.[selectedItem?.id!],
-          global: networkStatistics?.global?.[selectedItem?.id!],
+          local: localDataRef.current!.networkStatistics!.local?.[selectedItemId],
+          global: networkStatistics?.global?.[selectedItemId],
           sort: networkStatistics?.sort,
         },
         selectedElement,
@@ -100,7 +92,7 @@ export const DataBar = (props: DataBarProps) => {
     },
     autoPlay: false,
   }, [localDataRef.current.width])
-  const containerRef = React.useRef()
+  const containerRef = React.useRef<HTMLDivElement>()
   React.useEffect(() => {
     animationRef.current?.play?.(isOpen)
   }, [animationRef, isOpen])
@@ -114,7 +106,7 @@ export const DataBar = (props: DataBarProps) => {
       // localDataRef.current.width = rect.width - x
       localDataRef.current.width = rect.width + x
       localDataRef.current.height = rect.height - y
-      const target = containerRef.current
+      const target = containerRef.current!
       target.style.width = `${localDataRef.current.width}px`
       target.style.height = `${localDataRef.current.height}px`
     },
@@ -160,7 +152,7 @@ export const DataBar = (props: DataBarProps) => {
           defaultIsOpen={ true}
         >
           {
-            ({ isOpen, onToggle}) => (
+            ({ isOpen, onToggle }) => (
               <>
             <CollapsibleTitle
               style={{
@@ -281,7 +273,7 @@ export const DataBar = (props: DataBarProps) => {
 type EdgeElementSummaryProps = {
   element: EdgeElement;
 }
-const EdgeElementSummary = (props: EdgeElementSummaryProps) => {
+export const EdgeElementSummary = (props: EdgeElementSummaryProps) => {
   const {
     element,
   } = props

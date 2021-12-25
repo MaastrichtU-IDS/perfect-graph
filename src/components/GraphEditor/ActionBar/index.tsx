@@ -76,7 +76,6 @@ const ActionBarElement = (props: ActionBarProps) => {
   const {
     renderMoreAction,
     isOpen = false,
-    autoOpen = false,
     recording = false,
     eventRecording = false,
     // recordingActions = false,
@@ -96,7 +95,6 @@ const ActionBarElement = (props: ActionBarProps) => {
       onEvent,
       graphEditorRef,
       mode,
-      graphConfig,
     },
   ] = useGraphEditor(
     (editor) => ({
@@ -403,11 +401,13 @@ const MoreOptions = (props: MoreOptionsProps) => {
 
   return (
     <>
+    {// @ts-ignore
       <IconButton
+        // @ts-ignore
         onClick={onOpen}
       >
         <Icon name="more_vert" />
-      </IconButton>
+      </IconButton>}
       <Menu
         anchorEl={anchorEl}
         open={isOpen}

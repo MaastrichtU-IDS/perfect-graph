@@ -272,7 +272,7 @@ export const getSelectedItemByElement = (
   const targetPath = isNode ? 'nodes' : 'edges'
   const index = info[targetPath].findIndex((targetItem: ElementData) => targetItem.id === id)
   return {
-    item: info[targetPath][index] as NodeData | EdgeData,
+    item: info[targetPath][index] as ElementData,
     index: index as number,
   }
 }
@@ -796,7 +796,8 @@ export const getPointerPositionOnViewport = (
   return position
 }
 
-export const getEventClientPosition = (e: TouchEvent) => {
+export const getEventClientPosition = (e: TouchEvent | MouseEvent) => {
+  // @ts-ignore
   const event = e.touches?.[0] ?? e.changedTouches?.[0] ?? e
   return {
     x: event.clientX,

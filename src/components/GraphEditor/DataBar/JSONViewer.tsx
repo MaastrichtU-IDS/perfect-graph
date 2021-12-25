@@ -8,13 +8,15 @@ import {
   JSONViewer as JSONViewerNative,
 } from 'colay-ui'
 import { isValidURL } from '@utils'
+import { OnEventLite } from '@type'
 
 export type DataBarProps = {
-  editable?: boolean;
-  isOpen?: boolean;
-  header?: React.FC;
-  footer?: React.FC;
+  data: any;
   sort?: any;
+  localLabel?: any;
+  globalLabel?: any;
+  isGlobalLabelFirst?: boolean;
+  onEvent?: OnEventLite;
 } // & Omit<DataEditorProps, 'data'>
 
 const ICON_SIZE = 12
@@ -24,9 +26,8 @@ export const JSONViewer = (props: DataBarProps) => {
   const {
     localLabel, globalLabel,
     data, isGlobalLabelFirst,
-    onEvent,
+    onEvent = () => {},
     sort,
-    ...rest
   } = props
 
   

@@ -39,7 +39,8 @@ export const calculateEdgeGroupInfo = (edge: EdgeElement) => {
   const betweenEdgesCount = betweenEdges.length
   const betweenEdgesMedian = Math.floor(betweenEdgesCount / 2)
   let edgeIndex = 0
-  betweenEdges.some((edgeEl, i) => {
+  // @ts-ignore
+  betweenEdges.some((edgeEl: EdgeElement, i) => {
     if (edgeEl.id() === edgeID) {
       edgeIndex = i
       return true
@@ -118,7 +119,7 @@ const EdgeContainerElement = (
       distanceVector,
       // fromPosition,
       // toPosition,
-      midpointPosition,
+      // midpointPosition,
       normVector,
       unitVector,
       undirectedUnitVector,

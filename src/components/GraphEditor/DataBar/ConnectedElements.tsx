@@ -1,11 +1,3 @@
-import React from 'react'
-import {
-  Typography,
-  ListItem,
-  List,
-  ListItemText,
-  ListItemIcon,
-} from '@mui/material'
 import {
   Collapsible,
   CollapsibleContainer,
@@ -15,25 +7,27 @@ import {
   Icon,
 } from '@components/Icon'
 import {
-  useGraphEditor,
-} from '@hooks'
-import { 
-  View,
-} from 'colay-ui'
-import {
   EVENT,
 } from '@constants'
 import {
+  useGraphEditor,
+} from '@hooks'
+import {
+  List, Typography,
+} from '@mui/material'
+import {
   getItemFromElement,
-  isValidURL,
 } from '@utils'
+import {
+  View,
+} from 'colay-ui'
+import React from 'react'
 
 export type ConnectedElementsProps = {
 
 }
 
 const ICON_SIZE = 12
-const TEXT_VARIANT = 'subtitle2'
 
 export const ConnectedElements = () => {
   const [
@@ -46,7 +40,6 @@ export const ConnectedElements = () => {
     (editor) => {
       const {
         selectedElement,
-        selectedItem,
         onEvent,
       } = editor
       return {
@@ -60,7 +53,10 @@ export const ConnectedElements = () => {
     return null
   }
   const isNode = selectedElement.isNode()
-  let itemList
+  let itemList: {
+    id: string;
+    data: any;
+  }[]
   if (isNode) {
     itemList = selectedElement.connectedEdges().toArray().map(
       getItemFromElement,
@@ -134,6 +130,7 @@ const ConnectedElementItem = (props: any) => {
       align="center"
       href={item.id}
       style={{ wordWrap: 'break-word' }}
+      // @ts-ignore
       onClick={(e) => {
         onClick?.()
         e.preventDefault()

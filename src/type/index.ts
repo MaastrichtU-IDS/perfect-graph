@@ -16,9 +16,11 @@ import { YogaConstants } from '@utils/addFlexLayout/flex-layout/YogaContants'
 import { YogaLayout } from '@utils/addFlexLayout/flex-layout/YogaLayout'
 import GraphLayouts from '@core/layouts'
 import type { GraphEditorProps } from '@components/GraphEditor'
+import Form from  '@rjsf/material-ui'
 import type * as PIXIType from './pixi'
 
 declare module 'pixi.js' {
+  // @ts-ignore
   interface DisplayObject extends PIXI.DisplayObject {
     yoga: YogaLayout;
 
@@ -47,10 +49,12 @@ declare module 'pixi.js' {
 }
 
 declare module 'cytoscape' {
+  // @ts-ignore
   interface NodeSingular extends cytoscape.NodeSingular {
     hovered: () => boolean;
     filtered: () => boolean;
   }
+  // @ts-ignore
   interface EdgeSingular extends cytoscape.EdgeSingular  {
     hovered: () => boolean;
     filtered: () => boolean;
@@ -173,6 +177,8 @@ export type RenderNode<Additional extends Record<string, any> = {}> = (c: {
 export type RenderClusterNode<Additional extends Record<string, any> = {}> = (c: {
   item: Cluster;
   element: NodeElement;
+  context: NodeContext;
+  config: NodeConfig;
 } & RenderElementParams & Additional) => React.ReactElement
 
 export type GraphEditorRenderEdge<Additional extends Record<string, any> = {}> = ExtendParams<
@@ -286,14 +292,29 @@ export type Cluster = {
   ids: string[];
   childClusterIds: string[]
   visible?: boolean;
+  position?: Position;
 }
 
 export type ClustersByNodeId = Record<string, Cluster[]>
 
 export type ClustersByChildClusterId = Record<string, Cluster[]>
 
+export type GraphNodesConfig = NodeConfig & {
+  ids?: {
+    [id: string]: NodeConfig;
+  }
+}
+
+export type GraphEdgesConfig = EdgeConfig & {
+  ids?: {
+    [id: string]: EdgeConfig;
+  }
+}
+
 export type GraphConfig = {
-  layout?: typeof GraphLayouts['cose'];
+  layout?: typeof GraphLayouts['cose'] & {
+    expansion?: number;
+  };
   clusters?: Cluster[];
   zoom?: number;
   transform?: {
@@ -307,16 +328,8 @@ export type GraphConfig = {
     pivotX?: number;
     pivotY?: number;
   };
-  nodes?: NodeConfig & {
-    ids?: {
-      [id: string]: NodeConfig;
-    }
-  };
-  edges?: EdgeConfig & {
-    ids?: {
-      [id: string]: EdgeConfig;
-    }
-  };
+  nodes?: GraphNodesConfig;
+  edges?: GraphEdgesConfig
   backgroundColor?: string;
   theme?: Theme;
   graphId?: string
@@ -438,6 +451,7 @@ export type {
 export type NetworkStatistics = {
   global?: any
   local?: any
+  sort?: any;
 }
 
 export type GraphEditorContextType = {
@@ -459,12 +473,17 @@ export type GraphEditorContextType = {
       elementIds: string[];
     };
     networkStatistics?: NetworkStatistics;
+    contextMenu: {
+      itemIds: string[]
+    }
   }>;
-  selectedItem?: ElementData;
-  selectedElement?: Element;
+  selectedItem?: ElementData | null;
+  selectedElement?: Element | null;
   graphEditorRef: React.RefObject<GraphEditorRef>
   networkStatistics?: NetworkStatistics;
   nodes: NodeData[]
   edges: EdgeData[]
 }
 
+
+export type FormProps = React.ComponentPropsWithRef<typeof Form>

@@ -1,13 +1,11 @@
 import { RenderEdge } from '@type'
 import { cyUnselectAll } from '@utils'
-import * as R from 'colay/ramda'
 import React from 'react'
 import { Text as GraphText } from '../Text'
 import { View as GraphView } from '../View'
 
 export const DefaultRenderEdge: RenderEdge = ({
   cy,
-  item,
   element,
   config,
 }) => {

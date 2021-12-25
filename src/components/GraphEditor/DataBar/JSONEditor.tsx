@@ -1,4 +1,5 @@
 import React from 'react'
+// @ts-ignore
 import { JsonEditor as Editor } from 'jsoneditor-react'
 import 'jsoneditor-react/es/editor.min.css'
 import ace from 'brace'

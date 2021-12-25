@@ -39,17 +39,17 @@ type NativeViewportProps = {
     pivotX?: number;
     pivotY?: number;
   };
-  onBoxSelectionStart: (c: {
+  onBoxSelectionStart?: (c: {
     event: PIXI.InteractionEvent;
     startPosition: Position;
   }) => void;
-  onBoxSelection: (c: {
+  onBoxSelection?: (c: {
     event: PIXI.InteractionEvent;
     startPosition: Position;
     endPosition: Position;
     boundingBox: BoundingBox;
   }) => void;
-  onBoxSelectionEnd: (c: {
+  onBoxSelectionEnd?: (c: {
     event: PIXI.InteractionEvent;
     startPosition: Position;
     endPosition: Position;
@@ -332,7 +332,7 @@ const ReactViewportComp = PixiComponent('Viewport', {
 
 export type ViewportProps = {
   children?: React.ReactNode;
-} & Omit<NativeViewportProps, 'app'>
+} & Omit<NativeViewportProps, 'app' | 'theme'>
 
 function ViewportElement(props: Omit<ViewportProps, 'theme'>, ref: React.ForwardedRef<ViewportType>) {
   const {

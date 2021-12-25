@@ -16,25 +16,28 @@ import {
 } from '@mui/material'
 import Form from '@rjsf/material-ui'
 import { DataRender, dataRenderPath, isReact, View } from 'colay-ui'
-import { GraphConfig } from '@type'
+import { GraphConfig, FormProps } from '@type'
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import * as R from 'colay/ramda'
 import React from 'react'
 
+
 type SidebarItemData = {
-  label: string;
+  label?: string;
   children?: SidebarItemData[];
   icon?: string;
   id: string
 } | string
 
+type NormalizedSidebarItemData = Exclude<SidebarItemData, string>
+
 export type PreferencesModalProps = {
   isOpen?: boolean;
   sidebar?: SidebarItemData[];
-  components?: Record<string, React.ReactNode>;
+  components?: Record<string, React.ReactNode | FormProps>;
 }
 
-const getId = (sidebarItem: SidebarItemData) => sidebarItem?.id ?? sidebarItem
+const getId = (sidebarItem: NormalizedSidebarItemData) => sidebarItem?.id ?? sidebarItem
 
 export const PreferencesModal = (props: PreferencesModalProps) => {
   const {
@@ -46,7 +49,6 @@ export const PreferencesModal = (props: PreferencesModalProps) => {
   const [
     {
       onEvent,
-      graphEditorLocalDataRef,
       graphConfig,
     },
   ] = useGraphEditor(
@@ -57,7 +59,7 @@ export const PreferencesModal = (props: PreferencesModalProps) => {
     }),
   )
   const sidebar = React.useMemo(() => {
-    const normalize = (sidebar: SidebarItemData) => {
+    const normalize = (sidebar: SidebarItemData): SidebarItemData => {
       if (typeof sidebar === 'string') {
         return {
           id: sidebar,
@@ -70,16 +72,23 @@ export const PreferencesModal = (props: PreferencesModalProps) => {
         children: sidebar.children?.map((item) => normalize(item)),
       }
     }
+    // @ts-ignore
     return sidebar_?.map((item) => normalize(item)) ?? []
   }, [sidebar_])
   const [
     initialComponentId,
     initialSelectedPath,
   ] = React.useMemo(()=>{
-    const selectedPath = getSelectedPath(sidebar[0], [getId(sidebar[0])])
-    const selectedItem = dataRenderPath(['children'], selectedPath, sidebar)
+    const selectedPath = getSelectedPath(
+      sidebar[0], 
+      [getId(sidebar[0] as NormalizedSidebarItemData)],
+    )
+    const selectedItem = dataRenderPath(
+      ['children'],
+      selectedPath, 
+      sidebar,
+    ) as unknown as NormalizedSidebarItemData
     const componentId = getId(selectedItem)
-    console.log('A', selectedPath, selectedItem, componentId)
     return [componentId, selectedPath]
   }, [])
   const [state, update] = useImmer({
@@ -87,8 +96,12 @@ export const PreferencesModal = (props: PreferencesModalProps) => {
     selectedPath: initialSelectedPath,
   })
 
-  const onSelect = React.useCallback((path) => {
-    const item = dataRenderPath(['children'], path, sidebar)
+  const onSelect = React.useCallback((path: string[]) => {
+    const item = dataRenderPath(
+      ['children'], 
+      path, 
+      sidebar,
+    ) as unknown as NormalizedSidebarItemData
     update((draft) => {
       draft.selectedPath = path
       draft.componentId = getId(item)
@@ -102,13 +115,15 @@ export const PreferencesModal = (props: PreferencesModalProps) => {
     selectedPath: state.selectedPath,
   }), [sidebar, components, state.selectedPath])
   const Component = components[state.componentId] ?? React.Fragment
-  let form = components[state.componentId]
+  let form = components[state.componentId] as FormProps
+  // @ts-ignore
   const isComponent = isReact.compatible(Component)
   if (!isComponent && components[state.componentId]) {
-    form = components[state.componentId](graphConfig)
+    // @ts-ignore
+    form = (components[state.componentId]!)(graphConfig)
   }
   const isExist = components[state.componentId]
-  const onSubmitCallback = ({ formData }) => {
+  const onSubmitCallback = ({ formData }: { formData: any }) => {
     onEvent({
       type: EVENT.PREFERENCES_FORM_SUBMIT,
       payload: {
@@ -194,6 +209,7 @@ export const PreferencesModal = (props: PreferencesModalProps) => {
           >
             <Form
               {...form}
+              // @ts-ignore
               style={{
                 width: '100%',
                 height: '100%',
@@ -228,7 +244,7 @@ export const PreferencesModal = (props: PreferencesModalProps) => {
 
 type CreateDrawerParams = {
   sidebar: SidebarItemData[];
-  onSelect: (name: string) => void
+  onSelect: (path: string[]) => void
   selectedPath: string[]
 }
 const createDrawer = (params: CreateDrawerParams) => {
@@ -272,7 +288,7 @@ const createDrawer = (params: CreateDrawerParams) => {
 type SidebarItemProps = {
   item: SidebarItemData;
   children: React.ReactNode;
-  onSelect: (name: string)=>void
+  onSelect: (path: string[])=>void
   selectedPath: string[];
   path: string[];
 }
@@ -296,7 +312,7 @@ const SidebarItem = (props: SidebarItemProps) => {
   const item = (R.is(String)(propItem) ? {
     label: propItem,
     id: propItem,
-  } : propItem) as Exclude<SidebarItemData, string>
+  } : propItem) as NormalizedSidebarItemData
   const handleClick = () => {
     onSelect(getSelectedPath(propItem, path))
     setOpen(!open)
@@ -407,7 +423,7 @@ export const DefaultComponents = {
         },
       },
     },
-    formData: R.omit(['ids'], graphConfig.nodes.view),
+    formData: R.omit(['ids'], graphConfig!.nodes!.view),
   }),
   EdgeView: (graphConfig: GraphConfig) => ({
     schema: {
@@ -490,7 +506,7 @@ export const DefaultComponents = {
         },
       },
     },
-    formData: R.omit(['ids'], graphConfig.edges.view),
+    formData: R.omit(['ids'], graphConfig!.edges!.view),
   }),
   // GeneralUI: () => ({
   //   schema: {
