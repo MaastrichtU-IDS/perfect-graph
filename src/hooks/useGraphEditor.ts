@@ -15,4 +15,8 @@ const {
 
 export const GraphEditorContext = Context
 export const GraphEditorProvider = Provider
+
+/**
+ * To use graph editor context values.
+ */
 export const useGraphEditor = useSelector

@@ -37,26 +37,6 @@ const ClusterNodeContainerElement = (
     graphRef,
   } = props
   const containerRef = React.useRef<ContainerRef>(null)
-  // React.useEffect(() => {
-  //   if (item.ids.length > 0) {
-  //     const positionAcc = {
-  //       x: 0,
-  //       y: 0,
-  //     }
-  //     item.ids.forEach((id) => {
-  //       const clusterElement = cy.$id(id)
-  //       const clusterElementPos = clusterElement.position()
-  //       positionAcc.x += clusterElementPos.x
-  //       positionAcc.y += clusterElementPos.y
-  //     })
-  //     const { length } = item.ids
-  //     const calculatedPosition = {
-  //       x: positionAcc.x / length,
-  //       y: positionAcc.y / length,
-  //     }
-  //     element.position(calculatedPosition)
-  //   }
-  // }, [])
   const { element, context, cy } = useNode({
     graphID,
     config,

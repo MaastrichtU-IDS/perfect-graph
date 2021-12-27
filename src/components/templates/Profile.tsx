@@ -21,7 +21,7 @@ const ProfileElement = (
 ) => {
   const {
     name,
-    image,
+    // image,
     story,
     link,
     onClick,

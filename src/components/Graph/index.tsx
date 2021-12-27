@@ -84,8 +84,6 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
   const stageRef = React.useRef<{ app: PIXI.Application }>(null)
   const { cy } = useGraph({
     id: graphID,
-    onLoad: () => {
-    },
     clusters: config.clusters,
   })
   const graphRef = useForwardRef<GraphRef>(ref, { cy })
