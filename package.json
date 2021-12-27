@@ -14,8 +14,6 @@
   "homepage": "http://maastrichtu-ids.github.io/perfect-graph",
   "scripts": {
     "web": "EXPO_BETA=1 expo web",
-    "dev": "next dev",
-    "docs": "start-storybook -p 9009",
     "build-docs": "build-storybook -o docs-build",
     "build:types": "tsc -p tsconfig.json  && tscpaths -p tsconfig.json -s ./src -o ./dist",
     "type-check": "tsc --noEmit",
@@ -24,8 +22,7 @@
     "fire": "yarn build && yarn version --patch && cp ./package.json ./dist && cd dist && npm publish",
     "fire:beta": "rm -rf dist && yarn build:js && yarn version --patch && cp ./package.json ./dist && cd dist && npm publish --tag beta",
     "auth": "cd dist && npm login --always-auth && cd ..",
-    "test": "jest",
-    "chromatic": "chromatic --project-token 1un5jqj6bcs"
+    "generate:docs": "typedoc --out docs src/type"
   },
   "dependencies": {
     "@inlet/react-pixi": "6.6.5",
@@ -86,6 +83,8 @@
     "react-native": "0.64.2",
     "react-native-web": "0.17.5",
     "to-json-schema": "0.2.5",
+    "typedoc": "0.22.10",
+    "typedoc-plugin-markdown": "3.11.8",
     "typescript": "4.4.4",
     "webpack-bundle-analyzer": "4.3.0",
     "yoga-layout-prebuilt": "1.10.0"

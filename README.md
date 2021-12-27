@@ -17,7 +17,7 @@ Then,
 ```js
 expo init my-project
 cd my-project
-yarn add perfect-graph colay colay-ui
+yarn add perfect-graph colay colay-ui immer
 ```
 
 After you can write this command to the terminal in your project directory
@@ -36,20 +36,38 @@ function MyGraph() {
     <Graph
       style={{ width: "100%", height: 250 }}
       nodes={[
-        { id: 1, position: { x: 10, y: 10 } },
-        { id: 2, position: { x: 300, y: 100 } },
+        { id: '1', position: { x: 10, y: 10 } },
+        { id: '2', position: { x: 300, y: 100 } },
       ]}
-      edges={[{ id: 51, source: 1, target: 2 }]}
+      edges={[{ id: '51', source: '1', target: '2' }]}
     />
   );
 }
 ```
 
-Furthermore please refer to the Components Section.
-
-To use Graph : yarn add colay colay-ui immer
- 
 To use GraphEditor you need to install material-ui packages. We use the latest version: yarn add @mui/icons-material @mui/material @mui/styles @emotion/react @emotion/styled react-beautiful-dnd @rjsf/core @rjsf/material-ui react-color
+
+```js
+import { GraphEditor } from "perfect-graph";
+import { useController } from "perfect-graph/plugins/controller";
+
+function MyGraphEditor() {
+  const [controllerProps] = useController({
+    nodes: [
+      { id: '1', position: { x: 10, y: 10 } },
+      { id: '2', position: { x: 300, y: 100 } },
+    ],
+    edges: [{ id: '51', source: '1', target: '2' }],
+  });
+  });
+  return (
+    <GraphEditor
+      style={{ width: "100%", height: 250 }}
+      {...controllerProps}
+    />
+  );
+}
+```
 
 To have json editor: yarn add brace jsoneditor jsoneditor-react
 
@@ -109,3 +127,15 @@ In example when a huge data chunk imported to perfect-graph, if the view quality
 
 - If there is an error: Can not set readonly 'x' of '#Object' 
  That could be related with position ; If you use cy.$(id).position() in somewhere and store it that can cause an issue. Use cy.$(id).position().x , cy.$(id).position().y
+
+Furthermore please refer to the Components Section.
+
+
+
+
+
+
+
+
+
+
