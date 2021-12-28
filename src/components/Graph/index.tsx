@@ -1,39 +1,35 @@
+import { DEFAULT_EDGE_CONFIG, DEFAULT_NODE_CONFIG } from '@constants'
 import '@core/config'
 import { DefaultTheme, ThemeProvider } from '@core/theme'
 import { useGraph } from '@hooks'
 import { Stage } from '@inlet/react-pixi'
 import {
-  DrawLine, EdgeData, GraphConfig,
-  GraphRef, NodeData, RenderEdge, RenderNode,
-  RenderClusterNode,  NodeConfig, EdgeConfig,
-  ViewportType,
-  GraphNodesConfig,
-  GraphEdgesConfig,
+  DrawLine, EdgeConfig, EdgeData, GraphConfig,
+  GraphEdgesConfig, GraphNodesConfig, GraphRef,
+  NodeConfig, NodeData, OnBoxSelection, RenderClusterNode,
+  RenderEdge, RenderNode, ViewportType,
+  PropsWithRef,
 } from '@type'
 import {
-  calculateVisibilityByContext, 
-  contextUtils, cyUnselectAll, isPositionInBox,
-  adjustVisualQuality, isFiltered,
+  adjustVisualQuality, calculateVisibilityByContext,
+  contextUtils, cyUnselectAll, isFiltered, isPositionInBox,
 } from '@utils'
-import { DEFAULT_EDGE_CONFIG, DEFAULT_NODE_CONFIG } from '@constants'
 import {
-  DataRender, 
+  DataRender,
   useForwardRef,
   View,
   ViewProps, wrapComponent,
 } from 'colay-ui'
-import { PropsWithRef } from 'colay-ui/type'
 import * as R from 'colay/ramda'
-import { BoundingBox } from 'colay/type'
-import React from 'react'
 import * as PIXI from 'pixi.js'
+import React from 'react'
 import { ClusterNodeContainer } from '../ClusterNodeContainer'
 import { EdgeContainer } from '../EdgeContainer'
 import { NodeContainer } from '../NodeContainer'
+import { Viewport, ViewportOnPress } from '../Viewport'
 import { DefaultRenderClusterNode } from './DefaultRenderClusterNode'
-import { DefaultRenderNode } from './DefaultRenderNode'
 import { DefaultRenderEdge } from './DefaultRenderEdge'
-import { Viewport, ViewportProps } from '../Viewport'
+import { DefaultRenderNode } from './DefaultRenderNode'
 
 export type GraphProps = {
   children?: React.ReactNode;
@@ -68,7 +64,7 @@ export type GraphProps = {
   /**
    * Event handler for graph canvas background
    */
-  onPress?: ViewportProps['onPress'];
+  onPress?: ViewportOnPress;
   /**
    * The function to draw line for edge connection vectors
    */
@@ -80,12 +76,7 @@ export type GraphProps = {
   /**
    * Event handler for box selection event. It gives the selected nodes
    */
-  onBoxSelection?: (c: {
-    event: PIXI.InteractionEvent,
-    elements: cytoscape.Collection,
-    itemIds: string[],
-    boundingBox: BoundingBox;
-  }) => void;
+  onBoxSelection?: OnBoxSelection;
   /**
    * It gives the selected nodes. It is used for selected node highlighting and DataBar
    */
@@ -419,5 +410,6 @@ export const Graph = wrapComponent<PropsWithRef<GraphRef, GraphProps>>(
 )
 
 export { DefaultRenderClusterNode } from './DefaultRenderClusterNode'
-export { DefaultRenderNode } from './DefaultRenderNode'
 export { DefaultRenderEdge } from './DefaultRenderEdge'
+export { DefaultRenderNode } from './DefaultRenderNode'
+

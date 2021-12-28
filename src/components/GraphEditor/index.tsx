@@ -2,7 +2,6 @@ import {
   DefaultRenderEdge,
   DefaultRenderNode, Graph,
 } from '@components'
-import * as PIXI from 'pixi.js'
 import { DEFAULT_EDGE_CONFIG, DEFAULT_NODE_CONFIG } from '@constants'
 import { ContextMenu } from '@components/ContextMenu'
 import { EDITOR_MODE, EVENT } from '@constants'
@@ -20,27 +19,28 @@ import {
   NodeData, EdgeData, GraphEditorContextType, Element,
   RenderClusterNode,
   DrawLine,
-  BoundingBox,
+  OnBoxSelection,
+  PreviousData,
+  PropsWithRef,
 } from '@type'
 import {
   getEventClientPosition, getLabel, getSelectedItemByElement,
   throttle,
 } from '@utils'
-// import { calculateStatistics } from '@utils/networkStatistics'
 import { useTimeoutManager } from '@utils/useTimeoutManager'
 import { useForwardRef, wrapComponent, ViewProps } from 'colay-ui'
 import { useImmer } from 'colay-ui/hooks/useImmer'
-import { PropsWithRef } from 'colay-ui/type'
 import * as R from 'colay/ramda'
 import React from 'react'
-import { ActionBar, ActionBarProps } from './ActionBar'
+import { ActionBar, ActionBarConfig } from './ActionBar'
 import { DataBar, DataBarProps } from './DataBar'
+import { SettingsBar, SettingsBarProps } from './SettingsBar'
 import { ModalComponent, ModalComponentProps } from './ModalComponent'
 import { MouseIcon } from './MouseIcon'
 import { PreferencesModal, PreferencesModalProps } from './PreferencesModal/index'
 import { RecordedEventsModal } from './RecordedEventsModal'
-import { SettingsBar, SettingsBarProps } from './SettingsBar'
 import { Icon } from  '@components/Icon'
+
 type RenderElementAdditionalInfo = {
   // label: string;
 }
@@ -73,11 +73,11 @@ export type GraphEditorProps = {
   /**
    * Config for DataBar
    */
-  dataBar?: Pick<DataBarProps, 'editable' | 'isOpen'>;
+  dataBar?: DataBarProps;
   /**
    * Config for ActionBar
    */
-  actionBar?: Pick<ActionBarProps, 'renderMoreAction' | 'isOpen' | 'recording' | 'eventRecording' | 'autoOpen' | 'theming'>;
+  actionBar?: ActionBarConfig;
   /**
    * Config for PreferencesModal
    */
@@ -131,10 +131,7 @@ export type GraphEditorProps = {
   /**
    * Focus mode stack
    */
-  previousDataList?: {
-    nodes: NodeData[];
-    edges: EdgeData[];
-  }[]
+  previousDataList?: PreviousData[]
   children?: React.ReactNode;
   /**
    * To rerender the graph when the extra data changes
@@ -163,12 +160,7 @@ export type GraphEditorProps = {
   /**
    * Event handler for box selection event. It gives the selected nodes
    */
-  onBoxSelection?: (c: {
-    event: PIXI.InteractionEvent,
-    elements: cytoscape.Collection,
-    itemIds: string[],
-    boundingBox: BoundingBox;
-  }) => void;
+  onBoxSelection?: OnBoxSelection;
 }
 
 const MODE_ICON_SCALE = 0.8

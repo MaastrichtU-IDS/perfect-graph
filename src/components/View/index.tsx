@@ -2,10 +2,10 @@ import { drawGraphics } from '@components/Graphics'
 import { ThemeProps, useTheme } from '@core/theme'
 import { Graphics as InletGraphics, PixiComponent } from '@inlet/react-pixi'
 import {
-  applyDefaultProps, preprocessProps
+  applyDefaultProps, preprocessProps,
 } from '@utils'
 import { wrapComponent } from 'colay-ui'
-import { PropsWithRef } from 'colay-ui/type'
+import { PropsWithRef } from '@type'
 import * as R from 'colay/ramda'
 import * as PIXI from 'pixi.js'
 import React from 'react'

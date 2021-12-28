@@ -4,12 +4,10 @@ import {
 import { EDITOR_MODE, EVENT } from '@constants'
 import { useGraphEditor } from '@hooks'
 import {
-  Box, Button, FormControl, IconButton, InputLabel, Menu,
-  MenuItem, Select, useTheme, SelectProps, Divider,
+  Box, Button, Divider, FormControl, IconButton, InputLabel, Menu,
+  MenuItem, Select, SelectProps, useTheme,
 } from '@mui/material'
-import {
-  EditorMode, OnEventLite,
-} from '@type'
+import { OnEventLite } from '@type'
 import { readTextFile } from '@utils'
 import DocumentPicker from '@utils/DocumentPicker'
 import { useAnimation, useDisclosure, wrapComponent } from 'colay-ui'
@@ -24,14 +22,21 @@ type ActionOption = {
   visible?: boolean;
 }
 
-export type ActionBarProps = {
+type Actions = {
+  add: ActionOption;
+  recordEvents: ActionOption;
+  delete: ActionOption;
+  // record: { visible: boolean; };
+  options: {
+    actions: { import: ActionOption };
+  };
+}
+
+export type ActionBarConfig = {
   renderMoreAction?: () => React.ReactElement;
   left?: React.FC;
   right?: React.FC;
   isOpen?: boolean;
-  autoOpen?: boolean;
-  mode?: EditorMode;
-  layoutName?: string;
   theming?: {
     options?: {
       name: string;
@@ -41,16 +46,27 @@ export type ActionBarProps = {
   }
   recording?: boolean;
   eventRecording?: boolean;
-  actions?: {
-    add: ActionOption;
-    recordEvents: ActionOption;
-    delete: ActionOption;
-    // record: { visible: boolean; };
-    options: {
-      actions: { import: ActionOption };
-    };
-  };
+  actions?: Actions;
+  autoOpen?: boolean;
+}
+
+export type ActionBarProps = {
+  renderMoreAction?: () => React.ReactElement;
+  left?: React.FC;
+  right?: React.FC;
+  isOpen?: boolean;
+  theming?: {
+    options?: {
+      name: string;
+      value: string;
+    }[];
+    value?: string;
+  }
+  recording?: boolean;
+  eventRecording?: boolean;
   onAction: (action: { type: string; value?: any }) => void;
+  actions?: Actions;
+  autoOpen?: boolean;
 }
 
 const DEFAULT_ACTIONS = {
@@ -78,7 +94,6 @@ const ActionBarElement = (props: ActionBarProps) => {
     isOpen = false,
     recording = false,
     eventRecording = false,
-    // recordingActions = false,
     onAction,
     left: LeftComponent,
     right: RightComponent,

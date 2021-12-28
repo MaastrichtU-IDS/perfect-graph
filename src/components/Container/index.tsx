@@ -1,14 +1,15 @@
 import { dragTrack } from '@core/utils/events'
 import {
-  Container as PIXIReactContainer, PixiComponent
+  Container as PIXIReactContainer, PixiComponent,
 } from '@inlet/react-pixi'
 import {
-  PIXIBasicProps, PIXIDisplayObjectProps
+  PIXIBasicProps, PIXIDisplayObjectProps,
+  PropsWithRef,
 } from '@type'
 import {
-  applyDefaultProps, getEventClientPosition, preprocessProps
+  applyDefaultProps, getEventClientPosition, preprocessProps,
 } from '@utils'
-import { Position, PropsWithRef } from 'colay-ui/type'
+import { Position } from 'colay-ui/type'
 import { Enumerable } from 'colay/type'
 import * as PIXI from 'pixi.js'
 import React from 'react'

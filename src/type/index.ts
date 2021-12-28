@@ -2,7 +2,7 @@ import type { GraphEditorProps } from '@components/GraphEditor'
 import {
   CYTOSCAPE_EVENT, DATA_TYPE,
   EDITOR_MODE, ELEMENT_TYPE,
-  EVENT
+  EVENT,
 } from '@constants'
 import GraphLayouts from '@core/layouts'
 import { Theme } from '@core/theme'
@@ -373,10 +373,10 @@ export type PIXIBasicProps = {
 }
 
 export type {
-  GraphEditorProps
+  GraphEditorProps,
 } from '@components/GraphEditor'
 export type {
-  Theme
+  Theme,
 } from '../core/theme'
 
 export type CytoscapeEvent = keyof typeof CYTOSCAPE_EVENT
@@ -874,3 +874,33 @@ export type GraphEditorContextType = {
 
 
 export type FormProps = React.ComponentPropsWithRef<typeof Form>
+
+type OnBoxSelectionEvent = {
+  /**
+   * Original Event
+   */
+  event: PIXI.InteractionEvent,
+  /**
+   * Selected elements
+   */
+  elements: cytoscape.Collection,
+  /**
+   * Selected elements ids
+   */
+  itemIds: string[],
+  /**
+   * Selected boundingBox
+   */
+  boundingBox: BoundingBox;
+}
+
+export type OnBoxSelection = (event: OnBoxSelectionEvent) => void
+
+export type PreviousData = {
+  nodes: NodeData[];
+  edges: EdgeData[];
+}
+
+export type PropsWithRef<C, P> = Omit<P, 'ref'> & {
+  ref?: React.Ref<C>;
+}

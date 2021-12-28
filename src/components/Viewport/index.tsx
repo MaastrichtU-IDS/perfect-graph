@@ -16,6 +16,18 @@ import * as PIXI from 'pixi.js'
 import React from 'react'
 import Vector from 'victor'
 
+type ViewportOnPressEvent = {
+  /**
+   * Original event
+   */
+  nativeEvent: PIXI.InteractionEvent;
+  /**
+   * Event position
+   */
+  position: Position;
+}
+
+export type ViewportOnPress = (event: ViewportOnPressEvent ) => void | undefined;
 
 type NativeViewportProps = {
   /**
@@ -29,10 +41,7 @@ type NativeViewportProps = {
    */
   theme: Theme;
   onCreate?: (v: ViewportNative) => void;
-  onPress?: (c: {
-    nativeEvent: PIXI.InteractionEvent;
-    position: Position;
-  }) => void | undefined;
+  onPress?: ViewportOnPress;
   zoom?: number;
   /**
    * Scale, rotation and position of the viewport
