@@ -22,7 +22,7 @@
     "fire": "yarn build && yarn version --patch && cp ./package.json ./dist && cd dist && npm publish",
     "fire:beta": "rm -rf dist && yarn build:js && yarn version --patch && cp ./package.json ./dist && cd dist && npm publish --tag beta",
     "auth": "cd dist && npm login --always-auth && cd ..",
-    "generate:docs": "typedoc --out docs src/type"
+    "generate:docs": "typedoc --out docs src/**/*"
   },
   "dependencies": {
     "@inlet/react-pixi": "6.6.5",

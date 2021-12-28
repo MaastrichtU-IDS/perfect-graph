@@ -1,7 +1,8 @@
 import {
   DefaultRenderEdge,
-  DefaultRenderNode, Graph, GraphProps,
+  DefaultRenderNode, Graph,
 } from '@components'
+import * as PIXI from 'pixi.js'
 import { DEFAULT_EDGE_CONFIG, DEFAULT_NODE_CONFIG } from '@constants'
 import { ContextMenu } from '@components/ContextMenu'
 import { EDITOR_MODE, EVENT } from '@constants'
@@ -17,6 +18,9 @@ import {
   GraphEditorRenderNode, GraphLabelData, NetworkStatistics,
   NodeElement, OnEvent, OnEventLite, Playlist, RecordedEvent,
   NodeData, EdgeData, GraphEditorContextType, Element,
+  RenderClusterNode,
+  DrawLine,
+  BoundingBox,
 } from '@type'
 import {
   getEventClientPosition, getLabel, getSelectedItemByElement,
@@ -24,7 +28,7 @@ import {
 } from '@utils'
 // import { calculateStatistics } from '@utils/networkStatistics'
 import { useTimeoutManager } from '@utils/useTimeoutManager'
-import { useForwardRef, wrapComponent } from 'colay-ui'
+import { useForwardRef, wrapComponent, ViewProps } from 'colay-ui'
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import { PropsWithRef } from 'colay-ui/type'
 import * as R from 'colay/ramda'
@@ -81,7 +85,7 @@ export type GraphEditorProps = {
   /**
    * It gives the selected nodes. It is used for selected node highlighting and DataBar
    */
-  selectedElementIds?: string[] | null;
+  selectedElementIds?: string[];
   /**
    * Editor mode for changing actions and mouse icon
    */
@@ -131,10 +135,41 @@ export type GraphEditorProps = {
     nodes: NodeData[];
     edges: EdgeData[];
   }[]
-} & Omit<
-GraphProps,
-'config' | 'onPress' | 'renderNode' | 'renderEdge'
->
+  children?: React.ReactNode;
+  /**
+   * To rerender the graph when the extra data changes
+   */
+  extraData?: any;
+  /**
+   * Node data list to render
+   */
+  nodes: NodeData[];
+  /**
+   * Edge data list to render
+   */
+  edges: EdgeData[];
+  /**
+   * Style for graph container view
+   */
+  style?: ViewProps['style'];
+  /**
+   * It returns a PIXI.DisplayObject instance as React.Node for the cluster node
+   */
+  renderClusterNode?: RenderClusterNode;
+  /**
+   * The function to draw line for edge connection vectors
+   */
+  drawLine?: DrawLine;
+  /**
+   * Event handler for box selection event. It gives the selected nodes
+   */
+  onBoxSelection?: (c: {
+    event: PIXI.InteractionEvent,
+    elements: cytoscape.Collection,
+    itemIds: string[],
+    boundingBox: BoundingBox;
+  }) => void;
+}
 
 const MODE_ICON_SCALE = 0.8
 const MODE_ICON_MAP_BY_URL = {
