@@ -115,7 +115,10 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
     ...DEFAULT_CONFIG,
     ...configProp,
   }), [configProp])
-  const { theme } = config
+  const { 
+    theme,
+  } = config
+  const backgroundColor = config.backgroundColor ?? theme.palette.background.default
   const graphID = React.useMemo<string>(() => config.graphId ?? R.uuid(), [config.graphId])
   const stageRef = React.useRef<{ app: PIXI.Application }>(null)
   const { cy } = useGraph({
@@ -187,10 +190,10 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
       }, 200)
     }
   }, [config.layout])
-  const backgroundColor = React.useMemo(
-    () => theme.palette.background.default,
-    [theme.palette.background.default],
-  )
+  // const backgroundColor = React.useMemo(
+  //   () => theme.palette.background.default,
+  //   [theme.palette.background.default],
+  // )
   React.useEffect(() => {
     stageRef.current!.app.renderer.backgroundColor = backgroundColor
   }, [backgroundColor])

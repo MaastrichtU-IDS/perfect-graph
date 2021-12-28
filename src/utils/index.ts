@@ -10,7 +10,7 @@ import {
   Element, NodeData, EdgeData, ElementData,
   DisplayObjectWithYoga, NodeContext, EdgeContext,
   Cluster, EventInfo, GraphEditorRef, ControllerState,
-  ViewportRef, LightEventInfo,
+  ViewportRef, LiteEventInfo,
   EdgeElement, NodeElement,
   GraphRef, Playlist, 
 } from '@type'
@@ -19,46 +19,6 @@ import {
   QUALITY_LEVEL,
 } from '@constants'
 import Vector from 'victor'
-// type Result = {
-//   x: number;
-//   y: number;
-//   width: number;
-//   height: number;
-//   fill: number;
-// }
-// export const processStyle = (style: Properties): Result => {
-//   const newStyle: Result = {} as Result
-//   const _ = R.forEachObjIndexed((val: any, key: string) => {
-//     let isNumber = true
-//     if (R.isString(val) && R.includes(val, '%')) {
-//       isNumber = false
-//       val = (parseFloat(R.replace(val, '%', '')) / 100)
-//     }
-//     switch (key) {
-//       case 'width':
-//         newStyle.width = isNumber ? val : val * parent.width
-//         break
-//       case 'height':
-//         newStyle.height = isNumber ? val : val * parent.height
-//         break
-//       case 'top':
-//         newStyle.y = isNumber ? val : val * parent.height
-//         break
-//       case 'left':
-//         newStyle.x = isNumber ? val : val * parent.width
-//         break
-//       case 'backgroundColor':
-//         newStyle.fill = C.rgbNumber(val)
-//         break
-//       case 'borderRadius':
-//         newStyle.radius = val
-//         break
-//       default:
-//         break
-//     }
-//   }, style)
-//   return newStyle
-// }
 
 export const processStyle = (props: any = {}, mutableInstance: PIXI.DisplayObject): any => {
   const { parent } = mutableInstance
@@ -304,13 +264,6 @@ export const getSelectedElementInfo = (
 export const getLabel = (path: string[] = [], item: ElementData): string => (R.isEmpty(path)
   ? item.id
   : (R.path([ELEMENT_DATA_FIELDS.DATA, ...path], item) ?? item.id))
-// const firstKey = path[0]
-// if (firstKey === ELEMENT_DATA_FIELDS.DATA) {
-//   const name = path[1]
-//   const foundDataItem = item.data?.find((dataItem) => dataItem.name === name)
-//   return foundDataItem?.value[0] ?? ''
-// }
-// return R.path(path)(item)
 
 export const readTextFile = async (blob: Blob, encoding?: string) => new Promise<string>(
   (res, rej) => {
@@ -414,8 +367,8 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
     graphEditor,
   } = settings
   // const addHistory = true
-  const undoEvents: LightEventInfo[] = R.unnest(
-    events.map((event): LightEventInfo[] => {
+  const undoEvents: LiteEventInfo[] = R.unnest(
+    events.map((event): LiteEventInfo[] => {
       const {
         // elementId,
         type,

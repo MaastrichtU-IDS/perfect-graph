@@ -7,6 +7,10 @@ type Props = {
   nodes: NodeData[]
   edges: EdgeData[]
 }
+
+/**
+ * Calculate local network statistics
+ */
 export const calculateStatistics = (params: Props) => {
   const {
     nodes = [],

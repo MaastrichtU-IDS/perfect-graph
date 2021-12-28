@@ -59,6 +59,9 @@ type CreateHistoryOptions = {
   ) => boolean|void;
 }
 
+/**
+ * Create Event History recorder
+ */
 export const createHistory = (options: CreateHistoryOptions) => {
   const {
     onEvent = () => {},
