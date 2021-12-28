@@ -95,6 +95,10 @@ const drawArrowHead = ({
   // TODO: Check the performance effect of this later
   // graphics.isSprite = true
 }
+
+/**
+ * It draws the line with the given config for graphics.
+ */
 export const drawLine = (
   config: {
     graphics: PIXI.Graphics;
@@ -321,6 +325,10 @@ export const drawGraphics = (instance: PIXI.Graphics, props: {
 //   )
 // }
 
+
+/**
+ * [PIXI.Graphics React Component]{@link https://reactpixi.org/components/graphics}
+ */
 export const Graphics = ReactPIXIGraphics
 // wrapComponent<GraphProps>(
 //   GraphicsElement, {

@@ -11,4 +11,3 @@ export const parseContext = async (url: string) => {
   return myContext
 }
 
-// parseContext('http://xmlns.com/foaf/0.1/Person')

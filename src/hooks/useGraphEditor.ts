@@ -5,7 +5,6 @@ import {
 } from '@type'
 
 const {
-  // store,
   Context,
   useSelector,
   Provider,

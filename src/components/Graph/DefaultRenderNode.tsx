@@ -4,8 +4,12 @@ import React from 'react'
 import { Text as GraphText } from '../Text'
 import { View as GraphView } from '../View'
 
+/**
+ * Default render node component. If renderNode is not suplied, it will render.
+ */
 export const DefaultRenderNode: RenderNode = ({
-  item, element,
+  item, 
+  element,
   cy,
   config,
 }) => {
@@ -50,8 +54,8 @@ export const DefaultRenderNode: RenderNode = ({
         labelVisible && (
           <GraphText
             // isSprite
-            // text={R.last(item.id.split('/'))?.substring(0, 10) ?? item.id}
-            text={'Node'}
+            text={item.id}
+            // text={'Node'}
           />
         )
       }

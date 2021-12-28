@@ -15,9 +15,21 @@ import { Container, ContainerRef } from '../Container'
 
 export type ClusterNodeContainerProps = {
   children: RenderClusterNode;
+  /**
+   * Cluster node data
+   */
   item: Cluster;
+  /**
+   * Related graph id
+   */
   graphID: string;
+  /**
+   * Related graph instance ref
+   */
   graphRef: React.RefObject<GraphRef>;
+  /**
+   * Cluster node config
+   */
   config?: NodeConfig;
 
 }
@@ -25,6 +37,7 @@ export type ClusterNodeContainerProps = {
 export type ClusterNodeContainerType = React.ForwardedRef<ClusterNodeContainerProps>
 
 const DEFAULT_POSITION = { x: 0, y: 0 }
+
 const ClusterNodeContainerElement = (
   props: ClusterNodeContainerProps,
   __: React.ForwardedRef<ClusterNodeContainerType>,
@@ -102,6 +115,10 @@ const ClusterNodeContainerElement = (
   )
 }
 
+/**
+ * The container for ClusterNodes. It facilitates drag, visibility, and other
+ * operations.
+ */
 export const ClusterNodeContainer = wrapComponent<ClusterNodeContainerProps>(
   ClusterNodeContainerElement,
   {

@@ -18,9 +18,15 @@ import Vector from 'victor'
 
 
 type NativeViewportProps = {
+  /**
+   * Current PIXI app instance
+   */
   app: PIXI.Application;
   width: number;
   height: number;
+  /**
+   * Theme for the viewport and its children
+   */
   theme: Theme;
   onCreate?: (v: ViewportNative) => void;
   onPress?: (c: {
@@ -28,6 +34,9 @@ type NativeViewportProps = {
     position: Position;
   }) => void | undefined;
   zoom?: number;
+  /**
+   * Scale, rotation and position of the viewport
+   */
   transform?: {
     x?: number;
     y?: number;
@@ -39,16 +48,25 @@ type NativeViewportProps = {
     pivotX?: number;
     pivotY?: number;
   };
+  /**
+   * Event handler for box selection start
+   */
   onBoxSelectionStart?: (c: {
     event: PIXI.InteractionEvent;
     startPosition: Position;
   }) => void;
+  /**
+   * Event handler for box selection 
+   */
   onBoxSelection?: (c: {
     event: PIXI.InteractionEvent;
     startPosition: Position;
     endPosition: Position;
     boundingBox: BoundingBox;
   }) => void;
+  /**
+   * Event handler for box selection end
+   */
   onBoxSelectionEnd?: (c: {
     event: PIXI.InteractionEvent;
     startPosition: Position;
@@ -418,6 +436,10 @@ function ViewportElement(props: Omit<ViewportProps, 'theme'>, ref: React.Forward
   )
 }
 
+
+/**
+ * The wrapper for Node and Edge Elements to provide drag, pinch, and zoom functionality.
+ */
 export const Viewport = wrapComponent<ViewportProps>(
   ViewportElement, {
     isForwardRef: true,

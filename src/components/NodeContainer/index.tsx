@@ -15,9 +15,21 @@ import { Container } from '../Container'
 
 export type NodeContainerProps = {
   children: RenderNode;
+  /**
+   * Node data
+   */
   item: any;
+  /**
+   * Related graph id
+   */
   graphID: string;
+  /**
+   * Related graph instance ref
+   */
   graphRef: React.RefObject<GraphRef>;
+  /**
+   * Node config data
+   */
   config: NodeConfig;
 }
 
@@ -101,6 +113,10 @@ const NodeContainerElement = (
   )
 }
 
+/**
+ * The container for Node Elements. It facilitates drag, visibility, and other
+ * operations.
+ */
 export const NodeContainer = wrapComponent<NodeContainerProps>(
   NodeContainerElement,
   {

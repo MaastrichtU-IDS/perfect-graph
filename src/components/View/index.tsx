@@ -12,7 +12,13 @@ import React from 'react'
 
 export type ViewProps = React.ComponentProps<typeof InletGraphics> & {
   children?: React.ReactNode;
+  /**
+   * Background color
+   */
   fill?: number
+  /**
+   * Rectangle radius value
+   */
   radius?: number
 }
 
@@ -59,6 +65,9 @@ const ViewElement = (
   )
 }
 
+/**
+ * The rectangle creator for PIXI.
+ */
 export const View = wrapComponent<
 PropsWithRef<PIXI.Container, ViewProps>
 // @ts-ignore

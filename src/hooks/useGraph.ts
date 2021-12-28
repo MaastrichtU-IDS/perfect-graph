@@ -22,7 +22,7 @@ export type Props = {
 /**
  * To create new graph or use existing graph via hooks. 
  */
-export default (props: Props) => {
+export const useGraph = (props: Props) => {
   const {
     id,
     clusters = [],

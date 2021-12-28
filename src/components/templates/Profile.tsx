@@ -75,6 +75,9 @@ const ProfileElement = (
   )
 }
 
+/**
+ * The simple profile component.
+ */
 export const ProfileTemplate = wrapComponent<ProfileProps>(
   ProfileElement,
   {

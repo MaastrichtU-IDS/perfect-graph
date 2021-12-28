@@ -37,22 +37,58 @@ import { Viewport, ViewportProps } from '../Viewport'
 
 export type GraphProps = {
   children?: React.ReactNode;
+  /**
+   * To rerender the graph when the extra data changes
+   */
   extraData?: any;
+  /**
+   * Node data list to render
+   */
   nodes: NodeData[];
+  /**
+   * Edge data list to render
+   */
   edges: EdgeData[];
+  /**
+   * Style for graph container view
+   */
   style?: ViewProps['style'];
+  /**
+   * It returns a PIXI.DisplayObject instance as React.Node for the node
+   */
   renderNode?: RenderNode;
+  /**
+   * It returns a PIXI.DisplayObject instance as React.Node for the edge
+   */
   renderEdge?: RenderEdge;
+  /**
+   * It returns a PIXI.DisplayObject instance as React.Node for the cluster node
+   */
   renderClusterNode?: RenderClusterNode;
+  /**
+   * Event handler for graph canvas background
+   */
   onPress?: ViewportProps['onPress'];
+  /**
+   * The function to draw line for edge connection vectors
+   */
   drawLine?: DrawLine;
+  /**
+   * All graph config for nodes and edges
+   */
   config?: GraphConfig;
+  /**
+   * Event handler for box selection event. It gives the selected nodes
+   */
   onBoxSelection?: (c: {
     event: PIXI.InteractionEvent,
     elements: cytoscape.Collection,
     itemIds: string[],
     boundingBox: BoundingBox;
   }) => void;
+  /**
+   * It gives the selected nodes. It is used for selected node highlighting and DataBar
+   */
   selectedElementIds?: string[]
 }
 
@@ -368,6 +404,9 @@ const DEFAULT_CONFIG = {
   theme: DefaultTheme,
 }
 
+/**
+ * The stage creator for the network graph. It handles rendering operations of nodes and edges.
+ */
 export const Graph = wrapComponent<PropsWithRef<GraphRef, GraphProps>>(
   GraphElement,
   {

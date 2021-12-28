@@ -20,17 +20,35 @@ import { Container, ContainerRef } from '../Container'
 
 export type EdgeContainerProps = {
   children: RenderEdge;
+  /**
+   * Edge data
+   */
   item: any;
+  /**
+   * Related graph id
+   */
   graphID: string;
-  drawLine?: DrawLine;
-  config: EdgeConfig;
+  /**
+   * Related graph instance ref
+   */
   graphRef: React.RefObject<GraphRef>;
+  /**
+   * Draw line function for edge connection vector
+   */
+  drawLine?: DrawLine;
+  /**
+   * Edge config data
+   */
+  config: EdgeConfig;
 }
 
 export type EdgeContainerType = React.FC<EdgeContainerProps>
 const DEFAULT_DISTANCE = 36
 const DEFAULT_MARGIN = 10
 
+/**
+ * The calculator for the edges connection info. 
+ */
 export const calculateEdgeGroupInfo = (edge: EdgeElement) => {
   const edgeID = edge.id()
   const targetElement = edge.target()
@@ -60,6 +78,9 @@ export const calculateEdgeGroupInfo = (edge: EdgeElement) => {
   }
 }
 
+/**
+ * The calculator for the edge connection vector. 
+ */
 export const calculateVectorInfo = (
   source: NodeElement,
   to: NodeElement,
@@ -86,6 +107,7 @@ export const calculateVectorInfo = (
     undirectedNormVector: normVector.clone().multiplyScalar(sign),
   }
 }
+
 const EdgeContainerElement = (
   props: EdgeContainerProps,
   __: React.ForwardedRef<EdgeContainerType>,
@@ -276,6 +298,7 @@ const EdgeContainerElement = (
             targetElement,
             sourceElement,
             config,
+            context,
           })
         }
       </Container>
@@ -290,6 +313,11 @@ const EdgeContainerElement = (
   )
 }
 
+
+/**
+ * The container for Edge Elements. It facilitates drawLine, visibility, and other
+ * operations.
+ */
 export const EdgeContainer = wrapComponent<EdgeContainerProps>(
   EdgeContainerElement,
   {

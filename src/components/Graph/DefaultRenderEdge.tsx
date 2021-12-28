@@ -4,6 +4,9 @@ import React from 'react'
 import { Text as GraphText } from '../Text'
 import { View as GraphView } from '../View'
 
+/**
+ * Default render edge component. If renderEdge is not suplied, it will render.
+ */
 export const DefaultRenderEdge: RenderEdge = ({
   cy,
   element,

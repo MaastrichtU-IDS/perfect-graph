@@ -149,6 +149,9 @@ import { Text as ReactPIXIText } from '@inlet/react-pixi'
 //   )
 // }
 
+/**
+ * [PIXI.Text React Component]{@link https://reactpixi.org/components/text}
+ */
 export const Text = ReactPIXIText
 // export const Text = wrapComponent<
 // PropsWithRef<PIXI.Text, TextProps>

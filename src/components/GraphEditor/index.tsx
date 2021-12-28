@@ -42,28 +42,91 @@ type RenderElementAdditionalInfo = {
 }
 
 export type GraphEditorProps = {
+  /**
+   * Event handler for all events that are emitted by the graph editor.
+   */
   onEvent?: OnEvent;
+  /**
+   * All graph config data for nodes and edges. It will supply the config data for the graph.
+   */
   graphConfig?: GraphConfig;
+  /**
+   * GraphEditor config data for all operations.
+   */
   config?: GraphEditorConfig;
+  /**
+   * Render React component into ActionBar.
+   */
   renderMoreAction?: () => React.ReactElement;
+  /**
+   * Config for labels of nodes and edges
+   */
   label?: GraphLabelData;
+  /**
+   * Config for SettingsBar
+   */
   settingsBar?: SettingsBarProps;
+  /**
+   * Config for DataBar
+   */
   dataBar?: Pick<DataBarProps, 'editable' | 'isOpen'>;
+  /**
+   * Config for ActionBar
+   */
   actionBar?: Pick<ActionBarProps, 'renderMoreAction' | 'isOpen' | 'recording' | 'eventRecording' | 'autoOpen' | 'theming'>;
+  /**
+   * Config for PreferencesModal
+   */
   preferencesModal?: PreferencesModalProps;
+  /**
+   * It gives the selected nodes. It is used for selected node highlighting and DataBar
+   */
   selectedElementIds?: string[] | null;
+  /**
+   * Editor mode for changing actions and mouse icon
+   */
   mode?: EditorMode;
+  /**
+   * It returns a PIXI.DisplayObject instance as React.Node for the edge
+   */
   renderEdge?: GraphEditorRenderEdge<RenderElementAdditionalInfo>;
+  /**
+   * It returns a PIXI.DisplayObject instance as React.Node for the node
+   */
   renderNode?: GraphEditorRenderNode<RenderElementAdditionalInfo>;
+  /**
+   * Recorded events will be displayed on SettingsBar
+   */
   events?: RecordedEvent[]
+  /**
+   * Event history will be displayed on SettingsBar
+   */
   eventHistory?: EventHistory;
+  /**
+   * Events playlist will be displayed on SettingsBar
+   */
   playlists?: Playlist[];
+  /**
+   * Calculated network statistics will be displayed on SettingsBar
+   */
   networkStatistics?: NetworkStatistics;
+  /**
+   * Display loading indicator
+   */
   isLoading?: boolean;
-  isFocusMode?: boolean;
+  /**
+   * Modal components for displaying modal dialogs
+   */
   modals?: {
     ElementSettings?: ModalComponentProps
   };
+  /**
+   * Focus mode for chunk stacked nodes
+   */
+  isFocusMode?: boolean;
+  /**
+   * Focus mode stack
+   */
   previousDataList?: {
     nodes: NodeData[];
     edges: EdgeData[];
@@ -813,6 +876,10 @@ const extractGraphEditorData = (props: GraphEditorProps) => convert({
   edges: props.edges,
 })
 
+/**
+ * It is a wrapper for Graph with editor components. It has Sidebar, DataBar, ActionBar
+ * to give the power of editing.
+ */
 export const GraphEditor = wrapComponent<
 PropsWithRef<GraphEditorRef, GraphEditorProps>
 >(

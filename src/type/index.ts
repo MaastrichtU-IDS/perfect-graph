@@ -25,8 +25,8 @@ declare module 'pixi.js' {
     yoga: YogaLayout;
 
     /**
-         * Internal property for fast checking if object has yoga
-         */
+    * Internal property for fast checking if object has yoga
+    */
     __hasYoga: boolean;
 
     _visible: boolean;
@@ -34,13 +34,13 @@ declare module 'pixi.js' {
     flex: boolean;
 
     /**
-         * Applies yoga layout to DisplayObject
-         */
+    * Applies yoga layout to DisplayObject
+    */
     updateYogaLayout(): void;
 
     /**
-         * Checks boundaries of DisplayObject and emits NEED_LAYOUT_UPDATE if needed
-         */
+    * Checks boundaries of DisplayObject and emits NEED_LAYOUT_UPDATE if needed
+    */
     checkIfBoundingBoxChanged(): void;
     _yogaLayoutHash: number;
     _prevYogaLayoutHash: number;
@@ -51,18 +51,36 @@ declare module 'pixi.js' {
 declare module 'cytoscape' {
   // @ts-ignore
   interface NodeSingular extends cytoscape.NodeSingular {
+    /**
+     * Node element hovered
+     */
     hovered: () => boolean;
+    /**
+     * Node element filtered
+     */
     filtered: () => boolean;
   }
   // @ts-ignore
   interface EdgeSingular extends cytoscape.EdgeSingular  {
+    /**
+     * Edge element hovered
+     */
     hovered: () => boolean;
+    /**
+     * Edge element filtered
+     */
     filtered: () => boolean;
   }
 }
 
+/**
+* Style for view components
+*/
 export type Style = { [k: string]: any }
-// export type OnLayout = (event: LayoutChangeEvent) => void
+
+/**
+* Cytoscape element context
+*/
 export type ElementContext<T = (NodeElementSettings | EdgeElementSettings)> = {
   render: (callback?: () => void) => void;
   onPositionChange: () => void;
@@ -75,31 +93,70 @@ export type BoundingBox = {
   width: number;
   height: number;
 }
+
+
 export type EdgeElementSettings = {
+  /**
+   * Edge is filtered by given filter function
+   */
   filtered: boolean;
+  /**
+   * Edge's source or target node is filtered
+   */
   nodeFiltered: boolean;
+  /**
+   * Visibility tracking object
+   */
   visibility: {
     nodeVisible: boolean;
   }
+  /**
+   * Hovered state
+   */
   hovered: boolean
 }
 export type NodeElementSettings = {
+  /**
+   * Node is filtered by given filter function
+   */
   filtered: boolean;
+  /**
+   * Visibility tracking object
+   */
   visibility: {
     cluster: boolean;
   }
+  /**
+   * Hovered state
+   */
   hovered: boolean;
 }
+
 export type NodeContext = ElementContext<NodeElementSettings> & {
+  /**
+   * Node's bounding box without children
+   */
   boundingBox: BoundingBox;
+  /**
+   * Node cytoscape element
+   */
   element: NodeElement;
 }
 
 export type EdgeContext = ElementContext<EdgeElementSettings> & {
+  /**
+   * Edge cytoscape element
+   */
   element: EdgeElement;
 }
 
+/**
+* GraphEditor Event Types
+*/
 export type EventType = keyof typeof EVENT
+/**
+* GraphEditor mode
+*/
 export type EditorMode = keyof typeof EDITOR_MODE
 
 export type AdditionalDataItem = {
@@ -124,16 +181,37 @@ export type Element = EdgeElement | NodeElement
 export type ElementData = NodeData | EdgeData
 
 export type NodeData = {
+  /**
+   * Node id for cytoscape
+   */
   id: string;
+  /**
+   * Node initial position
+   */
   position?: Position;
-  data?: DataItem[];
+  /**
+   * Node data
+   */
+  data?: any;
 }
 
 export type EdgeData = {
+  /**
+   * Edge id for cytoscape
+   */
   id: string;
+  /**
+   * Edge source id for cytoscape
+   */
   source: string;
+  /**
+   * Edge target id for cytoscape
+   */
   target: string;
-  data?: DataItem[];
+  /**
+   * Edge data
+   */
+  data?: any;
 }
 
 export type GraphData = {
@@ -141,36 +219,97 @@ export type GraphData = {
   edges: EdgeData[];
 }
 
+/**
+ * Edge or Node render element function
+ */
 type RenderElementParams = {
+  /**
+   * Related cytoscape instance
+   */
   cy: Core;
+  /**
+   * Related graph instance ref
+   */
   graphRef: React.RefObject<GraphRef>;
   theme: Theme;
 }
 
 type GraphEditorRenderElementExtraParams = {
+  /**
+   * Selected label path
+   */
   labelPath: string[];
+  /**
+   * Element default label
+   */
   label: string;
 }
 
 type ExtendParams<T extends (a: any) => any, E> = (c: Parameters<T>[0] & E) => ReturnType<T>
 
 export type RenderEdge<Additional extends Record<string, any> = {}> = (c: {
+  /**
+   * Edge data
+   */
   item: EdgeData;
+  /**
+   * Edge cytoscape element
+   */
   element: EdgeElement;
+  /**
+   * Edge source element
+   */
   sourceElement: NodeElement;
+  /**
+   * Edge target element
+   */
   targetElement: NodeElement;
+  /**
+   * Edge source position
+   */
   from: Position;
+  /**
+   * Edge target position
+   */
   to: Position;
+  /**
+   * Edge index among neighbors after sorting
+   */
   sortedIndex: number;
+  /**
+   * Edge index among neighbors
+   */
   index: number;
+  /**
+   * Edge count with neighbors
+   */
   count: number;
+  /**
+   * Edge config data
+   */
   config: EdgeConfig;
+  /**
+   * Edge context
+   */
+  context: EdgeContext;
 } & RenderElementParams & Additional) => React.ReactElement
 
 export type RenderNode<Additional extends Record<string, any> = {}> = (c: {
+  /**
+   * Node data
+   */
   item: NodeData;
+  /**
+   * Node cytoscape element
+   */
   element: NodeElement;
+  /**
+   * Node config data
+   */
   config: NodeConfig;
+  /**
+   * Node context
+   */
   context: NodeContext;
 } & RenderElementParams & Additional) => React.ReactElement
 

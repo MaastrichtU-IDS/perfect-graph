@@ -16,12 +16,30 @@ import { mutableGraphMap } from './useGraph'
 import { useElement } from './useElement'
 
 export type Props = {
-  graphID: string;
-  position: Position;
-  isCluster?: boolean;
-  onPositionChange?: (c: { element: NodeSingular; context: NodeContext }) => void | any;
-  config?: NodeConfig;
+  /**
+   * Node data
+   */
   item: NodeData;
+  /**
+   * Related graph id
+   */
+  graphID: string;
+  /**
+   * Node initial position
+   */
+  position: Position;
+  /**
+   * Node is cluster or not
+   */
+  isCluster?: boolean;
+  /**
+   * Position change handler
+   */
+  onPositionChange?: (c: { element: NodeSingular; context: NodeContext }) => void | any;
+  /**
+   * Node config data
+   */
+  config?: NodeConfig;
 }
 
 type Result = {
@@ -38,7 +56,7 @@ const DEFAULT_BOUNDING_BOX = {
   height: 0,
 }
 
-export default (props: Props): Result => {
+export const useNode = (props: Props): Result => {
   const {
     position,
     onPositionChange,

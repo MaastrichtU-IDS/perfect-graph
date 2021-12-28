@@ -10,9 +10,19 @@ import {
 } from '@type'
 
 export type Config = {
+  /**
+   * HTML element ref
+   */
   ref: React.MutableRefObject<HTMLDivElement | null| undefined>;
+  /**
+   * Drag Handler
+   */
   onDrag: (pos: Position, rect: DOMRect) => { keepDragging?: boolean; position?: Position } | void;
 }
+
+/**
+ * Track drag events for Html Elements.
+ */
 export const useDrag = (options: Config) => {
   const {
     ref,

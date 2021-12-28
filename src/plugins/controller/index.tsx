@@ -53,6 +53,9 @@ const closeAllBars = (draft:UseControllerData) => {
   draft.settingsBar!.isOpen = false
 }
 
+/**
+ * Graph Editor Controller. There are events handlers for the graph editor. It return the changed props.
+ */
 export const useController = (
   useControllerData: Partial<UseControllerData>,
   _graphEditorRef?: React.MutableRefObject<GraphEditorRef>,
