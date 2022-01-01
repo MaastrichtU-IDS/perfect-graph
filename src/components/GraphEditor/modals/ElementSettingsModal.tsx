@@ -10,7 +10,7 @@ import {
   ListItemIcon,
   ListItemText, Paper, Slide, Typography,
 } from '@mui/material'
-import Form from '@rjsf/material-ui'
+import { Form } from '@components/Form'
 import { DataRender, dataRenderPath, isReact, View } from 'colay-ui'
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import * as R from 'colay/ramda'
@@ -167,6 +167,17 @@ export const ElementSettingsModal = (props: PreferencesModalProps) => {
               onSubmit={({ formData }) => {
                 onEvent({
                   type: EVENT.ELEMENT_SETTINGS_FORM_SUBMIT,
+                  payload: {
+                    name: state.componentId,
+                    value: formData,
+                    itemIds: graphEditorLocalDataRef.current!.contextMenu!.itemIds,
+                  },
+                })
+                graphEditorLocalDataRef.current!.contextMenu!.itemIds = []
+              }}
+              onClear={({ formData }) => {
+                onEvent({
+                  type: EVENT.ELEMENT_SETTINGS_FORM_CLEAR,
                   payload: {
                     name: state.componentId,
                     value: formData,

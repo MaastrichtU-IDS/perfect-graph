@@ -6,13 +6,13 @@ import { useGraphEditor } from '@hooks'
 import { useDrag } from '@hooks/useDrag'
 import {
   Box, Button, Divider,
-  IconButton, Paper
+  IconButton, Paper,
 } from '@mui/material'
-import { FormProps } from '@rjsf/core'
-import Form from '@rjsf/material-ui'
+import { FormProps } from '@type'
+import { Form } from '@components/Form'
 import {
   useAnimation,
-  View, wrapComponent
+  View, wrapComponent,
 } from 'colay-ui'
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import * as R from 'colay/ramda'
@@ -173,19 +173,13 @@ const SettingsBarElement = (props: SettingsBarProps) => {
                               type: EVENT.SETTINGS_FORM_CHANGED,
                               payload: { form, value: e.formData, index },
                             })}
-                          >
-                            {
-                              form.children ?? (
-                              <Button
-                                type="submit"
-                                fullWidth
-                                variant="contained"
-                              >
-                                Apply
-                              </Button>
-                              )
-        }
-                          </Form>
+                            onClear={(
+                              e,
+                            ) => onEvent({
+                              type: EVENT.SETTINGS_FORM_CLEAR,
+                              payload: { form, value: e.formData, index },
+                            })}
+                          />
                           </CollapsibleContainer>
                         )
                       }

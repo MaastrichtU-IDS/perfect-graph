@@ -26,13 +26,6 @@ import * as R from 'colay/ramda'
 import * as PIXI from 'pixi.js'
 import React from 'react'
 import Vector from 'victor'
-// import {
-//   ElementSettingsModal,
-// } from '@components/GraphEditor/modals/ElementSettingsModal'
-
-// type ControllerOptions = {
-//   // onEvent?: (info: EventInfo, draft: ControllerState) => boolean;
-// }
 
 type UseControllerData = ControllerState
 // Pick<
@@ -748,6 +741,47 @@ export const useController = (
             }
             break
           }
+          case EVENT.ELEMENT_SETTINGS_FORM_CLEAR: {
+            const {
+              name,
+              // value,
+            } = payload
+            // draft.modals.ElementSettings.isOpen = true
+            switch (name) { 
+              case 'Visualization':
+
+                break
+            
+              default:
+                break
+            }
+            break
+          }
+          case EVENT.PREFERENCES_FORM_CLEAR: {
+            const {
+              value,
+              preferenceId,
+            } = payload
+            // draft.modals.ElementSettings.isOpen = true
+            switch (preferenceId) { 
+              case 'NodeView':
+                draft.graphConfig!.nodes!.view = {
+                  ...draft.graphConfig?.nodes?.view,
+                  ...value,
+                }
+                break
+              case 'EdgeView':
+                draft.graphConfig!.edges!.view = {
+                  ...draft.graphConfig?.edges?.view,
+                  ...value,
+                }
+                break
+            
+              default:
+                break
+            }
+            break
+          }
           case EVENT.PREFERENCES_FORM_SUBMIT: {
             const {
               value,
@@ -814,7 +848,7 @@ export const useController = (
       update,
       onEvent,
     },
-  ]
+  ] as const
 }
 
 const getValueByType = (type: RDFType, value: string) => value

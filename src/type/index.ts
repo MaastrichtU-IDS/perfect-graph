@@ -7,6 +7,7 @@ import {
 import GraphLayouts from '@core/layouts'
 import { Theme } from '@core/theme'
 import Form from '@rjsf/material-ui'
+import { FormProps as FormPropsDefault } from '@rjsf/core'
 import { YogaLayout } from '@utils/addFlexLayout/flex-layout/YogaLayout'
 import { Enumerable, Position } from 'colay/type'
 // import { LayoutChangeEvent } from 'react-native'
@@ -769,7 +770,8 @@ GraphEditorProps,
 'nodes' | 'edges' | 'mode' | 'selectedElementIds'
 | 'actionBar' | 'dataBar' | 'settingsBar'
 | 'graphConfig' | 'playlists' | 'isLoading' | 'modals' | 'events'
-| 'preferencesModal' | 'isFocusMode' | 'previousDataList' | 'label'
+| 'preferencesModal' | 'isFocusMode' | 'previousDataList' | 'label' 
+| 'networkStatistics'
 
 >
 
@@ -873,7 +875,9 @@ export type GraphEditorContextType = {
 }
 
 
-export type FormProps = React.ComponentPropsWithRef<typeof Form>
+export type FormProps<T = any> = FormPropsDefault<T> & {
+  onClear?: (params: { formData: T }) => void;
+}
 
 type OnBoxSelectionEvent = {
   /**

@@ -14,7 +14,7 @@ import {
   ListItemText, Modal,
   Paper, Slide, Typography,
 } from '@mui/material'
-import Form from '@rjsf/material-ui'
+import { Form } from '@components/Form'
 import { DataRender, dataRenderPath, isReact, View } from 'colay-ui'
 import { GraphConfig, FormProps } from '@type'
 import { useImmer } from 'colay-ui/hooks/useImmer'
@@ -133,6 +133,16 @@ export const PreferencesModal = (props: PreferencesModalProps) => {
       },
     })
   }
+  const onClearCallback = ({ formData }: { formData: any }) => {
+    onEvent({
+      type: EVENT.PREFERENCES_FORM_CLEAR,
+      payload: {
+        value: formData,
+        preferenceId: state.componentId,
+        preferencePath: state.selectedPath,
+      },
+    })
+  }
   return (
     <Modal
       open={isOpen}
@@ -216,6 +226,7 @@ export const PreferencesModal = (props: PreferencesModalProps) => {
               }}
               schema={form.schema}
               onSubmit={onSubmitCallback}
+              onClear={onClearCallback}
             >
               {
                 form.children ?? (

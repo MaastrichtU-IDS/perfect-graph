@@ -6,9 +6,6 @@ import { ELEMENT_TYPE } from '@constants'
 import { View } from './View'
 import { Graphics } from './Graphics'
 import { Text } from './Text'
-// import { Pressable } from './Pressable'
-// import { Image } from './Image'
-// import { HoverContainer } from './HoverContainer'
 import { Graph as NativeGraph, GraphProps } from './Graph'
 
 export const Graph = NativeGraph as ComponentType<GraphProps> & {
@@ -19,14 +16,8 @@ export const Graph = NativeGraph as ComponentType<GraphProps> & {
   Layouts: typeof Layouts;
   Clusters: typeof Clusters;
   elementType: typeof ELEMENT_TYPE;
-  // Image: typeof Image;
-  // Pressable: typeof Pressable;
-  // HoverContainer: typeof HoverContainer;
 }
 
-// Graph.Pressable = Pressable
-// Graph.Image = Image
-// Graph.HoverContainer = HoverContainer
 Graph.View = View
 Graph.Text = Text
 Graph.Graphics = Graphics
@@ -41,12 +32,10 @@ export {
 } from './templates/Profile'
 
 export type { GraphProps } from './Graph'
+export type { GraphEditorProps } from './GraphEditor'
+
+export  { GraphEditor } from './GraphEditor'
 
 export {
   drawLine,
 } from './Graphics'
-
-// export {
-//   GraphEditor,
-//   GraphEditorProps,
-// } from './GraphEditor'

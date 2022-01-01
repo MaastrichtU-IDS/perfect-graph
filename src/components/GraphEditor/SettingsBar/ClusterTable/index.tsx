@@ -10,7 +10,7 @@ import { TabPanel } from '@components/TabPanel'
 import { EDITOR_MODE, EVENT } from '@constants'
 import { useGraphEditor } from '@hooks'
 import { GraphEditorContextType } from '@type'
-import { Cluster } from '@type'
+import { Cluster, FormProps } from '@type'
 import {
   Button,
   Card, Checkbox,
@@ -22,8 +22,7 @@ import {
 import Accordion from '@mui/material/Accordion'
 import AccordionDetails from '@mui/material/AccordionDetails'
 import AccordionSummary from '@mui/material/AccordionSummary'
-import { FormProps } from '@rjsf/core'
-import Form from '@rjsf/material-ui'
+import { Form } from '@components/Form'
 import {
   useDisclosure, View,
 } from 'colay-ui'
@@ -395,6 +394,12 @@ export const ClusterTable = (props: ClusterTableProps) => {
                 updateState((draft) => {
                   draft.formData = event.formData
                   draft.createClusterDialog.visible = true
+                })
+              }}
+              onClear={(event) => {
+                updateState((draft) => {
+                  draft.formData = event.formData
+                  draft.createClusterDialog.visible = false
                 })
               }}
               {...createClusterForm}

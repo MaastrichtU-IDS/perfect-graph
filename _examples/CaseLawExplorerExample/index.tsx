@@ -134,7 +134,7 @@ export const createMockData = (nodeSize: number, edgeSize: number) => {
     edges
   }
 }
-const COUNT = 1000
+const COUNT = 10
 const data = createMockData(COUNT, COUNT)
 const nextData = {
   edges: [{ id: 'edge-20', source: 'node-0', target: 'node-1' }],

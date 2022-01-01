@@ -878,7 +878,7 @@ const GraphEditorElement = (
   )
 }
 
-const convert = (object: any) => {
+const convertWithoutFunctions = (object: any) => {
   const cache: any[] = []
   return JSON.stringify(object, (key, value) => {
     if (typeof value === 'object' && value !== null) {
@@ -888,20 +888,38 @@ const convert = (object: any) => {
       // Store value in our collection
       cache.push(value)
     }
+    if (typeof value === 'function') return null
     return value
   })
 }
-const extractGraphEditorData = (props: GraphEditorProps) => convert({
-  graphConfig: props.graphConfig,
-  label: props.label,
-  // settingsBar: R.omit(['header', 'footer'], props.settingsBar),
-  dataBar: R.omit(['header', 'footer'], props.dataBar),
-  actionBar: R.omit(['right', 'left'], props.actionBar),
-  eventHistory: props.eventHistory,
-  mode: props.mode,
-  nodes: props.nodes,
-  edges: props.edges,
-})
+
+const extractGraphEditorData = (props: GraphEditorProps) => convertWithoutFunctions(props)
+
+// const convert = (object: any) => {
+//   const cache: any[] = []
+//   return JSON.stringify(object, (key, value) => {
+//     if (typeof value === 'object' && value !== null) {
+//       // Duplicate reference found, discard key
+//       if (cache.includes(value)) return null
+
+//       // Store value in our collection
+//       cache.push(value)
+//     }
+//     return value
+//   })
+// }
+// const extractGraphEditorData = (props: GraphEditorProps) => convert({
+//   graphConfig: props.graphConfig,
+//   label: props.label,
+//   settingsBar: R.omit(['header', 'footer'], props.settingsBar),
+//   dataBar: R.omit(['header', 'footer'], props.dataBar),
+//   actionBar: R.omit(['right', 'left'], props.actionBar),
+//   eventHistory: props.eventHistory,
+//   mode: props.mode,
+//   nodes: props.nodes,
+//   edges: props.edges,
+//   networkStatistics: props.networkStatistics,
+// })
 
 /**
  * It is a wrapper for Graph with editor components. It has Sidebar, DataBar, ActionBar

@@ -1,6 +1,6 @@
 import { Collapsible, CollapsibleContainer, CollapsibleTitle } from '@components/Collapsible'
 import { EVENT } from '@constants'
-import Form from '@rjsf/material-ui'
+import { Form } from '@components/Form'
 import { OnEventLite } from '@type'
 import * as R from 'colay/ramda'
 import React from 'react'
