@@ -295,7 +295,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
           }}
         >
           <Icon
-            name="build_circle_outlined"
+            name="settings_outlined" //"build_circle_outlined"
           />
         </IconButton>
         <IconButton
@@ -310,7 +310,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
           }}
         >
           <Icon
-            name="info_outlined"
+            name="article_outlined"//"info_outlined"
           />
         </IconButton>
         <IconButton
@@ -325,7 +325,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
             }}
           >
             <Icon
-              name="settings"
+              name="app_registration_outlined" //"tune_outlined" // "settings"
             />
           </IconButton>
       </View>

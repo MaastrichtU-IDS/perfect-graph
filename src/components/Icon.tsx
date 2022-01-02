@@ -2,6 +2,8 @@ import React from 'react'
 import {
   AddCircle,
   Adjust,
+  ArticleOutlined,
+  AppRegistrationOutlined,
   DeleteRounded,
   RecordVoiceOverRounded,
   Edit,
@@ -34,6 +36,8 @@ import {
   NavigateNext,
   NavigateBefore,
   Assessment,
+  TocOutlined,
+  SettingsOutlined,
   Beenhere,
   UnfoldLess,
   UnfoldMore,
@@ -41,10 +45,12 @@ import {
   DragHandle,
   CancelRounded,
   CenterFocusStrong,
+  TuneOutlined,
 } from '@mui/icons-material'
 import { IconProps as MUIIconProps } from '@mui/material'
 
 const ICONS = {
+  app_registration_outlined: AppRegistrationOutlined,
   assessment: Assessment,
   add_circle: AddCircle,
   addjust: Adjust,
@@ -63,6 +69,7 @@ const ICONS = {
   filter: Filter,
   arrow_drop_down_rounded: ArrowDropDownRounded,
   arrow_drop_up_rounded: ArrowDropUpRounded,
+  article_outlined: ArticleOutlined,
   bookmarks: Bookmarks,
   bookmark: Bookmark,
   bookmark_border: BookmarkBorder,
@@ -86,6 +93,9 @@ const ICONS = {
   unfold_more: UnfoldMore,
   my_location: MyLocation,
   drag_handle: DragHandle,
+  toc_outlined: TocOutlined,
+  tune_outlined: TuneOutlined,
+  settings_outlined: SettingsOutlined,
 } as const
 
 type IconName = keyof typeof ICONS
