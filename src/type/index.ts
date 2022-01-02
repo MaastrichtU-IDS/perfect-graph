@@ -6,7 +6,6 @@ import {
 } from '@constants'
 import GraphLayouts from '@core/layouts'
 import { Theme } from '@core/theme'
-import Form from '@rjsf/material-ui'
 import { FormProps as FormPropsDefault } from '@rjsf/core'
 import { YogaLayout } from '@utils/addFlexLayout/flex-layout/YogaLayout'
 import { Enumerable, Position } from 'colay/type'

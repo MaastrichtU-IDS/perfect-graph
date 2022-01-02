@@ -1,15 +1,15 @@
 import { Collapsible, CollapsibleContainer, CollapsibleTitle } from '@components/Collapsible'
+import { Form } from '@components/Form'
 import { Icon } from '@components/Icon'
 import { ResizeDivider } from '@components/ResizeDivider'
 import { EVENT, SIDE_PANEL_DEFAULT_HEIGHT, SIDE_PANEL_DEFAULT_WIDTH } from '@constants'
 import { useGraphEditor } from '@hooks'
 import { useDrag } from '@hooks/useDrag'
 import {
-  Box, Button, Divider,
+  Box, Divider,
   IconButton, Paper,
 } from '@mui/material'
 import { FormProps } from '@type'
-import { Form } from '@components/Form'
 import {
   useAnimation,
   View, wrapComponent,

@@ -10,15 +10,16 @@ export type FormProps<T> = FormPropsDefault<T> & {
   onClear?: (params: { formData: any }) => void;
 }
 
-export const Form = <T extends {}>(props: FormProps<T>) => {
+export const Form = <T,>(props: FormProps<T>) => {
   const {
-    onClear: onClearCallback,
+    // onClear: onClearCallback,
     formData: formDataValue,
   } = props
   const [defaultValue] = React.useState(formDataValue)
   const [, refresh] = React.useState(0)
   const formDataRef = React.useRef(formDataValue)
   const onClear = React.useCallback(() => {
+    // @ts-ignore
     formDataRef.current = { ...defaultValue }
     refresh((c) => c + 1)
     // if (!onClearCallback) {
