@@ -11,7 +11,8 @@ import {
   ListItemText, Paper, Slide, Typography,
 } from '@mui/material'
 import { Form } from '@components/Form'
-import { DataRender, dataRenderPath, isReact, View } from 'colay-ui'
+import { DataRender, dataRenderPath,  View } from 'colay-ui'
+import * as ReactIs from 'colay-ui/utils/is-react'
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import * as R from 'colay/ramda'
 import React from 'react'
@@ -146,7 +147,7 @@ export const ElementSettingsModal = (props: PreferencesModalProps) => {
           </Breadcrumbs> */}
           {
             // @ts-ignore
-      !isReact.compatible(Component)
+      !ReactIs.isValidElementType(Component)
         ? (
           <Paper
             style={{
