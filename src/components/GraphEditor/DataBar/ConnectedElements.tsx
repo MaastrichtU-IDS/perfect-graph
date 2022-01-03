@@ -57,16 +57,25 @@ export const ConnectedElements = () => {
     id: string;
     data: any;
   }[]
+  let connectedNodeitemList: {
+    id: string;
+    data: any;
+  }[]
   if (isNode) {
     itemList = selectedElement.connectedEdges().toArray().map(
       getItemFromElement,
     )
+    connectedNodeitemList = selectedElement.neighborhood().toArray()
+      .filter(el => el.isNode()).map(
+        getItemFromElement
+      )
   } else {
     itemList = [selectedElement.source(), selectedElement.target()].map(
       getItemFromElement,
     )
   }
   return (
+    <>
     <Collapsible
       defaultIsOpen
     >
@@ -81,25 +90,26 @@ export const ConnectedElements = () => {
             {
               isOpen && (
                 <CollapsibleContainer>
-          <List
-            dense
-          >
-            {
-          itemList.map((item) => (
-            <ConnectedElementItem 
-                item={item}
-                onClick={() => onEvent({
-                  type: EVENT.ELEMENT_SELECTED_WITH_ZOOM,
-                  payload: {
-                    itemIds: [item.id],
-                  },
-                  avoidHistoryRecording: true,
-                })}
-              />
-          ))
-        }
-          </List>
-      </CollapsibleContainer>
+                    <List
+                      dense
+                    >
+                      {
+                    itemList.map((item) => (
+                      <ConnectedElementItem 
+                        key={item.id}
+                          item={item}
+                          onClick={() => onEvent({
+                            type: EVENT.ELEMENT_SELECTED_WITH_ZOOM,
+                            payload: {
+                              itemIds: [item.id],
+                            },
+                            avoidHistoryRecording: true,
+                          })}
+                        />
+                    ))
+                  }
+                    </List>
+                </CollapsibleContainer>
               )
           }
           </>
@@ -107,6 +117,54 @@ export const ConnectedElements = () => {
       }
       
     </Collapsible>
+    {
+      isNode && (
+        <Collapsible
+      defaultIsOpen
+    >
+      {
+        ({ isOpen, onToggle }) => (
+          <>
+          
+            <CollapsibleTitle
+          onClick={onToggle}
+        >
+          {'Connected Nodes'}
+          </CollapsibleTitle>
+            {
+              isOpen && (
+                <CollapsibleContainer>
+                    <List
+                      dense
+                    >
+                      {
+                    connectedNodeitemList.map((item) => (
+                      <ConnectedElementItem 
+                          key={item.id}
+                          item={item}
+                          onClick={() => onEvent({
+                            type: EVENT.ELEMENT_SELECTED_WITH_ZOOM,
+                            payload: {
+                              itemIds: [item.id],
+                            },
+                            avoidHistoryRecording: true,
+                          })}
+                        />
+                    ))
+                  }
+                    </List>
+                </CollapsibleContainer>
+              )
+          }
+          </>
+        )
+      }
+      
+    </Collapsible>
+      )
+    }
+    </>
+    
 
   )
 }
