@@ -1,6 +1,6 @@
 {
   "name": "perfect-graph",
-  "version": "0.0.146",
+  "version": "0.0.147",
   "description": "",
   "main": "node_modules/expo/AppEntry.js",
   "types": "dist/index.d.ts",
@@ -55,7 +55,7 @@
     "colay": "0.0.68",
     "colay-dev": "0.0.17",
     "colay-docs": "0.0.60",
-    "colay-ui": "0.0.139",
+    "colay-ui": "0.0.142",
     "cytoscape-avsdf": "1.0.0",
     "cytoscape-cise": "1.0.0",
     "cytoscape-cola": "2.5.0",
