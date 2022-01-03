@@ -7443,11 +7443,12 @@ colay-docs@0.0.60:
     sass-loader "10.1.1"
     style-loader "2.0.0"
 
-colay-ui@0.0.139:
-  version "0.0.139"
-  resolved "https://registry.yarnpkg.com/colay-ui/-/colay-ui-0.0.139.tgz#d1ebdb924b2142230337301630b3b8916c56c3e2"
-  integrity sha512-yy5lXLDdYENvR+KTKBK+llsKZup5Mfp/pT+CJj37IrjSp03XBJjYY1dFSGWky7is72sF4zY3jsGjOAa1oZ98jA==
+colay-ui@0.0.142:
+  version "0.0.142"
+  resolved "https://registry.yarnpkg.com/colay-ui/-/colay-ui-0.0.142.tgz#77ea1e6db110b097e1be12f300bac5481c1b93db"
+  integrity sha512-xzBMdVi9RJ+0+QVEDzL7iRCsq3C4PZGOTyHLHQadlTMxP2QkCT8C80XQ4zd4q18Oj3ceOD3QZNUzJhMurh/BXw==
   dependencies:
+    is-react "1.5.4"
     react-error-boundary "3.1.4"
 
 colay@0.0.68:
@@ -11390,6 +11391,13 @@ is-promise@^2.1.0:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/is-promise/-/is-promise-2.2.2.tgz#39ab959ccbf9a774cf079f7b40c7a26f763135f1"
   integrity sha512-+lP4/6lKUBfQjZ2pdxThZvLUAafmZb8OAxFb8XXtiQmS35INgr85hdOGoEs124ez1FCnZJt6jau/T+alh58QFQ==
+
+is-react@1.5.4:
+  version "1.5.4"
+  resolved "https://registry.yarnpkg.com/is-react/-/is-react-1.5.4.tgz#4e6bb4ea52ac843ae0160c029dd4235e928acf94"
+  integrity sha512-W6QMMs6MlQs0qFbOUcxRlTjrdNq2I+78njYlMKe9fpaJ7TXKHWVT1hCooANRYKXmpxXhSAc7gSXL6IDuFIwitA==
+  dependencies:
+    react "^16.13.1"
 
 is-regex@^1.1.2, is-regex@^1.1.4:
   version "1.1.4"
@@ -15483,6 +15491,15 @@ react-transition-group@^4.4.2:
     "@babel/runtime" "^7.5.5"
     dom-helpers "^5.0.1"
     loose-envify "^1.4.0"
+    prop-types "^15.6.2"
+
+react@^16.13.1:
+  version "16.14.0"
+  resolved "https://registry.yarnpkg.com/react/-/react-16.14.0.tgz#94d776ddd0aaa37da3eda8fc5b6b18a4c9a3114d"
+  integrity sha512-0X2CImDkJGApiAlcf0ODKIneSwBPhqJawOa5wCtKbu7ZECrmS26NvtSILynQ66cgkT/RJ4LidJOc3bUESwmU8g==
+  dependencies:
+    loose-envify "^1.1.0"
+    object-assign "^4.1.1"
     prop-types "^15.6.2"
 
 react@^17.0.2:

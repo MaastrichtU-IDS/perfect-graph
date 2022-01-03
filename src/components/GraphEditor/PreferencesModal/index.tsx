@@ -16,7 +16,7 @@ import {
 } from '@mui/material'
 import { Form } from '@components/Form'
 import { DataRender, dataRenderPath, View } from 'colay-ui'
-import * as ReactIs from 'colay-ui/utils/is-react'
+// import * as ReactIs from 'colay-ui/utils/is-react'
 import { GraphConfig, FormProps } from '@type'
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import * as R from 'colay/ramda'
@@ -116,13 +116,14 @@ export const PreferencesModal = (props: PreferencesModalProps) => {
     selectedPath: state.selectedPath,
   }), [sidebar, components, state.selectedPath])
   const Component = components[state.componentId] ?? React.Fragment
-  let form = components[state.componentId] as FormProps
   // @ts-ignore
-  const isComponent = ReactIs.isValidElementType(Component)
-  if (!isComponent && components[state.componentId]) {
-    // @ts-ignore
-    form = (components[state.componentId]!)(graphConfig)
-  }
+  let form = (components[state.componentId]!)(graphConfig) as FormProps // components[state.componentId]
+  // @ts-ignore
+  const isComponent = !form.schema//ReactIs.isValidElementType(Component)
+  // if (!isComponent && components[state.componentId]) {
+  //   // @ts-ignore
+  //   form = (components[state.componentId]!)(graphConfig)
+  // }
   const isExist = components[state.componentId]
   const onSubmitCallback = ({ formData }: { formData: any }) => {
     onEvent({
