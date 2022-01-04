@@ -33,11 +33,12 @@ const PATHS = {
   projects: 'projects',
   nodes: 'nodes',
   edges: 'edges',
+  users: 'users',
 }
 
 type Event = {
   type: string;
-  elementType: 'nodes' | 'edges';
+  elementType: 'nodes' | 'edges' | 'users';
   data: any
 }
 type SubscriptionConfig = {
@@ -210,6 +211,66 @@ export async function updateEdge(variables: UpdateEdgeVariables) {
 }
 
 
+type UpdateUserVariables = {
+  user: any;
+  projectId: string;
+}
+
+export async function updateUser(variables: UpdateUserVariables) {
+  const {
+    user,
+    projectId,
+  } = variables
+  try {
+    const ref = doc(firestore,`${PATHS.projects}/${projectId}/${PATHS.users}/${user.id}`)
+    setDoc(
+      ref,
+      user
+    )
+  } catch (err) {
+    console.log('error update user:', err)
+  }
+}
+
+type DeleteUserVariables = {
+  id: string;
+  projectId: string;
+}
+
+export async function deleteUser(variables: DeleteUserVariables) {
+  const {
+    id,
+    projectId,
+  } = variables
+  try {
+    const ref = doc(firestore,`${PATHS.projects}/${projectId}/${PATHS.users}/${id}`)
+    deleteDoc(
+      ref,
+    )
+  } catch (err) {
+    console.log('error deleting user:', err)
+  }
+}
+
+export const useUserSubscription = (config: SubscriptionConfig) => { 
+  const {
+     onEvent,
+     projectId,
+  } = config
+  useSubscription(() => {
+    const ref = collection(firestore, `${PATHS.projects}/${projectId}/${PATHS.users}`)
+    onSnapshot(ref,querySnapshot => {
+      querySnapshot.docChanges().forEach(change => {
+        const data = change.doc.data()
+        onEvent({
+          elementType: 'users',
+          data,
+          type: change.type,
+        })
+      });
+    });
+  })
+}
 
 // export function onCreateNode(callback: (node: any) => void) {
 //   try {

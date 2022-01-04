@@ -1,24 +1,36 @@
-import { GraphEditor } from "perfect-graph";
+import React from 'react'
+import { Graph, GraphEditor, } from "perfect-graph";
+import { DefaultTheme } from "perfect-graph/core/theme";
 import { getSelectedItemByElement, getSelectedElementInfo } from "perfect-graph/utils";
 import { EVENT, EDITOR_MODE } from "perfect-graph/constants";
 import { useController } from "perfect-graph/plugins/controller";
+import { getPointerPositionOnViewport } from "perfect-graph/utils";
 import * as API from "../api/firebase";
+import * as R from "colay/ramda";
+import { useImmer } from "colay-ui/hooks/useImmer";
 
 const PROJECT_ID = 'daa9975c-6bdc-4ab3-9a01-2d1dca1f2290'
+
+type User = {
+  id: string
+  position: {
+    x: number;
+    y: number;
+  }
+}
 
 export function MyGraphEditor(props: any) {
   const {
     width,
     height
   } = props
+  const [state, updateState] = useImmer({
+    users: [] as User[],
+  })
+  const userId = React.useMemo(() => R.uuid(), [])
   const [controllerProps, controller] = useController({
-    nodes: [
-      // { id: '1', position: { x: 10, y: 10 } },
-      // { id: '2', position: { x: 300, y: 100 } },
-    ],
-    edges: [
-      // { id: '51', source: '1', target: '2' }
-    ],
+    nodes: [],
+    edges: [],
     networkStatistics: {
       local: {
 
@@ -157,6 +169,25 @@ export function MyGraphEditor(props: any) {
       }
     }
   });
+  const graphEditorRef = controllerProps.ref
+  const removeUser = React.useCallback(() => {
+    API.deleteUser({
+      projectId: PROJECT_ID,
+      id: userId
+    })
+  }, [userId])
+  const  createUser = React.useCallback(() => {
+    API.updateUser({
+      projectId: PROJECT_ID,
+      user: {
+        id: userId,
+        position: {
+          x: 0,
+          y: 0
+        }
+      }
+    })
+  }, [userId])
   API.useProjectSubscription({
     projectId: PROJECT_ID,
     onEvent: (event) => {
@@ -200,10 +231,136 @@ export function MyGraphEditor(props: any) {
        })
     }
   })
+  API.useUserSubscription({
+    projectId: PROJECT_ID,
+    onEvent: (event) => {
+       const {
+        type,
+        data,
+        elementType
+       } = event
+       if (data.id === userId) {
+         return
+       }
+       updateState((draft) => {
+        switch (type) {
+          case 'added':
+            draft.users.push(data)
+            break;
+          case 'modified':{
+            draft.users.forEach(
+              (item, index) => {
+                if (item.id === data.id) {
+                  draft.users[index] = data
+                }
+              }
+            )
+            break;
+          }
+          case 'removed':
+            draft.users = draft.users.filter(
+              (item) => item.id !== data.id
+            )
+            break;
+        
+          default:
+            break;
+        }
+       })
+    }
+  })
+  React.useEffect(() => {
+    createUser()
+    const handleWindowChange = (type: string) => (e) => {
+      switch (type) {
+        case 'visibilitychange':
+          if (document.visibilityState === 'visible') {
+            createUser()
+          } else {
+            removeUser()
+          }          
+          break;
+        case 'focus':
+          createUser()
+          break;
+        case 'blur':
+          removeUser()
+          break;
+        case 'blur':
+          removeUser()
+          break;
+        case 'beforeunload':
+          removeUser()
+          break;
+      
+        default:
+          break;
+      }
+      console.log('Focus change', e)
+    }
+    const focusHandler = handleWindowChange('focus')
+    const blurHandler = handleWindowChange('blur')
+    const visibilityChangeHandler = handleWindowChange('visibilitychange')
+    const beforeUnloadHandler = handleWindowChange('beforeunload')
+    window.addEventListener('visibilitychange', visibilityChangeHandler, false)
+    window.addEventListener('blur', blurHandler, false)
+    window.addEventListener('focus', focusHandler, false)
+    window.addEventListener('beforeunload', beforeUnloadHandler, false);
+    let isTrackRef = {
+      current: true
+    }
+    const interval = setInterval(() => {
+      isTrackRef.current = true
+    }, 1000)
+    const onMouseMove = (event) => {
+      if (isTrackRef.current) {
+        isTrackRef.current = false
+        const position = getPointerPositionOnViewport(
+          graphEditorRef.current.viewport,
+          event
+        )
+        API.updateUser({
+          projectId: PROJECT_ID,
+          user: {
+            id: userId,
+            position
+          }
+        })
+      }
+    }
+    document.addEventListener('mousemove', onMouseMove)
+    return () => {
+      API.deleteUser({
+        projectId: PROJECT_ID,
+        id: userId
+      })
+      clearInterval(interval)
+      document.removeEventListener('mousemove', onMouseMove)
+      window.removeEventListener('visibilitychange', visibilityChangeHandler, false)
+      window.removeEventListener('blur', blurHandler, false)
+      window.removeEventListener('focus', focusHandler, false)
+      window.removeEventListener('beforeunload', beforeUnloadHandler, false);
+    }
+  }, [])
+  console.log(state.users)
   return (
     <GraphEditor
       style={{ width, height }}
       {...controllerProps}
-    />
+    >
+      {
+        state.users.map((user) => userId !== user.id && (
+          <Graph.View
+            width={10}
+            height={10}
+            fill={DefaultTheme.palette.primary.main}
+            x={user.position.x}
+            y={user.position.y}
+          >
+            <Graph.Text text={R.takeLast(4, user.id)} />
+          </Graph.View>
+        ))
+      }
+    </GraphEditor>
   );
 }
