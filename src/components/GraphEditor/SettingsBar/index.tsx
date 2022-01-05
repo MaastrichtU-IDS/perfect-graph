@@ -9,7 +9,7 @@ import {
   Box, Divider,
   IconButton, Paper,
 } from '@mui/material'
-import { FormProps } from '@type'
+import { FormProps, CollapsibleSectionCommon } from '@type'
 import {
   useAnimation,
   View, wrapComponent,
@@ -43,6 +43,20 @@ export type SettingsBarProps = {
   }
 }
 
+const SECTION_NAMES = {
+  layout: 'layout',
+  history: 'history',
+  playlist: 'playlist',
+  clusters: 'clusters'
+}
+
+const SECTIONS = [
+  'layout',
+  'history',
+  'playlist',
+  'clusters'
+]
+
 const SettingsBarElement = (props: SettingsBarProps) => {
   const {
     isOpen = false,
@@ -74,7 +88,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
   )
   const localDataRef = React.useRef({
     width: SIDE_PANEL_DEFAULT_WIDTH,
-    height: SIDE_PANEL_DEFAULT_HEIGHT,
+    height: SIDE_PANEL_DEFAULT_HEIGHT
   })
   const {
     style: animationStyle,
@@ -90,15 +104,56 @@ const SettingsBarElement = (props: SettingsBarProps) => {
   }, [
     localDataRef.current.width,
   ])
-  React.useEffect(() => {
-    animationRef.current.play(isOpen)
-  }, [animationRef, isOpen])
-  const [state, updateState] = useImmer({
+  React.useEffect(
+    () => {
+      animationRef.current.play(isOpen)
+    }, 
+    [animationRef, isOpen]
+  )
+
+  const [_, updateState, stateSettings] = useImmer({
     createPlaylistDialog: {
       visible: false,
     },
     selectedEventIds: [] as string[],
+    sections: {} as Record<string, CollapsibleSectionCommon>,
   })
+  React.useMemo(() => {
+    const closeAllOtherSections = (draft: any, sectionName: string) => {
+      Object.keys(draft.sections).forEach(key => {
+        draft.sections[key].isOpen = false
+      })
+    }
+    updateState((draft) => {
+      forms.forEach((section, index) => {
+        const formName = `form${index}`
+        draft.sections[formName] = {
+          isOpen: false,
+          onChange: (isOpen: boolean) => {
+            updateState((draft) => {
+              closeAllOtherSections(draft, formName)
+              draft.sections[formName].isOpen = isOpen
+            })
+          }
+        }
+      })
+      SECTIONS.forEach((sectionName) => {
+        draft.sections[sectionName] = {
+          isOpen: false,
+          onChange: (isOpen: boolean) => {
+            updateState((draft) => {
+              closeAllOtherSections(draft, sectionName)
+              draft.sections[sectionName].isOpen = isOpen
+            })
+          }
+        }
+      })
+      return {
+        silent: true
+      }
+    })
+  }, [forms])
+  const state = stateSettings.get()
   const containerRef = React.useRef<HTMLDivElement>()
   const onMouseDown = useDrag({
     ref: containerRef,
@@ -146,17 +201,20 @@ const SettingsBarElement = (props: SettingsBarProps) => {
         {
         forms.map((form, index) => {
           const title = form.schema?.title ?? `Form-${index}`
+          const formSection = state.sections[`form${index}`]
+          const {
+            isOpen
+          } = formSection
           return (
             <React.Fragment key={title}>
-              <Collapsible>
+              <Collapsible
+                isOpen={isOpen}
+              >
                 {
-                  ({
-                    isOpen,
-                    onToggle,
-                  }) => (
+                  () => (
                     <>
                       <CollapsibleTitle
-                          onClick={onToggle}
+                          onClick={() => formSection.onChange(!isOpen)}
                         >
                           {title}
                         </CollapsibleTitle>
@@ -193,6 +251,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
         })
       }
       <LayoutOptions
+        {...state.sections[SECTION_NAMES.layout]}
         layout={layout}
         onEvent={onEvent}
         {...(defaults.layout ?? {})}
@@ -208,6 +267,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
             }}
           >
             <EventHistoryTable
+              {...state.sections[SECTION_NAMES.history]}
               onCreatePlaylistClick={(selectedEventIds) => updateState((draft) => {
                 draft.createPlaylistDialog.visible = true
                 draft.selectedEventIds = selectedEventIds
@@ -222,6 +282,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
         {
           playlists && (
           <PlaylistTable
+            {...state.sections[SECTION_NAMES.playlist]}
             createPlaylistDialog={{
               ...state.createPlaylistDialog,
               onClose: () => updateState((draft) => {
@@ -262,6 +323,7 @@ const SettingsBarElement = (props: SettingsBarProps) => {
             }}
           >
             <ClusterTable
+              {...state.sections[SECTION_NAMES.clusters]}
               createClusterForm={createClusterForm}
             />
           </View>

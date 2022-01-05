@@ -907,3 +907,8 @@ export type PreviousData = {
 export type PropsWithRef<C, P> = Omit<P, 'ref'> & {
   ref?: React.Ref<C>;
 }
+
+export type CollapsibleSectionCommon = {
+  isOpen: boolean;
+  onChange: (isOpen: boolean) => void;
+}

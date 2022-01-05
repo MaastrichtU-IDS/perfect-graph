@@ -1,7 +1,7 @@
 import { Collapsible, CollapsibleContainer, CollapsibleTitle } from '@components/Collapsible'
 import { EVENT } from '@constants'
 import { Form } from '@components/Form'
-import { OnEventLite } from '@type'
+import { OnEventLite, CollapsibleSectionCommon } from '@type'
 import * as R from 'colay/ramda'
 import React from 'react'
 import {
@@ -15,7 +15,7 @@ type LayoutOptionsValue = {
   maxIterations? : number;
   maxSimulationTime? : number;
 }
-export type LayoutOptionsProps = {
+export type LayoutOptionsProps = CollapsibleSectionCommon & {
   layout?: LayoutOptionsValue;
   schema?: any;
   onEvent: OnEventLite;
@@ -26,6 +26,8 @@ export const LayoutOptions = (props: LayoutOptionsProps) => {
     layout = {},
     onEvent,
     schema,
+    isOpen,
+    onChange,
   } = props
   // const {
   //   anchorEl,
@@ -44,12 +46,14 @@ export const LayoutOptions = (props: LayoutOptionsProps) => {
     // onClose()
   }, [onEvent])
   return (
-    <Collapsible>
+    <Collapsible
+      isOpen={isOpen}
+    >
         {
-          ({ isOpen, onToggle }) => (
+          () => (
             <>
             <CollapsibleTitle
-              onClick={onToggle}
+              onClick={() => onChange(!isOpen)}
             >
               Layout
             </CollapsibleTitle>

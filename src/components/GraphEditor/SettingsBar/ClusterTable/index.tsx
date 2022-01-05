@@ -9,8 +9,7 @@ import { SpeedDialCreator } from '@components/SpeedDialCreator'
 import { TabPanel } from '@components/TabPanel'
 import { EDITOR_MODE, EVENT } from '@constants'
 import { useGraphEditor } from '@hooks'
-import { GraphEditorContextType } from '@type'
-import { Cluster, FormProps } from '@type'
+import { GraphEditorContextType, Cluster, FormProps, CollapsibleSectionCommon } from '@type'
 import {
   Button,
   Card, Checkbox,
@@ -31,16 +30,14 @@ import * as R from 'colay/ramda'
 import React from 'react'
 import { CreateClusterByAlgorithm } from './CreateClusterByAlgorithm'
 
-export type ClusterTableProps = {
-  // onSelectAllClusters: (checked: boolean) => void
-  // onSelectCluster: (cluster: Cluster, checked: boolean) => void
+export type ClusterTableProps = CollapsibleSectionCommon & {
   createClusterForm?: FormProps<any>;
 }
 
 export const ClusterTable = (props: ClusterTableProps) => {
   const {
-    // onSelectAllClusters,
-    // onSelectCluster,
+    isOpen,
+    onChange,
     createClusterForm = { schema: { } },
   } = props
   const [
@@ -59,7 +56,6 @@ export const ClusterTable = (props: ClusterTableProps) => {
     }),
   )
   const [state, updateState] = useImmer({
-    isOpen: true,
     selectedClusterIds: [] as string[],
     currentTab: 0,
     formData: {},
@@ -71,13 +67,15 @@ export const ClusterTable = (props: ClusterTableProps) => {
   const hasSelected = state.selectedClusterIds.length > 0
   const {
     anchorEl,
-    isOpen,
+    isOpen: isMenuOpen,
     onClose,
     onOpen,
   } = useDisclosure({})
   return (
     <>
-    <Collapsible>
+    <Collapsible
+      isOpen={isOpen}
+    >
       {
         () => (
           <>
@@ -96,9 +94,7 @@ export const ClusterTable = (props: ClusterTableProps) => {
                 }}
               >
                 <CollapsibleTitle
-                  onClick={() => updateState((draft) => {
-                    draft.isOpen = !draft.isOpen
-                  })}
+                  onClick={() => onChange(!isOpen)}
                 >
                   Clusters
                 </CollapsibleTitle>
@@ -117,7 +113,7 @@ export const ClusterTable = (props: ClusterTableProps) => {
               </IconButton>
               <Menu
                 anchorEl={anchorEl}
-                open={isOpen}
+                open={isMenuOpen}
                 onClose={onClose}
                 // style={{ width: 400 }}
               >
@@ -145,8 +141,8 @@ export const ClusterTable = (props: ClusterTableProps) => {
                     event.stopPropagation()
                     updateState((draft) => {
                       draft.currentTab = 1
-                      draft.isOpen = true
                     })
+                    onChange(true)
                     onClose()
                   }}
                 >
@@ -159,8 +155,9 @@ export const ClusterTable = (props: ClusterTableProps) => {
                     event.stopPropagation()
                     updateState((draft) => {
                       draft.currentTab = 2
-                      draft.isOpen = true
+                      
                     })
+                    onChange(true)
                     onClose()
                   }}
                 >
@@ -169,7 +166,7 @@ export const ClusterTable = (props: ClusterTableProps) => {
               </Menu>
           </View>
           {
-            state.isOpen && hasSelected && (
+            isOpen && hasSelected && (
               <Card
                 style={{
                   display: 'flex',
@@ -220,7 +217,7 @@ export const ClusterTable = (props: ClusterTableProps) => {
             )
           }
           {
-            state.isOpen && (
+            isOpen && (
               <CollapsibleContainer>
                <TabPanel
             value={state.currentTab}

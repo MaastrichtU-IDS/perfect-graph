@@ -12,6 +12,7 @@ import {
 import {
   useGraphEditor,
 } from '@hooks'
+import { CollapsibleSectionCommon } from '@type'
 import {
   Button,
   Card, Checkbox,
@@ -29,8 +30,7 @@ import { useImmer } from 'colay-ui/hooks/useImmer'
 import * as R from 'colay/ramda'
 import React from 'react'
 
-export type EventHistoryTableProps = {
-  isOpen?: boolean;
+export type EventHistoryTableProps = CollapsibleSectionCommon & {
   // onPlay: (playlist: Playlist) => void
   createPlaylistDialog: {
     visible: boolean;
@@ -42,23 +42,13 @@ export type EventHistoryTableProps = {
   }) => void
 }
 
-// onSelectPlaylist={(playlist, checked) => {
-//   updateState((draft) => {
-//     if (checked) {
-//       draft.selectedPlaylistIds.push(playlist.id)
-//     } else {
-//       draft.selectedPlaylistIds = draft.selectedPlaylistIds.filter(
-//         (id) => id !== playlist.id,
-//       )
-//     }
-//   })
-// }}
-// selectedPlaylistIds={state.selectedPlaylistIds}
 
 export const PlaylistTable = (props: EventHistoryTableProps) => {
   const {
     createPlaylistDialog,
     onCreatePlaylist,
+    isOpen,
+    onChange,
   } = props
   const [
     {
@@ -72,7 +62,6 @@ export const PlaylistTable = (props: EventHistoryTableProps) => {
     }),
   )
   const [state, updateState] = useImmer({
-    isOpen: false,
     createPlaylistDialog: {
       name: '',
     },
@@ -82,7 +71,7 @@ export const PlaylistTable = (props: EventHistoryTableProps) => {
   return (
     <>
     <Collapsible
-      isOpen={state.isOpen}
+      isOpen={isOpen}
     >
                 {
                   () => (
@@ -102,16 +91,14 @@ export const PlaylistTable = (props: EventHistoryTableProps) => {
                           }}
                         >
                           <CollapsibleTitle
-                            onClick={() => updateState((draft) => {
-                              draft.isOpen = !draft.isOpen
-                            })}
+                            onClick={() => onChange(!isOpen)}
                           >
                             Playlists
                           </CollapsibleTitle>
                         </View>
                       </View>
                       {
-                      state.isOpen && hasSelected && (
+                      isOpen && hasSelected && (
                         <Card
                           style={{
                             display: 'flex',
@@ -160,7 +147,7 @@ export const PlaylistTable = (props: EventHistoryTableProps) => {
                       )
                         }
                       {
-                        state.isOpen && (
+                        isOpen && (
                           <CollapsibleContainer
                           >
                                 {

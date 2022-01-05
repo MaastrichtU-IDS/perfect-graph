@@ -8,6 +8,7 @@ import { SortableList } from '@components/SortableList'
 import { SpeedDialCreator } from '@components/SpeedDialCreator'
 import { EVENT } from '@constants'
 import { useGraphEditor } from '@hooks'
+import { CollapsibleSectionCommon } from '@type'
 import {
   Card, Checkbox, IconButton, List,
   ListItem, ListItemAvatar, ListItemText, Typography
@@ -20,16 +21,17 @@ import { useImmer } from 'colay-ui/hooks/useImmer'
 import * as R from 'colay/ramda'
 import React from 'react'
 
-export type EventHistoryTableProps = {
+export type EventHistoryTableProps = CollapsibleSectionCommon & {
   onCreatePlaylistClick: (selectedEventIds: string[]) => void;
 }
 
 const EventHistoryTableElement = (props: EventHistoryTableProps) => {
   const {
     onCreatePlaylistClick,
+    isOpen,
+    onChange,
   } = props
   const [state, updateState] = useImmer({
-    isOpen: false,
     selectedEventIds: [] as string[],
   })
   const hasSelected = state.selectedEventIds.length > 0
@@ -56,7 +58,9 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
         width: '100%',
       }}
     >
-      <Collapsible>
+      <Collapsible
+        isOpen={isOpen}
+      >
         {
           () => (
             <>
@@ -75,9 +79,7 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
                 }}
               >
                 <CollapsibleTitle
-                  onClick={() => updateState((draft) => {
-                    draft.isOpen = !draft.isOpen
-                  })}
+                  onClick={() => onChange(!isOpen)}
                 >
                   History
                 </CollapsibleTitle>
@@ -119,7 +121,7 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
               </View>
             </View>
             {
-              state.isOpen && hasSelected && (
+              isOpen && hasSelected && (
                 <Card
                   style={{
                     display: 'flex',
@@ -181,7 +183,7 @@ const EventHistoryTableElement = (props: EventHistoryTableProps) => {
               )
             }
             {
-              state.isOpen && (
+              isOpen && (
                 <CollapsibleContainer>
                       {
                       eventHistory!.events.length === 0 && (
