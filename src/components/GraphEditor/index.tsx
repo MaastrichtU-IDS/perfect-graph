@@ -29,6 +29,7 @@ import {
 } from '@utils'
 import { useTimeoutManager } from '@utils/useTimeoutManager'
 import { useForwardRef, wrapComponent, ViewProps } from 'colay-ui'
+import * as ReactIs from 'colay-ui/utils/is-react'
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import * as R from 'colay/ramda'
 import React from 'react'
@@ -888,7 +889,7 @@ const convertWithoutFunctions = (object: any) => {
       // Store value in our collection
       cache.push(value)
     }
-    if (typeof value === 'function') return null
+    if (value && (value.isNode || typeof value === 'function' || ReactIs.isValidElementType(value) || value.$$typeof)) return null
     return value
   })
 }
