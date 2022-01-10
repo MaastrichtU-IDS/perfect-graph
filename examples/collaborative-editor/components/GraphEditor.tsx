@@ -8,11 +8,13 @@ import { getPointerPositionOnViewport } from "perfect-graph/utils";
 import * as API from "../api/firebase";
 import * as R from "colay/ramda";
 import { useImmer } from "colay-ui/hooks/useImmer";
+import { MouseArrow } from './MouseArrow'
 
 const PROJECT_ID = 'daa9975c-6bdc-4ab3-9a01-2d1dca1f2290'
 
 type User = {
-  id: string
+  id: string;
+  name: string;
   position: {
     x: number;
     y: number;
@@ -22,7 +24,8 @@ type User = {
 export function MyGraphEditor(props: any) {
   const {
     width,
-    height
+    height,
+    userName,
   } = props
   const [state, updateState] = useImmer({
     users: [] as User[],
@@ -181,6 +184,7 @@ export function MyGraphEditor(props: any) {
       projectId: PROJECT_ID,
       user: {
         id: userId,
+        name: userName,
         position: {
           x: 0,
           y: 0
@@ -312,21 +316,25 @@ export function MyGraphEditor(props: any) {
     const interval = setInterval(() => {
       isTrackRef.current = true
     }, 1000)
+    const debounced = R.debounce((event) => {
+        // if (isTrackRef.current) {
+          isTrackRef.current = false
+          const position = getPointerPositionOnViewport(
+            graphEditorRef.current.viewport,
+            event
+          )
+          API.updateUser({
+            projectId: PROJECT_ID,
+            user: {
+              id: userId,
+              name: userName,
+              position
+            }
+          })
+        // }
+      }, 1000)
     const onMouseMove = (event) => {
-      if (isTrackRef.current) {
-        isTrackRef.current = false
-        const position = getPointerPositionOnViewport(
-          graphEditorRef.current.viewport,
-          event
-        )
-        API.updateUser({
-          projectId: PROJECT_ID,
-          user: {
-            id: userId,
-            position
-          }
-        })
-      }
+      debounced(event)
     }
     document.addEventListener('mousemove', onMouseMove)
     return () => {
@@ -350,15 +358,22 @@ export function MyGraphEditor(props: any) {
     >
       {
         state.users.map((user) => userId !== user.id && (
-          <Graph.View
-            width={10}
-            height={10}
-            fill={DefaultTheme.palette.primary.main}
-            x={user.position.x}
-            y={user.position.y}
-          >
-            <Graph.Text text={R.takeLast(4, user.id)} />
-          </Graph.View>
+          // <Graph.View
+          //   width={10}
+          //   height={10}
+          //   fill={DefaultTheme.palette.primary.main}
+          //   x={user.position.x}
+          //   y={user.position.y}
+          // >
+          //   <Graph.Text text={R.takeLast(4, user.id)} />
+          // </Graph.View>
+          <MouseArrow 
+            key={user.id}
+            user={user}
+            color={0xff3300}
+            position={user.position}
+            label={user.name}
+          />
         ))
       }
     </GraphEditor>
