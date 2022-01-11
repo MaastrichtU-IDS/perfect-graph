@@ -778,7 +778,7 @@ const GraphEditorElement = (
             { value: 'CreateCluster', label: 'Create Cluster' },
             { value: 'Delete', label: 'Delete' },
             { value: 'Focus', label: 'Focus' },
-            { value: 'Settings', label: 'Settings' },
+            // { value: 'Settings', label: 'Settings' },
           ]}
           onSelect={(value) => {
             const {
