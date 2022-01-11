@@ -1,17 +1,17 @@
 {
   "files": {
-    "app.js": "/perfect-graph/static/js/app.f18f1cef.chunk.js",
+    "app.js": "/perfect-graph/static/js/app.d15cbd76.chunk.js",
     "runtime~app.js": "/perfect-graph/static/js/runtime~app.05835bb9.js",
-    "static/js/2.9b6362fb.chunk.js": "/perfect-graph/static/js/2.9b6362fb.chunk.js",
+    "static/js/2.f721620a.chunk.js": "/perfect-graph/static/js/2.f721620a.chunk.js",
     "index.html": "/perfect-graph/index.html",
     "manifest.json": "/perfect-graph/manifest.json",
     "serve.json": "/perfect-graph/serve.json",
-    "static/js/2.9b6362fb.chunk.js.LICENSE.txt": "/perfect-graph/static/js/2.9b6362fb.chunk.js.LICENSE.txt",
+    "static/js/2.f721620a.chunk.js.LICENSE.txt": "/perfect-graph/static/js/2.f721620a.chunk.js.LICENSE.txt",
     "static/media/jsoneditor-icons.svg": "/perfect-graph/static/media/jsoneditor-icons.15f2789d.svg"
   },
   "entrypoints": [
     "static/js/runtime~app.05835bb9.js",
-    "static/js/2.9b6362fb.chunk.js",
-    "static/js/app.f18f1cef.chunk.js"
+    "static/js/2.f721620a.chunk.js",
+    "static/js/app.d15cbd76.chunk.js"
   ]
 }
