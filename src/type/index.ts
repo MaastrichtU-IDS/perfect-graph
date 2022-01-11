@@ -493,6 +493,10 @@ export type GraphConfig = {
      * Change the zoom and avoid overlaps of the nodes.
      */
     expansion?: number;
+    /**
+     * Default: true
+     */
+    runLayout?: boolean;
   };
   /**
   * Cluster config data

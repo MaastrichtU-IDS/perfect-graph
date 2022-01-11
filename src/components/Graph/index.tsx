@@ -148,7 +148,12 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
     if (stageRef.current && config.layout) {
       const {
         expansion, // = getViewportZoom(graphRef.current)
+        // @ts-ignore
+        runLayout,
       } = config.layout
+      if (runLayout === false) {
+        return
+      }
       if (expansion) {
         graphRef.current.viewport.setZoom(expansion, true)
       }
