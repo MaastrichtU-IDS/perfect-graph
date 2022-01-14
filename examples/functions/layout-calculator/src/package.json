@@ -1,0 +1,24 @@
+{
+  "name": "layout-calculator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm run shell"
+  },
+  "engines": {
+    "node": "14"
+  },
+  "dependencies": {
+    "cytoscape": "3.20.0",
+    "cytoscape-cola": "2.5.0",
+    "cytoscape-dagre": "2.3.2",
+    "cytoscape-euler": "1.2.2",
+    "cytoscape-fcose": "2.1.0",
+    "cytoscape-spread": "3.0.0"
+  },
+  "devDependencies": {
+    
+  },
+  "private": true
+}
