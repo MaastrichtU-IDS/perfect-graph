@@ -53,9 +53,7 @@ export const DefaultRenderNode: RenderNode = ({
       {
         labelVisible && (
           <GraphText
-            // isSprite
             text={item.id}
-            // text={'Node'}
           />
         )
       }

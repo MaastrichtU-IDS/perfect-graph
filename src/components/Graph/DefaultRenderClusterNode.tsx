@@ -11,6 +11,7 @@ export const DefaultRenderClusterNode: RenderNode = ({
   element,
   cy,
   config,
+  item,
 }) => {
   const hasSelectedEdge = element.connectedEdges(':selected').length > 0
   const {
@@ -49,9 +50,7 @@ export const DefaultRenderClusterNode: RenderNode = ({
       {
         labelVisible && (
           <GraphText
-            // isSprite
-            // text={R.last(item.id.split('/'))?.substring(0, 10) ?? item.id}
-            text={'Node'}
+            text={item.id}
           />
         )
       }

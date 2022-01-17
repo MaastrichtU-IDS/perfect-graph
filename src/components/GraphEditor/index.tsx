@@ -349,14 +349,16 @@ const GraphEditorElement = (
     })
   }, [onEventCallback, selectedItem?.id])
   const eventTimeoutsManager = useTimeoutManager(
-    (events ?? []).map((event, index) => ({
-      ...event,
-      after: events?.[index - 1]
-        ? new Date(
-          event.date,
-        ).getMilliseconds() - new Date(events[index - 1].date).getMilliseconds()
-        : 0,
-    })),
+    (events ?? []).map((event, index) => {
+      return {
+        ...event,
+        after: events?.[index - 1]
+          ? new Date(
+            event.date,
+          ).getTime() - new Date(events[index - 1].date).getTime()
+          : 0,
+      }
+    }),
     (event) => {
       onEventCallback(event)
     },

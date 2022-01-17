@@ -11,6 +11,7 @@ export const DefaultRenderEdge: RenderEdge = ({
   cy,
   element,
   config,
+  item,
 }) => {
   const {
     view: {
@@ -28,9 +29,7 @@ export const DefaultRenderEdge: RenderEdge = ({
     {
       labelVisible && (
         <GraphText
-          // isSprite
-          // text={R.last(item.id.split('/'))?.substring(0, 10) ?? item.id}
-          text={'Heyy'}
+          text={item.id}
         />
       )
     }

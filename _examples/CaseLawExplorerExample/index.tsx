@@ -448,7 +448,6 @@ const AppContainer = ({
       const {
         cy,
       } = graphEditor
-      console.log(`onEvent: ${type}`, payload)
       const element = cy.$id(elementId)
       // const {
       //   item: eventRelatedItem,
@@ -693,7 +692,6 @@ const AppContainer = ({
     //   })
     // }, 1500)
 }, [])
-console.log('CaseLaw,', controllerProps)
   return (
     <View
       style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%' }}

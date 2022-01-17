@@ -7,6 +7,7 @@ export type ResizeDividerProps = ReactHTMLElementProps<HTMLDivElement> & {
 export const ResizeDivider = (props: ResizeDividerProps) => {
   const {
     isRight = true,
+    ...rest
   } = props
   const [state, setState] = React.useState({
     onHover: false,
@@ -36,7 +37,7 @@ export const ResizeDivider = (props: ResizeDividerProps) => {
       }}
       onMouseEnter={() => setState({ ...state, onHover: true })}
       onMouseLeave={() => setState({ ...state, onHover: false })}
-      {...props}
+      {...rest}
     />
   )
 }
