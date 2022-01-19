@@ -22,14 +22,15 @@
     "fire": "yarn build && yarn version --patch && cp ./package.json ./dist && cd dist && npm publish",
     "fire:beta": "rm -rf dist && yarn build:js && yarn version --patch && cp ./package.json ./dist && cd dist && npm publish --tag beta",
     "auth": "cd dist && npm login --always-auth && cd ..",
-    "generate:docs": "typedoc --out /Users/turgaysaba/Desktop/projects/perfect-graph-docs/docs/type src/**/**/*"
+    "generate:docs": "typedoc --excludeExternals --out /Users/turgaysaba/Desktop/projects/perfect-graph-docs/docs/type src/**/**/*"
   },
   "dependencies": {
     "@inlet/react-pixi": "6.6.5",
     "cytoscape": "3.20.0",
     "pixi-cull": "2.1.0",
     "pixi-viewport": "4.34.1",
-    "pixi.js": "6.2.0"
+    "pixi.js": "6.2.0",
+    "typedoc-plugin-missing-exports": "0.22.6"
   },
   "devDependencies": {
     "@emotion/react": "11.5.0",

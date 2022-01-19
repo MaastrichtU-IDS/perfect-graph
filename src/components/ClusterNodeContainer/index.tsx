@@ -2,7 +2,9 @@ import React from 'react'
 import { wrapComponent } from 'colay-ui'
 import { useNode } from '@hooks'
 import {
-  RenderClusterNode, NodeConfig, GraphRef,
+  RenderClusterNode,
+  NodeConfig,
+  GraphRef,
   Cluster,
 } from '@type'
 import {
