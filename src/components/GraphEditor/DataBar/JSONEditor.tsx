@@ -26,7 +26,7 @@ export const JSONEditor = (props: JSONEditorProps) => {
   return (
     <>
       <Editor
-        value={item?.data}
+        value={item?.data ?? {}}
         onChange={(newData: any) => {
           onEvent({
             type: EVENT.UPDATE_DATA,

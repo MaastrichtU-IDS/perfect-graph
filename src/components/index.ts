@@ -34,7 +34,7 @@ export {
 export type { GraphProps } from './Graph'
 export type { GraphEditorProps } from './GraphEditor'
 
-export  { GraphEditor } from './GraphEditor'
+// export  { GraphEditor } from './GraphEditor'
 
 export {
   drawLine,

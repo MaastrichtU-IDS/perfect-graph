@@ -33,7 +33,7 @@ export type DataBarProps = {
 
 export const DataBar = (props: DataBarProps) => {
   const {
-    editable = true,
+    editable = false,
     isOpen = false,
     sort = -1,
     header: HeaderComponent,
@@ -177,7 +177,7 @@ export const DataBar = (props: DataBarProps) => {
                 isEdge && <EdgeElementSummary element={selectedElement} />
               } */}
               {
-        editable && item?.data
+        editable
           && (
             // <DataEditor
             //   data={item.data}
@@ -210,7 +210,7 @@ export const DataBar = (props: DataBarProps) => {
               localLabel={localLabel}
               globalLabel={globalLabel}
               isGlobalLabelFirst={isGlobalLabelFirst}
-              data={item?.data}
+              data={item?.data ?? {}}
               onEvent={onEvent}
             />
           )

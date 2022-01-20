@@ -34,6 +34,9 @@ export function MyGraphEditor(props: any) {
   const [controllerProps, controller] = useController({
     nodes: [],
     edges: [],
+    dataBar: {
+      editable: true
+    },
     networkStatistics: {
       local: {
 

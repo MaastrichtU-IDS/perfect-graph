@@ -57,11 +57,13 @@ const SECTIONS = [
   'clusters'
 ]
 
+const DEFAULT_FORMS: any[] = []
+
 const SettingsBarElement = (props: SettingsBarProps) => {
   const {
     isOpen = false,
     // schema = {},
-    forms = [],
+    forms = DEFAULT_FORMS,
     createClusterForm,
     defaults = {},
     // children,
