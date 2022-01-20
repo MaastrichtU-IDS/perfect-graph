@@ -1,40 +1,49 @@
 import React from 'react'
 import { Graph } from './components'
 
-export default () => (
-  // @ts-ignore
-  <Graph
-    style={{ width: '100%', height: 1000 }}
-    nodes={[
-      {
-        id: '1',
-        position: { x: 10, y: 10 },
-        data: { city: 'Turkey', color: 'red' },
-      },
-      {
-        id: '2',
-        position: { x: 300, y: 10 },
-        data: { city: 'Maastricht', color: 'blue' },
-      },
-    ]}
-    edges={[
-      { id: '51', source: '1', target: '2' },
-    ]}
-    renderNode={({ item }) => {
-      const data = item.data as Record<string, any>
-      return (
-        <Graph.View>
-          <Graph.Text
-            style={{ fontSize: 20 }}
-          >
-            {data.city}
-          </Graph.Text>
-        </Graph.View>
-      )
-    }}
-  />
-
-)
+export default () => {
+  const [containerRef, { width, height, initialized }] = useMeasure()
+  return  (
+    // @ts-ignore
+    <View 
+        ref={containerRef}
+        style={{
+          width: '100%', height: '100%'
+        }}
+      >
+      <Graph
+      style={{ width, height }}
+      nodes={[
+        {
+          id: '1',
+          position: { x: 10, y: 10 },
+          data: { city: 'Turkey', color: 'red' },
+        },
+        {
+          id: '2',
+          position: { x: 300, y: 10 },
+          data: { city: 'Maastricht', color: 'blue' },
+        },
+      ]}
+      edges={[
+        { id: '51', source: '1', target: '2' },
+      ]}
+      renderNode={({ item }) => {
+        const data = item.data as Record<string, any>
+        return (
+          <Graph.View>
+            <Graph.Text
+              style={{ fontSize: 20 }}
+            >
+              {data.city}
+            </Graph.Text>
+          </Graph.View>
+        )
+      }}
+    />
+    </View>
+  )
+}
 
 // const RDFData = {
 //   Person: 'http://xmlns.com/foaf/0.1/Person',

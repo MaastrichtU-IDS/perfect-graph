@@ -38,11 +38,15 @@ export const Data = {
     { id: 'KramerElaine', target: 'Kramer', source: 'Elaine' },
   ]
 }
-export default function Animation() {
+export default function Animation(props: any) {
+  const {
+    width,
+    height,
+  } = props
   return (
     <Graph
-        style={{ width: '100%', height: 600 }}
-          {...Data}
-        />
+      style={{ width, height }}
+      {...Data}
+    />
   )
 }
