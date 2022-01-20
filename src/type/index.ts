@@ -289,6 +289,10 @@ export type RenderEdge<Additional extends Record<string, any> = {}> = (c: {
    * Edge context
    */
   context: EdgeContext;
+  /**
+   * Label for Edge
+   */
+  label: string;
 } & RenderElementParams & Additional) => React.ReactElement
 
 export type RenderNode<Additional extends Record<string, any> = {}> = (c: {
@@ -308,6 +312,10 @@ export type RenderNode<Additional extends Record<string, any> = {}> = (c: {
    * Node context
    */
   context: NodeContext;
+  /**
+   * Label for Node
+   */
+  label: string;
 } & RenderElementParams & Additional) => React.ReactElement
 
 export type RenderClusterNode<Additional extends Record<string, any> = {}> = (c: {
@@ -327,6 +335,10 @@ export type RenderClusterNode<Additional extends Record<string, any> = {}> = (c:
    * Cluster node context
    */
   context: NodeContext;
+  /**
+   * Label for Node Cluster
+   */
+  label: string;
 } & RenderElementParams & Additional) => React.ReactElement
 
 /**

@@ -8,10 +8,11 @@ import { View as GraphView } from '../View'
  * Default render node component. If renderNode is not suplied, it will render.
  */
 export const DefaultRenderNode: RenderNode = ({
-  item, 
+  // item, 
   element,
   cy,
   config,
+  label,
 }) => {
   const hasSelectedEdge = element.connectedEdges(':selected').length > 0
   const {
@@ -53,7 +54,7 @@ export const DefaultRenderNode: RenderNode = ({
       {
         labelVisible && (
           <GraphText
-            text={item.id}
+            text={label}
           />
         )
       }

@@ -112,6 +112,7 @@ const ClusterNodeContainerElement = (
         graphRef,
         context,
         config,
+        label: item.id,
       })}
     </Container>
   )

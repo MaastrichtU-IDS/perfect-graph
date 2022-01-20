@@ -634,6 +634,7 @@ const GraphEditorElement = (
                 }}
               >
                 {(renderNode ?? DefaultRenderNode)({
+                  ...rest,
                   item,
                   element,
                   // @ts-ignore
@@ -646,7 +647,6 @@ const GraphEditorElement = (
                   labelPath: (label?.isGlobalFirst
                     ? (label?.global.nodes ?? label?.nodes?.[item.id])
                     : (label?.nodes?.[item.id] ?? label?.global.nodes)) ?? [],
-                  ...rest,
                 })}
               </Graph.View>
             )
@@ -699,6 +699,7 @@ const GraphEditorElement = (
               {
                // @ts-ignore
             (renderEdge ?? DefaultRenderEdge)({
+              ...rest,
               item,
               // @ts-ignore
               label: getLabel(
@@ -711,7 +712,6 @@ const GraphEditorElement = (
                 ? (label?.global.edges ?? label?.edges?.[item.id])
                 : (label?.edges?.[item.id] ?? label?.global.edges)) ?? [],
               element,
-              ...rest,
             })
 }
             </Graph.View>

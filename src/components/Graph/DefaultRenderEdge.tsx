@@ -11,7 +11,8 @@ export const DefaultRenderEdge: RenderEdge = ({
   cy,
   element,
   config,
-  item,
+  // item,
+  label,
 }) => {
   const {
     view: {
@@ -29,7 +30,7 @@ export const DefaultRenderEdge: RenderEdge = ({
     {
       labelVisible && (
         <GraphText
-          text={item.id}
+          text={label}
         />
       )
     }

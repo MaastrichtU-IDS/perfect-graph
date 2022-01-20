@@ -299,6 +299,7 @@ const EdgeContainerElement = (
             sourceElement,
             config,
             context,
+            label: item.id,
           })
         }
       </Container>

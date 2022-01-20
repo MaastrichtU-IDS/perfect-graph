@@ -108,6 +108,7 @@ const NodeContainerElement = (
         graphRef,
         context,
         config,
+        label: item.id,
       })}
     </Container>
   )
