@@ -327,26 +327,26 @@ const AppContainer = ({
       isOpen: false,
     }
   })
-  const ActionBarRight = React.useMemo(() => () => (
-    <View
-      style={{ flexDirection: 'row' }}
-    >
-      <Button
-        onClick={() => updateState((draft) => {
-          draft.helpModal.isOpen = true
-        })}
-      >
-        Help
-      </Button>
-      <Button
-        onClick={() => dispatch({
-          type: ACTIONS.TEST_API
-        })}
-      >
-        Test the API
-      </Button>
-    </View>
-  ), [dispatch])
+  // const ActionBarRight = React.useMemo(() => () => (
+  //   <View
+  //     style={{ flexDirection: 'row' }}
+  //   >
+  //     <Button
+  //       onClick={() => updateState((draft) => {
+  //         draft.helpModal.isOpen = true
+  //       })}
+  //     >
+  //       Help
+  //     </Button>
+  //     <Button
+  //       onClick={() => dispatch({
+  //         type: ACTIONS.TEST_API
+  //       })}
+  //     >
+  //       Test the API
+  //     </Button>
+  //   </View>
+  // ), [dispatch])
   const [controllerProps, controller] = useController({
     ...data,
     // nodes: [],
@@ -399,7 +399,7 @@ const AppContainer = ({
       // isOpen: true,
     },
     settingsBar: {
-      isOpen: true,
+      // isOpen: true,
       // forms: [AUTO_CREATED_SCHEMA,FETCH_SCHEMA, VIEW_CONFIG_SCHEMA, {...FILTER_SCHEMA,  formData: configRef.current.filtering}, ],
       forms: [{ ...FETCH_SCHEMA, formData: configRef.current.fetching }, VIEW_CONFIG_SCHEMA, { ...FILTER_SCHEMA, formData: configRef.current.filtering },],
       createClusterForm: {
@@ -409,13 +409,13 @@ const AppContainer = ({
       },
     },
     dataBar: {
-      isOpen: true,
+      // isOpen: true,
       editable: true,
-      header: DataBarHeader,
+      // header: DataBarHeader,
     },
     actionBar: {
       // isOpen: true,
-      right: ActionBarRight,
+      // right: ActionBarRight,
       // autoOpen: true,
       eventRecording: false,
       actions: {
