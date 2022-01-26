@@ -1,31 +1,39 @@
 import { RenderEdge } from '@type'
 import { cyUnselectAll } from '@utils'
-import * as R from 'colay/ramda'
 import React from 'react'
 import { Text as GraphText } from '../Text'
 import { View as GraphView } from '../View'
 
+/**
+ * Default render edge component. If renderEdge is not suplied, it will render.
+ */
 export const DefaultRenderEdge: RenderEdge = ({
   cy,
-  item,
   element,
-}) => (
+  config,
+  // item,
+  label,
+}) => {
+  const {
+    view: {
+      labelVisible,
+    },
+  } = config
+  
+  return (
   <GraphView
-    style={{
-      // backgroundColor: DefaultTheme.palette.background.paper,
-      // element.selected()
-      //   ? DefaultTheme.palette.primary.main
-      //   : DefaultTheme.palette.background.paper,
-      // borderRadius: 50,
-    }}
     pointertap={() => {
       cyUnselectAll(cy)
       element.select()
     }}
   >
-    <GraphText
-      isSprite
-      text={R.last(item.id.split('/'))?.substring(0, 10) ?? item.id}
-    />
+    {
+      labelVisible && (
+        <GraphText
+          text={label}
+        />
+      )
+    }
   </GraphView>
-)
+  )
+}

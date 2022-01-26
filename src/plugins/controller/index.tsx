@@ -4,14 +4,19 @@ import GraphLayouts from '@core/layouts'
 import {
   ControllerState, DataItem, EditorMode, EventInfo,
   GraphEditorRef, GraphLabelData, RDFType, RecordedEvent,
+  EventHistory,
 } from '@type'
 import {
   getSelectedItemByElement,
   getUndoEvents,
   getSelectedElementInfo,
+  vectorMidpoint,
+  getHitAreaCenter,
 } from '@utils'
 import {
   EDITOR_MODE, EVENT,
+  DEFAULT_EDGE_CONFIG,
+  DEFAULT_NODE_CONFIG,
 } from '@constants'
 import { createHistory } from '@utils/createHistory'
 import { useImmer } from 'colay-ui/hooks/useImmer'
@@ -20,31 +25,20 @@ import { download } from 'colay-ui/utils'
 import * as R from 'colay/ramda'
 import * as PIXI from 'pixi.js'
 import React from 'react'
-import * as V from 'colay/vector'
-import {
-  ElementSettingsModal,
-} from '@components/GraphEditor/modals/ElementSettingsModal'
+import Vector from 'victor'
 
-// type ControllerOptions = {
-//   // onEvent?: (info: EventInfo, draft: ControllerState) => boolean;
+type UseControllerData = ControllerState
+// Pick<
+// GraphEditorProps,
+// 'nodes' | 'edges' | 'mode'
+// | 'actionBar' | 'dataBar' | 'settingsBar'
+// | 'graphConfig' | 'events' | 'label' | 'playlists' | 'selectedElementIds'
+// | 'modals' | 'isFocusMode' | 'preferencesModal' | 'previousDataList'
+// > & {
+//   onEvent?: (info: EventInfo & {
+//     graphEditor: GraphEditorRef;
+//   }, draft: ControllerState) => boolean;
 // }
-
-type UseControllerData = Pick<
-GraphEditorProps,
-'nodes' | 'edges' | 'mode'
-| 'actionBar' | 'dataBar' | 'settingsBar'
-| 'graphConfig' | 'events' | 'label' | 'playlists' | 'selectedElementIds'
-| 'modals' | 'isFocusMode'
-> & {
-  onEvent?: (info: EventInfo & {
-    graphEditor: GraphEditorRef;
-  }, draft: ControllerState) => boolean;
-}
-
-// export type UseControllerResult = [
-//   UseControllerData,
-//   {},
-// ]
 
 const closeAllBars = (draft:UseControllerData) => {
   draft.actionBar!.isOpen = false
@@ -52,6 +46,9 @@ const closeAllBars = (draft:UseControllerData) => {
   draft.settingsBar!.isOpen = false
 }
 
+/**
+ * Graph Editor Controller. There are events handlers for the graph editor. It return the changed props.
+ */
 export const useController = (
   useControllerData: Partial<UseControllerData>,
   _graphEditorRef?: React.MutableRefObject<GraphEditorRef>,
@@ -78,7 +75,7 @@ export const useController = (
     // targetNode: null,
   })
   const [state, updateState] = useImmer(controllerConfig)
-  type UpdateFunction = (draft: UseControllerData, config: {
+  type UpdateFunction = (draft: ControllerState, config: {
     graphEditorRef: React.MutableRefObject<GraphEditorRef>
   }) => void
   const update = React.useCallback( (updater: UpdateFunction) => {
@@ -198,7 +195,7 @@ export const useController = (
             const {
               itemIds = [],
             } = payload as {
-              itemIds: { id: string } []
+              itemIds: string[]
             }
             // const itemIds = items.map((item) => item.id)
             // const itemIndex = draft.nodes.findIndex((node) => node.id === item.id)
@@ -235,10 +232,12 @@ export const useController = (
             const {
               itemIds = [],
             } = payload as {
-              itemIds: { id: string } []
+              itemIds: string[]
             }
             // const itemIds = items.map((item) => item.id)
-            draft.edges = draft.edges.filter((edgeItem) => !itemIds.includes(edgeItem.id))
+            draft.edges = draft.edges.filter(
+              (edgeItem) => !itemIds.includes(edgeItem.id),
+            )
             if (draft.mode === EDITOR_MODE.DELETE) {
               draft.mode = EDITOR_MODE.DEFAULT
             }
@@ -282,9 +281,10 @@ export const useController = (
               if (selectedElement.isNode()) {
                 position = selectedElement.position()
               } else {
-                position = V.midpoint(
-                  selectedElement.source().position(),
-                )(selectedElement.target().position())
+                position = vectorMidpoint(
+                  Vector.fromObject(selectedElement.source().position()),
+                  Vector.fromObject(selectedElement.target().position()),
+                )
               }
               const center = {
                 x: position.x + TARGET_SIZE / 4,
@@ -303,6 +303,13 @@ export const useController = (
               // })
             }
 
+            break
+          }
+          case EVENT.BOX_SELECTION: {
+            const {
+              itemIds,
+            } = payload
+            draft.selectedElementIds = itemIds
             break
           }
           case EVENT.ELEMENT_SELECTED: {
@@ -375,8 +382,8 @@ export const useController = (
           case EVENT.DEFOCUS: {
             if (draft.previousDataList) {
               const previousData =  draft.previousDataList.pop()
-              draft.nodes = previousData.nodes
-              draft.edges = previousData.edges
+              draft.nodes = previousData!.nodes
+              draft.edges = previousData!.edges
               if (draft.previousDataList.length === 0) {
                 draft.isFocusMode = false
               }
@@ -457,21 +464,26 @@ export const useController = (
           case EVENT.TOGGLE_FILTER_BAR:
             draft.settingsBar!.isOpen = !draft.settingsBar?.isOpen
             break
+          case EVENT.TOGGLE_PREFERENCES_MODAL:
+            draft.preferencesModal!.isOpen = !draft.preferencesModal?.isOpen
+            break
           case EVENT.TOGGLE_DATA_BAR:
             draft.dataBar!.isOpen = !draft.dataBar?.isOpen
             break
           case EVENT.TOGGLE_ACTION_BAR:
             draft.actionBar!.isOpen = !draft.actionBar?.isOpen
             break
-          case EVENT.IMPORT_DATA:
+          case EVENT.IMPORT_DATA:{
 
             R.mapObjIndexed((value, key) => {
               // @ts-ignore
               draft[key] = value
-            })(payload.value)
+            })(payload.value) 
             const {
               eventHistory: eventHistoryData,
-            } = payload.value ?? {}
+            } = (payload.value ?? {}) as unknown  as {
+              eventHistory: EventHistory;
+            }
             eventHistory.set({
               currentIndex: eventHistoryData.events.length,
               items: eventHistoryData.events.map((event, i) => ({
@@ -481,6 +493,7 @@ export const useController = (
               })),
             })
             break
+          }
           case EVENT.IMPORT_EVENTS:
             closeAllBars(draft)
             draft.events = [...(payload.value ?? [])]
@@ -518,6 +531,7 @@ export const useController = (
               })
             }
             draft.graphConfig!.layout = layout
+
             break
           }
           case EVENT.SET_POSITIONS_IMPERATIVELY: {
@@ -600,7 +614,9 @@ export const useController = (
             const {
               items = [],
             } = payload
-            draft.graphConfig!.clusters = draft.graphConfig?.clusters?.concat(items)
+            draft.graphConfig!.clusters = (
+              draft.graphConfig?.clusters?.concat(items) ?? []
+            ).map((cluster) => ({ ...cluster, position: getHitAreaCenter(graphEditor) }))
             break
           }
           case EVENT.PRESS_ADD_CLUSTER_ELEMENT: {
@@ -712,7 +728,7 @@ export const useController = (
           case EVENT.ELEMENT_SETTINGS_FORM_SUBMIT: {
             const {
               name,
-              value,
+              // value,
             } = payload
             // draft.modals.ElementSettings.isOpen = true
             switch (name) { 
@@ -725,10 +741,77 @@ export const useController = (
             }
             break
           }
+          case EVENT.ELEMENT_SETTINGS_FORM_CLEAR: {
+            const {
+              name,
+              // value,
+            } = payload
+            // draft.modals.ElementSettings.isOpen = true
+            switch (name) { 
+              case 'Visualization':
+
+                break
+            
+              default:
+                break
+            }
+            break
+          }
+          case EVENT.PREFERENCES_FORM_CLEAR: {
+            const {
+              value,
+              preferenceId,
+            } = payload
+            // draft.modals.ElementSettings.isOpen = true
+            switch (preferenceId) { 
+              case 'NodeView':
+                draft.graphConfig!.nodes!.view = {
+                  ...draft.graphConfig?.nodes?.view,
+                  ...value,
+                }
+                break
+              case 'EdgeView':
+                draft.graphConfig!.edges!.view = {
+                  ...draft.graphConfig?.edges?.view,
+                  ...value,
+                }
+                break
+            
+              default:
+                break
+            }
+            break
+          }
+          case EVENT.PREFERENCES_FORM_SUBMIT: {
+            const {
+              value,
+              preferenceId,
+            } = payload
+            // draft.modals.ElementSettings.isOpen = true
+            switch (preferenceId) { 
+              case 'NodeView':
+                draft.graphConfig!.nodes!.view = {
+                  ...draft.graphConfig?.nodes?.view,
+                  ...value,
+                }
+                break
+              case 'EdgeView':
+                draft.graphConfig!.edges!.view = {
+                  ...draft.graphConfig?.edges?.view,
+                  ...value,
+                }
+                break
+            
+              default:
+                break
+            }
+            break
+          }
           case EVENT.CLOSE_MODAL: {
             const {
               name,
-            } = payload
+            } = payload as { name: string }
+            // @ts-ignore
             draft.modals[name].isOpen = false
             break
           }
@@ -765,12 +848,12 @@ export const useController = (
       update,
       onEvent,
     },
-  ]
+  ] as const
 }
 
 const getValueByType = (type: RDFType, value: string) => value
 
-const DEFAULT_CONTROLLER_CONFIG: UseControllerData = {
+const DEFAULT_CONTROLLER_CONFIG: Partial<ControllerState> = {
   nodes: [],
   edges: [],
   isLoading: false,
@@ -796,6 +879,8 @@ const DEFAULT_CONTROLLER_CONFIG: UseControllerData = {
   selectedElementIds: [] as string[] | undefined,
   graphConfig: {
     clusters: [],
+    nodes: DEFAULT_NODE_CONFIG,
+    edges: DEFAULT_EDGE_CONFIG,
   },
   playlists: [
     // {
@@ -810,9 +895,9 @@ const DEFAULT_CONTROLLER_CONFIG: UseControllerData = {
     // },
   ],
   modals: {
-    ElementSettings: {
-      isOpen: false,
-      render: ElementSettingsModal,
-    },
+    // ElementSettings: {
+    //   isOpen: false,
+    //   render: ElementSettingsModal,
+    // },
   },
 }

@@ -1,37 +1,34 @@
-import React from 'react'
-import {
-  Modal,
-  Paper,
-  Typography,
-  Divider,
-  Slide,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Link,
-  Breadcrumbs,
-  Button,
-  Collapse,
-} from '@mui/material'
 import { Icon } from '@components/Icon'
-import { useGraphEditor } from '@hooks'
 import { EVENT } from '@constants'
-import {
-  View, DataRender, dataRenderPath, isReact,
-} from 'colay-ui'
-import Form from '@rjsf/material-ui'
+import { useGraphEditor } from '@hooks'
 import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
-import * as R from 'colay/ramda'
+import {
+  Button,
+  Collapse, Divider, List,
+  ListItem,
+  ListItemIcon,
+  ListItemText, Paper, Slide, Typography,
+} from '@mui/material'
+import { Form } from '@components/Form'
+import { DataRender, dataRenderPath,  View } from 'colay-ui'
+import * as ReactIs from 'colay-ui/utils/is-react'
 import { useImmer } from 'colay-ui/hooks/useImmer'
+import * as R from 'colay/ramda'
+import React from 'react'
+import {
+  FormProps,
+} from '@type'
+
 
 type SidebarItemData = {
-  label: string;
+  label?: string;
   children?: SidebarItemData[];
   icon?: string;
   id: string
 } | string
+
+type NormalizedSidebarItemData = Exclude<SidebarItemData, string>
 
 export type PreferencesModalProps = {
   isOpen?: boolean;
@@ -39,7 +36,7 @@ export type PreferencesModalProps = {
   components?: Record<string, React.ReactNode>;
 }
 
-const getId = (sidebarItem: SidebarItemData) => sidebarItem?.id ?? sidebarItem
+const getId = (sidebarItem: NormalizedSidebarItemData) => sidebarItem?.id ?? sidebarItem
 
 export const ElementSettingsModal = (props: PreferencesModalProps) => {
   const {
@@ -59,7 +56,7 @@ export const ElementSettingsModal = (props: PreferencesModalProps) => {
     }),
   )
   const sidebar = React.useMemo(() => {
-    const normalize = (sidebar: SidebarItemData) => {
+    const normalize = (sidebar: SidebarItemData): NormalizedSidebarItemData => {
       if (typeof sidebar === 'string') {
         return {
           id: sidebar,
@@ -72,7 +69,8 @@ export const ElementSettingsModal = (props: PreferencesModalProps) => {
         children: sidebar.children?.map((item) => normalize(item)) ?? [],
       }
     }
-    return sidebar_?.map((item) => normalize(item)) ?? []
+    // @ts-ignore
+    return sidebar_?.map((item: SidebarItemData) => normalize(item)) ?? []
   }, [sidebar_])
   const [state, update] = useImmer({
     componentId: getId(sidebar[0]),
@@ -80,7 +78,11 @@ export const ElementSettingsModal = (props: PreferencesModalProps) => {
   })
 
   const onSelect = React.useCallback((path) => {
-    const item = dataRenderPath(['children'], path, sidebar)
+    const item = dataRenderPath(
+      ['children'], 
+      path,
+      sidebar,
+    ) as unknown as NormalizedSidebarItemData
     update((draft) => {
       draft.selectedPath = path
       draft.componentId = getId(item)
@@ -94,7 +96,7 @@ export const ElementSettingsModal = (props: PreferencesModalProps) => {
     selectedPath: state.selectedPath,
   }), [sidebar, components, state.selectedPath])
   const Component = components[state.componentId] ?? React.Fragment
-  const form = components[state.componentId]
+  const form = components[state.componentId] as FormProps
   return (
     <Paper
       style={{
@@ -144,7 +146,8 @@ export const ElementSettingsModal = (props: PreferencesModalProps) => {
             <Typography color="text.primary">{R.last(state.selectedPath)}</Typography>
           </Breadcrumbs> */}
           {
-      !isReact.compatible(Component)
+            // @ts-ignore
+      !ReactIs.isValidElementType(Component)
         ? (
           <Paper
             style={{
@@ -156,6 +159,7 @@ export const ElementSettingsModal = (props: PreferencesModalProps) => {
           >
             <Form
               {...form}
+              //@ts-ignore
               style={{
                 width: '100%',
                 height: '100%',
@@ -167,10 +171,21 @@ export const ElementSettingsModal = (props: PreferencesModalProps) => {
                   payload: {
                     name: state.componentId,
                     value: formData,
-                    itemIds: graphEditorLocalDataRef.current.contextMenu.itemIds,
+                    itemIds: graphEditorLocalDataRef.current!.contextMenu!.itemIds,
                   },
                 })
-                graphEditorLocalDataRef.current.contextMenu.itemIds = []
+                graphEditorLocalDataRef.current!.contextMenu!.itemIds = []
+              }}
+              onClear={({ formData }) => {
+                onEvent({
+                  type: EVENT.ELEMENT_SETTINGS_FORM_CLEAR,
+                  payload: {
+                    name: state.componentId,
+                    value: formData,
+                    itemIds: graphEditorLocalDataRef.current!.contextMenu!.itemIds,
+                  },
+                })
+                graphEditorLocalDataRef.current!.contextMenu!.itemIds = []
               }}
             >
               {
@@ -187,6 +202,7 @@ export const ElementSettingsModal = (props: PreferencesModalProps) => {
             </Form>
           </Paper>
         )
+        // @ts-ignore
         : <Component />
       }
           {/* <Form
@@ -226,7 +242,7 @@ export const ElementSettingsModal = (props: PreferencesModalProps) => {
 
 type CreateDrawerParams = {
   sidebar: SidebarItemData[];
-  onSelect: (name: string) => void
+  onSelect: (path: string[]) => void
   selectedPath: string[]
 }
 const createDrawer = (params: CreateDrawerParams) => {
@@ -270,7 +286,9 @@ const createDrawer = (params: CreateDrawerParams) => {
 type SidebarItemProps = {
   item: SidebarItemData;
   children: React.ReactNode;
-  onSelect: (name: string)=>void
+  onSelect: (path: string[])=>void
+  selectedPath: string[];
+  path: string[];
 }
 const SidebarItem = (props: SidebarItemProps) => {
   const {

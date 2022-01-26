@@ -1,20 +1,21 @@
-import React from 'react'
-import * as PIXI from 'pixi.js'
-import { wrapComponent } from 'colay-ui'
-import { PropsWithRef } from 'colay-ui/type'
-import { PixiComponent, Text as ReactPIXIText } from '@inlet/react-pixi'
-import { useTheme, ThemeProps } from '@core/theme'
-import * as C from 'colay/color'
-import { applyDefaultProps } from '@utils'
+// import React from 'react'
+// import * as PIXI from 'pixi.js'
+// import { wrapComponent } from 'colay-ui'
+// import { PropsWithRef } from 'colay-ui/type'
+import { Text as ReactPIXIText } from '@inlet/react-pixi'
+// import { PixiComponent,} from '@inlet/react-pixi'
+// import { useTheme, ThemeProps } from '@core/theme'
+// import * as C from 'colay/color'
+// import { applyDefaultProps } from '@utils'
 
-type TextStyle = any
+// type TextStyle = any
 
-type TextPIXIProps = {
-  text: string;
-  style?: TextStyle;
-  color?: string;
-  isSprite?: boolean;
-}
+// type TextPIXIProps = {
+//   text: string;
+//   style?: TextStyle;
+//   color?: string;
+//   isSprite?: boolean;
+// }
 // dropShadow
 // dropShadowAlpha
 // dropShadowAngle
@@ -60,94 +61,97 @@ type TextPIXIProps = {
 //   }
 // }
 
-// @ts-ignore
-const TextPIXI = PixiComponent<TextPIXIProps & ThemeProps, PIXI.Text>('PIXIText', {
-  create: (props) => {
-    const {
-      style = {},
-      text = '', 
-      isSprite,
-    } = props
-    // processTextProps({
-    //   ...props,
-    //   style: {
-    //     color: props.theme.palette.text.primary,
-    //     ...style,
-    //   },
-    // })
-    const pixiText = new PIXI.Text(text, {
-      ...style,
-      fill: C.rgbNumber(style.fill ?? props.theme.palette.text.primary ),
-    })
-    if (isSprite) {
-      pixiText.updateText(false)
-      const spriteText = new PIXI.Sprite(pixiText.texture)
-      spriteText.pixiText = pixiText
-      // spriteText.text = pixiText
-      return spriteText
-    }
-    return pixiText
-  },
-  applyProps: (
-    instance: PIXI.Text,
-    oldProps,
-    props,
-  ) => {
-    const {
-      style = {},
-      text = '', 
-      isSprite,
-    } = props
-    instance.forceToRender = props.forceToRender
-    applyDefaultProps(
-      instance,
-      oldProps,
-      props,
-    )
-    const newStyle = {
-      ...style,
-      fill: C.rgbNumber(style.fill ?? props.theme.palette.text.primary ),
-    }
-    if (isSprite) {
-      // const pixiText = new PIXI.Text(text, {
-      //   ...style,
-      //   fill: C.rgbNumber(style.fill ?? props.theme.palette.text.primary ),
-      // })
-      // pixiText.updateText(false)
-      instance.pixiText.text = text
-      instance.style = newStyle
-      instance.texture = pixiText.texture
-    } else {
-      instance.text = text
-      instance.style = newStyle
-    }
-  },
-})
+// // @ts-ignore
+// const TextPIXI = PixiComponent<TextPIXIProps & ThemeProps, PIXI.Text>('PIXIText', {
+//   create: (props) => {
+//     const {
+//       style = {},
+//       text = '', 
+//       isSprite,
+//     } = props
+//     // processTextProps({
+//     //   ...props,
+//     //   style: {
+//     //     color: props.theme.palette.text.primary,
+//     //     ...style,
+//     //   },
+//     // })
+//     const pixiText = new PIXI.Text(text, {
+//       ...style,
+//       fill: C.rgbNumber(style.fill ?? props.theme.palette.text.primary ),
+//     })
+//     if (isSprite) {
+//       pixiText.updateText(false)
+//       const spriteText = new PIXI.Sprite(pixiText.texture)
+//       spriteText.pixiText = pixiText
+//       // spriteText.text = pixiText
+//       return spriteText
+//     }
+//     return pixiText
+//   },
+//   applyProps: (
+//     instance: PIXI.Text,
+//     oldProps,
+//     props,
+//   ) => {
+//     const {
+//       style = {},
+//       text = '', 
+//       isSprite,
+//     } = props
+//     instance.forceToRender = props.forceToRender
+//     applyDefaultProps(
+//       instance,
+//       oldProps,
+//       props,
+//     )
+//     const newStyle = {
+//       ...style,
+//       fill: C.rgbNumber(style.fill ?? props.theme.palette.text.primary ),
+//     }
+//     if (isSprite) {
+//       // const pixiText = new PIXI.Text(text, {
+//       //   ...style,
+//       //   fill: C.rgbNumber(style.fill ?? props.theme.palette.text.primary ),
+//       // })
+//       // pixiText.updateText(false)
+//       instance.pixiText.text = text
+//       instance.style = newStyle
+//       instance.texture = pixiText.texture
+//     } else {
+//       instance.text = text
+//       instance.style = newStyle
+//     }
+//   },
+// })
 
-export type TextProps = {
-  children: string;
-  style?: TextStyle;
-  isSprite?: boolean;
-}
+// export type TextProps = {
+//   children: string;
+//   style?: TextStyle;
+//   isSprite?: boolean;
+// }
 
-const TextElement = (
-  props: TextProps,
-  forwardedRef: React.ForwardedRef<PIXI.Text>,
-) => {
-  const { children, ...rest } = props
-  const theme = useTheme()
-  const [count, setCount] = React.useState(0)
-  return (
-    <TextPIXI
-      ref={forwardedRef}
-      text={children}
-      theme={theme}
-      forceToRender={() => setCount((c) => c + 1)}
-      {...rest}
-    />
-  )
-}
+// const TextElement = (
+//   props: TextProps,
+//   forwardedRef: React.ForwardedRef<PIXI.Text>,
+// ) => {
+//   const { children, ...rest } = props
+//   const theme = useTheme()
+//   const [count, setCount] = React.useState(0)
+//   return (
+//     <TextPIXI
+//       ref={forwardedRef}
+//       text={children}
+//       theme={theme}
+//       forceToRender={() => setCount((c) => c + 1)}
+//       {...rest}
+//     />
+//   )
+// }
 
+/**
+ * [PIXI.Text React Component]{@link https://reactpixi.org/components/text}
+ */
 export const Text = ReactPIXIText
 // export const Text = wrapComponent<
 // PropsWithRef<PIXI.Text, TextProps>

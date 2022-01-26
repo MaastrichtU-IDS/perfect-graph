@@ -1,40 +1,63 @@
 import { RenderNode } from '@type'
 import { cyUnselectAll } from '@utils'
-import * as R from 'colay/ramda'
 import React from 'react'
 import { Text as GraphText } from '../Text'
 import { View as GraphView } from '../View'
-import { CYTOSCAPE_EVENT } from '@constants'
 
+/**
+ * Default render node component. If renderNode is not suplied, it will render.
+ */
 export const DefaultRenderNode: RenderNode = ({
-  item, element, cy, theme,
+  // item, 
+  element,
+  cy,
+  config,
+  label,
 }) => {
   const hasSelectedEdge = element.connectedEdges(':selected').length > 0
+  const {
+    view: {
+      width,
+      height,
+      radius,
+      fill,
+      labelVisible,
+    },
+  } = config
+  // const isThereSelected = cy.elements(':selected').length > 0
+  const alpha = 1
+  // isThereSelected && (hasSelectedEdge || element.selected())
+  //   ? 1
+  //   : 0.5
   return (
     <GraphView
-      style={{
-        width: 50,
-        height: 50,
-        justifyContent: 'center',
-        alignItems: 'center',
-        display: 'flex',
-        backgroundColor: hasSelectedEdge
-          ? theme.palette.secondary.main
-          : (element.selected()
-            ? theme.palette.primary.main
-            : theme.palette.background.paper),
-        borderRadius: 50,
-      }}
+      width={width}
+      height={height}
+      fill={hasSelectedEdge
+        ? fill.edgeSelected
+        : (element.selected()
+          ? fill.selected
+          : (
+            element.hovered()
+              ? fill.hovered
+              : fill.default
+          )
+        )}
+      radius={radius}
       interactive
+      alpha={alpha}
       pointertap={() => {
         cyUnselectAll(cy)
         element.select()
       }}
     >
-      <GraphText
-        isSprite
-        text={R.last(item.id.split('/'))?.substring(0, 10) ?? item.id}
-      />
+      {
+        labelVisible && (
+          <GraphText
+            text={label}
+          />
+        )
+      }
     </GraphView>
   )
 }

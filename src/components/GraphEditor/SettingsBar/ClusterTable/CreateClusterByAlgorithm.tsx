@@ -2,11 +2,11 @@ import { EVENT } from '@constants'
 import { Clusters } from '@core/clusters'
 import { useGraphEditor } from '@hooks'
 import {
-  InputLabel, MenuItem, Select
+  InputLabel, MenuItem, Select,
 } from '@mui/material'
-import Form from '@rjsf/material-ui'
+import { Form } from '@components/Form'
 import {
-  View
+  View,
 } from 'colay-ui'
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import React from 'react'
@@ -58,17 +58,6 @@ export const CreateClusterByAlgorithm = (props: CreateClusterByAlgorithmProps) =
       </Select>
       <Form
         onSubmit={(event) => {
-          // updateState((draft) => {
-          //   draft.formData = event.formData
-          //   draft.createClusterDialog.visible = true
-          // })
-          // onEvent({
-          //   type: EVENT.CREATE_CLUSTER_BY_ALGORITHM,
-          //   payload: {
-          //     config: event.formData,
-          //     name: state.selectedClusterName,
-          //   },
-          // })
           onEvent({
             type: EVENT.CREATE_CLUSTER_BY_ALGORITHM_FORM_SUBMIT,
             payload: {
@@ -77,6 +66,15 @@ export const CreateClusterByAlgorithm = (props: CreateClusterByAlgorithmProps) =
             },
           })
           onSubmit()
+        }}
+        onClear={(event) => {
+          onEvent({
+            type: EVENT.CREATE_CLUSTER_BY_ALGORITHM_FORM_CLEAR,
+            payload: {
+              config: event.formData,
+              name: state.selectedClusterName,
+            },
+          })
         }}
         schema={Clusters[state.selectedClusterName].configSchema}
       />

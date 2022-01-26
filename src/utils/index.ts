@@ -10,62 +10,23 @@ import {
   Element, NodeData, EdgeData, ElementData,
   DisplayObjectWithYoga, NodeContext, EdgeContext,
   Cluster, EventInfo, GraphEditorRef, ControllerState,
-  ViewportRef, LightEventInfo,
+  ViewportRef, LiteEventInfo,
   EdgeElement, NodeElement,
+  GraphRef, Playlist, 
 } from '@type'
 import {
   ELEMENT_DATA_FIELDS, EVENT,
   QUALITY_LEVEL,
 } from '@constants'
+import Vector from 'victor'
 
-// type Result = {
-//   x: number;
-//   y: number;
-//   width: number;
-//   height: number;
-//   fill: number;
-// }
-// export const processStyle = (style: Properties): Result => {
-//   const newStyle: Result = {} as Result
-//   const _ = R.forEachObjIndexed((val: any, key: string) => {
-//     let isNumber = true
-//     if (R.isString(val) && R.includes(val, '%')) {
-//       isNumber = false
-//       val = (parseFloat(R.replace(val, '%', '')) / 100)
-//     }
-//     switch (key) {
-//       case 'width':
-//         newStyle.width = isNumber ? val : val * parent.width
-//         break
-//       case 'height':
-//         newStyle.height = isNumber ? val : val * parent.height
-//         break
-//       case 'top':
-//         newStyle.y = isNumber ? val : val * parent.height
-//         break
-//       case 'left':
-//         newStyle.x = isNumber ? val : val * parent.width
-//         break
-//       case 'backgroundColor':
-//         newStyle.fill = C.rgbNumber(val)
-//         break
-//       case 'borderRadius':
-//         newStyle.radius = val
-//         break
-//       default:
-//         break
-//     }
-//   }, style)
-//   return newStyle
-// }
-
-export const processStyle = (props: any = {}, mutableInstance): any => {
+export const processStyle = (props: any = {}, mutableInstance: PIXI.DisplayObject): any => {
   const { parent } = mutableInstance
   const {
     style = {},
   } = props
   const newProps: any = {}
-  R.forEachObjIndexed((val: any, key: string) => {
+  R.forEachObjIndexed<Record<string, any>>((val: any, key: string) => {
     let isNumber = true
     if (R.is(String)(val) && R.includes(val, '%')) {
       isNumber = false
@@ -153,18 +114,14 @@ export const applyEvents = (
   
 }
 
-const processProps = (props: Record<string, any>, mutableInstance) => {
-  return props
-}
+const processProps = (props: Record<string, any>, _mutableInstance: PIXI.DisplayObject) => props
 
 type ApplyDefaultPropsConfig = {
   isFlex?: boolean;
   rescaleToYoga?: boolean;
 }
 
-export const preprocessProps = <T extends Record<string, any>>(props: T): T => ({
-  ...props,
-})
+export const preprocessProps = <T extends Record<string, any>>(props: T): T => props
 
 export const IS_FLEX_DEFAULT = false
 
@@ -178,30 +135,30 @@ export const applyDefaultProps = <P extends Record<string, any> >(
     rescaleToYoga: false,
   },
 ) => {
-  const mutableInstance = instance as DisplayObjectWithYoga
+  instance = instance as DisplayObjectWithYoga
   const {
     isFlex = IS_FLEX_DEFAULT,
     rescaleToYoga = false,
   } = config
-  const { style = {}, ...restProps } = newProps
   if (isFlex) {
-    mutableInstance.flex = true // display === 'flex'
-    mutableInstance.yoga.flexDirection = style?.flexDirection ?? 'column'
-    mutableInstance.yoga.keepAspectRatio = R.equals(
+    const { style = {} } = newProps
+    instance.flex = true // display === 'flex'
+    instance.yoga.flexDirection = style?.flexDirection ?? 'column'
+    instance.yoga.keepAspectRatio = R.equals(
       newProps.resizeMode,
       'contain',
     )
     // @TODO: was true
-    mutableInstance.yoga.rescaleToYoga = rescaleToYoga
-    mutableInstance.yoga.fromConfig(style)
+    instance.yoga.rescaleToYoga = rescaleToYoga
+    instance.yoga.fromConfig(style)
   }
   // FOR CULLING
-  mutableInstance._visible = newProps.visible
+  instance._visible = newProps.visible
   // FOR CULLING
   return nativeApplyDefaultProps(
-    mutableInstance,
-    processProps(oldProps, mutableInstance),
-    processProps(restProps, mutableInstance),
+    instance,
+    processProps(oldProps, instance),
+    processProps(newProps, instance),
   )
 }
 
@@ -268,14 +225,14 @@ export const getTextureFromProps = (elementType: string, pureProps: Record<strin
 
 export const getSelectedItemByElement = (
   element: Element,
-  info: { nodes: NodeData[]; edges: EdgeData[]},
+  info: { nodes: NodeData[]; edges: EdgeData[] },
 ) => {
   const id = element.id()
   const isNode = element.isNode()
   const targetPath = isNode ? 'nodes' : 'edges'
   const index = info[targetPath].findIndex((targetItem: ElementData) => targetItem.id === id)
   return {
-    item: info[targetPath][index] as NodeData | EdgeData,
+    item: info[targetPath][index] as ElementData,
     index: index as number,
   }
 }
@@ -286,7 +243,7 @@ export const getSelectedElementInfo = (
   const itemIds = controllerState.selectedElementIds
   const selectedItemId = R.last(itemIds ?? [])
   const selectedElement = selectedItemId
-    ? graphEditor.cy.$id(`${selectedItemId}`)
+    ? graphEditor.cy.$id(`${selectedItemId}`) as  EdgeElement | NodeElement
     : null
   if (!selectedElement) {
     return {}
@@ -307,13 +264,6 @@ export const getSelectedElementInfo = (
 export const getLabel = (path: string[] = [], item: ElementData): string => (R.isEmpty(path)
   ? item.id
   : (R.path([ELEMENT_DATA_FIELDS.DATA, ...path], item) ?? item.id))
-// const firstKey = path[0]
-// if (firstKey === ELEMENT_DATA_FIELDS.DATA) {
-//   const name = path[1]
-//   const foundDataItem = item.data?.find((dataItem) => dataItem.name === name)
-//   return foundDataItem?.value[0] ?? ''
-// }
-// return R.path(path)(item)
 
 export const readTextFile = async (blob: Blob, encoding?: string) => new Promise<string>(
   (res, rej) => {
@@ -375,30 +325,15 @@ export const getClusterVisibility = (id: string, clusters: Cluster[] = []) => {
   })
   return visible
 }
-// export const calculateDisplayObjectBounds = (object: PIXI.Container) => {
-//   const box = object.getLocalBounds()
-//   box.width = 45
-//   box.height = 45
-//   return {
-//     // x: object.x + (box.x - object.pivot.x) * object.scale.x,
-//     // y: object.y + (box.y - object.pivot.y) * object.scale.y,
-//     width: box.width * object.scale.x,
-//     height: box.height * object.scale.y,
-//     x: object.x * object.scale.x,
-//     y: object.y * object.scale.y,}
-//   }
 
 export const calculateVisibilityByContext = (
-  element: EdgeElement|NodeElement,
+  element: EdgeElement | NodeElement,
 ): boolean => {
   const context = contextUtils.get(element)
-  const visibility = R.all(R.isTrue)(Object.values(context.settings.visibility))
-  // if (element.isEdge()) {
-  //   const target = element.target()
-  //   const source = element.source()
-  //   return visibility && calculateVisibilityByContext(target)
-  //   && calculateVisibilityByContext(source)
-  // }
+  const visibility = Object.values(context.settings.visibility).reduce(
+    (acc, curr) => acc && curr,
+    true,
+  ) as boolean
   return visibility
 }
 
@@ -406,12 +341,19 @@ export const calculateVisibilityByContext = (
 export const filterEdges = (nodes: NodeData[]) => (
   edges: EdgeData[],
 ) => {
-  const nodeMap = R.groupBy(R.prop('id'), nodes)
-  return R.filter(
+  const nodeMap = nodes.reduce(
+    (acc, curr) => {
+      acc[curr.id] = curr
+      return acc
+    },
+    {} as Record<string, NodeData>,
+  ) as Record<string, NodeData>
+  console.log('AA', nodeMap)
+  // R.groupBy(R.prop('id'), nodes)
+  return edges.filter(
     (
       edge: EdgeData,
     ) => !!(nodeMap[edge.source] && nodeMap[edge.target]),
-    edges,
   )
 }
 
@@ -425,8 +367,8 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
     graphEditor,
   } = settings
   // const addHistory = true
-  const undoEvents: LightEventInfo[] = R.unnest(
-    events.map((event): LightEventInfo[] => {
+  const undoEvents: LiteEventInfo[] = R.unnest(
+    events.map((event): LiteEventInfo[] => {
       const {
         // elementId,
         type,
@@ -434,7 +376,6 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
       } = event
       const oldSelectedElementIds = controllerState.selectedElementIds
       const {
-        selectedElement,
         selectedItem,
       } = getSelectedElementInfo(controllerState, graphEditor)
       switch (type) {
@@ -501,7 +442,7 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
             {
               type: EVENT.DELETE_PLAYLIST,
               payload: {
-                itemIds: payload.items?.map((item) => item.id),
+                itemIds: payload.items?.map((item: Playlist) => item.id),
               },
             },
           ]
@@ -510,7 +451,7 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
             {
               type: EVENT.DELETE_CLUSTER,
               payload: {
-                itemIds: payload.items?.map((item) => item.id),
+                itemIds: payload.items?.map((item: Cluster) => item.id),
               },
             },
           ]
@@ -581,7 +522,7 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
               type: EVENT.CREATE_PLAYLIST,
               payload: {
                 items: controllerState.playlists!.filter(
-                  (playlist) => payload.itemIds.includes(playlist.id),
+                  (playlist: Playlist) => payload.itemIds.includes(playlist.id),
                 ),
               },
             },
@@ -706,7 +647,7 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
               type: EVENT.SET_POSITIONS_IMPERATIVELY,
               payload: {
                 oldLayout: controllerState.graphConfig?.layout,
-                positions: payload.positions.map(({ elementId }) => {
+                positions: payload.positions.map(({ elementId }: { elementId: string }) => {
                   const element = graphEditor.cy.$id(`${elementId}`)
                   return {
                     position: {
@@ -793,7 +734,7 @@ export const getElementsCollectionByIds = (cy: cytoscape.Core, ids: string[]) =>
 
 export const getPointerPositionOnViewport = (
   viewport: ViewportRef,
-  event: MouseEvent,
+  event: TouchEvent,
 ) => {
   const position = getEventClientPosition(event)
   // @ts-ignore
@@ -808,7 +749,8 @@ export const getPointerPositionOnViewport = (
   return position
 }
 
-export const getEventClientPosition = (e) => {
+export const getEventClientPosition = (e: TouchEvent | MouseEvent) => {
+  // @ts-ignore
   const event = e.touches?.[0] ?? e.changedTouches?.[0] ?? e
   return {
     x: event.clientX,
@@ -816,7 +758,7 @@ export const getEventClientPosition = (e) => {
   }
 }
 
-export const isMultipleTouches = (e) => {
+export const isMultipleTouches = (e: TouchEvent) => {
   const touches = e.touches ?? e.changedTouches
   return touches && touches.length > 0
 }
@@ -843,7 +785,7 @@ export const getItemFromElement = (element: Element) => ({
   data: getElementData(element),
 })
 
-export const pauseEvent = (e) => {
+export const pauseEvent = (e: Event) => {
   if (e.stopPropagation) e.stopPropagation()
   if (e.preventDefault) e.preventDefault()
   e.cancelBubble = true
@@ -890,4 +832,38 @@ export const adjustVisualQuality = (objectCount: number, viewport: ViewportRef)=
         break
     }
   }
+}
+
+export const vectorMidpoint = (from: Vector, to: Vector) => {
+  return to.clone()
+    .subtract(from)
+    .divideScalar(2)
+    .add(from)
+}
+
+export const getHitAreaCenter = (graphRef: GraphRef) => {
+  const { hitArea } = graphRef.viewport
+  return {
+    x: hitArea.x + hitArea.width / 2,
+    y: hitArea.y + hitArea.height / 2,
+  }
+}
+
+export const isFiltered = (element: Element) => {
+  return contextUtils.get(element).settings.filtered
+}
+
+export const getViewportZoom = (graphRef: GraphRef) => {
+  const { viewport } = graphRef
+  return viewport.scale.x
+}
+
+export const isValidURL = (value: string) => {
+  let url
+  try {
+    url = new URL(value)
+  } catch (_) {
+    return false
+  }
+  return url.protocol === 'http:' || url.protocol === 'https:'
 }

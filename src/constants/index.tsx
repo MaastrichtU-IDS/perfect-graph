@@ -1,6 +1,7 @@
 // import { Icon, Text, TouchableOpacity } from 'unitx-ui'
 import Layouts from '@core/layouts'
-import { EventInfo } from '@type'
+import { EventInfo, NodeConfig, EdgeConfig } from '@type'
+import { DefaultTheme } from '@core/theme'
 
 export const THEME = {
   backgroundColor: '#3287a8',
@@ -35,6 +36,7 @@ export const EVENT = {
   CLEAR_NODE_GLOBAL_LABEL: 'CLEAR_NODE_GLOBAL_LABEL',
   CLEAR_NODE_LOCAL_LABEL: 'CLEAR_NODE_LOCAL_LABEL',
   CLOSE_MODAL: 'CLOSE_MODAL',
+  CREATE_CLUSTER_BY_ALGORITHM_FORM_CLEAR: 'CREATE_CLUSTER_BY_ALGORITHM_FORM_CLEAR',
   CREATE_CLUSTER_BY_ALGORITHM_FORM_SUBMIT: 'CREATE_CLUSTER_BY_ALGORITHM_FORM_SUBMIT',
   CREATE_CLUSTER_BY_ALGORITHM: 'CREATE_CLUSTER_BY_ALGORITHM',
   CREATE_CLUSTER_FORM_SUBMIT: 'CREATE_CLUSTER_FORM_SUBMIT',
@@ -57,18 +59,22 @@ export const EVENT = {
   ELEMENT_SELECTED: 'ELEMENT_SELECTED',
   ELEMENT_SETTINGS: 'ELEMENT_SETTINGS',
   ELEMENT_SETTINGS_FORM_SUBMIT: 'ELEMENT_SETTINGS_FORM_SUBMIT',
+  ELEMENT_SETTINGS_FORM_CLEAR: 'ELEMENT_SETTINGS_FORM_CLEAR',
   EXPORT_DATA: 'EXPORT_DATA',
   FOCUS: 'FOCUS',
   IMPORT_DATA: 'IMPORT_DATA',
   IMPORT_EVENTS: 'IMPORT_EVENTS',
   LAYOUT_ANIMATION_DURATION_CHANGED: 'LAYOUT_ANIMATION_DURATION_CHANGED',
   LAYOUT_CHANGED: 'LAYOUT_CHANGED',
+  LAYOUT_FORM_CLEAR: 'LAYOUT_FORM_CLEAR',
   MAKE_DATA_LABEL_FIRST: 'MAKE_DATA_LABEL_FIRST',
   MAKE_DATA_LABEL: 'MAKE_DATA_LABEL',
   MAKE_GLOBAL_DATA_LABEL_FIRST: 'MAKE_GLOBAL_DATA_LABEL_FIRST',
   MAKE_GLOBAL_DATA_LABEL: 'MAKE_GLOBAL_DATA_LABEL',
   MODE_CHANGED: 'MODE_CHANGED',
   PLAY_EVENTS: 'PLAY_EVENTS',
+  PREFERENCES_FORM_CLEAR: 'PREFERENCES_FORM_CLEAR',
+  PREFERENCES_FORM_SUBMIT: 'PREFERENCES_FORM_SUBMIT',
   PRESS_ADD_CLUSTER_ELEMENT: 'PRESS_ADD_CLUSTER_ELEMENT',
   PRESS_BACKGROUND: 'PRESS_BACKGROUND',
   RECORD_FINISHED: 'RECORD_FINISHED',
@@ -81,6 +87,7 @@ export const EVENT = {
   SET_NODE_LOCAL_LABEL: 'SET_NODE_LOCAL_LABEL',
   SET_POSITIONS_IMPERATIVELY: 'SET_POSITIONS_IMPERATIVELY',
   SETTINGS_FORM_CHANGED: 'SETTINGS_FORM_CHANGED',
+  SETTINGS_FORM_CLEAR: 'SETTINGS_FORM_CLEAR',
   TOGGLE_ACTION_BAR: 'TOGGLE_ACTION_BAR',
   TOGGLE_DATA_BAR: 'TOGGLE_DATA_BAR',
   TOGGLE_FILTER_BAR: 'TOGGLE_FILTER_BAR',
@@ -127,7 +134,8 @@ export const LAYOUT_NAMES = Object.keys(Layouts)
 
 
 
-export const SIDE_PANEL_DEFAULT_WIDTH = 330
+export const SIDE_PANEL_DEFAULT_WIDTH = 260
+export const SIDE_PANEL_DEFAULT_HEIGHT = 530
 // export const eventHandlers = [
 //   'click',
 //   'mousedown',
@@ -193,3 +201,60 @@ export const  QUALITY_LEVEL = {
   MEDIUM: 1,
   LOW: 0,
 } as const
+
+export const DEFAULT_NODE_CONFIG: NodeConfig = {
+  view: {
+    width: 50,
+    height: 50,
+    radius: 50,
+    fill: {
+      default: DefaultTheme.palette.background.paper,
+      hovered: DefaultTheme.palette.secondary.main,
+      selected: DefaultTheme.palette.primary.main,
+      edgeSelected: DefaultTheme.palette.secondary.main,
+    },
+    labelVisible: true,
+  },
+  filter: {
+    settings: {
+      opacity: 0.2,
+    },
+    // test: () => true,
+  },
+  renderEvents: [
+    CYTOSCAPE_EVENT.select,
+    CYTOSCAPE_EVENT.unselect,
+    CYTOSCAPE_EVENT.selectEdge,
+    CYTOSCAPE_EVENT.unselectEdge,
+    CYTOSCAPE_EVENT.mouseover,
+    CYTOSCAPE_EVENT.mouseout,
+  ],
+}
+
+export const DEFAULT_EDGE_CONFIG: EdgeConfig = {
+  view: {
+    lineType: 'line',
+    width: 2,
+    alpha: 1,
+    fill: {
+      default: DefaultTheme.palette.background.paper,
+      hovered: DefaultTheme.palette.secondary.main,
+      selected: DefaultTheme.palette.primary.main,
+      nodeSelected: DefaultTheme.palette.secondary.main,
+    },
+    labelVisible: true,
+  },
+  filter: {
+    settings: {
+      opacity: 0.2,
+    },
+  },
+  renderEvents: [
+    CYTOSCAPE_EVENT.select,
+    CYTOSCAPE_EVENT.unselect,
+    CYTOSCAPE_EVENT.selectNode,
+    CYTOSCAPE_EVENT.unselectNode,
+    CYTOSCAPE_EVENT.mouseover,
+    CYTOSCAPE_EVENT.mouseout,
+  ],
+}

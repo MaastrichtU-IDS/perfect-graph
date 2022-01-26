@@ -1,5 +1,4 @@
 // import '@utils/addFlexLayout'
-import cytoscape from 'cytoscape'
 import * as PIXI from 'pixi.js'
 // @ts-ignore
 // import euler from 'cytoscape-euler'

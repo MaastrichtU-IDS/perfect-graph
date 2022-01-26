@@ -1,28 +1,29 @@
-import React from 'react'
-import {
-  PixiComponent,
-  Container as PIXIReactContainer,
-} from '@inlet/react-pixi'
-import * as PIXI from 'pixi.js'
 import { dragTrack } from '@core/utils/events'
 import {
-  applyDefaultProps, preprocessProps,
-  getEventClientPosition,
-} from '@utils'
+  Container as PIXIReactContainer, PixiComponent,
+} from '@inlet/react-pixi'
 import {
-  PIXIFlexStyle,
-  PIXIBasicStyle,
-  PIXIDisplayObjectProps,
-  PIXIBasicProps,
+  PIXIBasicProps, PIXIDisplayObjectProps,
+  PropsWithRef,
 } from '@type'
-import { Position, PropsWithRef } from 'colay-ui/type'
+import {
+  applyDefaultProps, getEventClientPosition, preprocessProps,
+} from '@utils'
+import { Position } from 'colay-ui/type'
 import { Enumerable } from 'colay/type'
+import * as PIXI from 'pixi.js'
+import React from 'react'
 
 export type ContainerProps = PIXIBasicProps & PIXIDisplayObjectProps
-& Omit<React.ComponentProps<typeof PIXIReactContainer>, 'children'> &{
-  style: PIXIFlexStyle & PIXIBasicStyle;
+& Omit<React.ComponentProps<typeof PIXIReactContainer>, 'children'> & {
   children: Enumerable<React.ReactNode>;
+  /**
+   * Gives drag functionality to the container.
+   */
   draggable?: boolean;
+  /**
+   * Track drag events.
+   */
   onDrag?: (param: Position) => void;
 }
 
@@ -34,6 +35,9 @@ ContainerProps
 export type ContainerType = React.FC<ContainerPropsWithRef>
 export type ContainerRef = PIXI.Container
 
+/**
+ * The container for PIXI objects. It facilitates drag operations.
+ */
 // @ts-ignore
 export const Container = PixiComponent<ContainerProps, PIXI.Container>(
   'PIXIContainer',
@@ -65,17 +69,10 @@ export const Container = PixiComponent<ContainerProps, PIXI.Container>(
             onMove({ x, y })
           })
       }
-      // applyEvents(instance, props)
       return instance
     },
     applyProps: (mutableInstance: PIXI.Container, oldProps, _props) => {
       const props = preprocessProps(_props)
-      const {
-        left = 0,
-        top = 0,
-        width,
-        height,
-      } = props.style ?? {}
       applyDefaultProps(
         mutableInstance,
         oldProps,
@@ -84,10 +81,6 @@ export const Container = PixiComponent<ContainerProps, PIXI.Container>(
           isFlex: false,
         },
       )
-      mutableInstance.x = left
-      mutableInstance.y = top
-      width && (mutableInstance.width = width)
-      height && (mutableInstance.height = height)
     },
   },
 ) as unknown as ContainerType

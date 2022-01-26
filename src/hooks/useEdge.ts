@@ -12,25 +12,48 @@ import { calculateVisibilityByContext, contextUtils } from '@utils'
 import { mutableGraphMap } from './useGraph'
 import { useElement } from './useElement'
 
-export type Props<T> = {
-  children?: React.ReactNode;
+export type Props = {
+  /**
+   * Edge data
+   */
   item: EdgeData;
+  /**
+   * Related graph id
+   */
   graphID: string;
-  onPositionChange?: (c: {element: EdgeSingular; context: EdgeContext; cy: Core }) => void;
+  /**
+   * Position change handler
+   */
+  onPositionChange?: (c: { element: EdgeSingular; context: EdgeContext; cy: Core }) => void;
+  /**
+   * Edge config data
+   */
   config?: EdgeConfig;
 }
 
-type Result<T> = {
-  element: EdgeSingular;
+type Result = {
+  /**
+   * Created edge element
+   */
+  element: EdgeElement;
+  /**
+   * Edge context for edge related data
+   */
   context: EdgeContext;
+  /**
+   * Related cytoscape instance
+   */
   cy: Core;
 }
 
-export default <T>(props: Props<T>): Result<T> => {
+/**
+ * Add edge to graph by hooks
+ */
+export const useEdge = (props: Props): Result => {
   const {
     onPositionChange,
     graphID,
-    config = {},
+    config = {} as EdgeConfig,
     item,
   } = props
   const {
@@ -42,7 +65,7 @@ export default <T>(props: Props<T>): Result<T> => {
   const [, setState] = useStateWithCallback({}, () => {
   })
   const contextRef = React.useRef<EdgeContext>({
-    render: (callback: () => {}) => {
+    render: (callback: () => void) => {
       setState({}, callback)
     },
     onPositionChange: () => {

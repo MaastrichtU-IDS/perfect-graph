@@ -1,7 +1,6 @@
 import React from 'react'
 // @ts-ignore
 import Form from '@rjsf/semantic-ui'
-// import Form from '@rjsf/semantic-ui'
 import { Box, BoxProps } from '@mui/material'
 import { EVENT } from '@constants'
 import { OnEventLite, DataItem } from '@type'

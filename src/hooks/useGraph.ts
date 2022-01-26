@@ -9,22 +9,21 @@ export const mutableGraphMap: Record<string, {
 }> = {}
 
 export type Props = {
+  /**
+   * If there is no graph with the id, it will be generated
+   */
   id: string;
-  onLoad?: (cy: Core) => void;
-  create?: true;
+  /**
+   * Clusters list
+   */
   clusters?: Cluster[];
 }
 
-// const createCanvas = () => {
-//   const canvas = document.createElement('canvas')
-//   canvas.width = window.innerWidth
-//   canvas.height = window.innerHeight
-//   document.body.appendChild(canvas)
-//   return canvas
-// }
-export default (props: Props) => {
+/**
+ * To create new graph or use existing graph via hooks. 
+ */
+export const useGraph = (props: Props) => {
   const {
-    onLoad,
     id,
     clusters = [],
   } = props
@@ -38,30 +37,6 @@ export default (props: Props) => {
       elements: [],
       headless: true,
       styleEnabled: true,
-      // container: createCanvas(),
-      // style: [ // the stylesheet for the graph
-      //   {
-      //     selector: 'node',
-      //     style: {
-      //       'background-color': '#666',
-      //       label: 'data(id)',
-      //       width: 100,
-      //       height: 100,
-      //     },
-      //   },
-
-      //   {
-      //     selector: 'edge',
-      //     style: {
-      //       width: 3,
-      //       'line-color': '#ccc',
-      //       'target-arrow-color': '#ccc',
-      //       'target-arrow-shape': 'triangle',
-      //       // 'curve-style': 'bezier',
-      //     },
-      //   },
-      // ],
-
     })
     mutableGraphMap[id] = {
       cy: cyInstance,
@@ -95,9 +70,6 @@ export default (props: Props) => {
   }, [graph, clusters])
   React.useEffect(() => {
     if (isExistRef.current) return
-    setTimeout(() => {
-      onLoad?.(cy)
-    }, 500)
     return () => {
       if (!isExistRef.current) {
         delete mutableGraphMap[id]

@@ -1,11 +1,15 @@
 import { Icon } from '@components/Icon'
+import { 
+  Collapsible,
+  CollapsibleContainer,
+  CollapsibleTitle,
+} from '@components/Collapsible'
 import { SortableList } from '@components/SortableList'
 import { SpeedDialCreator } from '@components/SpeedDialCreator'
 import { TabPanel } from '@components/TabPanel'
 import { EDITOR_MODE, EVENT } from '@constants'
 import { useGraphEditor } from '@hooks'
-import { GraphEditorContext } from '@hooks/useGraphEditor'
-import { Cluster } from '@type'
+import { GraphEditorContextType, Cluster, FormProps, CollapsibleSectionCommon } from '@type'
 import {
   Button,
   Card, Checkbox,
@@ -17,8 +21,7 @@ import {
 import Accordion from '@mui/material/Accordion'
 import AccordionDetails from '@mui/material/AccordionDetails'
 import AccordionSummary from '@mui/material/AccordionSummary'
-import { FormProps } from '@rjsf/core'
-import Form from '@rjsf/material-ui'
+import { Form } from '@components/Form'
 import {
   useDisclosure, View,
 } from 'colay-ui'
@@ -27,16 +30,14 @@ import * as R from 'colay/ramda'
 import React from 'react'
 import { CreateClusterByAlgorithm } from './CreateClusterByAlgorithm'
 
-export type ClusterTableProps = {
-  // onSelectAllClusters: (checked: boolean) => void
-  // onSelectCluster: (cluster: Cluster, checked: boolean) => void
+export type ClusterTableProps = CollapsibleSectionCommon & {
   createClusterForm?: FormProps<any>;
 }
 
 export const ClusterTable = (props: ClusterTableProps) => {
   const {
-    // onSelectAllClusters,
-    // onSelectCluster,
+    isOpen,
+    onChange,
     createClusterForm = { schema: { } },
   } = props
   const [
@@ -55,7 +56,6 @@ export const ClusterTable = (props: ClusterTableProps) => {
     }),
   )
   const [state, updateState] = useImmer({
-    expanded: true,
     selectedClusterIds: [] as string[],
     currentTab: 0,
     formData: {},
@@ -67,27 +67,19 @@ export const ClusterTable = (props: ClusterTableProps) => {
   const hasSelected = state.selectedClusterIds.length > 0
   const {
     anchorEl,
-    isOpen,
+    isOpen: isMenuOpen,
     onClose,
     onOpen,
   } = useDisclosure({})
   return (
     <>
-      <Accordion
-        expanded={state.expanded}
-        onChange={(e, expanded) => updateState((draft) => {
-          draft.expanded = expanded
-        })}
-      >
-        <AccordionSummary
-          aria-controls="panel1a-content"
-        >
+    <Collapsible
+      isOpen={isOpen}
+    >
+      {
+        () => (
+          <>
           <View
-            style={{
-              width: '100%',
-            }}
-          >
-            <View
               style={{
                 flexDirection: 'row',
                 justifyContent: 'space-between',
@@ -101,11 +93,11 @@ export const ClusterTable = (props: ClusterTableProps) => {
                   alignItems: 'center',
                 }}
               >
-                <Typography
-                  variant="h6"
+                <CollapsibleTitle
+                  onClick={() => onChange(!isOpen)}
                 >
                   Clusters
-                </Typography>
+                </CollapsibleTitle>
               </View>
               <IconButton
                 onClick={(e) => {
@@ -121,7 +113,7 @@ export const ClusterTable = (props: ClusterTableProps) => {
               </IconButton>
               <Menu
                 anchorEl={anchorEl}
-                open={isOpen}
+                open={isMenuOpen}
                 onClose={onClose}
                 // style={{ width: 400 }}
               >
@@ -149,8 +141,8 @@ export const ClusterTable = (props: ClusterTableProps) => {
                     event.stopPropagation()
                     updateState((draft) => {
                       draft.currentTab = 1
-                      draft.expanded = true
                     })
+                    onChange(true)
                     onClose()
                   }}
                 >
@@ -163,17 +155,18 @@ export const ClusterTable = (props: ClusterTableProps) => {
                     event.stopPropagation()
                     updateState((draft) => {
                       draft.currentTab = 2
-                      draft.expanded = true
+                      
                     })
+                    onChange(true)
                     onClose()
                   }}
                 >
                   By Algorithm
                 </MenuItem>
               </Menu>
-            </View>
-            {
-            state.expanded && hasSelected && (
+          </View>
+          {
+            isOpen && hasSelected && (
               <Card
                 style={{
                   display: 'flex',
@@ -223,11 +216,10 @@ export const ClusterTable = (props: ClusterTableProps) => {
               </Card>
             )
           }
-          </View>
-
-        </AccordionSummary>
-        <AccordionDetails>
-          <TabPanel
+          {
+            isOpen && (
+              <CollapsibleContainer>
+               <TabPanel
             value={state.currentTab}
             index={0}
           >
@@ -355,7 +347,7 @@ export const ClusterTable = (props: ClusterTableProps) => {
                                   onEvent({
                                     type: EVENT.ELEMENT_SELECTED,
                                     payload: {
-                                      itemIds: [elementId]
+                                      itemIds: [elementId],
                                     },
                                     avoidHistoryRecording: true,
                                   })
@@ -401,6 +393,12 @@ export const ClusterTable = (props: ClusterTableProps) => {
                   draft.createClusterDialog.visible = true
                 })
               }}
+              onClear={(event) => {
+                updateState((draft) => {
+                  draft.formData = event.formData
+                  draft.createClusterDialog.visible = false
+                })
+              }}
               {...createClusterForm}
             />
           </TabPanel>
@@ -416,8 +414,13 @@ export const ClusterTable = (props: ClusterTableProps) => {
               }}
             />
           </TabPanel>
-        </AccordionDetails>
-      </Accordion>
+          </CollapsibleContainer>
+            )
+          }
+          </>
+        )
+      }
+    </Collapsible>
       <Dialog
         onClose={() => updateState((draft) => {
           draft.createClusterDialog.visible = false
@@ -471,9 +474,9 @@ export const ClusterTable = (props: ClusterTableProps) => {
 }
 
 type SpeedDialActionsViewProps = {
-  graphEditorLocalDataRef: GraphEditorContext['localDataRef'];
-  editorMode: GraphEditorContext['mode'];
-  onEvent: GraphEditorContext['onEvent'];
+  graphEditorLocalDataRef: GraphEditorContextType['localDataRef'];
+  editorMode: GraphEditorContextType['mode'];
+  onEvent: GraphEditorContextType['onEvent'];
   item: Cluster;
 }
 
@@ -499,6 +502,21 @@ const SpeedDialActionsView = (props: SpeedDialActionsViewProps) => {
               type: EVENT.DELETE_CLUSTER,
               payload: {
                 itemIds: [cluster.id],
+              },
+            })
+          },
+        },
+        {
+          name: 'Focus',
+          icon: {
+            name: 'center_focus_strong',
+          },
+          onClick: (e) => {
+            e.stopPropagation()
+            onEvent({
+              type: EVENT.FOCUS,
+              payload: {
+                itemIds: cluster.ids,
               },
             })
           },

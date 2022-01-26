@@ -12,11 +12,29 @@ import { calculateVisibilityByContext, contextUtils } from '@utils'
 import { useInitializedRef } from 'colay-ui/hooks/useInitializedRef'
 
 export type Props = {
+  /**
+   * Related element
+   */
   element: Element;
+  /**
+   * Element data
+   */
   item: ElementData
+  /**
+   * The created cytoscape instance
+   */
   cy: Core;
+  /**
+   * The element context reference
+   */
   contextRef: React.RefObject<ElementContext>;
+  /**
+   * The element config
+   */
   config: NodeConfig | EdgeConfig;
+  /**
+   * The Filter config
+   */
   filter?: ElementFilterOption<Element>
 }
 
@@ -24,6 +42,11 @@ type Result = {
 
 }
 
+const DEFAULT_RENDER_EVENTS = [] as string[]
+
+/**
+ * To support common features of node and edge.
+ */
 export const useElement = (props: Props): Result => {
   const {
     // cy,
@@ -33,7 +56,7 @@ export const useElement = (props: Props): Result => {
     item,
   } = props
   const {
-    renderEvents = [],
+    renderEvents = DEFAULT_RENDER_EVENTS,
   } = config
   const initializedRef = useInitializedRef()
   // Update data
@@ -109,8 +132,8 @@ export const useElement = (props: Props): Result => {
 
   // Add fields
   React.useMemo(() => {
-    element.hovered = () => contextRef.current?.settings.hovered
-    element.filtered = () => contextRef.current?.settings.filtered
+    element.hovered = () => !!contextRef.current?.settings.hovered
+    element.filtered = () => !!contextRef.current?.settings.filtered
   }, [element])
   return {
 

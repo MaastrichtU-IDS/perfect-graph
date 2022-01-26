@@ -4,20 +4,16 @@ import {
 import { EDITOR_MODE, EVENT } from '@constants'
 import { useGraphEditor } from '@hooks'
 import {
-  Box, Button, FormControl, IconButton, InputLabel, Menu,
-  MenuItem, Select, useTheme, SelectProps,
+  Box, Button, Divider, FormControl, IconButton, InputLabel, Menu,
+  MenuItem, Select, SelectProps, useTheme,
 } from '@mui/material'
-import {
-  EditorMode, OnEventLite,
-} from '@type'
+import { OnEventLite } from '@type'
 import { readTextFile } from '@utils'
 import DocumentPicker from '@utils/DocumentPicker'
 import { useAnimation, useDisclosure, wrapComponent } from 'colay-ui'
 import { Recorder } from 'colay-ui/components/Recorder'
-// import Form from 'unitx-ui/components/Form'
 import * as R from 'colay/ramda'
 import React from 'react'
-import { LayoutOptions } from './LayoutOptions'
 // export const ACTION = {
 //   EXPORT_DATA: 'EXPORT_DATA',
 // }
@@ -25,14 +21,21 @@ type ActionOption = {
   visible?: boolean;
 }
 
-export type ActionBarProps = {
+type Actions = {
+  add: ActionOption;
+  recordEvents: ActionOption;
+  delete: ActionOption;
+  // record: { visible: boolean; };
+  options: {
+    actions: { import: ActionOption };
+  };
+}
+
+export type ActionBarConfig = {
   renderMoreAction?: () => React.ReactElement;
   left?: React.FC;
   right?: React.FC;
   isOpen?: boolean;
-  autoOpen?: boolean;
-  mode?: EditorMode;
-  layoutName?: string;
   theming?: {
     options?: {
       name: string;
@@ -42,17 +45,27 @@ export type ActionBarProps = {
   }
   recording?: boolean;
   eventRecording?: boolean;
-  actions?: {
-    add: ActionOption;
-    recordEvents: ActionOption;
-    delete: ActionOption;
-    // record: { visible: boolean; };
-    options: {
-      actions: { import: ActionOption };
-    };
-    layout: ActionOption;
-  };
+  actions?: Actions;
+  autoOpen?: boolean;
+}
+
+export type ActionBarProps = {
+  renderMoreAction?: () => React.ReactElement;
+  left?: React.FC;
+  right?: React.FC;
+  isOpen?: boolean;
+  theming?: {
+    options?: {
+      name: string;
+      value: string;
+    }[];
+    value?: string;
+  }
+  recording?: boolean;
+  eventRecording?: boolean;
   onAction: (action: { type: string; value?: any }) => void;
+  actions?: Actions;
+  autoOpen?: boolean;
 }
 
 const DEFAULT_ACTIONS = {
@@ -78,16 +91,14 @@ const ActionBarElement = (props: ActionBarProps) => {
   const {
     renderMoreAction,
     isOpen = false,
-    autoOpen = false,
     recording = false,
     eventRecording = false,
-    // recordingActions = false,
     onAction,
     left: LeftComponent,
     right: RightComponent,
     theming = {
       options: [
-        { name: 'Default', value: 'Default' },
+        { name: 'Light', value: 'Default' },
         { name: 'Dark', value: 'Dark' },
       ],
       value: 'Default',
@@ -98,7 +109,6 @@ const ActionBarElement = (props: ActionBarProps) => {
       onEvent,
       graphEditorRef,
       mode,
-      graphConfig,
     },
   ] = useGraphEditor(
     (editor) => ({
@@ -250,7 +260,7 @@ const ActionBarElement = (props: ActionBarProps) => {
           </Button>
           )
         }
-        {
+        {/* {
           actions.layout.visible && (
           <LayoutOptions
             layout={graphConfig?.layout}
@@ -258,7 +268,7 @@ const ActionBarElement = (props: ActionBarProps) => {
             {...actions.layout}
           />
           )
-        }
+        } */}
         {
           actions.recordEvents.visible && (
           <IconButton
@@ -313,7 +323,7 @@ const ActionBarElement = (props: ActionBarProps) => {
         />
       </Box>
       {RightComponent && <RightComponent />}
-      {
+      {/* {
         !autoOpen && (
           <IconButton
             style={styles.icon}
@@ -329,7 +339,7 @@ const ActionBarElement = (props: ActionBarProps) => {
             />
           </IconButton>
         )
-      }
+      } */}
 
     </Box>
   )
@@ -339,6 +349,7 @@ type MoreOptionsProps = {
 } & Pick<ActionBarProps, 'renderMoreAction' | 'onAction' | 'theming'>
 
 const OPTIONS = {
+  Preferences: 'Preferences',
   Import: 'Import',
   Export: 'Export',
   ImportEvents: 'Import Events',
@@ -360,6 +371,12 @@ const MoreOptions = (props: MoreOptionsProps) => {
     onClose()
     const action = Object.values(OPTIONS)[index]
     switch (action) {
+      case OPTIONS.Preferences: {
+        onEvent({
+          type: EVENT.TOGGLE_PREFERENCES_MODAL,
+        })
+        break
+      }
       case OPTIONS.Import: {
         const result = await DocumentPicker.getDocumentAsync({ type: 'application/json' })
         if (result.type === 'success') {
@@ -398,11 +415,13 @@ const MoreOptions = (props: MoreOptionsProps) => {
 
   return (
     <>
+    {// @ts-ignore
       <IconButton
+        // @ts-ignore
         onClick={onOpen}
       >
         <Icon name="more_vert" />
-      </IconButton>
+      </IconButton>}
       <Menu
         anchorEl={anchorEl}
         open={isOpen}
@@ -418,6 +437,7 @@ const MoreOptions = (props: MoreOptionsProps) => {
             {option}
           </MenuItem>
         ))}
+        <Divider />
         <FormControl fullWidth>
           <InputLabel id="theme-select-label">Theme</InputLabel>
           <Select

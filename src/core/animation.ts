@@ -1,3 +1,6 @@
+/**
+ * Default animation configuration for cytoscape.
+ */
 export const animationOptions = {
   // // Whether to animate while running the layout
   // // true : Animate continuously as the layout is running

@@ -1,45 +1,60 @@
 import { RenderNode } from '@type'
 import { cyUnselectAll } from '@utils'
-import * as R from 'colay/ramda'
 import React from 'react'
 import { Text as GraphText } from '../Text'
 import { View as GraphView } from '../View'
 
+/**
+ * Default render cluster node component. If renderClusterNode is not suplied, it will render.
+ */
 export const DefaultRenderClusterNode: RenderNode = ({
-  item, element, cy, theme,
+  element,
+  cy,
+  config,
+  // item,
+  label,
 }) => {
   const hasSelectedEdge = element.connectedEdges(':selected').length > 0
+  const {
+    view: {
+      fill,
+      labelVisible,
+    },
+  } = config
+  // const isThereSelected = cy.elements(':selected').length > 0
+  const alpha = 1
+  // isThereSelected && (hasSelectedEdge || element.selected())
+  //   ? 1
+  //   : 0.5
   return (
     <GraphView
-      style={{
-        width: 150,
-        height: 150,
-        justifyContent: 'center',
-        alignItems: 'center',
-        display: 'flex',
-        backgroundColor: hasSelectedEdge
-          ? theme.palette.secondary.main
-          : (element.selected()
-            ? theme.palette.primary.main
-            : theme.palette.warning.main),
-        borderRadius: 20,
-      }}
+      width={220}
+      height={220}
+      fill={hasSelectedEdge
+        ? fill.edgeSelected
+        : (element.selected()
+          ? fill.selected
+          : (
+            element.hovered()
+              ? fill.hovered
+              : fill.default
+          )
+        )}
+      radius={30}
+      alpha={alpha}
       interactive
       pointertap={() => {
         cyUnselectAll(cy)
         element.select()
       }}
     >
-      <GraphText
-        style={{
-          position: 'absolute',
-          top: -90,
-          color: 'black',
-        }}
-        isSprite
-      >
-        {R.last(item.id.split('/'))?.substring(0, 10) ?? item.id}
-      </GraphText>
+      {
+        labelVisible && (
+          <GraphText
+            text={label}
+          />
+        )
+      }
     </GraphView>
   )
 }

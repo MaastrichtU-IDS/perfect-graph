@@ -35,6 +35,7 @@ import { getFilterSchema, getFetchSchema, VIEW_CONFIG_SCHEMA, RECORDED_EVENTS } 
 import { EVENT } from '../../src/constants'
 import { useController } from '../../src/plugins/controller'
 import { createSchema } from '../../src/plugins/createSchema'
+import { getHitAreaCenter } from '../../src/utils'
 import { getSelectedItemByElement, getSelectedElementInfo } from '../../src/utils'
 import { calculateStatistics } from './utils/networkStatistics'
 import { RenderNode } from './RenderNode'
@@ -100,20 +101,45 @@ const populate = (times, data) => ({
 })
 
 export const createMockData = (nodeSize: number, edgeSize: number) => {
-  const nodes = R.range(0, nodeSize).map((index) => ({ id: `node-${index}` }) )
-  const edges = R.range(0, edgeSize).map((index) => ({ 
-    id: `edge-${index}`,
-    source: `node-${Math.floor(Math.random() * nodeSize)}`,
-    target: `node-${Math.floor(Math.random() * nodeSize)}`,
-  }))
+  const nodes = R.range(0, nodeSize).map((index) => ({ 
+    id: `node-${index}` ,
+    data: {
+      name: 'perfect-graph',
+      address: {
+        city: 'Maastricht',
+        country: 'Netherlands',
+      },
+      type: 'package',
+    }
+  }) )
+  
+  const edges = R.range(0, edgeSize).map((index) => {
+    let edge
+    do {
+      const sourceId= Math.floor(Math.random() * nodeSize)
+      const targetId= Math.floor(Math.random() * nodeSize)
+      if (sourceId !== targetId) {
+        edge =  { 
+          id: `edge-${index}`,
+          source: `node-${sourceId}`,
+          target: `node-${targetId}`,
+        }
+        break
+      }
+    }while(true)
+    return edge
+  })
   return {
     nodes,
     edges
   }
 }
-const COUNT = 1000
+const COUNT = 10
 const data = createMockData(COUNT, COUNT)
-
+const nextData = {
+  edges: [{ id: 'edge-20', source: 'node-0', target: 'node-1' }],
+  nodes: []
+}
 // const data = prepareData(defaultData)
 // const data = populate(4,prepareData(defaultData))
 
@@ -301,26 +327,26 @@ const AppContainer = ({
       isOpen: false,
     }
   })
-  const ActionBarRight = React.useMemo(() => () => (
-    <View
-      style={{ flexDirection: 'row' }}
-    >
-      <Button
-        onClick={() => updateState((draft) => {
-          draft.helpModal.isOpen = true
-        })}
-      >
-        Help
-      </Button>
-      <Button
-        onClick={() => dispatch({
-          type: ACTIONS.TEST_API
-        })}
-      >
-        Test the API
-      </Button>
-    </View>
-  ), [dispatch])
+  // const ActionBarRight = React.useMemo(() => () => (
+  //   <View
+  //     style={{ flexDirection: 'row' }}
+  //   >
+  //     <Button
+  //       onClick={() => updateState((draft) => {
+  //         draft.helpModal.isOpen = true
+  //       })}
+  //     >
+  //       Help
+  //     </Button>
+  //     <Button
+  //       onClick={() => dispatch({
+  //         type: ACTIONS.TEST_API
+  //       })}
+  //     >
+  //       Test the API
+  //     </Button>
+  //   </View>
+  // ), [dispatch])
   const [controllerProps, controller] = useController({
     ...data,
     // nodes: [],
@@ -330,6 +356,13 @@ const AppContainer = ({
       layout: Graph.Layouts.circle,
       zoom: 0.2,
       nodes: {},
+      config: {
+        nodes:{
+          view: {
+            size: 12
+          },
+        },
+      },
       clusters: [
         // {
         //   id: '123',
@@ -366,7 +399,7 @@ const AppContainer = ({
       // isOpen: true,
     },
     settingsBar: {
-      opened: true,
+      // isOpen: true,
       // forms: [AUTO_CREATED_SCHEMA,FETCH_SCHEMA, VIEW_CONFIG_SCHEMA, {...FILTER_SCHEMA,  formData: configRef.current.filtering}, ],
       forms: [{ ...FETCH_SCHEMA, formData: configRef.current.fetching }, VIEW_CONFIG_SCHEMA, { ...FILTER_SCHEMA, formData: configRef.current.filtering },],
       createClusterForm: {
@@ -378,11 +411,11 @@ const AppContainer = ({
     dataBar: {
       // isOpen: true,
       editable: true,
-      header: DataBarHeader,
+      // header: DataBarHeader,
     },
     actionBar: {
       // isOpen: true,
-      right: ActionBarRight,
+      // right: ActionBarRight,
       // autoOpen: true,
       eventRecording: false,
       actions: {
@@ -454,16 +487,18 @@ const AppContainer = ({
             name,
             formData,
           } = payload
+
           const {
             year,
             degree,
             indegree,
             outdegree
           } = formData
+
           const clusterItemIds = draft.nodes.filter((item) => {
             const element = cy.$id(item.id)
             return (
-              R.inBetween(year[0], year[1])(item.data.year)
+              R.inBetween(year[0], year[1])(item.data?.year)
               && R.inBetween(degree[0], degree[1])(element.degree())
               && R.inBetween(indegree[0], indegree[1])(element.indegree())
               && R.inBetween(outdegree[0], outdegree[1])(element.outdegree())
@@ -474,7 +509,8 @@ const AppContainer = ({
             id: R.uuid(),
             name,
             ids: clusterItemIds,
-            childClusterIds: []
+            childClusterIds: [],
+            position: getHitAreaCenter(graphEditor)
           })
           return false
         }
@@ -494,7 +530,7 @@ const AppContainer = ({
                   outdegree
                 } = payload.value
                 return (
-                  R.inBetween(year[0], year[1])(item.data.year)
+                  R.inBetween(year[0], year[1])(item.data?.year)
                   && R.inBetween(degree[0], degree[1])(element.degree())
                   && R.inBetween(indegree[0], indegree[1])(element.indegree())
                   && R.inBetween(outdegree[0], outdegree[1])(element.outdegree())
@@ -648,14 +684,20 @@ const AppContainer = ({
     //   })
     // }, 1000)
 }, [])
-
+  React.useEffect(() => {
+    // setTimeout(() => {
+    //   controller.update((draft, { graphEditorRef }) => {
+    //     draft.nodes = draft.nodes.concat(nextData.nodes)
+    //     draft.edges = draft.edges.concat(nextData.edges)
+    //   })
+    // }, 1500)
+}, [])
   return (
     <View
       style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%' }}
     >
       <GraphEditor
         {...controllerProps}
-        // {...R.omit(['eventHistory', ])(controllerProps)}
         payload={[configRef.current]}
         style={{ width, height }}
         // renderNode={(props) => (

@@ -2,7 +2,9 @@ import React from 'react'
 import { wrapComponent } from 'colay-ui'
 import { useNode } from '@hooks'
 import {
-  RenderClusterNode, NodeConfig, GraphRef,
+  RenderClusterNode,
+  NodeConfig,
+  GraphRef,
   Cluster,
 } from '@type'
 import {
@@ -10,13 +12,26 @@ import {
   calculateVisibilityByContext,
 } from '@utils'
 import { useTheme } from '@core/theme'
+import { CYTOSCAPE_EVENT } from '@constants'
 import { Container, ContainerRef } from '../Container'
 
 export type ClusterNodeContainerProps = {
   children: RenderClusterNode;
+  /**
+   * Cluster node data
+   */
   item: Cluster;
+  /**
+   * Related graph id
+   */
   graphID: string;
+  /**
+   * Related graph instance ref
+   */
   graphRef: React.RefObject<GraphRef>;
+  /**
+   * Cluster node config
+   */
   config?: NodeConfig;
 
 }
@@ -24,6 +39,7 @@ export type ClusterNodeContainerProps = {
 export type ClusterNodeContainerType = React.ForwardedRef<ClusterNodeContainerProps>
 
 const DEFAULT_POSITION = { x: 0, y: 0 }
+
 const ClusterNodeContainerElement = (
   props: ClusterNodeContainerProps,
   __: React.ForwardedRef<ClusterNodeContainerType>,
@@ -36,30 +52,10 @@ const ClusterNodeContainerElement = (
     graphRef,
   } = props
   const containerRef = React.useRef<ContainerRef>(null)
-  React.useEffect(() => {
-    if (item.ids.length > 0) {
-      const positionAcc = {
-        x: 0,
-        y: 0,
-      }
-      item.ids.forEach((id) => {
-        const clusterElement = cy.$id(id)
-        const clusterElementPos = clusterElement.position()
-        positionAcc.x += clusterElementPos.x
-        positionAcc.y += clusterElementPos.y
-      })
-      const { length } = item.ids
-      const calculatedPosition = {
-        x: positionAcc.x / length,
-        y: positionAcc.y / length,
-      }
-      element.position(calculatedPosition)
-    }
-  }, [item.ids])
   const { element, context, cy } = useNode({
     graphID,
     config,
-    position: config.position ?? DEFAULT_POSITION,
+    position: config.position ?? item.position ?? DEFAULT_POSITION,
     onPositionChange: ({ element }) => {
       const container = containerRef.current!
       const { x, y } = element.position()
@@ -90,15 +86,19 @@ const ClusterNodeContainerElement = (
     : (config.filter?.settings?.opacity ?? 0.2)
   return (
     <Container
-      ref={containerRef}
-      style={{
-        left: x,
-        top: y,
-      }}
+    ref={containerRef}
+      x={x}
+      y={y}
       alpha={opacity}
       visible={visible}
       draggable
       onDrag={onDrag}
+      mouseover={() => {
+        element.emit(CYTOSCAPE_EVENT.mouseover)
+      }}
+      mouseout={() => {
+        element.emit(CYTOSCAPE_EVENT.mouseout)
+      }}
       // onRightPress={(event) => {
       //   event.data.originalEvent.preventDefault()
       //   event.data.originalEvent.stopPropagation()
@@ -110,11 +110,18 @@ const ClusterNodeContainerElement = (
         cy,
         theme,
         graphRef,
+        context,
+        config,
+        label: item.id,
       })}
     </Container>
   )
 }
 
+/**
+ * The container for ClusterNodes. It facilitates drag, visibility, and other
+ * operations.
+ */
 export const ClusterNodeContainer = wrapComponent<ClusterNodeContainerProps>(
   ClusterNodeContainerElement,
   {

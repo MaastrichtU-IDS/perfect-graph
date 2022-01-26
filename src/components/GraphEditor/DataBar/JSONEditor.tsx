@@ -1,4 +1,5 @@
 import React from 'react'
+// @ts-ignore
 import { JsonEditor as Editor } from 'jsoneditor-react'
 import 'jsoneditor-react/es/editor.min.css'
 import ace from 'brace'
@@ -25,7 +26,7 @@ export const JSONEditor = (props: JSONEditorProps) => {
   return (
     <>
       <Editor
-        value={item?.data}
+        value={item?.data ?? {}}
         onChange={(newData: any) => {
           onEvent({
             type: EVENT.UPDATE_DATA,

@@ -1,7 +1,8 @@
 import {
   DefaultRenderEdge,
-  DefaultRenderNode, Graph, GraphProps,
+  DefaultRenderNode, Graph,
 } from '@components'
+import { DEFAULT_EDGE_CONFIG, DEFAULT_NODE_CONFIG } from '@constants'
 import { ContextMenu } from '@components/ContextMenu'
 import { EDITOR_MODE, EVENT } from '@constants'
 import { Clusters } from '@core/clusters'
@@ -15,57 +16,153 @@ import {
   GraphConfig, GraphEditorConfig, GraphEditorRef, GraphEditorRenderEdge,
   GraphEditorRenderNode, GraphLabelData, NetworkStatistics,
   NodeElement, OnEvent, OnEventLite, Playlist, RecordedEvent,
+  NodeData, EdgeData, GraphEditorContextType, Element,
+  RenderClusterNode,
+  DrawLine,
+  OnBoxSelection,
+  PreviousData,
+  PropsWithRef,
 } from '@type'
 import {
   getEventClientPosition, getLabel, getSelectedItemByElement,
   throttle,
 } from '@utils'
-import { calculateStatistics } from '@utils/networkStatistics'
 import { useTimeoutManager } from '@utils/useTimeoutManager'
-import { useForwardRef, wrapComponent } from 'colay-ui'
+import { useForwardRef, wrapComponent, ViewProps } from 'colay-ui'
+import * as ReactIs from 'colay-ui/utils/is-react'
 import { useImmer } from 'colay-ui/hooks/useImmer'
-import { PropsWithRef } from 'colay-ui/type'
 import * as R from 'colay/ramda'
 import React from 'react'
-import { ActionBar, ActionBarProps } from './ActionBar'
+import { ActionBar, ActionBarConfig } from './ActionBar'
 import { DataBar, DataBarProps } from './DataBar'
+import { SettingsBar, SettingsBarProps } from './SettingsBar'
 import { ModalComponent, ModalComponentProps } from './ModalComponent'
 import { MouseIcon } from './MouseIcon'
-import { PreferencesModal, PreferencesModalProps } from './PreferencesModal'
+import { PreferencesModal, PreferencesModalProps } from './PreferencesModal/index'
 import { RecordedEventsModal } from './RecordedEventsModal'
-import { SettingsBar, SettingsBarProps } from './SettingsBar'
 import { Icon } from  '@components/Icon'
+
 type RenderElementAdditionalInfo = {
   // label: string;
 }
 
 export type GraphEditorProps = {
+  /**
+   * Event handler for all events that are emitted by the graph editor.
+   */
   onEvent?: OnEvent;
+  /**
+   * All graph config data for nodes and edges. It will supply the config data for the graph.
+   */
   graphConfig?: GraphConfig;
+  /**
+   * GraphEditor config data for all operations.
+   */
   config?: GraphEditorConfig;
+  /**
+   * Render React component into ActionBar.
+   */
   renderMoreAction?: () => React.ReactElement;
+  /**
+   * Config for labels of nodes and edges
+   */
   label?: GraphLabelData;
+  /**
+   * Config for SettingsBar
+   */
   settingsBar?: SettingsBarProps;
-  dataBar?: Pick<DataBarProps, 'editable' | 'isOpen'>;
-  actionBar?: Pick<ActionBarProps, 'renderMoreAction' | 'isOpen' | 'recording' | 'eventRecording' | 'autoOpen' | 'theming'>;
+  /**
+   * Config for DataBar
+   */
+  dataBar?: DataBarProps;
+  /**
+   * Config for ActionBar
+   */
+  actionBar?: ActionBarConfig;
+  /**
+   * Config for PreferencesModal
+   */
   preferencesModal?: PreferencesModalProps;
-  selectedElementIds?: string[] | null;
+  /**
+   * It gives the selected nodes. It is used for selected node highlighting and DataBar
+   */
+  selectedElementIds?: string[];
+  /**
+   * Editor mode for changing actions and mouse icon
+   */
   mode?: EditorMode;
+  /**
+   * It returns a PIXI.DisplayObject instance as React.Node for the edge
+   */
   renderEdge?: GraphEditorRenderEdge<RenderElementAdditionalInfo>;
+  /**
+   * It returns a PIXI.DisplayObject instance as React.Node for the node
+   */
   renderNode?: GraphEditorRenderNode<RenderElementAdditionalInfo>;
+  /**
+   * Recorded events will be displayed on SettingsBar
+   */
   events?: RecordedEvent[]
+  /**
+   * Event history will be displayed on SettingsBar
+   */
   eventHistory?: EventHistory;
+  /**
+   * Events playlist will be displayed on SettingsBar
+   */
   playlists?: Playlist[];
+  /**
+   * Calculated network statistics will be displayed on SettingsBar
+   */
   networkStatistics?: NetworkStatistics;
+  /**
+   * Display loading indicator
+   */
   isLoading?: boolean;
-  isFocusMode?: boolean;
+  /**
+   * Modal components for displaying modal dialogs
+   */
   modals?: {
     ElementSettings?: ModalComponentProps
   };
-} & Omit<
-GraphProps,
-'config' | 'onPress' | 'renderNode' | 'renderEdge'
->
+  /**
+   * Focus mode for chunk stacked nodes
+   */
+  isFocusMode?: boolean;
+  /**
+   * Focus mode stack
+   */
+  previousDataList?: PreviousData[]
+  children?: React.ReactNode;
+  /**
+   * To rerender the graph when the extra data changes
+   */
+  extraData?: any;
+  /**
+   * Node data list to render
+   */
+  nodes: NodeData[];
+  /**
+   * Edge data list to render
+   */
+  edges: EdgeData[];
+  /**
+   * Style for graph container view
+   */
+  style?: ViewProps['style'];
+  /**
+   * It returns a PIXI.DisplayObject instance as React.Node for the cluster node
+   */
+  renderClusterNode?: RenderClusterNode;
+  /**
+   * The function to draw line for edge connection vectors
+   */
+  drawLine?: DrawLine;
+  /**
+   * Event handler for box selection event. It gives the selected nodes
+   */
+  onBoxSelection?: OnBoxSelection;
+}
 
 const MODE_ICON_SCALE = 0.8
 const MODE_ICON_MAP_BY_URL = {
@@ -92,7 +189,7 @@ const GraphEditorElement = (
     onEvent: onEventCallback = DEFAULT_HANDLER,
     renderEdge,
     renderNode,
-    graphConfig,
+    graphConfig: _graphConfig,
     style,
     settingsBar,
     actionBar,
@@ -109,11 +206,18 @@ const GraphEditorElement = (
     playlists,
     networkStatistics,
     isLoading = false,
-    modals,
+    modals = {},
     isFocusMode = false,
     ...rest
   } = props
 
+  const graphConfig = React.useMemo(() =>{ 
+    return {
+      ...(_graphConfig ?? {}),
+      nodes: R.mergeAll([DEFAULT_NODE_CONFIG, _graphConfig?.nodes ?? {} ]),
+      edges: R.mergeAll([DEFAULT_EDGE_CONFIG, _graphConfig?.edges ?? {} ]),
+    } as GraphConfig
+  }, [_graphConfig])
   const localDataRef = React.useRef({
     initialized: false,
     targetNode: null as NodeElement | null,
@@ -126,7 +230,7 @@ const GraphEditorElement = (
       local: null,
     },
     contextMenu: {
-      itemIds: [],
+      itemIds: [] as string[],
     },
   })
   const [state, updateState] = useImmer({
@@ -166,22 +270,8 @@ const GraphEditorElement = (
       const collection = graphEditorRef.current?.cy?.$id(R.last(selectedElementIds)!)
       return collection?.length === 0
         ? null
-        : collection
+        : collection as Element
     },
-    // if (!localDataRef.current.initialized) {
-    //   const callback = () => {
-    //     setTimeout(() => {
-    //       if (graphEditorRef.current.cy) {
-
-    //       } else {
-    //         callback()
-    //       }
-    //     }, 1000)
-    //   }
-    // } else if (selectedElementIds?.length > 0) {
-    //   return graphEditorRef.current.cy && graphEditorRef.current.cy.$id(R.last(selectedElementIds))
-    // }
-
     [nodes, edges, selectedElementIds],
   )
   const selectedItem = selectedElement && getSelectedItemByElement(
@@ -259,14 +349,16 @@ const GraphEditorElement = (
     })
   }, [onEventCallback, selectedItem?.id])
   const eventTimeoutsManager = useTimeoutManager(
-    (events ?? []).map((event, index) => ({
-      ...event,
-      after: events?.[index - 1]
-        ? new Date(
-          event.date,
-        ).getMilliseconds() - new Date(events[index - 1].date).getMilliseconds()
-        : 0,
-    })),
+    (events ?? []).map((event, index) => {
+      return {
+        ...event,
+        after: events?.[index - 1]
+          ? new Date(
+            event.date,
+          ).getTime() - new Date(events[index - 1].date).getTime()
+          : 0,
+      }
+    }),
     (event) => {
       onEventCallback(event)
     },
@@ -301,7 +393,7 @@ const GraphEditorElement = (
   React.useEffect(() => {
     localDataRef.current.targetNode = null
   }, [mode])
-  const graphEditorValue = React.useMemo(() => ({
+  const graphEditorValue: GraphEditorContextType = React.useMemo(() => ({
     config,
     eventHistory,
     events,
@@ -395,6 +487,7 @@ const GraphEditorElement = (
             label,
             extraData: rest.extraData,
           }}
+          // @ts-ignore
           config={{
             ...graphConfig,
             graphId,
@@ -432,7 +525,7 @@ const GraphEditorElement = (
           onBoxSelection={(event) => {
             const { mode } = localDataRef.current.props
             const {
-              elementIds,
+              itemIds,
             } = event
             if (EDITOR_MODE.ADD_CLUSTER_ELEMENT === mode) {
               onEvent({
@@ -445,35 +538,31 @@ const GraphEditorElement = (
               return
             }
             // TODO: DANGER**
-            localDataRef.current.newClusterBoxSelection.elementIds = elementIds
-            if (elementIds.length > 0) {
-              localDataRef.current.contextMenu.itemIds = elementIds
-              updateState((draft) => {
-                const e = event.event.data.originalEvent
-                draft.contextMenu.visible = true
-                draft.contextMenu.position = getEventClientPosition(e)
-                // getPointerPositionOnViewport(
-                //   graphEditorRef.current.viewport,
-                //   // @ts-ignore
-                //   event.event.data.originalEvent,
-                // )
-              })
-              // TODO: **DANGER
-              onEvent({
-                type: EVENT.BOX_SELECTION,
-                payload: {
-                  elementIds,
+            localDataRef.current.newClusterBoxSelection.elementIds = itemIds
+            if (itemIds.length > 0) {
+              localDataRef.current.contextMenu.itemIds = itemIds
+              updateState(
+                (draft) => {
+                  const e = event.event.data.originalEvent
+                  draft.contextMenu.visible = true
+                  draft.contextMenu.position = getEventClientPosition(e)
                 },
-              })
+                () => {
+                  onEvent({
+                    type: EVENT.BOX_SELECTION,
+                    payload: {
+                      itemIds,
+                    },
+                  })
+                },
+              )
+              
             }
           }}
           renderNode={({ item, element, ...rest }) => {
             return (
               <Graph.View
                 interactive
-                // rightdown={(event) => {
-                //   event.stopPropagation()
-                // }}
                 rightclick={(event) => {
                   localDataRef.current.contextMenu.itemIds = [element.id()]
                   updateState((draft) => {
@@ -545,6 +634,7 @@ const GraphEditorElement = (
                 }}
               >
                 {(renderNode ?? DefaultRenderNode)({
+                  ...rest,
                   item,
                   element,
                   // @ts-ignore
@@ -557,7 +647,6 @@ const GraphEditorElement = (
                   labelPath: (label?.isGlobalFirst
                     ? (label?.global.nodes ?? label?.nodes?.[item.id])
                     : (label?.nodes?.[item.id] ?? label?.global.nodes)) ?? [],
-                  ...rest,
                 })}
               </Graph.View>
             )
@@ -610,6 +699,7 @@ const GraphEditorElement = (
               {
                // @ts-ignore
             (renderEdge ?? DefaultRenderEdge)({
+              ...rest,
               item,
               // @ts-ignore
               label: getLabel(
@@ -622,7 +712,6 @@ const GraphEditorElement = (
                 ? (label?.global.edges ?? label?.edges?.[item.id])
                 : (label?.edges?.[item.id] ?? label?.global.edges)) ?? [],
               element,
-              ...rest,
             })
 }
             </Graph.View>
@@ -691,7 +780,7 @@ const GraphEditorElement = (
             { value: 'CreateCluster', label: 'Create Cluster' },
             { value: 'Delete', label: 'Delete' },
             { value: 'Focus', label: 'Focus' },
-            { value: 'Settings', label: 'Settings' },
+            // { value: 'Settings', label: 'Settings' },
           ]}
           onSelect={(value) => {
             const {
@@ -759,7 +848,8 @@ const GraphEditorElement = (
         Object.keys(modals).map((modalName) => (
           <ModalComponent
             key={modalName}
-            {...(modals[modalName] ?? {})}
+            // @ts-ignore
+            {...(modals[modalName]! ?? {})}
             name={modalName}
           />
         ))
@@ -791,7 +881,7 @@ const GraphEditorElement = (
   )
 }
 
-const convert = (object: any) => {
+const convertWithoutFunctions = (object: any) => {
   const cache: any[] = []
   return JSON.stringify(object, (key, value) => {
     if (typeof value === 'object' && value !== null) {
@@ -801,21 +891,43 @@ const convert = (object: any) => {
       // Store value in our collection
       cache.push(value)
     }
+    if (value && (value.isNode || typeof value === 'function' || ReactIs.isValidElementType(value) || value.$$typeof)) return null
     return value
   })
 }
-const extractGraphEditorData = (props: GraphEditorProps) => convert({
-  graphConfig: props.graphConfig,
-  label: props.label,
-  // settingsBar: R.omit(['header', 'footer'], props.settingsBar),
-  dataBar: R.omit(['header', 'footer'], props.dataBar),
-  actionBar: R.omit(['right', 'left'], props.actionBar),
-  eventHistory: props.eventHistory,
-  mode: props.mode,
-  nodes: props.nodes,
-  edges: props.edges,
-})
 
+const extractGraphEditorData = (props: GraphEditorProps) => convertWithoutFunctions(props)
+
+// const convert = (object: any) => {
+//   const cache: any[] = []
+//   return JSON.stringify(object, (key, value) => {
+//     if (typeof value === 'object' && value !== null) {
+//       // Duplicate reference found, discard key
+//       if (cache.includes(value)) return null
+
+//       // Store value in our collection
+//       cache.push(value)
+//     }
+//     return value
+//   })
+// }
+// const extractGraphEditorData = (props: GraphEditorProps) => convert({
+//   graphConfig: props.graphConfig,
+//   label: props.label,
+//   settingsBar: R.omit(['header', 'footer'], props.settingsBar),
+//   dataBar: R.omit(['header', 'footer'], props.dataBar),
+//   actionBar: R.omit(['right', 'left'], props.actionBar),
+//   eventHistory: props.eventHistory,
+//   mode: props.mode,
+//   nodes: props.nodes,
+//   edges: props.edges,
+//   networkStatistics: props.networkStatistics,
+// })
+
+/**
+ * It is a wrapper for Graph with editor components. It has Sidebar, DataBar, ActionBar
+ * to give the power of editing.
+ */
 export const GraphEditor = wrapComponent<
 PropsWithRef<GraphEditorRef, GraphEditorProps>
 >(

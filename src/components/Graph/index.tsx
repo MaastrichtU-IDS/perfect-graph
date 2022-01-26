@@ -1,55 +1,85 @@
+import { DEFAULT_EDGE_CONFIG, DEFAULT_NODE_CONFIG } from '@constants'
 import '@core/config'
 import { DefaultTheme, ThemeProvider } from '@core/theme'
 import { useGraph } from '@hooks'
 import { Stage } from '@inlet/react-pixi'
 import {
-  DrawLine, EdgeData, GraphConfig,
-  GraphRef, NodeData, RenderEdge, RenderNode,
-  RenderClusterNode,
+  DrawLine, EdgeConfig, EdgeData, GraphConfig,
+  GraphEdgesConfig, GraphNodesConfig, GraphRef,
+  NodeConfig, NodeData, OnBoxSelection, RenderClusterNode,
+  RenderEdge, RenderNode, ViewportType,
+  PropsWithRef,
 } from '@type'
 import {
-  calculateVisibilityByContext, 
-  contextUtils, cyUnselectAll, isPositionInBox,
-  adjustVisualQuality,
+  adjustVisualQuality, calculateVisibilityByContext,
+  contextUtils, cyUnselectAll, isFiltered, isPositionInBox,
 } from '@utils'
-import { CYTOSCAPE_EVENT } from '@constants'
 import {
-  DataRender, useForwardRef,
+  DataRender,
+  useForwardRef,
   View,
   ViewProps, wrapComponent,
 } from 'colay-ui'
-import { PropsWithRef } from 'colay-ui/type'
-import * as C from 'colay/color'
 import * as R from 'colay/ramda'
-import { BoundingBox } from 'colay/type'
-import React from 'react'
 import * as PIXI from 'pixi.js'
+import React from 'react'
 import { ClusterNodeContainer } from '../ClusterNodeContainer'
 import { EdgeContainer } from '../EdgeContainer'
 import { NodeContainer } from '../NodeContainer'
+import { Viewport, ViewportOnPress } from '../Viewport'
 import { DefaultRenderClusterNode } from './DefaultRenderClusterNode'
-import { DefaultRenderNode } from './DefaultRenderNode'
 import { DefaultRenderEdge } from './DefaultRenderEdge'
-import { Viewport, ViewportProps } from '../Viewport'
+import { DefaultRenderNode } from './DefaultRenderNode'
 
 export type GraphProps = {
   children?: React.ReactNode;
+  /**
+   * To rerender the graph when the extra data changes
+   */
   extraData?: any;
+  /**
+   * Node data list to render
+   */
   nodes: NodeData[];
+  /**
+   * Edge data list to render
+   */
   edges: EdgeData[];
+  /**
+   * Style for graph container view
+   */
   style?: ViewProps['style'];
+  /**
+   * It returns a PIXI.DisplayObject instance as React.Node for the node
+   */
   renderNode?: RenderNode;
+  /**
+   * It returns a PIXI.DisplayObject instance as React.Node for the edge
+   */
   renderEdge?: RenderEdge;
+  /**
+   * It returns a PIXI.DisplayObject instance as React.Node for the cluster node
+   */
   renderClusterNode?: RenderClusterNode;
-  onPress?: ViewportProps['onPress'];
+  /**
+   * Event handler for graph canvas background
+   */
+  onPress?: ViewportOnPress;
+  /**
+   * The function to draw line for edge connection vectors
+   */
   drawLine?: DrawLine;
+  /**
+   * All graph config for nodes and edges
+   */
   config?: GraphConfig;
-  onBoxSelection?: (c: {
-    event: PIXI.InteractionEvent,
-    elements: cytoscape.Collection,
-    elementIds: string[],
-    boundingBox: BoundingBox;
-  }) => void;
+  /**
+   * Event handler for box selection event. It gives the selected nodes
+   */
+  onBoxSelection?: OnBoxSelection;
+  /**
+   * It gives the selected nodes. It is used for selected node highlighting and DataBar
+   */
   selectedElementIds?: string[]
 }
 
@@ -76,13 +106,14 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
     ...DEFAULT_CONFIG,
     ...configProp,
   }), [configProp])
-  const { theme } = config
+  const { 
+    theme,
+  } = config
+  const backgroundColor = config.backgroundColor ?? theme.palette.background.default
   const graphID = React.useMemo<string>(() => config.graphId ?? R.uuid(), [config.graphId])
   const stageRef = React.useRef<{ app: PIXI.Application }>(null)
   const { cy } = useGraph({
     id: graphID,
-    onLoad: () => {
-    },
     clusters: config.clusters,
   })
   const graphRef = useForwardRef<GraphRef>(ref, { cy })
@@ -106,61 +137,76 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
     }
   }, [stageRef.current])
   React.useEffect(() => {
-    cyUnselectAll(cy)
-    selectedElementIds.forEach((id) => {
-      cy.$id(id).select()
-    })
+    if (selectedElementIds?.length > 0) {
+      cyUnselectAll(cy)
+      selectedElementIds.forEach((id) => {
+        cy.$id(id).select()
+      })
+    }
   }, [selectedElementIds, cy])
   React.useEffect(() => {
     if (stageRef.current && config.layout) {
-      const { hitArea } = graphRef.current.viewport
-      const boundingBox = {
-        x1: hitArea.x,
-        y1: hitArea.y,
-        w: hitArea.width,
-        h: hitArea.height,
-      }
-      graphLayoutRef.current?.stop()
-      // @ts-ignore
-      graphLayoutRef.current = cy.createLayout({
-        boundingBox,
-        ...config.layout,
-      })
-      graphLayoutRef.current.on('layoutstop', () => {
+      const {
+        expansion, // = getViewportZoom(graphRef.current)
         // @ts-ignore
-        graphLayoutRef.current = null
-        // Fix the edge lines
-        cy.edges().forEach((edge) => {
-          const edgeContext = contextUtils.get(edge)
-          edgeContext.onPositionChange()
+        runLayout,
+      } = config.layout
+      if (runLayout === false) {
+        return
+      }
+      if (expansion) {
+        graphRef.current.viewport.setZoom(expansion, true)
+      }
+      setTimeout(() => {
+        const { hitArea } = graphRef.current.viewport
+        const boundingBox = {
+          x1: hitArea.x,
+          y1: hitArea.y,
+          w: hitArea.width,
+          h: hitArea.height,
+        }
+        graphLayoutRef.current?.stop()
+        // @ts-ignore
+        graphLayoutRef.current = cy.createLayout({
+          boundingBox,
+          ...config.layout,
         })
-        // FOR CULLING
-        graphRef.current.viewport.dirty = true
-      })
-      graphLayoutRef.current.start()
+        graphLayoutRef.current.on('layoutstop', () => {
+        // @ts-ignore
+          graphLayoutRef.current = null
+          // Fix the edge lines
+          cy.edges().forEach((edge) => {
+            const edgeContext = contextUtils.get(edge)
+            edgeContext.onPositionChange()
+          })
+          // FOR CULLING
+          graphRef.current.viewport.dirty = true
+        })
+        graphLayoutRef.current.start()
+      }, 200)
     }
   }, [config.layout])
-  const backgroundColor = React.useMemo(
-    () => C.rgbNumber(theme.palette.background.default),
-    [theme.palette.background.default],
-  )
+  // const backgroundColor = React.useMemo(
+  //   () => theme.palette.background.default,
+  //   [theme.palette.background.default],
+  // )
   React.useEffect(() => {
     stageRef.current!.app.renderer.backgroundColor = backgroundColor
   }, [backgroundColor])
   const {
     ids: nodeConfigIds,
     ...globalNodeConfig
-  } = {
-    ...DEFAULT_NODE_CONFIG,
-    ...(config.nodes ?? {}),
-  }
+  } = React.useMemo(
+    () => R.mergeDeepAll([DEFAULT_NODE_CONFIG, config.nodes ?? {}]),
+    [config.nodes],
+  ) as GraphNodesConfig
   const {
     ids: edgeConfigIds,
     ...globalEdgeConfig
-  } = {
-    ...DEFAULT_EDGE_CONFIG,
-    ...(config.edges ?? {}),
-  }
+  } =  React.useMemo(
+    () => R.mergeDeepAll([DEFAULT_EDGE_CONFIG, config.edges ?? {}]),
+    [config.edges],
+  ) as GraphEdgesConfig
 
   const onPressCallback = React.useCallback((e) => {
     cyUnselectAll(cy)
@@ -188,7 +234,7 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
         >
           <Viewport
             onCreate={(viewport) => {
-              graphRef.current.viewport = viewport
+              graphRef.current.viewport = viewport as ViewportType
             }}
             onPress={onPressCallback}
             zoom={config.zoom}
@@ -198,16 +244,14 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
               event,
               boundingBox,
             }) => {
-              cyUnselectAll(cy)
-              const elementIds: string[] = []
+              const itemIds: string[] = []
               const selectedCollection = cy.nodes().filter((element) => {
                 const elementPosition = element.position()
-                const elementContext = contextUtils.get(element)
                 const selected = calculateVisibilityByContext(element)
+                  && isFiltered(element)
                   && isPositionInBox(elementPosition, boundingBox)
                 if (selected) {
-                  element.select()
-                  elementIds.push(element.id())
+                  itemIds.push(element.id())
                 }
                 return selected
               })
@@ -215,7 +259,7 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
                 boundingBox,
                 elements: selectedCollection,
                 event,
-                elementIds,
+                itemIds,
               })
             }}
           >
@@ -224,40 +268,32 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
               data={nodes}
               accessor={['children']}
               keyExtractor={(item) => item.id}
-              renderItem={({ item }) => {
-                return (
-                  <NodeContainer
-                    graphID={graphID}
-                    item={item}
-                    graphRef={graphRef}
-                    config={{
-                      ...(globalNodeConfig ?? {}),
-                      ...(nodeConfigIds?.[item.id] ?? {}),
-                    }}
-                  >
-                    {renderNode}
-                  </NodeContainer>
-                )
-              }}
+              renderItem={(args) => (
+                <RenderNodeContainer 
+                  {...args}
+                  graphID={graphID}
+                  graphRef={graphRef}
+                  globalNodeConfig={globalNodeConfig}
+                  nodeConfigIds={nodeConfigIds}
+                  renderNode={renderNode}
+                />
+              )}
             />
             <DataRender
               extraData={[extraData, config.edges, config.clusters]}
               data={edges}
               accessor={['children']}
               keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
-                <EdgeContainer
+              renderItem={(args) => (
+                <RenderEdgeContainer 
+                  {...args} 
                   graphID={graphID}
-                  item={item}
                   graphRef={graphRef}
                   drawLine={drawLine}
-                  config={{
-                    ...(globalEdgeConfig ?? {}),
-                    ...(edgeConfigIds?.[item.id] ?? {}),
-                  }}
-                >
-                  {renderEdge}
-                </EdgeContainer>
+                  globalEdgeConfig={globalEdgeConfig}
+                  edgeConfigIds={edgeConfigIds}
+                  renderEdge={renderEdge}
+                />
               )}
             />
             <DataRender
@@ -265,19 +301,18 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
               data={config.clusters ?? []}
               accessor={['children']}
               keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
-                <ClusterNodeContainer
-                  graphID={graphID}
-                  item={item}
-                  graphRef={graphRef}
-                  config={{
-                    ...(globalNodeConfig ?? {}),
-                    ...(nodeConfigIds?.[item.id] ?? {}),
-                  }}
-                >
-                  {renderClusterNode}
-                </ClusterNodeContainer>
-              )}
+              renderItem={(args) => {
+                return (
+                  <RenderClusterNodeContainer 
+                    {...args}
+                    graphID={graphID}
+                    graphRef={graphRef}
+                    globalNodeConfig={globalNodeConfig}
+                    nodeConfigIds={nodeConfigIds}
+                    renderClusterNode={renderClusterNode}
+                  />
+                )
+              }}
             />
             {children}
           </Viewport>
@@ -287,32 +322,90 @@ const GraphElement = (props: GraphProps, ref: React.ForwardedRef<GraphRef>) => {
   )
 }
 
-const DEFAULT_NODE_CONFIG = {
-  renderEvents: [
-    CYTOSCAPE_EVENT.select,
-    CYTOSCAPE_EVENT.unselect,
-    CYTOSCAPE_EVENT.selectEdge,
-    CYTOSCAPE_EVENT.unselectEdge,
-    CYTOSCAPE_EVENT.mouseover,
-    CYTOSCAPE_EVENT.mouseout,
-  ],
+const RenderNodeContainer = ({
+  graphID,
+  item,
+  graphRef,
+  globalNodeConfig,
+  nodeConfigIds,
+  renderNode,
+}: any) => {
+  const config = React.useMemo(
+    () => R.mergeDeepAll([globalNodeConfig, nodeConfigIds?.[item.id] ?? {}]),
+    [globalNodeConfig, nodeConfigIds?.[item.id]],
+  ) as NodeConfig
+  return (
+    <NodeContainer
+      graphID={graphID}
+      item={item}
+      graphRef={graphRef}
+      config={config}
+    >
+      {renderNode}
+    </NodeContainer>
+  )
 }
 
-const DEFAULT_EDGE_CONFIG = {
-  renderEvents: [
-    CYTOSCAPE_EVENT.select,
-    CYTOSCAPE_EVENT.unselect,
-    CYTOSCAPE_EVENT.selectNode,
-    CYTOSCAPE_EVENT.unselectNode,
-    CYTOSCAPE_EVENT.mouseover,
-    CYTOSCAPE_EVENT.mouseout,
-  ],
+const RenderEdgeContainer  = ({ 
+  item,
+  graphID,
+  graphRef,
+  drawLine,
+  globalEdgeConfig,
+  edgeConfigIds,
+  renderEdge,
+}: any) => {
+  const config = React.useMemo(
+    () => R.mergeDeepAll([globalEdgeConfig, edgeConfigIds?.[item.id] ?? {}]),
+    [globalEdgeConfig, edgeConfigIds?.[item.id]],
+  ) as EdgeConfig
+  return (
+    <EdgeContainer
+      graphID={graphID}
+      item={item}
+      graphRef={graphRef}
+      drawLine={drawLine}
+      config={config}
+    >
+      {renderEdge}
+    </EdgeContainer>
+  )
 }
+
+const RenderClusterNodeContainer = ({
+  graphID,
+  item,
+  graphRef,
+  globalNodeConfig,
+  nodeConfigIds,
+  renderClusterNode,
+}: any) => {
+  const config = React.useMemo(
+    () => R.mergeDeepAll([globalNodeConfig, nodeConfigIds?.[item.id] ?? {}]),
+    [globalNodeConfig, nodeConfigIds?.[item.id]],
+  ) as NodeConfig
+  return (
+    <ClusterNodeContainer
+      graphID={graphID}
+      item={item}
+      graphRef={graphRef}
+      config={config}
+    >
+      {renderClusterNode}
+    </ClusterNodeContainer>
+  )
+}
+
+
+
 
 const DEFAULT_CONFIG = {
   theme: DefaultTheme,
 }
 
+/**
+ * The stage creator for the network graph. It handles rendering operations of nodes and edges.
+ */
 export const Graph = wrapComponent<PropsWithRef<GraphRef, GraphProps>>(
   GraphElement,
   {
@@ -322,5 +415,6 @@ export const Graph = wrapComponent<PropsWithRef<GraphRef, GraphProps>>(
 )
 
 export { DefaultRenderClusterNode } from './DefaultRenderClusterNode'
-export { DefaultRenderNode } from './DefaultRenderNode'
 export { DefaultRenderEdge } from './DefaultRenderEdge'
+export { DefaultRenderNode } from './DefaultRenderNode'
+

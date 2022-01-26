@@ -1,35 +1,51 @@
+import { drawGraphics } from '@components/Graphics'
+import { Theme, useTheme } from '@core/theme'
 import { PixiComponent, useApp } from '@inlet/react-pixi'
-import * as R from 'colay/ramda'
-import { Viewport as ViewportNative } from 'pixi-viewport'
-import * as PIXI from 'pixi.js'
-import * as V from 'colay/vector'
-// import Cull from 'pixi-cull'
-import React from 'react'
-import { wrapComponent, useForwardRef } from 'colay-ui'
+import { ViewportType } from '@type'
 import {
   getBoundingBox,
   getPointerPositionOnViewport,
   isMultipleTouches,
-  adjustVisualQuality,
 } from '@utils'
-import { Position, BoundingBox } from 'colay/type'
-import { drawGraphics } from '@components/Graphics'
-import { QUALITY_LEVEL } from '@constants'
-import { ViewportType } from '@type'
-import { Simple } from 'pixi-cull'
+import { useForwardRef, wrapComponent } from 'colay-ui'
+import * as R from 'colay/ramda'
+import { BoundingBox, Position } from 'colay/type'
+import { Viewport as ViewportNative } from 'pixi-viewport'
+import * as PIXI from 'pixi.js'
+// import Cull from 'pixi-cull'
+import React from 'react'
+import Vector from 'victor'
 
+type ViewportOnPressEvent = {
+  /**
+   * Original event
+   */
+  nativeEvent: PIXI.InteractionEvent;
+  /**
+   * Event position
+   */
+  position: Position;
+}
 
+export type ViewportOnPress = (event: ViewportOnPressEvent ) => void | undefined;
 
 type NativeViewportProps = {
+  /**
+   * Current PIXI app instance
+   */
   app: PIXI.Application;
   width: number;
   height: number;
+  /**
+   * Theme for the viewport and its children
+   */
+  theme: Theme;
   onCreate?: (v: ViewportNative) => void;
-  onPress?: (c: {
-    nativeEvent: PIXI.InteractionEvent;
-    position: Position;
-  }) => void | undefined;
+  onPress?: ViewportOnPress;
   zoom?: number;
+  /**
+   * Scale, rotation and position of the viewport
+   */
   transform?: {
     x?: number;
     y?: number;
@@ -41,17 +57,26 @@ type NativeViewportProps = {
     pivotX?: number;
     pivotY?: number;
   };
-  onBoxSelectionStart: (c: {
+  /**
+   * Event handler for box selection start
+   */
+  onBoxSelectionStart?: (c: {
     event: PIXI.InteractionEvent;
     startPosition: Position;
   }) => void;
-  onBoxSelection: (c: {
+  /**
+   * Event handler for box selection 
+   */
+  onBoxSelection?: (c: {
     event: PIXI.InteractionEvent;
     startPosition: Position;
     endPosition: Position;
     boundingBox: BoundingBox;
   }) => void;
-  onBoxSelectionEnd: (c: {
+  /**
+   * Event handler for box selection end
+   */
+  onBoxSelectionEnd?: (c: {
     event: PIXI.InteractionEvent;
     startPosition: Position;
     endPosition: Position;
@@ -67,8 +92,8 @@ const ReactViewportComp = PixiComponent('Viewport', {
       app: {
         renderer,
         ticker,
-        stage,
       },
+      theme,
       height,
       width,
       onCreate,
@@ -148,17 +173,22 @@ const ReactViewportComp = PixiComponent('Viewport', {
         viewport.removeChild(boxElement!)
         boxElement?.destroy()
       }
+      // @ts-ignore
       localDataRef.current.boxSelection = {}
     })
     viewport.on('pointermove', (e) => {
       // const { metaKey } = e.data.originalEvent
       if (localDataRef.current.boxSelection.startPosition && !localDataRef.current.boxSelection.boxElement) {
         const position = getPointerPositionOnViewport(viewport, e.data.originalEvent)
+        // R.pipe(
+        //   V.subtract(localDataRef.current.boxSelection.startPosition),
+        //   V.length,
+        // )(position)
         if (
-          R.pipe(
-            V.subtract(localDataRef.current.boxSelection.startPosition),
-            V.length,
-          )(position) > 20) {
+          Vector.fromObject(position)
+            .subtract(Vector.fromObject(localDataRef.current.boxSelection.startPosition))
+            .length()  > 20
+        ) {
           const boxElement = new PIXI.Graphics()
           viewport.addChild(boxElement!)
           localDataRef.current.boxSelection.boxElement = boxElement
@@ -192,13 +222,12 @@ const ReactViewportComp = PixiComponent('Viewport', {
         boxElement.x = boundingBox.x
         boxElement.y = boundingBox.y
         drawGraphics(boxElement, {
-          style: {
-            width: boundingBox.width,
-            height: boundingBox.height,
-            backgroundColor: 'rgba(0,0,0,0)',
-            borderColor: 'rgba(0,0,0,0.7)',
-            borderWidth: 1 / viewport.scale.x,
-          },
+          width: boundingBox.width,
+          height: boundingBox.height,
+          alpha: 0,
+          fill: theme.palette.text.primary,
+          lineFill: theme.palette.text.primary,
+          lineWidth: 1 / viewport.scale.x,
         })
       }
     })
@@ -206,7 +235,7 @@ const ReactViewportComp = PixiComponent('Viewport', {
       // @ts-ignore
       data.event.preventDefault()
     })
-
+    // TODO: CULL and Adaptive Performance Optimizer
     // // PIXI CULL
     // const cull = new Simple({
     //   dirtyTest: false,
@@ -273,6 +302,7 @@ const ReactViewportComp = PixiComponent('Viewport', {
     // }
     // })
     // PIXI CULL
+    // TODO: CULL and Adaptive Performance Optimizer
     return viewport
   },
   applyProps: (
@@ -329,22 +359,22 @@ const ReactViewportComp = PixiComponent('Viewport', {
 
 export type ViewportProps = {
   children?: React.ReactNode;
-} & Omit<NativeViewportProps, 'app'>
+} & Omit<NativeViewportProps, 'app' | 'theme'>
 
-function ViewportElement(props: ViewportProps, ref: React.ForwardedRef<ViewportType>) {
+function ViewportElement(props: Omit<ViewportProps, 'theme'>, ref: React.ForwardedRef<ViewportType>) {
   const {
     children,
     ...rest
   } = props
   const app = useApp()
   const viewportRef = useForwardRef(ref, {})
-
+  const theme = useTheme()
   const keyboardRef = React.useRef({
-    pressedKeys: {},
-    intervalTimeout: null,
+    pressedKeys: {} as Record<string, boolean>,
+    intervalTimeout: null as number | null,
   })
   React.useEffect(() => {
-    const keyDownListener = (e) => {
+    const keyDownListener = (e: KeyboardEvent) => {
       if (document.body === e.target) {
         keyboardRef.current.pressedKeys[e.key] = true
         if (!keyboardRef.current.intervalTimeout) {
@@ -386,13 +416,13 @@ function ViewportElement(props: ViewportProps, ref: React.ForwardedRef<ViewportT
             const newCenter = new PIXI.Point(center.x + pointer.x, center.y + pointer.y)
             viewportRef.current.center = newCenter
           }, 5)
-          keyboardRef.current.intervalTimeout = interval
+          keyboardRef.current.intervalTimeout = interval as unknown as number
         }
         // viewportRef.current.center =
       }
     }
-    const keyUpListener = (e) => {
-      clearInterval(keyboardRef.current.intervalTimeout)
+    const keyUpListener = () => {
+      clearInterval(keyboardRef.current.intervalTimeout!)
       keyboardRef.current.intervalTimeout = null
       keyboardRef.current.pressedKeys = {}
     }
@@ -407,6 +437,7 @@ function ViewportElement(props: ViewportProps, ref: React.ForwardedRef<ViewportT
     <ReactViewportComp
       ref={viewportRef}
       app={app}
+      theme={theme}
       {...rest}
     >
       {children}
@@ -414,6 +445,10 @@ function ViewportElement(props: ViewportProps, ref: React.ForwardedRef<ViewportT
   )
 }
 
+
+/**
+ * The wrapper for Node and Edge Elements to provide drag, pinch, and zoom functionality.
+ */
 export const Viewport = wrapComponent<ViewportProps>(
   ViewportElement, {
     isForwardRef: true,

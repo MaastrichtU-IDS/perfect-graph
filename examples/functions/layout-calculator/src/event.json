@@ -1,0 +1,18 @@
+{
+  "arguments": {
+    "nodes": [
+      { "id" : "1" },
+      { "id" : "2" }
+    ],
+    "edges": [
+      { "id" : "1", "source" : "1", "target" : "2" }
+    ],
+    "layoutName": "cose",
+    "boundingBox": {
+      "x1": 0,
+      "y1": 0,
+      "w": 1024,
+      "h": 800
+    }
+  }   
+}
