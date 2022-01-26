@@ -1,6 +1,6 @@
 import React from 'react'
 import { Icon, IconProps } from '@components/Icon'
-import { SpeedDial, SpeedDialAction } from '@material-ui/core'
+import { SpeedDial, SpeedDialAction } from '@mui/material'
 import {
   View,
 } from 'colay-ui'

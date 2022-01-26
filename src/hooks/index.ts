@@ -1,5 +1,4 @@
-export { default as useGraph } from './useGraph'
-export { default as useEdge } from './useEdge'
-export { default as useNode } from './useNode'
+export { useGraph } from './useGraph'
+export { useEdge } from './useEdge'
+export { useNode } from './useNode'
 export { useGraphEditor } from './useGraphEditor'
-// export { default as useLayout } from './useLayout'

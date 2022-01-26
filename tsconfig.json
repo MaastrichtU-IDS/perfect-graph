@@ -19,7 +19,6 @@
     "target": "ES5",
     "declaration": true,
     "outDir": "dist",
-    "emitDeclarationOnly": true,
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "isolatedModules": true,
@@ -80,6 +79,5 @@
   ],
   "exclude": [
     "node_modules"
-  ],
-  "extends": "expo/tsconfig.base"
+  ]
 }

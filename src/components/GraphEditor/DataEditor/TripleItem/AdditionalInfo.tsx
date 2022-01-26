@@ -1,5 +1,5 @@
 import { EVENT } from '@constants'
-import { Box, Collapse, Divider } from '@material-ui/core'
+import { Box, Collapse, Divider } from '@mui/material'
 import { DataItem, OnEventLite } from '@type'
 import React from 'react'
 import { AdditionalTripleItem } from '../AdditionalTripleItem'

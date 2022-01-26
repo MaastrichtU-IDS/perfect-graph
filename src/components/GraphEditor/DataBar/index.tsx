@@ -1,20 +1,26 @@
-import { Icon } from '@components/Icon'
+import {
+  Collapsible,
+  CollapsibleContainer,
+  CollapsibleTitle,
+} from '@components/Collapsible'
+import { ResizeDivider } from '@components/ResizeDivider'
+import { SIDE_PANEL_DEFAULT_HEIGHT, SIDE_PANEL_DEFAULT_WIDTH } from '@constants'
 import { useGraphEditor } from '@hooks'
+// import {
+//   DataEditor,
+// } from '../DataEditor'
+import { useDrag } from '@hooks/useDrag'
+import { Box, Button, Divider, Paper, Typography } from '@mui/material'
+import { EdgeElement } from '@type'
 import {
-  Accordion, AccordionDetails, AccordionSummary, Divider, IconButton, Paper, Typography,
-} from '@material-ui/core'
-import { EVENT } from '@constants'
-import {
-  JSONViewer,
   useAnimation,
 } from 'colay-ui'
 import { View } from 'colay-ui/components/View'
-import * as R from 'colay/ramda'
 import React from 'react'
-import {
-  DataEditor,
-} from '../DataEditor'
+import { ConnectedElements } from './ConnectedElements'
 import { GlobalNetworkStatistics } from './GlobalNetworkStatistics'
+import { JSONEditor } from './JSONEditor'
+import { JSONViewer } from './JSONViewer'
 import { LocalNetworkStatistics } from './LocalNetworkStatistics'
 
 export type DataBarProps = {
@@ -22,18 +28,16 @@ export type DataBarProps = {
   isOpen?: boolean;
   header?: React.FC;
   footer?: React.FC;
+  sort?: any;
 } // & Omit<DataEditorProps, 'data'>
-
-const WIDTH_PROPORTION = 40
-const ICON_SIZE = 16
 
 export const DataBar = (props: DataBarProps) => {
   const {
-    editable = true,
+    editable = false,
     isOpen = false,
+    sort = -1,
     header: HeaderComponent,
     footer: FooterComponent,
-    ...rest
   } = props
 
   const [
@@ -52,54 +56,91 @@ export const DataBar = (props: DataBarProps) => {
         selectedItem,
         label,
         localDataRef,
-        networkStatistics
+        networkStatistics,
       } = editor
       const targetPath = selectedElement?.isNode() ? 'nodes' : 'edges'
+      const selectedItemId = selectedItem?.id!
       return {
         graphEditorConfig: editor.config,
         item: editor.selectedItem,
-        localLabel: selectedElement && (label?.[targetPath][selectedItem?.id!]),
+        localLabel: selectedElement && (label?.[targetPath][selectedItemId]),
         globalLabel: label?.global?.[targetPath],
         isGlobalLabelFirst: label?.isGlobalFirst?.[targetPath],
         onEvent: editor.onEvent,
         networkStatistics: {
-          local: localDataRef.current!.networkStatistics!.local?.[selectedItem?.id!],
-          global: networkStatistics?.global ?? localDataRef.current!.networkStatistics!.local?.[selectedItem?.id!],
+          local: localDataRef.current!.networkStatistics!.local?.[selectedItemId],
+          global: networkStatistics?.global?.[selectedItemId],
+          sort: networkStatistics?.sort,
         },
+        selectedElement,
       }
     },
   )
-
+  const localDataRef = React.useRef({
+    width: SIDE_PANEL_DEFAULT_WIDTH,
+    height: SIDE_PANEL_DEFAULT_HEIGHT,
+  })
   const {
     style: animationStyle,
     ref: animationRef,
   } = useAnimation({
     from: {
-      right: `-${WIDTH_PROPORTION}%`,
+      width: 0,
     },
     to: {
-      right: '0%',
+      width: localDataRef.current.width,
     },
     autoPlay: false,
-  })
+  }, [localDataRef.current.width])
+  const containerRef = React.useRef<HTMLDivElement>()
   React.useEffect(() => {
     animationRef.current?.play?.(isOpen)
   }, [animationRef, isOpen])
   const hasStatistics = Object.values(networkStatistics).find((val) => val)
+  const [state, setState] = React.useState({
+    isEditing: false,
+  })
+  const onMouseDown = useDrag({
+    ref: containerRef,
+    onDrag: ({ x, y }, rect) => {
+      // localDataRef.current.width = rect.width - x
+      localDataRef.current.width = rect.width + x
+      localDataRef.current.height = rect.height - y
+      const target = containerRef.current!
+      target.style.width = `${localDataRef.current.width}px`
+      target.style.height = `${localDataRef.current.height}px`
+    },
+  })
   return (
-    <Paper
+    <Box
+      ref={containerRef}
       style={{
         position: 'absolute',
-        width: `${WIDTH_PROPORTION}%`,
-        height: '100%',
-        top: 0,
+        height: '60%',
+        top: 2,
+        right: 2,
+        // width: animationStyle.right,
         ...animationStyle,
       }}
+      
     >
+      <Paper
+        sx={{ 
+          boxShadow: 2,
+          borderColor: 'grey.500',
+          // borderRadius: 5,
+          borderWidth: 2,
+          overflow: 'hidden',
+          height: '100%',
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'row',
+        }}
+      >
       <View
         style={{
           height: '100%',
-          width: '100%',
+          flex: 1,
           // @ts-ignore
           overflowY: 'auto',
           overflowX: 'hidden',
@@ -107,18 +148,24 @@ export const DataBar = (props: DataBarProps) => {
       >
         {HeaderComponent && <HeaderComponent />}
         {item && (
-        <Accordion
-          defaultExpanded
+        <Collapsible
+          defaultIsOpen={ true}
         >
-          <AccordionSummary>
-            <Typography
-              variant="h6"
-              // style={{ marginLeft: 2 }}
+          {
+            ({ isOpen, onToggle }) => (
+              <>
+            <CollapsibleTitle
+              style={{
+                wordBreak: 'break-word',
+                padding: 2,
+              }}
+              onClick={onToggle}
             >
               {` id: ${item?.id}`}
-            </Typography>
-          </AccordionSummary>
-          <AccordionDetails>
+            </CollapsibleTitle>
+              {
+                isOpen && (
+                  <CollapsibleContainer>
             <View style={{
               width: '100%',
               height: hasStatistics ? '70%' : '100%',
@@ -126,139 +173,61 @@ export const DataBar = (props: DataBarProps) => {
               // flexWrap: 'wrap',
             }}
             >
+              {/* {
+                isEdge && <EdgeElementSummary element={selectedElement} />
+              } */}
               {
-        editable && item?.data
+        editable
+          && (
+            // <DataEditor
+            //   data={item.data}
+            //   onEvent={onEvent}
+            //   {...rest}
+            // />
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'flex-end',
+              }}
+            >
+              <Button
+                onClick={() => setState({ ...state, isEditing: !state.isEditing })}
+              >
+                {state.isEditing ? 'Done' : 'Edit'}
+
+              </Button>
+            </View>
+          )
+      }
+              {
+        state.isEditing
           ? (
-            <DataEditor
-              data={item.data}
-              onEvent={onEvent}
-              {...rest}
-            />
+            <JSONEditor />
           )
           : (
             <JSONViewer
-              extraData={[localLabel, globalLabel]}
-              data={item?.data}
-              left={(props) => {
-                const {
-                  item: { path },
-                  collapsed, onCollapse, noChild,
-                } = props
-                const isLocalLabel = R.equals(path, localLabel)
-                const isGlobalLabel = R.equals(path, globalLabel)
-                return (
-                  <>
-
-                    <IconButton
-                      size="small"
-                      sx={{ height: ICON_SIZE }}
-                      onClick={() => onEvent(
-                        isLocalLabel
-                          ? {
-                            type: EVENT.CLEAR_NODE_LOCAL_LABEL,
-                          }
-                          : {
-                            type: EVENT.SET_NODE_LOCAL_LABEL,
-                            payload: {
-                              value: path,
-                            },
-                          },
-                      )}
-                    >
-                      <Icon
-                        style={{
-                          fontSize: ICON_SIZE,
-                          textDecoration: !isGlobalLabelFirst ? 'underline' : '',
-                        }}
-                        name={
-                          isLocalLabel ? 'bookmark' : 'bookmark_border'
-                        }
-                      />
-                    </IconButton>
-                    <IconButton
-                      size="small"
-                      sx={{ height: ICON_SIZE }}
-                      onClick={() => onEvent(
-                        isGlobalLabel
-                          ? {
-                            type: EVENT.CLEAR_NODE_GLOBAL_LABEL,
-                          }
-                          : {
-                            type: EVENT.SET_NODE_GLOBAL_LABEL,
-                            payload: {
-                              value: path,
-                            },
-                          },
-                      )}
-                    >
-                      <Icon
-                        style={{
-                          fontSize: ICON_SIZE,
-                          textDecoration: isGlobalLabelFirst ? 'underline' : '',
-                        }}
-                        name={
-                          isGlobalLabel ? 'bookmarks' : 'bookmark_border'
-  }
-                      />
-                    </IconButton>
-                    <IconButton
-                      size="small"
-                      sx={{ height: ICON_SIZE }}
-                      disabled={noChild}
-                      onClick={() => onCollapse(!collapsed)}
-                    >
-                      <Icon
-                        style={{
-                          fontSize: ICON_SIZE, // noChild ? 12 : ICON_SIZE,
-                        }}
-                        name={
-                      noChild
-                        ? 'fiber_manual_record'
-                        : collapsed
-                          ? 'arrow_drop_down_rounded'
-                          : 'arrow_drop_up_rounded'
-}
-                      />
-                    </IconButton>
-                  </>
-                )
-              }}
-              renderItem={({ item: { key, value } }) => (
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                  }}
-                >
-                  <Typography
-                    variant="subtitle1"
-                    style={{ alignContent: 'center' }}
-                  >
-                    {`${key}${value ? ': ' : ''}`}
-                  </Typography>
-                  {value
-                    ? (
-                      <Typography
-                        variant="subtitle1"
-                        // noWrap
-                        display="inline"
-                        style={{ alignContent: 'center' }}
-                      >
-                        {value}
-                      </Typography>
-                    )
-                    : null}
-                </View>
-              )}
+              sort={sort}
+              localLabel={localLabel}
+              globalLabel={globalLabel}
+              isGlobalLabelFirst={isGlobalLabelFirst}
+              data={item?.data ?? {}}
+              onEvent={onEvent}
             />
           )
       }
+
             </View>
-          </AccordionDetails>
-        </Accordion>
+          </CollapsibleContainer>
+                )
+              }
+              </>
+            )
+          }
+        </Collapsible>
 
         )}
         <Divider />
+        <ConnectedElements />
         {
         hasStatistics && (
           <View
@@ -271,6 +240,7 @@ export const DataBar = (props: DataBarProps) => {
           networkStatistics.global && (
             <GlobalNetworkStatistics
               data={networkStatistics.global}
+              sort={networkStatistics.sort?.global}
               onEvent={onEvent}
             />
           )
@@ -280,6 +250,7 @@ export const DataBar = (props: DataBarProps) => {
           networkStatistics.local && (
             <LocalNetworkStatistics
               data={networkStatistics.local}
+              sort={networkStatistics.sort?.local}
               onEvent={onEvent}
             />
           )
@@ -289,25 +260,45 @@ export const DataBar = (props: DataBarProps) => {
       }
         {FooterComponent && <FooterComponent />}
       </View>
-
-      <IconButton
-        style={{
-          position: 'absolute',
-          left: -34,
-          top: 0,
-          fontSize: 24,
-        }}
-        onClick={() => {
-          onEvent({
-            type: EVENT.TOGGLE_DATA_BAR,
-            avoidHistoryRecording: true,
-          })
-        }}
-      >
-        <Icon
-          name="info_outlined"
-        />
-      </IconButton>
-    </Paper>
+      <ResizeDivider
+        onMouseDown={onMouseDown}
+        isRight={false}
+      />
+      </Paper>
+      
+    </Box>
   )
+}
+
+type EdgeElementSummaryProps = {
+  element: EdgeElement;
+}
+export const EdgeElementSummary = (props: EdgeElementSummaryProps) => {
+  const {
+    element,
+  } = props
+  const sourceId = element.source().id()
+  const targetId = element.target().id()
+  return (
+    <View>
+      <View style={{ flexDirection: 'row' }}>
+        <Typography variant="subtitle1">source:</Typography>
+        <Typography>{` ${sourceId}`}</Typography>
+      </View>
+      <View style={{ flexDirection: 'row' }}>
+        <Typography variant="subtitle1">target:</Typography>
+        <Typography>{` ${targetId}`}</Typography>
+      </View>
+    </View>
+  )
+}
+
+export const isValidURL = (value: string) => {
+  let url
+  try {
+    url = new URL(value)
+  } catch (_) {
+    return false
+  }
+  return url.protocol === 'http:' || url.protocol === 'https:'
 }

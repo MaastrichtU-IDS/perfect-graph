@@ -1,23 +1,36 @@
 import React from 'react'
 import { wrapComponent } from 'colay-ui'
 import { useNode } from '@hooks'
+import { CYTOSCAPE_EVENT } from '@constants'
 import {
   RenderNode, NodeConfig, GraphRef,
 } from '@type'
 import {
   calculateObjectBoundsWithoutChildren,
   calculateVisibilityByContext,
+  isFiltered,
 } from '@utils'
 import { useTheme } from '@core/theme'
 import { Container } from '../Container'
 
 export type NodeContainerProps = {
   children: RenderNode;
+  /**
+   * Node data
+   */
   item: any;
+  /**
+   * Related graph id
+   */
   graphID: string;
+  /**
+   * Related graph instance ref
+   */
   graphRef: React.RefObject<GraphRef>;
-  config?: NodeConfig;
-
+  /**
+   * Node config data
+   */
+  config: NodeConfig;
 }
 
 export type NodeContainerType = React.ForwardedRef<NodeContainerProps>
@@ -30,7 +43,7 @@ const NodeContainerElement = (
     item,
     graphID,
     children,
-    config = {} as NodeConfig,
+    config,
     graphRef,
   } = props
   const containerRef = React.useRef(null)
@@ -63,21 +76,25 @@ const NodeContainerElement = (
     )
   })
   const theme = useTheme()
-  const visible = calculateVisibilityByContext(context)
-  const opacity = context.settings.filtered
+  const visible = calculateVisibilityByContext(element)
+  const opacity = isFiltered(element)
     ? 1
     : (config.filter?.settings?.opacity ?? 0.2)
   return (
     <Container
       ref={containerRef}
-      style={{
-        left: x,
-        top: y,
-      }}
+      x={x}
+      y={y}
       alpha={opacity}
       visible={visible}
       draggable
       onDrag={onDrag}
+      mouseover={() => {
+        element.emit(CYTOSCAPE_EVENT.mouseover)
+      }}
+      mouseout={() => {
+        element.emit(CYTOSCAPE_EVENT.mouseout)
+      }}
       // onRightPress={(event) => {
       //   event.data.originalEvent.preventDefault()
       //   event.data.originalEvent.stopPropagation()
@@ -89,11 +106,18 @@ const NodeContainerElement = (
         cy,
         theme,
         graphRef,
+        context,
+        config,
+        label: item.id,
       })}
     </Container>
   )
 }
 
+/**
+ * The container for Node Elements. It facilitates drag, visibility, and other
+ * operations.
+ */
 export const NodeContainer = wrapComponent<NodeContainerProps>(
   NodeContainerElement,
   {

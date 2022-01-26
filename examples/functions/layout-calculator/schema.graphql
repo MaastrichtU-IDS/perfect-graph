@@ -1,0 +1,15 @@
+input  BoundingBoxInput  {
+  x1: Float!
+  y1: Float!
+  w: Float!
+  h: Float!
+}
+
+type Query {
+  calculateLayout(
+    nodes: [NodeInput!]!,
+    edges: [EdgeInput!]!,
+    layoutName: String!,
+    boundingBox: AWSJSON,
+  ): AWSJSON @function(name: "layoutcalculator-${env}")
+}

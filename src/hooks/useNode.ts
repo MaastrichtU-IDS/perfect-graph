@@ -7,6 +7,7 @@ import {
   NodeConfig,
   Cluster,
   NodeData,
+  NodeElement,
 } from '@type'
 import { getClusterVisibility, calculateVisibilityByContext, contextUtils } from '@utils'
 import { CYTOSCAPE_EVENT, ELEMENT_DATA_FIELDS } from '@constants'
@@ -15,12 +16,30 @@ import { mutableGraphMap } from './useGraph'
 import { useElement } from './useElement'
 
 export type Props = {
-  graphID: string;
-  position: Position;
-  isCluster?: boolean;
-  onPositionChange?: (c: {element: NodeSingular; context: NodeContext }) => void|any;
-  config?: NodeConfig;
+  /**
+   * Node data
+   */
   item: NodeData;
+  /**
+   * Related graph id
+   */
+  graphID: string;
+  /**
+   * Node initial position
+   */
+  position: Position;
+  /**
+   * Node is cluster or not
+   */
+  isCluster?: boolean;
+  /**
+   * Position change handler
+   */
+  onPositionChange?: (c: { element: NodeSingular; context: NodeContext }) => void | any;
+  /**
+   * Node config data
+   */
+  config?: NodeConfig;
 }
 
 type Result = {
@@ -37,12 +56,12 @@ const DEFAULT_BOUNDING_BOX = {
   height: 0,
 }
 
-export default (props: Props): Result => {
+export const useNode = (props: Props): Result => {
   const {
     position,
     onPositionChange,
     graphID,
-    config = {},
+    config = {} as NodeConfig,
     item,
     isCluster = false,
   } = props
@@ -56,7 +75,7 @@ export default (props: Props): Result => {
     : clustersByNodeId[id]
   const [, setState] = useStateWithCallback({}, () => {})
   const contextRef = React.useRef<NodeContext>({
-    render: (callback: () => {}) => setState({}, callback),
+    render: (callback: () => void) => setState({}, callback),
     onPositionChange: () => {
       onPositionChange?.({ element, context: contextRef.current })
       element.connectedEdges().forEach((mutableEdge) => {
@@ -70,18 +89,25 @@ export default (props: Props): Result => {
       visibility: {
         cluster: getClusterVisibility(id, clusters),
       },
+      hovered: false,
     },
   } as NodeContext)
-  const element = React.useMemo(() => cy!.add({
-    data: {
-      id,
-      [ELEMENT_DATA_FIELDS.CONTEXT]: contextRef.current,
-      [ELEMENT_DATA_FIELDS.DATA]: item?.data,
-    }, // ...(parentID ? { parent: parentID } : {}),
-    position: { ...position },
-    group: 'nodes',
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }) as NodeSingular, [cy, id])
+  const element: NodeElement = React.useMemo(() => {
+    let _element: NodeElement = cy.$id(id)[0]
+    if (!_element) {
+      _element = cy!.add({
+        data: {
+          id,
+          [ELEMENT_DATA_FIELDS.CONTEXT]: contextRef.current,
+          [ELEMENT_DATA_FIELDS.DATA]: item?.data,
+        }, // ...(parentID ? { parent: parentID } : {}),
+        position: { ...position },
+        group: 'nodes',
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+      }) as unknown as NodeElement
+    }
+    return _element
+  }, [cy, id])
   React.useEffect(
     () => {
       const {
@@ -89,9 +115,24 @@ export default (props: Props): Result => {
           onPositionChange,
         },
       } = contextRef
+      const onHover = () => {
+        contextRef.current.settings.hovered = true
+        contextUtils.update(element, contextRef.current)
+      }
+      const onHoverExit = () => {
+        contextRef.current.settings.hovered = false
+        contextUtils.update(element, contextRef.current)
+      }
       element.on(CYTOSCAPE_EVENT.position, onPositionChange)
+      element.on(CYTOSCAPE_EVENT.mouseover, onHover)
+      element.on(CYTOSCAPE_EVENT.mouseout, onHoverExit)
       return () => {
-        element.off(CYTOSCAPE_EVENT.position, `#${element.id()}`, onPositionChange)
+        // element.off(CYTOSCAPE_EVENT.position, `#${element.id()}`, onPositionChange)
+        // element.off(CYTOSCAPE_EVENT.mouseover, `#${element.id()}`, onHover)
+        // element.off(CYTOSCAPE_EVENT.mouseout, `#${element.id()}`, onHoverExit)
+        element.removeListener(CYTOSCAPE_EVENT.position)
+        element.removeListener(CYTOSCAPE_EVENT.mouseover)
+        element.removeListener(CYTOSCAPE_EVENT.mouseout)
         cy!.remove(element!)
       }
     }, // destroy
@@ -102,19 +143,18 @@ export default (props: Props): Result => {
       element.position(position)
     }
   }, [position.x, position.y])
-
   // Update Visibility
   React.useMemo(() => {
     const clusterVisibility = getClusterVisibility(element.id(), clusters)
     if (clusterVisibility !== contextRef.current.settings.visibility.cluster) {
-      const oldVisible = calculateVisibilityByContext(contextRef.current)
+      const oldVisible = calculateVisibilityByContext(element)
       contextRef.current.settings.visibility.cluster = clusterVisibility
       // contextRef.current.settings = {
       //   ...contextRef.current.settings,
       //   visibility,
       // }
       contextUtils.update(element, contextRef.current)
-      if (oldVisible !== calculateVisibilityByContext(contextRef.current)) {
+      if (oldVisible !== calculateVisibilityByContext(element)) {
         contextRef.current.render()
       }
     }

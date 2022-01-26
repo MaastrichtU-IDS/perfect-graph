@@ -1,76 +1,168 @@
-import React from 'react'
 import {
   DefaultRenderEdge,
-  DefaultRenderNode, Graph, GraphProps,
+  DefaultRenderNode, Graph,
 } from '@components'
+import { DEFAULT_EDGE_CONFIG, DEFAULT_NODE_CONFIG } from '@constants'
+import { ContextMenu } from '@components/ContextMenu'
+import { EDITOR_MODE, EVENT } from '@constants'
+import { Clusters } from '@core/clusters'
+import { GraphEditorProvider } from '@hooks/useGraphEditor'
 import {
-  Box,
-  Backdrop,
-  CircularProgress,
-} from '@material-ui/core'
+  Backdrop, Box, CircularProgress,
+  IconButton,
+} from '@mui/material'
 import {
-  EditorMode, EventInfo,
-  GraphConfig,
-  GraphEditorRef, GraphLabelData,
-  RecordedEvent, GraphEditorRenderEdge,
-  GraphEditorRenderNode, EventHistory,
-  OnEvent,
-  GraphEditorConfig,
-  NodeElement,
-  Playlist,
-  OnEventLite,
-  NetworkStatistics,
-  EventType,
+  EditorMode, EventHistory, EventInfo, EventType,
+  GraphConfig, GraphEditorConfig, GraphEditorRef, GraphEditorRenderEdge,
+  GraphEditorRenderNode, GraphLabelData, NetworkStatistics,
+  NodeElement, OnEvent, OnEventLite, Playlist, RecordedEvent,
+  NodeData, EdgeData, GraphEditorContextType, Element,
+  RenderClusterNode,
+  DrawLine,
+  OnBoxSelection,
+  PreviousData,
+  PropsWithRef,
 } from '@type'
 import {
-  getLabel, getSelectedItemByElement,
-  throttle, cyUnselectAll,
-  getPointerPositionOnViewport,
+  getEventClientPosition, getLabel, getSelectedItemByElement,
+  throttle,
 } from '@utils'
-import { EDITOR_MODE, EVENT } from '@constants'
 import { useTimeoutManager } from '@utils/useTimeoutManager'
-import { calculateStatistics } from '@utils/networkStatistics'
-import { useForwardRef, wrapComponent } from 'colay-ui'
-import { PropsWithRef } from 'colay-ui/type'
-import * as R from 'colay/ramda'
-import { Clusters } from '@core/clusters'
+import { useForwardRef, wrapComponent, ViewProps } from 'colay-ui'
+import * as ReactIs from 'colay-ui/utils/is-react'
 import { useImmer } from 'colay-ui/hooks/useImmer'
-import { ContextMenu } from '@components/ContextMenu'
-import { GraphEditorProvider } from '@hooks/useGraphEditor'
-import { ActionBar, ActionBarProps } from './ActionBar'
+import * as R from 'colay/ramda'
+import React from 'react'
+import { ActionBar, ActionBarConfig } from './ActionBar'
 import { DataBar, DataBarProps } from './DataBar'
-import { MouseIcon } from './MouseIcon'
 import { SettingsBar, SettingsBarProps } from './SettingsBar'
+import { ModalComponent, ModalComponentProps } from './ModalComponent'
+import { MouseIcon } from './MouseIcon'
+import { PreferencesModal, PreferencesModalProps } from './PreferencesModal/index'
 import { RecordedEventsModal } from './RecordedEventsModal'
-import { PreferencesModal, PreferencesModalProps } from './PreferencesModal'
+import { Icon } from  '@components/Icon'
 
 type RenderElementAdditionalInfo = {
   // label: string;
 }
 
 export type GraphEditorProps = {
+  /**
+   * Event handler for all events that are emitted by the graph editor.
+   */
   onEvent?: OnEvent;
+  /**
+   * All graph config data for nodes and edges. It will supply the config data for the graph.
+   */
   graphConfig?: GraphConfig;
+  /**
+   * GraphEditor config data for all operations.
+   */
   config?: GraphEditorConfig;
+  /**
+   * Render React component into ActionBar.
+   */
   renderMoreAction?: () => React.ReactElement;
+  /**
+   * Config for labels of nodes and edges
+   */
   label?: GraphLabelData;
+  /**
+   * Config for SettingsBar
+   */
   settingsBar?: SettingsBarProps;
-  dataBar?: Pick<DataBarProps, 'editable'| 'isOpen'>;
-  actionBar?: Pick<ActionBarProps, 'renderMoreAction' | 'isOpen' | 'recording' |'eventRecording' | 'autoOpen' | 'theming'>;
+  /**
+   * Config for DataBar
+   */
+  dataBar?: DataBarProps;
+  /**
+   * Config for ActionBar
+   */
+  actionBar?: ActionBarConfig;
+  /**
+   * Config for PreferencesModal
+   */
   preferencesModal?: PreferencesModalProps;
-  selectedElementIds?: string[] | null;
+  /**
+   * It gives the selected nodes. It is used for selected node highlighting and DataBar
+   */
+  selectedElementIds?: string[];
+  /**
+   * Editor mode for changing actions and mouse icon
+   */
   mode?: EditorMode;
+  /**
+   * It returns a PIXI.DisplayObject instance as React.Node for the edge
+   */
   renderEdge?: GraphEditorRenderEdge<RenderElementAdditionalInfo>;
+  /**
+   * It returns a PIXI.DisplayObject instance as React.Node for the node
+   */
   renderNode?: GraphEditorRenderNode<RenderElementAdditionalInfo>;
+  /**
+   * Recorded events will be displayed on SettingsBar
+   */
   events?: RecordedEvent[]
+  /**
+   * Event history will be displayed on SettingsBar
+   */
   eventHistory?: EventHistory;
+  /**
+   * Events playlist will be displayed on SettingsBar
+   */
   playlists?: Playlist[];
+  /**
+   * Calculated network statistics will be displayed on SettingsBar
+   */
   networkStatistics?: NetworkStatistics;
+  /**
+   * Display loading indicator
+   */
   isLoading?: boolean;
-} & Omit<
-GraphProps,
-'config'|'onPress' | 'renderNode' | 'renderEdge'
->
+  /**
+   * Modal components for displaying modal dialogs
+   */
+  modals?: {
+    ElementSettings?: ModalComponentProps
+  };
+  /**
+   * Focus mode for chunk stacked nodes
+   */
+  isFocusMode?: boolean;
+  /**
+   * Focus mode stack
+   */
+  previousDataList?: PreviousData[]
+  children?: React.ReactNode;
+  /**
+   * To rerender the graph when the extra data changes
+   */
+  extraData?: any;
+  /**
+   * Node data list to render
+   */
+  nodes: NodeData[];
+  /**
+   * Edge data list to render
+   */
+  edges: EdgeData[];
+  /**
+   * Style for graph container view
+   */
+  style?: ViewProps['style'];
+  /**
+   * It returns a PIXI.DisplayObject instance as React.Node for the cluster node
+   */
+  renderClusterNode?: RenderClusterNode;
+  /**
+   * The function to draw line for edge connection vectors
+   */
+  drawLine?: DrawLine;
+  /**
+   * Event handler for box selection event. It gives the selected nodes
+   */
+  onBoxSelection?: OnBoxSelection;
+}
 
 const MODE_ICON_SCALE = 0.8
 const MODE_ICON_MAP_BY_URL = {
@@ -97,7 +189,7 @@ const GraphEditorElement = (
     onEvent: onEventCallback = DEFAULT_HANDLER,
     renderEdge,
     renderNode,
-    graphConfig,
+    graphConfig: _graphConfig,
     style,
     settingsBar,
     actionBar,
@@ -114,18 +206,31 @@ const GraphEditorElement = (
     playlists,
     networkStatistics,
     isLoading = false,
+    modals = {},
+    isFocusMode = false,
     ...rest
   } = props
+
+  const graphConfig = React.useMemo(() =>{ 
+    return {
+      ...(_graphConfig ?? {}),
+      nodes: R.mergeAll([DEFAULT_NODE_CONFIG, _graphConfig?.nodes ?? {} ]),
+      edges: R.mergeAll([DEFAULT_EDGE_CONFIG, _graphConfig?.edges ?? {} ]),
+    } as GraphConfig
+  }, [_graphConfig])
   const localDataRef = React.useRef({
     initialized: false,
     targetNode: null as NodeElement | null,
     props,
-    issuedClusterId: null as string|null,
+    issuedClusterId: null as string | null,
     newClusterBoxSelection: {
       elementIds: [] as string[],
     },
     networkStatistics: {
       local: null,
+    },
+    contextMenu: {
+      itemIds: [] as string[],
     },
   })
   const [state, updateState] = useImmer({
@@ -139,10 +244,14 @@ const GraphEditorElement = (
         y: 0,
       },
     },
+    isLoading: false,
   })
   localDataRef.current.props = props
   React.useEffect(() => {
     localDataRef.current.initialized = true
+    // setTimeout(() => updateState((draft) => {
+    //   draft.isLoading = false
+    // }), 2200)
   }, [])
   const graphId = React.useMemo<string>(
     () => graphConfig?.graphId ?? R.uuid(),
@@ -157,21 +266,12 @@ const GraphEditorElement = (
   }, [graphEditorRef.current])
   // @TODO: DANGER
   const selectedElement = React.useMemo(
-    () => graphEditorRef.current?.cy?.$id(R.last(selectedElementIds)!),
-    // if (!localDataRef.current.initialized) {
-    //   const callback = () => {
-    //     setTimeout(() => {
-    //       if (graphEditorRef.current.cy) {
-
-    //       } else {
-    //         callback()
-    //       }
-    //     }, 1000)
-    //   }
-    // } else if (selectedElementIds?.length > 0) {
-    //   return graphEditorRef.current.cy && graphEditorRef.current.cy.$id(R.last(selectedElementIds))
-    // }
-
+    () => {
+      const collection = graphEditorRef.current?.cy?.$id(R.last(selectedElementIds)!)
+      return collection?.length === 0
+        ? null
+        : collection as Element
+    },
     [nodes, edges, selectedElementIds],
   )
   const selectedItem = selectedElement && getSelectedItemByElement(
@@ -249,14 +349,16 @@ const GraphEditorElement = (
     })
   }, [onEventCallback, selectedItem?.id])
   const eventTimeoutsManager = useTimeoutManager(
-    (events ?? []).map((event, index) => ({
-      ...event,
-      after: events?.[index - 1]
-        ? new Date(
-          event.date,
-        ).getMilliseconds() - new Date(events[index - 1].date).getMilliseconds()
-        : 0,
-    })),
+    (events ?? []).map((event, index) => {
+      return {
+        ...event,
+        after: events?.[index - 1]
+          ? new Date(
+            event.date,
+          ).getTime() - new Date(events[index - 1].date).getTime()
+          : 0,
+      }
+    }),
     (event) => {
       onEventCallback(event)
     },
@@ -267,28 +369,31 @@ const GraphEditorElement = (
       autostart: false,
     },
   )
-  React.useEffect(() => {
-    if (!config.enableNetworkStatistics) {
-      localDataRef.current.networkStatistics.local = networkStatistics?.local
-    } else {
-      localDataRef.current.networkStatistics.local = R.mergeDeepRight(
-        calculateStatistics({ nodes, edges }),
-        (networkStatistics?.local ?? {}),
-      )
-    }
-  }, [])
   React.useMemo(() => {
-    if (localDataRef.current.initialized) {
-      localDataRef.current.networkStatistics.local = R.mergeDeepRight(
-        calculateStatistics({ nodes, edges }),
-        (networkStatistics?.local ?? {}),
-      )
-    }
-  }, [nodes, edges, networkStatistics?.local, config.enableNetworkStatistics])
+    localDataRef.current.networkStatistics.local = networkStatistics?.local
+  }, [networkStatistics?.local])
+  // React.useEffect(() => {
+  //   if (!config.enableNetworkStatistics) {
+  //     localDataRef.current.networkStatistics.local = networkStatistics?.local
+  //   } else {
+  //     localDataRef.current.networkStatistics.local = R.mergeDeepRight(
+  //       calculateStatistics({ nodes, edges }),
+  //       (networkStatistics?.local ?? {}),
+  //     )
+  //   }
+  // }, [])
+  // React.useMemo(() => {
+  //   if (localDataRef.current.initialized) {
+  //     localDataRef.current.networkStatistics.local = R.mergeDeepRight(
+  //       calculateStatistics({ nodes, edges }),
+  //       (networkStatistics?.local ?? {}),
+  //     )
+  //   }
+  // }, [nodes, edges, networkStatistics?.local, config.enableNetworkStatistics])
   React.useEffect(() => {
     localDataRef.current.targetNode = null
   }, [mode])
-  const graphEditorValue = React.useMemo(() => ({
+  const graphEditorValue: GraphEditorContextType = React.useMemo(() => ({
     config,
     eventHistory,
     events,
@@ -303,6 +408,8 @@ const GraphEditorElement = (
     selectedElement,
     networkStatistics,
     graphEditorRef,
+    nodes,
+    edges,
   }),
   [
     config,
@@ -318,7 +425,12 @@ const GraphEditorElement = (
     selectedElement,
     networkStatistics,
     graphEditorRef,
+    nodes,
+    edges,
   ])
+  if (graphEditorRef.current) {
+    graphEditorRef.current.context = graphEditorValue
+  }
   return (
     <GraphEditorProvider
       value={graphEditorValue}
@@ -365,8 +477,8 @@ const GraphEditorElement = (
         // @ts-ignore
           ref={graphEditorRef}
           style={{
-            width: '100%',
-            height: '100%',
+            width: style?.width,
+            height: style?.height,
           }}
           nodes={nodes}
           edges={edges}
@@ -375,15 +487,18 @@ const GraphEditorElement = (
             label,
             extraData: rest.extraData,
           }}
+          // @ts-ignore
           config={{
             ...graphConfig,
             graphId,
           }}
           selectedElementIds={selectedElementIds}
           onPress={({ position }) => {
-            updateState((draft) => {
-              draft.contextMenu.visible = false
-            })
+            if (state.contextMenu.visible) {
+              updateState((draft) => {
+                draft.contextMenu.visible = false
+              })
+            }
             const { mode } = localDataRef.current.props
             if (
             // @ts-ignore
@@ -404,124 +519,156 @@ const GraphEditorElement = (
             onEvent({
               type: EVENT.PRESS_BACKGROUND,
               payload: { position },
+              avoidHistoryRecording: true,
             })
           }}
           onBoxSelection={(event) => {
             const { mode } = localDataRef.current.props
             const {
-              elementIds,
+              itemIds,
             } = event
             if (EDITOR_MODE.ADD_CLUSTER_ELEMENT === mode) {
               onEvent({
-                type: EVENT.ADD_CLUSTER_ELEMENTS,
+                type: EVENT.ADD_CLUSTER_ELEMENT,
                 payload: {
                   clusterId: localDataRef.current.issuedClusterId,
-                  elementIds,
+                  itemIds,
                 },
               })
               return
             }
             // TODO: DANGER**
-            localDataRef.current.newClusterBoxSelection.elementIds = elementIds
-            updateState((draft) => {
-              draft.contextMenu.visible = true
-              draft.contextMenu.position = getPointerPositionOnViewport(
-                graphEditorRef.current.viewport,
-                // @ts-ignore
-                event.event.data.originalEvent,
-              )
-            })
-            // TODO: **DANGER
-            onEvent({
-              type: EVENT.BOX_SELECTION,
-              payload: {
-                elementIds,
-              },
-            })
-          }}
-          renderNode={({ item, element, ...rest }) => (
-            <Graph.View
-              interactive
-              click={(event) => {
-                const { mode } = localDataRef.current.props
-                const elementId = element.id()
-                if (
-                  [
-                    EDITOR_MODE.DELETE,
-                    // @ts-ignore
-                    EDITOR_MODE.CONTINUES_DELETE].includes(mode)
-                ) {
+            localDataRef.current.newClusterBoxSelection.elementIds = itemIds
+            if (itemIds.length > 0) {
+              localDataRef.current.contextMenu.itemIds = itemIds
+              updateState(
+                (draft) => {
+                  const e = event.event.data.originalEvent
+                  draft.contextMenu.visible = true
+                  draft.contextMenu.position = getEventClientPosition(e)
+                },
+                () => {
                   onEvent({
-                    type: EVENT.DELETE_NODE,
+                    type: EVENT.BOX_SELECTION,
                     payload: {
-                      items: [item],
+                      itemIds,
                     },
-                    event,
                   })
-                  return
-                }
-                if (
-                  // @ts-ignore
-                  [EDITOR_MODE.ADD, EDITOR_MODE.CONTINUES_ADD].includes(mode)
-                ) {
-                  if (localDataRef.current.targetNode) {
+                },
+              )
+              
+            }
+          }}
+          renderNode={({ item, element, ...rest }) => {
+            return (
+              <Graph.View
+                interactive
+                rightclick={(event) => {
+                  localDataRef.current.contextMenu.itemIds = [element.id()]
+                  updateState((draft) => {
+                    draft.contextMenu.visible = true
+                    draft.contextMenu.position = getEventClientPosition(event.data.originalEvent)
+                  })
+                  event.stopPropagation()
+                }}
+                pointertap={(event) => {
+                  const { mode } = localDataRef.current.props
+                  const elementId = element.id()
+                  if (
+                    [
+                      EDITOR_MODE.DELETE,
+                      // @ts-ignore
+                      EDITOR_MODE.CONTINUES_DELETE].includes(mode)
+                  ) {
                     onEvent({
-                      type: EVENT.ADD_EDGE,
+                      type: EVENT.DELETE_NODE,
                       payload: {
-                        items: [{
-                          id: R.uuid(),
-                          source: localDataRef.current.targetNode.id(),
-                          target: elementId,
-                        }],
+                        itemIds: [item.id],
                       },
                       event,
                     })
-                    localDataRef.current.targetNode = null
-                  } else {
-                    localDataRef.current.targetNode = element
+                    return
                   }
-                  return
-                }
-                if (EDITOR_MODE.ADD_CLUSTER_ELEMENT === mode) {
+                  if (
+                    // @ts-ignore
+                    [EDITOR_MODE.ADD, EDITOR_MODE.CONTINUES_ADD].includes(mode)
+                  ) {
+                    if (localDataRef.current.targetNode) {
+                      onEvent({
+                        type: EVENT.ADD_EDGE,
+                        payload: {
+                          items: [{
+                            id: R.uuid(),
+                            source: localDataRef.current.targetNode.id(),
+                            target: elementId,
+                          }],
+                        },
+                        event,
+                      })
+                      localDataRef.current.targetNode = null
+                    } else {
+                      localDataRef.current.targetNode = element
+                    }
+                    return
+                  }
+                  if (EDITOR_MODE.ADD_CLUSTER_ELEMENT === mode) {
+                    onEvent({
+                      type: EVENT.ADD_CLUSTER_ELEMENT,
+                      payload: {
+                        clusterId: localDataRef.current.issuedClusterId,
+                        itemIds: [elementId],
+                      },
+                    })
+                    return
+                  }
+                  // cyUnselectAll(graphEditorRef.current.cy)
+                  // element.select()
                   onEvent({
-                    type: EVENT.ADD_CLUSTER_ELEMENTS,
+                    type: EVENT.ELEMENT_SELECTED,
                     payload: {
-                      clusterId: localDataRef.current.issuedClusterId,
-                      elementIds: [elementId],
+                      itemIds: [element.id()],
                     },
+                    event,
+                    avoidHistoryRecording: true,
                   })
-                  return
-                }
-                cyUnselectAll(graphEditorRef.current.cy)
-                element.select()
-                onEvent({
-                  type: EVENT.ELEMENT_SELECTED,
-                  elementId: element.id(),
-                  event,
-                })
-              }}
-            >
-              {(renderNode ?? DefaultRenderNode)({
-                item,
-                element,
-                // @ts-ignore
-                label: getLabel(
-                  label?.isGlobalFirst
-                    ? (label?.global.nodes ?? label?.nodes?.[item.id])
-                    : (label?.nodes?.[item.id] ?? label?.global.nodes),
+                }}
+              >
+                {(renderNode ?? DefaultRenderNode)({
+                  ...rest,
                   item,
-                ),
-                labelPath: (label?.isGlobalFirst
-                  ? (label?.global.nodes ?? label?.nodes?.[item.id])
-                  : (label?.nodes?.[item.id] ?? label?.global.nodes)) ?? [],
-                ...rest,
-              })}
-            </Graph.View>
-          )}
+                  element,
+                  // @ts-ignore
+                  label: getLabel(
+                    label?.isGlobalFirst
+                      ? (label?.global.nodes ?? label?.nodes?.[item.id])
+                      : (label?.nodes?.[item.id] ?? label?.global.nodes),
+                    item,
+                  ),
+                  labelPath: (label?.isGlobalFirst
+                    ? (label?.global.nodes ?? label?.nodes?.[item.id])
+                    : (label?.nodes?.[item.id] ?? label?.global.nodes)) ?? [],
+                })}
+              </Graph.View>
+            )
+          }}
           renderEdge={({ item, element, ...rest }) => (
             <Graph.View
               interactive
-              click={(event) => {
+              rightclick={(event) => {
+                onEvent({
+                  type: EVENT.ELEMENT_SELECTED,
+                  payload: {
+                    itemIds: [element.id()],
+                  },
+                  event,
+                  avoidHistoryRecording: true,
+                })
+                updateState((draft) => {
+                  draft.contextMenu.visible = true
+                })
+                event.stopPropagation()
+              }}
+              pointertap={(event) => {
                 const { mode } = localDataRef.current.props
                 if (
                   [
@@ -532,23 +679,27 @@ const GraphEditorElement = (
                   onEvent({
                     type: EVENT.DELETE_EDGE,
                     payload: {
-                      items: [item],
+                      itemIds: [item.id],
                     },
                     event,
                   })
                   return
                 }
-                cyUnselectAll(graphEditorRef.current.cy)
-                element.select()
+                // cyUnselectAll(graphEditorRef.current.cy)
+                // element.select()
                 onEvent({
                   type: EVENT.ELEMENT_SELECTED,
-                  elementId: element.id(),
+                  payload: {
+                    itemIds: [element.id()],
+                  },
+                  avoidHistoryRecording: true,
                 })
               }}
             >
               {
                // @ts-ignore
             (renderEdge ?? DefaultRenderEdge)({
+              ...rest,
               item,
               // @ts-ignore
               label: getLabel(
@@ -561,57 +712,11 @@ const GraphEditorElement = (
                 ? (label?.global.edges ?? label?.edges?.[item.id])
                 : (label?.edges?.[item.id] ?? label?.global.edges)) ?? [],
               element,
-              ...rest,
             })
 }
             </Graph.View>
           )}
-        >
-          <ContextMenu
-            graphEditorRef={graphEditorRef}
-            items={[
-              { value: 'CreateCluster', label: 'Create Cluster' },
-              { value: 'Delete', label: 'Delete' },
-              { value: 'Settings', label: 'Settings' },
-            ]}
-            onSelect={(value) => {
-              updateState((draft) => {
-                draft.contextMenu.visible = false
-              })
-              switch (value) {
-                case 'CreateCluster':
-                  onEvent({
-                    type: EVENT.CREATE_CLUSTER,
-                    payload: {
-                      items: [{
-                        id: R.uuid(),
-                        name: `Cluster-${graphConfig?.clusters?.length ?? 0}`,
-                        ids: localDataRef.current.newClusterBoxSelection.elementIds,
-                        childClusterIds: [],
-                      }],
-                    },
-                  })
-                  break
-                case 'Delete':
-                  onEvent({
-                    type: EVENT.DELETE_NODE,
-                    payload: {
-                      items: nodes.filter(
-                        (nodeItem) => localDataRef.current.newClusterBoxSelection.elementIds
-                          .includes(nodeItem.id),
-                      ),
-                    },
-                  })
-                  break
-                default:
-                  break
-              }
-              localDataRef.current.newClusterBoxSelection.elementIds = []
-            }}
-            position={state.contextMenu.position}
-            open={state.contextMenu.visible}
-          />
-        </Graph>
+        />
         {
         settingsBar && (
           <SettingsBar
@@ -669,22 +774,114 @@ const GraphEditorElement = (
             eventTimeoutsManager.clear()
           }}
         />
+        <ContextMenu
+          graphEditorRef={graphEditorRef}
+          items={[
+            { value: 'CreateCluster', label: 'Create Cluster' },
+            { value: 'Delete', label: 'Delete' },
+            { value: 'Focus', label: 'Focus' },
+            // { value: 'Settings', label: 'Settings' },
+          ]}
+          onSelect={(value) => {
+            const {
+              current: {
+                contextMenu: {
+                  itemIds,
+                },
+              },
+            } = localDataRef
+            switch (value) {
+              case 'CreateCluster':
+                onEvent({
+                  type: EVENT.CREATE_CLUSTER,
+                  payload: {
+                    items: [{
+                      id: R.uuid(),
+                      name: `Cluster-${graphConfig?.clusters?.length ?? 0}`,
+                      ids: itemIds,
+                      childClusterIds: [],
+                    }],
+                  },
+                })
+                break
+              case 'Delete':
+                onEvent({
+                  type: EVENT.DELETE_NODE,
+                  payload: {
+                    itemIds,
+                  },
+                })
+                break
+              case 'Settings':
+                onEvent({
+                  type: EVENT.ELEMENT_SETTINGS,
+                  payload: {
+                    itemIds,
+                  },
+                })
+                break
+              case 'Focus':
+                onEvent({
+                  type: EVENT.FOCUS,
+                  payload: {
+                    itemIds,
+                  },
+                })
+                break
+              default:
+                break
+            }
+            localDataRef.current.newClusterBoxSelection.elementIds = []
+            localDataRef.current.contextMenu.itemIds = []
+            updateState((draft) => {
+              draft.contextMenu.visible = false
+            })
+          }}
+          position={state.contextMenu.position}
+          open={state.contextMenu.visible}
+        />
       </Box>
       <PreferencesModal
         {...preferencesModal}
       />
+      {
+        Object.keys(modals).map((modalName) => (
+          <ModalComponent
+            key={modalName}
+            // @ts-ignore
+            {...(modals[modalName]! ?? {})}
+            name={modalName}
+          />
+        ))
+      }
       <Backdrop
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={isLoading}
+        open={isLoading || state.isLoading}
       >
         <CircularProgress color="inherit" />
       </Backdrop>
+      <IconButton
+        onClick={()=> onEvent({
+          type: EVENT.DEFOCUS,
+        })}
+        style={{
+          position: 'absolute',
+          left: '49%',
+          visibility: isFocusMode ? 'visible' : 'hidden',
+        }}
+      >
+<Icon 
+        name="cancel_rounded"
+        
+      />
+      </IconButton>
+      
     </GraphEditorProvider>
 
   )
 }
 
-const convert = (object: any) => {
+const convertWithoutFunctions = (object: any) => {
   const cache: any[] = []
   return JSON.stringify(object, (key, value) => {
     if (typeof value === 'object' && value !== null) {
@@ -694,20 +891,43 @@ const convert = (object: any) => {
       // Store value in our collection
       cache.push(value)
     }
+    if (value && (value.isNode || typeof value === 'function' || ReactIs.isValidElementType(value) || value.$$typeof)) return null
     return value
   })
 }
-const extractGraphEditorData = (props: GraphEditorProps) => convert({
-  graphConfig: props.graphConfig,
-  label: props.label,
-  // settingsBar: R.omit(['header', 'footer'], props.settingsBar),
-  dataBar: R.omit(['header', 'footer'], props.dataBar),
-  actionBar: R.omit(['right', 'left'], props.actionBar),
-  mode: props.mode,
-  nodes: props.nodes,
-  edges: props.edges,
-})
 
+const extractGraphEditorData = (props: GraphEditorProps) => convertWithoutFunctions(props)
+
+// const convert = (object: any) => {
+//   const cache: any[] = []
+//   return JSON.stringify(object, (key, value) => {
+//     if (typeof value === 'object' && value !== null) {
+//       // Duplicate reference found, discard key
+//       if (cache.includes(value)) return null
+
+//       // Store value in our collection
+//       cache.push(value)
+//     }
+//     return value
+//   })
+// }
+// const extractGraphEditorData = (props: GraphEditorProps) => convert({
+//   graphConfig: props.graphConfig,
+//   label: props.label,
+//   settingsBar: R.omit(['header', 'footer'], props.settingsBar),
+//   dataBar: R.omit(['header', 'footer'], props.dataBar),
+//   actionBar: R.omit(['right', 'left'], props.actionBar),
+//   eventHistory: props.eventHistory,
+//   mode: props.mode,
+//   nodes: props.nodes,
+//   edges: props.edges,
+//   networkStatistics: props.networkStatistics,
+// })
+
+/**
+ * It is a wrapper for Graph with editor components. It has Sidebar, DataBar, ActionBar
+ * to give the power of editing.
+ */
 export const GraphEditor = wrapComponent<
 PropsWithRef<GraphEditorRef, GraphEditorProps>
 >(

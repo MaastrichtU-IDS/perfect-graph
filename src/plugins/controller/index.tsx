@@ -4,40 +4,41 @@ import GraphLayouts from '@core/layouts'
 import {
   ControllerState, DataItem, EditorMode, EventInfo,
   GraphEditorRef, GraphLabelData, RDFType, RecordedEvent,
+  EventHistory,
 } from '@type'
 import {
-  getSelectedItemByElement, getUndoEvents,
+  getSelectedItemByElement,
+  getUndoEvents,
+  getSelectedElementInfo,
+  vectorMidpoint,
+  getHitAreaCenter,
 } from '@utils'
 import {
   EDITOR_MODE, EVENT,
+  DEFAULT_EDGE_CONFIG,
+  DEFAULT_NODE_CONFIG,
 } from '@constants'
 import { createHistory } from '@utils/createHistory'
 import { useImmer } from 'colay-ui/hooks/useImmer'
 import { Position } from 'colay-ui/type'
 import { download } from 'colay-ui/utils'
 import * as R from 'colay/ramda'
-import PIXI from 'pixi.js'
+import * as PIXI from 'pixi.js'
 import React from 'react'
+import Vector from 'victor'
 
-// type ControllerOptions = {
-//   // onEvent?: (info: EventInfo, draft: ControllerState) => boolean;
+type UseControllerData = ControllerState
+// Pick<
+// GraphEditorProps,
+// 'nodes' | 'edges' | 'mode'
+// | 'actionBar' | 'dataBar' | 'settingsBar'
+// | 'graphConfig' | 'events' | 'label' | 'playlists' | 'selectedElementIds'
+// | 'modals' | 'isFocusMode' | 'preferencesModal' | 'previousDataList'
+// > & {
+//   onEvent?: (info: EventInfo & {
+//     graphEditor: GraphEditorRef;
+//   }, draft: ControllerState) => boolean;
 // }
-
-type UseControllerData = Pick<
-GraphEditorProps,
-'nodes'| 'edges' | 'mode'
-| 'actionBar' | 'dataBar' | 'settingsBar'
-| 'graphConfig' | 'events' | 'label' | 'playlists' | 'selectedElementIds'
-> & {
-  onEvent?: (info: EventInfo & {
-    graphEditor: GraphEditorRef;
-  }, draft: ControllerState) => boolean;
-}
-
-// export type UseControllerResult = [
-//   UseControllerData,
-//   {},
-// ]
 
 const closeAllBars = (draft:UseControllerData) => {
   draft.actionBar!.isOpen = false
@@ -45,8 +46,11 @@ const closeAllBars = (draft:UseControllerData) => {
   draft.settingsBar!.isOpen = false
 }
 
+/**
+ * Graph Editor Controller. There are events handlers for the graph editor. It return the changed props.
+ */
 export const useController = (
-  useControllerData: UseControllerData,
+  useControllerData: Partial<UseControllerData>,
   _graphEditorRef?: React.MutableRefObject<GraphEditorRef>,
   // options: ControllerOptions = {},
 ) => {
@@ -71,11 +75,11 @@ export const useController = (
     // targetNode: null,
   })
   const [state, updateState] = useImmer(controllerConfig)
-  type UpdateFunction = (draft: UseControllerData, config: {
+  type UpdateFunction = (draft: ControllerState, config: {
     graphEditorRef: React.MutableRefObject<GraphEditorRef>
   }) => void
-  const update = React.useCallback((updater: UpdateFunction) => {
-    updateState((draft) => {
+  const update = React.useCallback( (updater: UpdateFunction) => {
+    updateState( (draft) => {
       // @ts-ignore
       updater(draft, { graphEditorRef })
     })
@@ -97,14 +101,16 @@ export const useController = (
       : null
     // const isNode = element?.isNode()
     // const targetPath = isNode ? 'nodes' : 'edges'
-    update((draft) => {
+    update( (draft) => {
       try {
         if (!avoidHistoryRecording) {
           const {
             addHistory,
             events: undoEvents,
             // @ts-ignore
-          } = getUndoEvents([eventInfo], { graphEditor, draft })
+          } = getUndoEvents(
+            [eventInfo], { graphEditor, controllerState: state },
+          )
           if (addHistory) {
             eventHistory.add({
               do: [
@@ -133,20 +139,20 @@ export const useController = (
             event,
           })
         }
-        const isAllowedToProcess = controllerConfig.onEvent?.({
+        const isAllowedToProcess =  controllerConfig.onEvent?.({
           ...eventInfo,
           graphEditor,
           // @ts-ignore
           update,
+          state,
         }, draft)
         if (isAllowedToProcess === false) {
           return
         }
         const {
-          item: selectedItem,
-          // index: selectedItemIndex,
+          item: eventRelatedItem,
         } = (element && getSelectedItemByElement(element, draft)) ?? {}
-        const targetDataList = selectedItem?.data!// getSelectedItemByElement(element, draft).data
+        const targetDataList = eventRelatedItem?.data!// getSelectedItemByElement(element, draft).data
         switch (type) {
           case EVENT.REDO_EVENT:
             eventHistory.redo()
@@ -154,45 +160,26 @@ export const useController = (
           case EVENT.UNDO_EVENT:
             eventHistory.undo()
             break
-          case EVENT.UPDATE_DATA:
+          case EVENT.UPDATE_DATA: {
+            const {
+              selectedItem,
+            } = getSelectedElementInfo(draft, graphEditor)
             selectedItem!.data = payload.value
             break
+          }
           case EVENT.ADD_DATA:
             targetDataList.push({
               ...payload,
               value: [payload.value],
             })
             break
-          // case EVENT.MAKE_DATA_LABEL: {
-          //   const newLabel = [ELEMENT_DATA_FIELDS.DATA, dataItem.name]
-          //   const isSame = R.equals(draft.label[targetPath][selectedItem.id], newLabel)
-          //   if (isSame) {
-          //     delete draft.label[targetPath][selectedItem.id]
-          //   } else {
-          //     draft.label[targetPath][selectedItem.id] = newLabel
-          //   }
-          //   // targetDataList[index].name = payload.value
-          //   break
-          // }
-          // case EVENT.MAKE_DATA_LABEL_FIRST: {
-          //   draft.label.isGlobalFirst = false
-          //   break
-          // }
-          // case EVENT.MAKE_GLOBAL_DATA_LABEL: {
-          //   const newLabel = [ELEMENT_DATA_FIELDS.DATA, dataItem.name]
-          //   const isSame = R.equals(draft.label?.global[targetPath], newLabel)
-          //   draft.label!.global[targetPath] = isSame ? [ELEMENT_DATA_FIELDS.ID] : newLabel
-          //   break
-          // }
-          // case EVENT.MAKE_GLOBAL_DATA_LABEL_FIRST: {
-          //   draft.label!.isGlobalFirst = true
-          //   break
-          // }
           case EVENT.ADD_NODE: {
             const {
               items,
+              edgeItems,
             } = payload
             draft.nodes = draft.nodes.concat(items)
+            draft.edges = draft.edges.concat(edgeItems ?? [])
             // const { position } = payload
             // draft.nodes.push({
             //   id: `${draft.nodes.length + 1}`, // R.uuid(),
@@ -206,11 +193,11 @@ export const useController = (
           }
           case EVENT.DELETE_NODE: {
             const {
-              items = [],
+              itemIds = [],
             } = payload as {
-              items: {id: string} []
+              itemIds: string[]
             }
-            const itemIds = items.map((item) => item.id)
+            // const itemIds = items.map((item) => item.id)
             // const itemIndex = draft.nodes.findIndex((node) => node.id === item.id)
             // draft.nodes.splice(itemIndex, 1)
             draft.nodes = draft.nodes.filter((nodeItem) => !itemIds.includes(nodeItem.id))
@@ -243,12 +230,14 @@ export const useController = (
           }
           case EVENT.DELETE_EDGE: {
             const {
-              items = [],
+              itemIds = [],
             } = payload as {
-              items: {id: string} []
+              itemIds: string[]
             }
-            const itemIds = items.map((item) => item.id)
-            draft.edges = draft.edges.filter((edgeItem) => !itemIds.includes(edgeItem.id))
+            // const itemIds = items.map((item) => item.id)
+            draft.edges = draft.edges.filter(
+              (edgeItem) => !itemIds.includes(edgeItem.id),
+            )
             if (draft.mode === EDITOR_MODE.DELETE) {
               draft.mode = EDITOR_MODE.DEFAULT
             }
@@ -258,21 +247,95 @@ export const useController = (
             draft.selectedElementIds = []
             break
           }
+          case EVENT.ELEMENT_SELECTED_WITH_ZOOM: {
+            const {
+              itemIds,
+            } = payload
+            draft.selectedElementIds = itemIds
+            const {
+              selectedElement,
+            } = getSelectedElementInfo({
+              ...state,
+              selectedElementIds: itemIds,
+            }, graphEditor)
+            if (selectedElement) {
+              const {
+                viewport,
+              } = graphEditor
+              const TARGET_SIZE = 2000 // viewport.hitArea.width / 2// 800
+              // const MARGIN_SIZE = 180
+
+              // element.neighborhood().layout({
+              //   ...Graph.Layouts.circle,
+              //   boundingBox: {
+              //     x1: center.x - TARGET_SIZE / 2,
+              //     y1: center.y - TARGET_SIZE / 3,
+              //     w: TARGET_SIZE / 2,
+              //     h: TARGET_SIZE / 2,
+              //   },
+              // }).start()
+              // if (viewport.hitArea.width === TARGET_SIZE) {
+              //   TARGET_SIZE += 500
+              // }
+              let position
+              if (selectedElement.isNode()) {
+                position = selectedElement.position()
+              } else {
+                position = vectorMidpoint(
+                  Vector.fromObject(selectedElement.source().position()),
+                  Vector.fromObject(selectedElement.target().position()),
+                )
+              }
+              const center = {
+                x: position.x + TARGET_SIZE / 4,
+                y: position.y,
+              }
+              const centerPoint = new PIXI.Point(center.x, center.y)
+              viewport.center = centerPoint
+              // viewport.snapZoom({
+              //   center: centerPoint,
+              //   width: TARGET_SIZE,
+              //   forceStart: true,
+              //   time: Graph.Layouts.grid.animationDuration + 500,
+              //   removeOnComplete: true,
+              //   removeOnInterrupt: true,
+              //   noMove: false,
+              // })
+            }
+
+            break
+          }
+          case EVENT.BOX_SELECTION: {
+            const {
+              itemIds,
+            } = payload
+            draft.selectedElementIds = itemIds
+            break
+          }
           case EVENT.ELEMENT_SELECTED: {
-            draft.selectedElementIds = [selectedItem!.id]
-            if (event && event.data!.originalEvent.metaKey && element?.isNode()) {
+            const {
+              itemIds,
+            } = payload
+            draft.selectedElementIds = itemIds
+            const {
+              selectedElement,
+            } = getSelectedElementInfo({
+              ...state,
+              selectedElementIds: itemIds,
+            }, graphEditor)
+            if (event && event.data!.originalEvent.metaKey && selectedElement?.isNode()) {
               draft.dataBar!.isOpen = true
               const {
                 viewport,
               } = graphEditor
               const TARGET_SIZE = 2000 // viewport.hitArea.width / 2// 800
               // const MARGIN_SIZE = 180
-              const position = element.position()
+              const position = selectedElement.position()
               const center = {
                 x: position.x + TARGET_SIZE / 4,
                 y: position.y,
               }
-              element.neighborhood().layout({
+              selectedElement.neighborhood().layout({
                 ...Graph.Layouts.circle,
                 boundingBox: {
                   x1: center.x - TARGET_SIZE / 2,
@@ -291,6 +354,40 @@ export const useController = (
               })
             }
 
+            break
+          }
+          case EVENT.FOCUS: {
+            const {
+              itemIds = [],
+            } = payload
+            if (!draft.previousDataList) {
+              draft.previousDataList = []
+            }
+            draft.previousDataList.push({
+              nodes: draft.nodes.map((node) => ({ ...node, position: {
+                x: graphEditor?.cy.$id(node.id).position().x,
+                y: graphEditor?.cy.$id(node.id).position().y,
+              }, 
+              })),
+              edges: draft.edges,
+            })
+            draft.nodes = draft.nodes.filter((nodeItem) => itemIds.includes(nodeItem.id))
+            draft.edges = draft.edges.filter(
+              (edgeItem) => itemIds.includes(edgeItem.source)
+              && itemIds.includes(edgeItem.target),
+            )
+            draft.isFocusMode = true
+            break
+          }
+          case EVENT.DEFOCUS: {
+            if (draft.previousDataList) {
+              const previousData =  draft.previousDataList.pop()
+              draft.nodes = previousData!.nodes
+              draft.edges = previousData!.edges
+              if (draft.previousDataList.length === 0) {
+                draft.isFocusMode = false
+              }
+            }
             break
           }
           case EVENT.MODE_CHANGED: {
@@ -367,18 +464,36 @@ export const useController = (
           case EVENT.TOGGLE_FILTER_BAR:
             draft.settingsBar!.isOpen = !draft.settingsBar?.isOpen
             break
+          case EVENT.TOGGLE_PREFERENCES_MODAL:
+            draft.preferencesModal!.isOpen = !draft.preferencesModal?.isOpen
+            break
           case EVENT.TOGGLE_DATA_BAR:
             draft.dataBar!.isOpen = !draft.dataBar?.isOpen
             break
           case EVENT.TOGGLE_ACTION_BAR:
             draft.actionBar!.isOpen = !draft.actionBar?.isOpen
             break
-          case EVENT.IMPORT_DATA:
+          case EVENT.IMPORT_DATA:{
+
             R.mapObjIndexed((value, key) => {
               // @ts-ignore
               draft[key] = value
-            })(payload.value)
+            })(payload.value) 
+            const {
+              eventHistory: eventHistoryData,
+            } = (payload.value ?? {}) as unknown  as {
+              eventHistory: EventHistory;
+            }
+            eventHistory.set({
+              currentIndex: eventHistoryData.events.length,
+              items: eventHistoryData.events.map((event, i) => ({
+                id: R.uuid(),
+                do: [event],
+                undo: [eventHistoryData.undoEvents[i]],
+              })),
+            })
             break
+          }
           case EVENT.IMPORT_EVENTS:
             closeAllBars(draft)
             draft.events = [...(payload.value ?? [])]
@@ -416,6 +531,7 @@ export const useController = (
               })
             }
             draft.graphConfig!.layout = layout
+
             break
           }
           case EVENT.SET_POSITIONS_IMPERATIVELY: {
@@ -438,11 +554,11 @@ export const useController = (
             const {
               value,
             } = payload
-            draft.label!.nodes[selectedItem!.id] = value
+            draft.label!.nodes[eventRelatedItem!.id] = value
             break
           }
           case EVENT.CLEAR_NODE_LOCAL_LABEL: {
-            delete draft.label!.nodes[selectedItem!.id]
+            delete draft.label!.nodes[eventRelatedItem!.id]
             break
           }
           case EVENT.TOGGLE_NODE_GLOBAL_LABEL_FIRST: {
@@ -484,13 +600,13 @@ export const useController = (
           case EVENT.DELETE_CLUSTER_ELEMENT: {
             const {
               clusterId,
-              elementIds = [],
+              itemIds = [],
             } = payload
             const selectedCluster = draft.graphConfig?.clusters?.find(
               (cluster) => cluster.id === clusterId,
             )
             selectedCluster!.ids = selectedCluster!.ids.filter(
-              (id) => !elementIds.includes(id),
+              (id) => !itemIds.includes(id),
             )
             break
           }
@@ -498,7 +614,9 @@ export const useController = (
             const {
               items = [],
             } = payload
-            draft.graphConfig!.clusters = draft.graphConfig?.clusters?.concat(items)
+            draft.graphConfig!.clusters = (
+              draft.graphConfig?.clusters?.concat(items) ?? []
+            ).map((cluster) => ({ ...cluster, position: getHitAreaCenter(graphEditor) }))
             break
           }
           case EVENT.PRESS_ADD_CLUSTER_ELEMENT: {
@@ -509,15 +627,15 @@ export const useController = (
             draft.mode = EDITOR_MODE.ADD_CLUSTER_ELEMENT
             break
           }
-          case EVENT.ADD_CLUSTER_ELEMENTS: {
+          case EVENT.ADD_CLUSTER_ELEMENT: {
             const {
               clusterId,
-              elementIds,
+              itemIds,
             } = payload
             const selectedCluster = draft.graphConfig?.clusters?.find(
               (cluster) => cluster.id === clusterId,
             )
-            selectedCluster!.ids = R.union((selectedCluster?.ids ?? []), elementIds)
+            selectedCluster!.ids = R.union((selectedCluster?.ids ?? []), itemIds)
             break
           }
           case EVENT.CHANGE_CLUSTER_VISIBILITY: {
@@ -601,6 +719,102 @@ export const useController = (
             draft.playlists = draft.playlists!.filter((playlist) => !itemIds.includes(playlist.id))
             break
           }
+          case EVENT.ELEMENT_SETTINGS: {
+            if (draft.modals?.ElementSettings) {
+              draft.modals.ElementSettings.isOpen = true
+            }
+            break
+          }
+          case EVENT.ELEMENT_SETTINGS_FORM_SUBMIT: {
+            const {
+              name,
+              // value,
+            } = payload
+            // draft.modals.ElementSettings.isOpen = true
+            switch (name) { 
+              case 'Visualization':
+
+                break
+            
+              default:
+                break
+            }
+            break
+          }
+          case EVENT.ELEMENT_SETTINGS_FORM_CLEAR: {
+            const {
+              name,
+              // value,
+            } = payload
+            // draft.modals.ElementSettings.isOpen = true
+            switch (name) { 
+              case 'Visualization':
+
+                break
+            
+              default:
+                break
+            }
+            break
+          }
+          case EVENT.PREFERENCES_FORM_CLEAR: {
+            const {
+              value,
+              preferenceId,
+            } = payload
+            // draft.modals.ElementSettings.isOpen = true
+            switch (preferenceId) { 
+              case 'NodeView':
+                draft.graphConfig!.nodes!.view = {
+                  ...draft.graphConfig?.nodes?.view,
+                  ...value,
+                }
+                break
+              case 'EdgeView':
+                draft.graphConfig!.edges!.view = {
+                  ...draft.graphConfig?.edges?.view,
+                  ...value,
+                }
+                break
+            
+              default:
+                break
+            }
+            break
+          }
+          case EVENT.PREFERENCES_FORM_SUBMIT: {
+            const {
+              value,
+              preferenceId,
+            } = payload
+            // draft.modals.ElementSettings.isOpen = true
+            switch (preferenceId) { 
+              case 'NodeView':
+                draft.graphConfig!.nodes!.view = {
+                  ...draft.graphConfig?.nodes?.view,
+                  ...value,
+                }
+                break
+              case 'EdgeView':
+                draft.graphConfig!.edges!.view = {
+                  ...draft.graphConfig?.edges?.view,
+                  ...value,
+                }
+                break
+            
+              default:
+                break
+            }
+            break
+          }
+          case EVENT.CLOSE_MODAL: {
+            const {
+              name,
+            } = payload as { name: string }
+            // @ts-ignore
+            draft.modals[name].isOpen = false
+            break
+          }
           default:
             break
         }
@@ -608,7 +822,8 @@ export const useController = (
         console.log('error', error)
       }
     })
-  }, [])
+  }, [state])
+
   return [
     // @ts-ignore
     {
@@ -633,14 +848,15 @@ export const useController = (
       update,
       onEvent,
     },
-  ]
+  ] as const
 }
 
 const getValueByType = (type: RDFType, value: string) => value
 
-const DEFAULT_CONTROLLER_CONFIG: UseControllerData = {
+const DEFAULT_CONTROLLER_CONFIG: Partial<ControllerState> = {
   nodes: [],
   edges: [],
+  isLoading: false,
   label: {
     global: { nodes: ['id'], edges: ['id'] },
     nodes: {},
@@ -663,6 +879,8 @@ const DEFAULT_CONTROLLER_CONFIG: UseControllerData = {
   selectedElementIds: [] as string[] | undefined,
   graphConfig: {
     clusters: [],
+    nodes: DEFAULT_NODE_CONFIG,
+    edges: DEFAULT_EDGE_CONFIG,
   },
   playlists: [
     // {
@@ -676,4 +894,10 @@ const DEFAULT_CONTROLLER_CONFIG: UseControllerData = {
     //   events: MOCK_DATA.events,
     // },
   ],
+  modals: {
+    // ElementSettings: {
+    //   isOpen: false,
+    //   render: ElementSettingsModal,
+    // },
+  },
 }

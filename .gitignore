@@ -133,4 +133,7 @@ amplifytools.xcconfig
 .secret-*
 
 yarn.lock
+
 _old/
+
+docs/

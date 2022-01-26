@@ -1,6 +1,6 @@
 import { Icon } from '@components/Icon'
 import { EVENT } from '@constants'
-import { Box, IconButton } from '@material-ui/core'
+import { Box, IconButton } from '@mui/material'
 import { OnEventLite } from '@type'
 import React from 'react'
 import { ICON_SIZE, TripleItemProps } from './index'

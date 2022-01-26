@@ -8,13 +8,17 @@ type TransformStatic = PIXI.Transform
 // const NineSlicePlane = (<any>PIXI).NineSlicePlane || (<any>PIXI).mesh.NineSlicePlane
 
 declare module 'pixi.js' {
-  export type DisplayObject = {
+  export type DisplayObject = PIXI.DisplayObject & {
     yoga: YogaLayout;
 
     /**
          * Internal property for fast checking if object has yoga
          */
     __hasYoga: boolean;
+
+    _visible: boolean;
+
+    flex: boolean;
 
     /**
          * Applies yoga layout to DisplayObject

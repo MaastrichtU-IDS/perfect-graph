@@ -1,4 +1,5 @@
 import * as R from 'colay/ramda'
+import * as C from 'colay/color'
 import * as PIXI from 'pixi.js'
 import { applyDefaultProps as nativeApplyDefaultProps } from '@inlet/react-pixi'
 import { EventMap } from 'colay-ui/type'
@@ -9,69 +10,54 @@ import {
   Element, NodeData, EdgeData, ElementData,
   DisplayObjectWithYoga, NodeContext, EdgeContext,
   Cluster, EventInfo, GraphEditorRef, ControllerState,
-  ViewportRef, LightEventInfo,
+  ViewportRef, LiteEventInfo,
+  EdgeElement, NodeElement,
+  GraphRef, Playlist, 
 } from '@type'
 import {
-  ELEMENT_DATA_FIELDS, PIXI_EVENT_NAMES, EVENT,
+  ELEMENT_DATA_FIELDS, EVENT,
+  QUALITY_LEVEL,
 } from '@constants'
+import Vector from 'victor'
 
-// type Result = {
-//   x: number;
-//   y: number;
-//   width: number;
-//   height: number;
-//   fill: number;
-// }
-// export const processStyle = (style: Properties): Result => {
-//   const newStyle: Result = {} as Result
-//   const _ = R.forEachObjIndexed((val: any, key: string) => {
-//     let isNumber = true
-//     if (R.isString(val) && R.includes(val, '%')) {
-//       isNumber = false
-//       val = (parseFloat(R.replace(val, '%', '')) / 100)
-//     }
-//     switch (key) {
-//       case 'width':
-//         newStyle.width = isNumber ? val : val * parent.width
-//         break
-//       case 'height':
-//         newStyle.height = isNumber ? val : val * parent.height
-//         break
-//       case 'top':
-//         newStyle.y = isNumber ? val : val * parent.height
-//         break
-//       case 'left':
-//         newStyle.x = isNumber ? val : val * parent.width
-//         break
-//       case 'backgroundColor':
-//         newStyle.fill = C.rgbNumber(val)
-//         break
-//       case 'borderRadius':
-//         newStyle.radius = val
-//         break
-//       default:
-//         break
-//     }
-//   }, style)
-//   return newStyle
-// }
+export const processStyle = (props: any = {}, mutableInstance: PIXI.DisplayObject): any => {
+  const { parent } = mutableInstance
+  const {
+    style = {},
+  } = props
+  const newProps: any = {}
+  R.forEachObjIndexed<Record<string, any>>((val: any, key: string) => {
+    let isNumber = true
+    if (R.is(String)(val) && R.includes(val, '%')) {
+      isNumber = false
+      val = (parseFloat(R.replace(val, '%', '')) / 100)
+    }
+    switch (key) {
+      case 'width':
+        newProps.width = isNumber ? val : val * parent.width
+        break
+      case 'height':
+        newProps.height = isNumber ? val : val * parent.height
+        break
+      case 'top':
+        newProps.y = isNumber ? val : val * parent.height
+        break
+      case 'left':
+        newProps.x = isNumber ? val : val * parent.width
+        break
+      case 'backgroundColor':
+        newProps.fill = C.rgbNumber(val)
+        break
+      case 'borderRadius':
+        newProps.radius = val
+        break
+      default:
+        break
+    }
+  }, style)
+  return newProps
+}
 
-// position: 'absolute',
-//     width: 231,
-//     height: 20,
-//     left: 151,
-//     top: 72,
-//     fontFamily: 'Roboto',
-//     fontStyle: 'italic',
-//     fontWeight: '500',
-//     fontSize: '8.66%',
-//     display: 'flex',
-//     alignItems: 'center',
-//     justifyContent: 'flex-start',
-//     letterSpacing: 0,
-//     textDecorationLine: 'none',
-//     textTransform: 'lowercase',
-//     color: 'rgba(255,255,255,1)',
 const JUSTIFY_CONTENT = {
   'flex-start': 'left',
   center: 'center',
@@ -117,94 +103,27 @@ export const processTextStyle = (style: {
     // wordWrapWidth: 440,
   })
 }
-// export const PIXI_EVENT_NAMES = {
-//   onAdded: 'added',
-//   onClick: 'click',
-//   onMouseDown: 'mousedown',
-//   onMouseMove: 'mousemove',
-//   onMouseOut: 'mouseout',
-//   onMouseOver: 'mouseover',
-//   onMouseUp: 'mouseup',
-//   onMouseUpOutside: 'mouseupoutside',
-//   onPointerCancel: 'pointercancel',
-//   onPointerDown: 'pointerdown',
-//   onPointerMove: 'pointermove',
-//   onPointerOut: 'pointerout',
-//   onPointerOver: 'pointerover',
-//   onPointerTap: 'pointertap',
-//   onPointerUp: 'pointerup',
-//   onPointerUpOutside: 'pointerupoutside',
-//   onRemoved: 'removed',
-//   onRightClick: 'rightclick',
-//   onRightDown: 'rightdown',
-//   onRightUp: 'rightup',
-//   onRightUpOutside: 'rightupoutside',
-//   onTap: 'tap',
-//   onTouchCancel: 'touchcancel',
-//   onTouchEnd: 'touchend',
-//   onTouchEndoutside: 'touchendoutside',
-//   onTouchMove: 'touchmove',
-//   onTouchStart: 'touchstart',
-// }
 
 export type EventType = (e: PIXI.InteractionEvent) => void
 export type Events = EventMap
-
-// export const processEventProps = (props: Record<string, any>) => {
-//   const newProps = { ...props }
-//   Object
-//     .keys(PIXI_EVENT_NAMES)
-//     .map((eventName) => {
-//       // @ts-ignore
-//       const domEventName = PIXI_EVENT_NAMES[eventName]
-//       const callback = props[eventName]
-//       if (callback) {
-//         newProps[domEventName] = callback
-//       }
-//     })
-//   return newProps
-// }
 
 export const applyEvents = (
   instance: PIXI.DisplayObject,
   props: Record<string, any>,
 ) => {
-  Object
-    .keys(PIXI_EVENT_NAMES)
-    .map((eventName) => {
-      // @ts-ignore
-      const domEventName = PIXI_EVENT_NAMES[eventName]
-      const callback = props[eventName]
-      if (callback) {
-        // @ts-ignore
-        instance.on(domEventName, callback)
-      }
-    })
+  
 }
 
-const processProps = (props: Record<string, any>) => {
-  const newProps = { ...props }
-  Object
-    .keys(PIXI_EVENT_NAMES)
-    .map((eventName) => {
-      // @ts-ignore
-      const domEventName = PIXI_EVENT_NAMES[eventName]
-      const callback = props[eventName]
-      if (callback) {
-        newProps[domEventName] = callback
-      }
-    })
-  return newProps
-}
+const processProps = (props: Record<string, any>, _mutableInstance: PIXI.DisplayObject) => props
 
 type ApplyDefaultPropsConfig = {
   isFlex?: boolean;
   rescaleToYoga?: boolean;
 }
 
-export const preprocessProps = <T extends Record<string, any>>(props: T): T => ({
-  ...props,
-})
+export const preprocessProps = <T extends Record<string, any>>(props: T): T => props
+
+export const IS_FLEX_DEFAULT = false
 
 export const applyDefaultProps = <P extends Record<string, any> >(
   instance: PIXI.Graphics | PIXI.DisplayObject | PIXI.Container,
@@ -212,35 +131,34 @@ export const applyDefaultProps = <P extends Record<string, any> >(
   // @ts-ignore
   newProps: P = {},
   config: ApplyDefaultPropsConfig = {
-    isFlex: true,
+    isFlex: IS_FLEX_DEFAULT,
     rescaleToYoga: false,
   },
 ) => {
-  const mutableInstance = instance as DisplayObjectWithYoga
+  instance = instance as DisplayObjectWithYoga
   const {
-    isFlex = true,
+    isFlex = IS_FLEX_DEFAULT,
     rescaleToYoga = false,
   } = config
-  const { style = {}, ...restProps } = newProps
   if (isFlex) {
-    mutableInstance.flex = true // display === 'flex'
-    mutableInstance.yoga.flexDirection = style?.flexDirection ?? 'column'
-    mutableInstance.yoga.keepAspectRatio = R.equals(
+    const { style = {} } = newProps
+    instance.flex = true // display === 'flex'
+    instance.yoga.flexDirection = style?.flexDirection ?? 'column'
+    instance.yoga.keepAspectRatio = R.equals(
       newProps.resizeMode,
       'contain',
     )
     // @TODO: was true
-    mutableInstance.yoga.rescaleToYoga = rescaleToYoga
-    mutableInstance.yoga.fromConfig(style)
-    // mutableInstance.yoga.animationConfig = {
-    //   time: 200,
-    //   easing: (t) => t,
-    // }
+    instance.yoga.rescaleToYoga = rescaleToYoga
+    instance.yoga.fromConfig(style)
   }
+  // FOR CULLING
+  instance._visible = newProps.visible
+  // FOR CULLING
   return nativeApplyDefaultProps(
-    mutableInstance,
-    processProps(oldProps),
-    processProps(restProps),
+    instance,
+    processProps(oldProps, instance),
+    processProps(newProps, instance),
   )
 }
 
@@ -307,28 +225,45 @@ export const getTextureFromProps = (elementType: string, pureProps: Record<strin
 
 export const getSelectedItemByElement = (
   element: Element,
-  info: { nodes: NodeData[]; edges: EdgeData[]},
+  info: { nodes: NodeData[]; edges: EdgeData[] },
 ) => {
   const id = element.id()
   const isNode = element.isNode()
   const targetPath = isNode ? 'nodes' : 'edges'
   const index = info[targetPath].findIndex((targetItem: ElementData) => targetItem.id === id)
   return {
-    item: info[targetPath][index] as NodeData | EdgeData,
+    item: info[targetPath][index] as ElementData,
     index: index as number,
+  }
+}
+
+export const getSelectedElementInfo = (
+  controllerState: ControllerState, graphEditor: GraphEditorRef,
+) => {
+  const itemIds = controllerState.selectedElementIds
+  const selectedItemId = R.last(itemIds ?? [])
+  const selectedElement = selectedItemId
+    ? graphEditor.cy.$id(`${selectedItemId}`) as  EdgeElement | NodeElement
+    : null
+  if (!selectedElement) {
+    return {}
+  }
+  const isNode = selectedElement.isNode()
+  const targetPath = isNode ? 'nodes' : 'edges'
+  const index = controllerState[targetPath].findIndex(
+    (targetItem: ElementData) => targetItem.id === selectedItemId,
+  )
+  return {
+    selectedItem: controllerState[targetPath][index],
+    selectedElement,
+    index,
+    type: targetPath,
   }
 }
 
 export const getLabel = (path: string[] = [], item: ElementData): string => (R.isEmpty(path)
   ? item.id
   : (R.path([ELEMENT_DATA_FIELDS.DATA, ...path], item) ?? item.id))
-// const firstKey = path[0]
-// if (firstKey === ELEMENT_DATA_FIELDS.DATA) {
-//   const name = path[1]
-//   const foundDataItem = item.data?.find((dataItem) => dataItem.name === name)
-//   return foundDataItem?.value[0] ?? ''
-// }
-// return R.path(path)(item)
 
 export const readTextFile = async (blob: Blob, encoding?: string) => new Promise<string>(
   (res, rej) => {
@@ -384,27 +319,21 @@ export const calculateObjectBoundsWithoutChildren = (
 export const getClusterVisibility = (id: string, clusters: Cluster[] = []) => {
   let visible = true
   clusters.forEach((cluster) => {
-    visible = visible && (cluster.visible ?? true)
+    if (cluster.ids.includes(id)) {
+      visible = visible && !(cluster.visible ?? true)
+    }
   })
   return visible
 }
-// export const calculateDisplayObjectBounds = (object: PIXI.Container) => {
-//   const box = object.getLocalBounds()
-//   box.width = 45
-//   box.height = 45
-//   return {
-//     // x: object.x + (box.x - object.pivot.x) * object.scale.x,
-//     // y: object.y + (box.y - object.pivot.y) * object.scale.y,
-//     width: box.width * object.scale.x,
-//     height: box.height * object.scale.y,
-//     x: object.x * object.scale.x,
-//     y: object.y * object.scale.y,}
-//   }
 
 export const calculateVisibilityByContext = (
-  context: EdgeContext | NodeContext,
+  element: EdgeElement | NodeElement,
 ): boolean => {
-  const visibility = R.all(R.isTrue)(Object.values(context.settings.visibility))
+  const context = contextUtils.get(element)
+  const visibility = Object.values(context.settings.visibility).reduce(
+    (acc, curr) => acc && curr,
+    true,
+  ) as boolean
   return visibility
 }
 
@@ -412,52 +341,48 @@ export const calculateVisibilityByContext = (
 export const filterEdges = (nodes: NodeData[]) => (
   edges: EdgeData[],
 ) => {
-  const nodeMap = R.groupBy(R.prop('id'), nodes)
-  return R.filter(
+  const nodeMap = nodes.reduce(
+    (acc, curr) => {
+      acc[curr.id] = curr
+      return acc
+    },
+    {} as Record<string, NodeData>,
+  ) as Record<string, NodeData>
+  console.log('AA', nodeMap)
+  // R.groupBy(R.prop('id'), nodes)
+  return edges.filter(
     (
       edge: EdgeData,
     ) => !!(nodeMap[edge.source] && nodeMap[edge.target]),
-    edges,
   )
 }
 
 type GetUndoActionsSettings = {
-  draft: ControllerState,
+  controllerState: ControllerState,
   graphEditor: GraphEditorRef
 }
 export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSettings) => {
   const {
-    draft,
+    controllerState,
     graphEditor,
   } = settings
   // const addHistory = true
-  const undoEvents: LightEventInfo[] = R.unnest(
-    events.map((event): LightEventInfo[] => {
+  const undoEvents: LiteEventInfo[] = R.unnest(
+    events.map((event): LiteEventInfo[] => {
       const {
         // elementId,
         type,
         payload,
       } = event
-      const oldSelectedElementId = R.last(draft.selectedElementIds ?? [])
-      // const element = elementId
-      //   ? graphEditor.cy.$id(`${elementId}`)
-      //   : null
-      // const {
-      //   item,
-      //   index: itemIndex,
-      // } = (element && getSelectedItemByElement(element, draft)) ?? {}
+      const oldSelectedElementIds = controllerState.selectedElementIds
+      const {
+        selectedItem,
+      } = getSelectedElementInfo(controllerState, graphEditor)
       switch (type) {
-        case EVENT.ADD_NODE:
+        case EVENT.ADD_CLUSTER_ELEMENT:
           return [
             {
-              type: EVENT.DELETE_NODE,
-              payload,
-            },
-          ]
-        case EVENT.DELETE_NODE:
-          return [
-            {
-              type: EVENT.ADD_NODE,
+              type: EVENT.DELETE_CLUSTER_ELEMENT,
               payload,
             },
           ]
@@ -468,28 +393,11 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
               payload,
             },
           ]
-        case EVENT.DELETE_EDGE:
+        case EVENT.ADD_NODE:
           return [
             {
-              type: EVENT.ADD_EDGE,
+              type: EVENT.DELETE_NODE,
               payload,
-            },
-          ]
-
-        case EVENT.LAYOUT_CHANGED:
-          return [
-            {
-              type: EVENT.SET_POSITIONS_IMPERATIVELY,
-              payload: {
-                oldLayout: draft.graphConfig?.layout,
-                positions: graphEditor.cy.nodes().map((element) => ({
-                  position: {
-                    x: element.position().x,
-                    y: element.position().y,
-                  },
-                  elementId: element.id(),
-                })),
-              },
             },
           ]
         case EVENT.CHANGE_THEME:
@@ -497,17 +405,137 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
             {
               type: EVENT.CHANGE_THEME,
               payload: {
-                value: draft.actionBar?.theming?.value,
+                value: controllerState.actionBar?.theming?.value,
+              },
+            },
+          ]
+        case EVENT.CHANGE_CLUSTER_VISIBILITY:
+          return [
+            {
+              type: EVENT.CHANGE_CLUSTER_VISIBILITY,
+              payload: {
+                ...payload,
+                value: !payload.value,
+              },
+            },
+          ]
+        case EVENT.CLEAR_NODE_GLOBAL_LABEL:
+          return [
+            {
+              type: EVENT.SET_NODE_GLOBAL_LABEL,
+              payload: {
+                value: controllerState.label!.global!.nodes!,
+              },
+            },
+          ]
+        case EVENT.CLEAR_NODE_LOCAL_LABEL:
+          return [
+            {
+              type: EVENT.SET_NODE_LOCAL_LABEL,
+              payload: {
+                value: controllerState.label!.nodes[selectedItem!.id],
+              },
+            },
+          ]
+        case EVENT.CREATE_PLAYLIST:
+          return [
+            {
+              type: EVENT.DELETE_PLAYLIST,
+              payload: {
+                itemIds: payload.items?.map((item: Playlist) => item.id),
+              },
+            },
+          ]
+        case EVENT.CREATE_CLUSTER:
+          return [
+            {
+              type: EVENT.DELETE_CLUSTER,
+              payload: {
+                itemIds: payload.items?.map((item: Cluster) => item.id),
+              },
+            },
+          ]
+        case EVENT.DELETE_CLUSTER: {
+          const {
+            itemIds = [],
+          } = payload
+          const items = controllerState.graphConfig?.clusters?.filter(
+            (cluster) => itemIds.includes(cluster.id),
+          )
+          return [
+            {
+              type: EVENT.CREATE_CLUSTER,
+              payload: {
+                items,
+              },
+            },
+          ]
+        }
+        case EVENT.DELETE_CLUSTER_ELEMENT: {
+          return [
+            {
+              type: EVENT.ADD_CLUSTER_ELEMENT,
+              payload,
+            },
+          ]
+        }
+
+        case EVENT.DELETE_EDGE:
+          return [
+            {
+              type: EVENT.ADD_EDGE,
+              payload: {
+                items: controllerState.edges!.filter(
+                  (item) => payload.itemIds.includes(item.id),
+                ),
+              },
+            },
+          ]
+        case EVENT.DELETE_NODE: {
+          const {
+            itemIds,
+          } = payload
+          const relatedEdges = controllerState.edges.filter(
+            (edgeItem) => itemIds.includes(edgeItem.source)
+            || itemIds.includes(edgeItem.target),
+          )
+          return [
+            {
+              type: EVENT.ADD_NODE,
+              payload: {
+                items: controllerState.nodes!.filter(
+                  (item) => itemIds.includes(item.id),
+                ).map((item) => {
+                  const position = graphEditor.cy.$id(item.id).position()
+                  return {
+                    ...item,
+                    position,
+                  }
+                }),
+                edgeItems: relatedEdges,
+              },
+            },
+          ] }
+        case EVENT.DELETE_PLAYLIST:
+          return [
+            {
+              type: EVENT.CREATE_PLAYLIST,
+              payload: {
+                items: controllerState.playlists!.filter(
+                  (playlist: Playlist) => payload.itemIds.includes(playlist.id),
+                ),
               },
             },
           ]
         case EVENT.ELEMENT_SELECTED:
-          return oldSelectedElementId
+          return (oldSelectedElementIds && oldSelectedElementIds.length > 0)
             ? [
               {
                 ...event,
                 type: EVENT.ELEMENT_SELECTED,
-                elementId: oldSelectedElementId,
+                payload: {
+                  itemIds: oldSelectedElementIds,
+                },
               },
             ]
             : [
@@ -519,13 +547,62 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
                 },
               },
             ]
-        case EVENT.PRESS_BACKGROUND:
-          // @ts-ignore
-          return oldSelectedElementId
+        case EVENT.ELEMENT_SELECTED_WITH_ZOOM:
+          return (oldSelectedElementIds && oldSelectedElementIds.length > 0)
             ? [
               {
                 ...event,
-                elementId: oldSelectedElementId,
+                type: EVENT.ELEMENT_SELECTED,
+                payload: {
+                  itemIds: oldSelectedElementIds,
+                },
+              },
+            ]
+            : [
+              {
+                type: EVENT.PRESS_BACKGROUND,
+                payload: {
+                  x: graphEditor.viewport.center.x,
+                  y: graphEditor.viewport.center.y,
+                },
+              },
+            ]
+        case EVENT.LAYOUT_CHANGED:
+          return [
+            {
+              type: EVENT.SET_POSITIONS_IMPERATIVELY,
+              payload: {
+                oldLayout: controllerState.graphConfig?.layout,
+                positions: graphEditor.cy.nodes().map((element) => ({
+                  position: {
+                    x: element.position().x,
+                    y: element.position().y,
+                  },
+                  elementId: element.id(),
+                })),
+              },
+            },
+          ]
+
+        case EVENT.MODE_CHANGED:
+          return [
+            {
+              type: EVENT.MODE_CHANGED,
+              payload: {
+                value: controllerState.mode,
+              },
+            },
+          ]
+
+        case EVENT.PRESS_BACKGROUND:
+          // @ts-ignore
+          return oldSelectedElementIds
+            ? [
+              {
+                ...event,
+                payload: {
+                  itemIds: oldSelectedElementIds,
+                },
                 type: EVENT.ELEMENT_SELECTED,
                 event: {
                   data: {
@@ -537,7 +614,53 @@ export const getUndoEvents = (events: EventInfo[], settings: GetUndoActionsSetti
               },
             ]
             : []
+        case EVENT.SET_NODE_GLOBAL_LABEL:
+          return [
+            {
+              type: EVENT.SET_NODE_GLOBAL_LABEL,
+              payload: {
+                value: controllerState.label!.global!.nodes!,
+              },
+            },
+          ]
+        case EVENT.SET_NODE_LOCAL_LABEL:
+          return [
+            {
+              type: EVENT.SET_NODE_LOCAL_LABEL,
+              payload: {
+                value: controllerState.label!.nodes[selectedItem!.id],
+              },
+            },
+          ]
+        case EVENT.UPDATE_DATA:
+          return [
+            {
+              type: EVENT.UPDATE_DATA,
+              payload: {
+                value: selectedItem!.data,
+              },
+            },
+          ]
+        case EVENT.SET_POSITIONS_IMPERATIVELY:
+          return [
+            {
+              type: EVENT.SET_POSITIONS_IMPERATIVELY,
+              payload: {
+                oldLayout: controllerState.graphConfig?.layout,
+                positions: payload.positions.map(({ elementId }: { elementId: string }) => {
+                  const element = graphEditor.cy.$id(`${elementId}`)
+                  return {
+                    position: {
+                      x: element.position().x,
+                      y: element.position().y,
+                    },
+                    elementId,
+                  }
+                }),
 
+              },
+            },
+          ]
         default:
           break
       }
@@ -567,15 +690,35 @@ export const isPositionInBox = (position: Position, box: BoundingBox) => {
     x,
     y,
   } = position
-  return x >= box.x && y >= box.y && x <= box.x + box.width
-  && y <= box.y + box.height
+  const x_ = box.x + box.width
+  const y_ = box.y + box.height
+  const startPos = {
+    x: box.x < x_ ? box.x : x_,
+    y: box.y < y_ ? box.y : y_,
+  }
+  const endPos = {
+    x: box.x < x_ ? x_ : box.x,
+    y: box.y < y_ ? y_ : box.y,
+  }
+  return x >= startPos.x && y >= startPos.y && x <= endPos.x
+  && y <= endPos.y
 }
 
-export const getBoundingBox = (startPos: Position, endPos: Position) => ({
-  ...startPos,
-  width: Math.abs(startPos.x - endPos.x),
-  height: Math.abs(startPos.y - endPos.y),
-})
+export const getBoundingBox = (
+  startPos: Position, endPos: Position, abs = false,
+) => {
+  const width = endPos.x - startPos.x
+  const height = endPos.y - startPos.y
+  // const x = startPos.x < endPos.x ? startPos.x : endPos.x
+  // const y = startPos.y < endPos.y ? startPos.y : endPos.y
+  return {
+    ...startPos,
+    // x,
+    // y,
+    width: abs ? Math.abs(width) : width,
+    height: abs ? Math.abs(height) : height,
+  }
+}
 
 export const cyUnselectAll = (cy: cytoscape.Core) => {
   cy.elements(':selected').unselect()
@@ -591,22 +734,33 @@ export const getElementsCollectionByIds = (cy: cytoscape.Core, ids: string[]) =>
 
 export const getPointerPositionOnViewport = (
   viewport: ViewportRef,
-  event: MouseEvent,
+  event: TouchEvent,
 ) => {
-  const position = {
-    x: event.clientX,
-    y: event.clientY,
-  }
+  const position = getEventClientPosition(event)
   // @ts-ignore
   if (viewport.options.interaction) {
     // @ts-ignore
-    viewport.options.interaction.mapPositionToPoint(position, event.clientX, event.clientY)
+    viewport.options.interaction.mapPositionToPoint(position, position.x, position.y)
   }
   position.x /= viewport.scale.x
   position.y /= viewport.scale.y
   position.x += viewport.left
   position.y += viewport.top
   return position
+}
+
+export const getEventClientPosition = (e: TouchEvent | MouseEvent) => {
+  // @ts-ignore
+  const event = e.touches?.[0] ?? e.changedTouches?.[0] ?? e
+  return {
+    x: event.clientX,
+    y: event.clientY,
+  }
+}
+
+export const isMultipleTouches = (e: TouchEvent) => {
+  const touches = e.touches ?? e.changedTouches
+  return touches && touches.length > 0
 }
 
 export const contextUtils = {
@@ -622,4 +776,94 @@ export const contextUtils = {
   getEdgeContext: (element: Element): EdgeContext => element.data(
     ELEMENT_DATA_FIELDS.CONTEXT,
   ),
+}
+
+export const getElementData = (element: Element) => element.data(ELEMENT_DATA_FIELDS.DATA)
+
+export const getItemFromElement = (element: Element) => ({
+  id: element.id(),
+  data: getElementData(element),
+})
+
+export const pauseEvent = (e: Event) => {
+  if (e.stopPropagation) e.stopPropagation()
+  if (e.preventDefault) e.preventDefault()
+  e.cancelBubble = true
+  e.returnValue = false
+  return false
+}
+
+export const adjustVisualQuality = (objectCount: number, viewport: ViewportRef)=>{
+  const qualityLevel = objectCount < 150
+    ? QUALITY_LEVEL.HIGH
+    : (
+      objectCount < 400
+        ? QUALITY_LEVEL.MEDIUM
+        : QUALITY_LEVEL.LOW
+    )
+  if (viewport.qualityLevel !== qualityLevel) {
+    viewport.oldQualityLevel = viewport.qualityLevel
+    viewport.qualityLevel = qualityLevel
+    // viewport.qualityChanged = true
+    switch (qualityLevel) {
+      case QUALITY_LEVEL.HIGH:
+        // HIGH
+        PIXI.settings.ROUND_PIXELS = true
+        // @ts-ignore
+        PIXI.settings.PRECISION_FRAGMENT = PIXI.PRECISION.HIGH
+        PIXI.settings.RESOLUTION = 32// 64// window.devicePixelRatio
+        PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.LINEAR
+        break
+      case QUALITY_LEVEL.MEDIUM:
+        PIXI.settings.ROUND_PIXELS = false// true
+        // @ts-ignore
+        PIXI.settings.PRECISION_FRAGMENT = PIXI.PRECISION.MEDIUM
+        PIXI.settings.RESOLUTION = 12// 32// 64// window.devicePixelRatio
+        PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST
+        break
+      case QUALITY_LEVEL.LOW:
+        PIXI.settings.ROUND_PIXELS = false
+        // @ts-ignore
+        PIXI.settings.PRECISION_FRAGMENT = PIXI.PRECISION.LOW
+        PIXI.settings.RESOLUTION = 0.8// 32// 64// window.devicePixelRatio
+        PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST
+        break
+      default:
+        break
+    }
+  }
+}
+
+export const vectorMidpoint = (from: Vector, to: Vector) => {
+  return to.clone()
+    .subtract(from)
+    .divideScalar(2)
+    .add(from)
+}
+
+export const getHitAreaCenter = (graphRef: GraphRef) => {
+  const { hitArea } = graphRef.viewport
+  return {
+    x: hitArea.x + hitArea.width / 2,
+    y: hitArea.y + hitArea.height / 2,
+  }
+}
+
+export const isFiltered = (element: Element) => {
+  return contextUtils.get(element).settings.filtered
+}
+
+export const getViewportZoom = (graphRef: GraphRef) => {
+  const { viewport } = graphRef
+  return viewport.scale.x
+}
+
+export const isValidURL = (value: string) => {
+  let url
+  try {
+    url = new URL(value)
+  } catch (_) {
+    return false
+  }
+  return url.protocol === 'http:' || url.protocol === 'https:'
 }

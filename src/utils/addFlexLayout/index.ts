@@ -1,9 +1,13 @@
 import * as PIXI from 'pixi.js'
+import { IS_FLEX_DEFAULT } from '@utils'
 import { initializeYogaLayout, yogaSetRenderer } from './flex-layout'
 
-initializeYogaLayout()
-// @ts-ignore
-yogaSetRenderer(PIXI.autoDetectRenderer())
+if (IS_FLEX_DEFAULT) {
+  console.log('FLEX_LAYOUT_ADDED')
+  initializeYogaLayout()
+  // @ts-ignore
+  yogaSetRenderer(PIXI.autoDetectRenderer())
+}
 
 // const containerStyle = {
 //   justifyContent: 'space-between',

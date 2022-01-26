@@ -12,11 +12,29 @@ import { calculateVisibilityByContext, contextUtils } from '@utils'
 import { useInitializedRef } from 'colay-ui/hooks/useInitializedRef'
 
 export type Props = {
+  /**
+   * Related element
+   */
   element: Element;
+  /**
+   * Element data
+   */
   item: ElementData
+  /**
+   * The created cytoscape instance
+   */
   cy: Core;
+  /**
+   * The element context reference
+   */
   contextRef: React.RefObject<ElementContext>;
+  /**
+   * The element config
+   */
   config: NodeConfig | EdgeConfig;
+  /**
+   * The Filter config
+   */
   filter?: ElementFilterOption<Element>
 }
 
@@ -24,6 +42,11 @@ type Result = {
 
 }
 
+const DEFAULT_RENDER_EVENTS = [] as string[]
+
+/**
+ * To support common features of node and edge.
+ */
 export const useElement = (props: Props): Result => {
   const {
     // cy,
@@ -33,7 +56,7 @@ export const useElement = (props: Props): Result => {
     item,
   } = props
   const {
-    renderEvents = [],
+    renderEvents = DEFAULT_RENDER_EVENTS,
   } = config
   const initializedRef = useInitializedRef()
   // Update data
@@ -82,11 +105,11 @@ export const useElement = (props: Props): Result => {
       /// ***ADD SELECT_EDGE and SELECT_NODE Events
       return () => {
         renderEvents.forEach((eventName) => {
-          element.off(eventName)
+          element.removeListener(eventName)
         })
         /// ADD SELECT_EDGE and SELECT_NODE Events ***
-        element.off(CYTOSCAPE_EVENT.select)
-        element.off(CYTOSCAPE_EVENT.unselect)
+        element.removeListener(CYTOSCAPE_EVENT.select)
+        element.removeListener(CYTOSCAPE_EVENT.unselect)
         /// *** ADD SELECT_EDGE and SELECT_NODE Events
       }
     },
@@ -101,11 +124,17 @@ export const useElement = (props: Props): Result => {
     if (oldFiltered !== filtered) {
       contextUtils.update(element, contextRef.current)
       // @ts-ignore
-      if (calculateVisibilityByContext(contextRef.current!)) {
+      if (calculateVisibilityByContext(element)) {
         contextRef.current?.render()
       }
     }
   }, [config.filter])
+
+  // Add fields
+  React.useMemo(() => {
+    element.hovered = () => !!contextRef.current?.settings.hovered
+    element.filtered = () => !!contextRef.current?.settings.filtered
+  }, [element])
   return {
 
   }

@@ -1,12 +1,12 @@
 import React from 'react'
 import { wrapComponent } from 'colay-ui'
 import * as R from 'colay/ramda'
-import * as C from 'colay/color'
+import Vector from 'victor'
 import * as PIXI from 'pixi.js'
 import { useTheme } from '@core/theme'
 import { useEdge } from '@hooks'
-import { contextUtils, calculateVisibilityByContext } from '@utils'
-import { EDGE_CONTAINER_Z_INDEX } from '@constants'
+import { contextUtils, calculateVisibilityByContext, vectorMidpoint } from '@utils'
+import { EDGE_CONTAINER_Z_INDEX, CYTOSCAPE_EVENT } from '@constants'
 import {
   RenderEdge,
   EdgeConfig,
@@ -15,24 +15,40 @@ import {
   NodeElement,
   GraphRef,
 } from '@type'
-import * as V from 'colay/vector'
-
 import { Graphics, drawLine as defaultDrawLine } from '../Graphics'
 import { Container, ContainerRef } from '../Container'
 
 export type EdgeContainerProps = {
   children: RenderEdge;
+  /**
+   * Edge data
+   */
   item: any;
+  /**
+   * Related graph id
+   */
   graphID: string;
-  drawLine?: DrawLine;
-  config?: EdgeConfig;
+  /**
+   * Related graph instance ref
+   */
   graphRef: React.RefObject<GraphRef>;
+  /**
+   * Draw line function for edge connection vector
+   */
+  drawLine?: DrawLine;
+  /**
+   * Edge config data
+   */
+  config: EdgeConfig;
 }
 
 export type EdgeContainerType = React.FC<EdgeContainerProps>
 const DEFAULT_DISTANCE = 36
 const DEFAULT_MARGIN = 10
 
+/**
+ * The calculator for the edges connection info. 
+ */
 export const calculateEdgeGroupInfo = (edge: EdgeElement) => {
   const edgeID = edge.id()
   const targetElement = edge.target()
@@ -41,9 +57,11 @@ export const calculateEdgeGroupInfo = (edge: EdgeElement) => {
   const betweenEdgesCount = betweenEdges.length
   const betweenEdgesMedian = Math.floor(betweenEdgesCount / 2)
   let edgeIndex = 0
-  betweenEdges.forEach((edgeEl, i) => {
+  // @ts-ignore
+  betweenEdges.some((edgeEl: EdgeElement, i) => {
     if (edgeEl.id() === edgeID) {
       edgeIndex = i
+      return true
     }
   })
   let sortedIndex = 0
@@ -59,20 +77,24 @@ export const calculateEdgeGroupInfo = (edge: EdgeElement) => {
     count: betweenEdgesCount,
   }
 }
+
+/**
+ * The calculator for the edge connection vector. 
+ */
 export const calculateVectorInfo = (
   source: NodeElement,
   to: NodeElement,
 ) => {
-  const fromPosition = source.position()
-  const toPosition = to.position()
-  const distanceVector = V.subtract(fromPosition)(toPosition)
-  // const distanceVector = R.pipe(
-  //   V.subtract(fromPosition),
-  // )(toPosition)
-  const unitVector = V.normalize(distanceVector)
-  const normVector = V.rotate(Math.PI / 2)(unitVector)
-  // V.multiplyScalar(sortedIndex > 0 ? 1 : -1)(V.rotate(Math.PI / 2)(unitVector))
-  const midpointPosition = V.midpoint(fromPosition)(toPosition)
+  const fromPosition = Vector.fromObject(source.position())
+  const toPosition = Vector.fromObject(to.position())
+  const distanceVector = toPosition.clone().subtract(fromPosition)
+
+  const unitVector = distanceVector.clone().normalize()
+  const normVector = unitVector.clone().rotate(Math.PI / 2)
+  const midpointPosition = vectorMidpoint(
+    fromPosition,
+    toPosition,
+  )
   const sign = source.id() > to.id() ? 1 : -1
   return {
     fromPosition,
@@ -81,10 +103,11 @@ export const calculateVectorInfo = (
     unitVector,
     normVector,
     midpointPosition,
-    undirectedUnitVector: V.multiplyScalar(sign)(unitVector),
-    undirectedNormVector: V.multiplyScalar(sign)(normVector),
+    undirectedUnitVector: unitVector.clone().multiplyScalar(sign),
+    undirectedNormVector: normVector.clone().multiplyScalar(sign),
   }
 }
+
 const EdgeContainerElement = (
   props: EdgeContainerProps,
   __: React.ForwardedRef<EdgeContainerType>,
@@ -95,61 +118,63 @@ const EdgeContainerElement = (
     graphID,
     children,
     drawLine = defaultDrawLine,
-    config = {},
+    config,
     graphRef,
   } = props
   const theme = useTheme()
   const graphicsRef = React.useRef<PIXI.Graphics>(null)
   const containerRef = React.useRef<ContainerRef>(null)
-  // const edgeID = React.useMemo(() => _item.id ?? R.uuid(), [])
-  // const item = {
-  //   ..._item,
-  //   id: edgeID,
-  // }
   const drawLineCallback = React.useCallback(({
     element,
     cy,
+    vectorInfo,
+    edgeGroupInfo,
   }: {
-    cy: cytoscape.Core,
-    element: EdgeElement,
+    cy: cytoscape.Core;
+    element: EdgeElement;
+    vectorInfo: any;
+    edgeGroupInfo: any;
   }) => {
     const targetElement = element.target()
     const sourceElement = element.source()
-    const edgeGroupInfo = calculateEdgeGroupInfo(element)
     const {
       distanceVector,
       // fromPosition,
       // toPosition,
-      midpointPosition,
+      // midpointPosition,
       normVector,
       unitVector,
       undirectedUnitVector,
       undirectedNormVector,
-    } = calculateVectorInfo(sourceElement, targetElement)
-    containerRef.current!.x = midpointPosition.x + (
-      edgeGroupInfo.sortedIndex * undirectedNormVector.x * DEFAULT_DISTANCE
-    )
-    containerRef.current!.y = midpointPosition.y + (
-      edgeGroupInfo.sortedIndex * undirectedNormVector.y * DEFAULT_DISTANCE
-    )
+    } = vectorInfo
+    
     const sourceElementContext = contextUtils.getNodeContext(sourceElement)
     const targetElementContext = contextUtils.getNodeContext(targetElement)
     // calculate sortedIndex
+    const {
+      view: {
+        lineType,
+        fill,
+        width,
+        alpha,
+      },
+    } = config
     return drawLine({
       item,
       element,
       // cy,
+      type: lineType,
       graphRef,
       theme,
       sourceElement,
       targetElement,
-      fill: C.rgbNumber(
-        element.selected()
-          ? theme.palette.primary.main
-          : (element.source().selected() || element.target().selected())
-            ? theme.palette.secondary.main
-            : theme.palette.background.paper,
-      ),
+      fill: element.selected()
+        ? fill.selected
+        : (element.source().selected() || element.target().selected())
+          ? fill.nodeSelected
+          : fill.default,
+      alpha,
+      width,
       graphics: graphicsRef.current!,
       to: targetElementContext.boundingBox,
       from: sourceElementContext.boundingBox,
@@ -167,11 +192,24 @@ const EdgeContainerElement = (
       ...edgeGroupInfo,
       cy,
     })
-  }, [containerRef, graphicsRef])
+  }, [containerRef, graphicsRef, config])
   const onPositionChange = React.useCallback(({ element }) => {
+    const edgeGroupInfo = calculateEdgeGroupInfo(element)
+    const vectorInfo = calculateVectorInfo(
+      element.source(), 
+      element.target(),
+    )
+    containerRef.current!.x = vectorInfo.midpointPosition.x + (
+      edgeGroupInfo.sortedIndex * vectorInfo.undirectedNormVector.x * DEFAULT_DISTANCE
+    )
+    containerRef.current!.y = vectorInfo.midpointPosition.y + (
+      edgeGroupInfo.sortedIndex * vectorInfo.undirectedNormVector.y * DEFAULT_DISTANCE
+    )
     drawLineCallback({
       cy,
       element,
+      edgeGroupInfo,
+      vectorInfo,
     })
   }, [drawLineCallback])
   const { element, cy, context } = useEdge({
@@ -180,50 +218,71 @@ const EdgeContainerElement = (
     config,
     item,
   })
-  React.useEffect(
-    () => {
-      drawLineCallback({
-        cy,
-        element,
-      })
-    },
-  )
+  // React.useEffect(() => {
+  //   const sourceId = element.source().id()
+  //   const targetId = element.target().id()
+  //   cy.elements(`edge[source = "${sourceId}"][target = "${targetId}"], edge[source = "${targetId}"][target = "${sourceId}"]`)
+  //     .on('add remove', (event)=>{
+  //       console.log('ADD or REMOVE', event)
+  //     })
+  //   console.log('EDGE', cy.elements(`edge[source = "${sourceId}"][target = "${targetId}"], edge[source = "${targetId}"][target = "${sourceId}"]`))
+  // }, [])
   React.useEffect(
     () => {
       containerRef.current!.zIndex = EDGE_CONTAINER_Z_INDEX
     },
     [],
   )
+  const sourceElement = element.source()
+  const targetElement = element.target()
   const edgeGroupInfo = calculateEdgeGroupInfo(element)
+  const vectorInfo = calculateVectorInfo(
+    sourceElement, 
+    targetElement,
+  )
+  React.useEffect(
+    () => {
+      drawLineCallback({
+        cy,
+        element,
+        edgeGroupInfo,
+        vectorInfo,
+      })
+    },
+  )
   const {
     // normVector,
     midpointPosition,
     toPosition,
     fromPosition,
     undirectedNormVector,
-  } = calculateVectorInfo(element.source(), element.target())
-  const visible = calculateVisibilityByContext(context)
+  } = vectorInfo
+  const visible = calculateVisibilityByContext(element)
   const filtered = context.settings.filtered && context.settings.nodeFiltered
   const opacity = filtered
     ? 1
     : (config?.filter?.settings?.opacity ?? 0.2)
 
-  const targetElement = element.target()
-  const sourceElement = element.source()
+  
   return (
     <>
       <Container
         ref={containerRef}
         alpha={opacity}
         visible={visible}
-        style={{
-          left: midpointPosition.x + (
-            edgeGroupInfo.sortedIndex * undirectedNormVector.x * DEFAULT_DISTANCE
-          ),
-          top: midpointPosition.y + (
-            edgeGroupInfo.sortedIndex * undirectedNormVector.y * DEFAULT_DISTANCE
-          ),
-          zIndex: EDGE_CONTAINER_Z_INDEX,
+        x={midpointPosition.x + (
+          edgeGroupInfo.sortedIndex * undirectedNormVector.x * DEFAULT_DISTANCE
+        )}
+        y={midpointPosition.y + (
+          edgeGroupInfo.sortedIndex * undirectedNormVector.y * DEFAULT_DISTANCE
+        )}
+        zIndex={EDGE_CONTAINER_Z_INDEX}
+        interactive
+        mouseover={() => {
+          element.emit(CYTOSCAPE_EVENT.mouseover)
+        }}
+        mouseout={() => {
+          element.emit(CYTOSCAPE_EVENT.mouseout)
         }}
       >
         {
@@ -238,6 +297,9 @@ const EdgeContainerElement = (
             ...edgeGroupInfo,
             targetElement,
             sourceElement,
+            config,
+            context,
+            label: item.id,
           })
         }
       </Container>
@@ -245,11 +307,18 @@ const EdgeContainerElement = (
         ref={graphicsRef}
         visible={visible}
         alpha={opacity}
+        // interactive
+        // buttonMode
       />
     </>
   )
 }
 
+
+/**
+ * The container for Edge Elements. It facilitates drawLine, visibility, and other
+ * operations.
+ */
 export const EdgeContainer = wrapComponent<EdgeContainerProps>(
   EdgeContainerElement,
   {

@@ -1,20 +1,25 @@
-import React from 'react'
-import { PixiComponent } from '@inlet/react-pixi'
-import { PropsWithRef } from 'colay-ui/type'
-import { wrapComponent } from 'colay-ui'
-import { useTheme, ThemeProps } from '@core/theme'
-import * as PIXI from 'pixi.js'
-import * as C from 'colay/color'
+import { drawGraphics } from '@components/Graphics'
+import { ThemeProps, useTheme } from '@core/theme'
+import { Graphics as InletGraphics, PixiComponent } from '@inlet/react-pixi'
 import {
   applyDefaultProps, preprocessProps,
 } from '@utils'
-import {
-  PIXIBasicStyle, PIXIShapeStyle, PIXIBasicProps,
-} from '@type'
+import { wrapComponent } from 'colay-ui'
+import { PropsWithRef } from '@type'
+import * as R from 'colay/ramda'
+import * as PIXI from 'pixi.js'
+import React from 'react'
 
-export type ViewProps = PIXIBasicProps & {
-  style?: PIXIBasicStyle & PIXIShapeStyle;
+export type ViewProps = React.ComponentProps<typeof InletGraphics> & {
   children?: React.ReactNode;
+  /**
+   * Background color
+   */
+  fill?: number
+  /**
+   * Rectangle radius value
+   */
+  radius?: number
 }
 
 export type ViewType = React.FC<ViewProps>
@@ -34,29 +39,14 @@ const ViewPIXI = PixiComponent<ViewProps & ThemeProps, PIXI.Graphics>('View', {
   },
   applyProps: (instance: PIXI.Graphics, oldProps, _props) => {
     const props = preprocessProps(_props)
-    const {
-      style: {
-        width = instance.width,
-        height = instance.height,
-        backgroundColor, //= props.theme!.palette.background.paper,
-        borderRadius = 0,
-        borderWidth = 0,
-        borderColor = 'black',
-      } = {},
-    } = props
-    instance.clear()
-    if (backgroundColor) {
-      instance.beginFill(C.rgbNumber(backgroundColor), C.getAlpha(backgroundColor))
-      instance.lineStyle(borderWidth, C.rgbNumber(borderColor))
-      const radius = width / 2
-      if ((width === height) && (borderRadius >= radius)) {
-        instance.drawCircle(radius, radius, radius)
-      } else {
-        instance.drawRoundedRect(0, 0, width, height, borderRadius)
-      }
-    }
-    instance.endFill()
-    applyDefaultProps(instance, oldProps, props)
+    // @ts-ignore
+    drawGraphics(instance, props)
+    const EXCLUDE_KEYS = ['fill', 'width', 'height']
+    applyDefaultProps(
+      instance, 
+      R.omit(EXCLUDE_KEYS, oldProps),
+      R.omit(EXCLUDE_KEYS, props),
+    )
   },
 })
 
@@ -75,11 +65,10 @@ const ViewElement = (
   )
 }
 
+/**
+ * The rectangle creator for PIXI.
+ */
 export const View = wrapComponent<
 PropsWithRef<PIXI.Container, ViewProps>
+// @ts-ignore
 >(ViewElement, { isForwardRef: true })
-// >
-//   <FlexContainer style={rest.style}>
-//     {children}
-//   </FlexContainer>
-// </ViewPIXI>

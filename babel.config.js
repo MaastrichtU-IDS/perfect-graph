@@ -17,7 +17,7 @@
 					".es6",
 					".mjs",
 					".ts",
-					".tsx"
+					".tsx",
 				],
 				"alias": {
 					"@assets": "./src/assets",
@@ -27,7 +27,10 @@
 					"@root": "./src",
 					"@core": "./src/core",
 					"@constants": "./src/constants",
-					"@type": "./src/type"
+					"@type": "./src/type",
+					'@material-ui/core': '@mui/material',
+    			'@material-ui/icons': '@mui/icons-material',
+    			'@material-ui/styles': '@mui/styles',
 				}
 			}
 		],

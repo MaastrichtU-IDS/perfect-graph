@@ -4,7 +4,7 @@ import { TYPE_ICONS } from '@components/GraphEditor/constants'
 import React from 'react'
 import {
   Grid, GridProps,
-} from '@material-ui/core'
+} from '@mui/material'
 import { TEXT_STYLE_MAP, TripleInput } from './TripleInput'
 
 type NewTripleItemProps = {

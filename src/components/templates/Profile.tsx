@@ -1,26 +1,15 @@
-import React from 'react'
-import { wrapComponent } from 'colay-ui'
-import {
-  DataItem,
-} from '@type'
-import { Position } from 'colay-ui/type'
-import { Pressable } from '@components/Pressable'
-import { Image } from '@components/Image'
 import { Text } from '@components/Text'
-import { View, ViewProps } from '@components/View'
-
-export type NodeData = {
-  id: string;
-  position?: Position;
-  data?: DataItem[];
-}
+import { View } from '@components/View'
+import { wrapComponent } from 'colay-ui'
+import React from 'react'
+// import { Image } from '@components/Image'
 
 export type ProfileProps = {
   name: string;
   story: string;
   image: string;
-  style?: ViewProps['style'];
-  onPress?: (p: { node: Node; data: NodeData }) => void;
+  link?: string;
+  onClick?: () => void;
 }
 // const SWITCH_COLLAPSE = 'SWITCH_COLLAPSE'
 
@@ -32,32 +21,38 @@ const ProfileElement = (
 ) => {
   const {
     name,
-    image,
+    // image,
     story,
+    link,
+    onClick,
   } = props
   return (
     <>
-      <View style={{
-        width: 300,
-        height: 150,
-        flexDirection: 'row',
-        // paddingLeft: 10,
-        // paddingTop: 10,
-      }}
+      <View 
+        width={300}
+        height={150}
+        radius={30}
+      // backgroundColor: '#304e57',
       >
-        <Image
+        {/* <Image
           source={{ uri: image }}
           style={{
             width: 100,
             height: 100,
           }}
-        />
+        /> */}
         <View
-          style={{ flexDirection: 'column', width: 200 }}
+          width={200} 
         >
-          <Pressable
-            style={{
-              left: 10,
+          <View
+            x={10}
+            interactive
+            buttonMode
+            pointertap={() => {
+              if (link) {
+                window.open(link, '_blank')
+              }
+              onClick?.()
             }}
           >
             <Text
@@ -65,12 +60,10 @@ const ProfileElement = (
             >
               {name}
             </Text>
-          </Pressable>
+          </View>
           <Text
           // @ts-ignore
-            style={[style.paragraph, {
-              left: 10,
-            }]}
+            style={style.paragraph}
           >
             {story}
           </Text>
@@ -82,6 +75,9 @@ const ProfileElement = (
   )
 }
 
+/**
+ * The simple profile component.
+ */
 export const ProfileTemplate = wrapComponent<ProfileProps>(
   ProfileElement,
   {
@@ -107,6 +103,8 @@ const style = {
     width: 150,
     wordWrap: true,
     wordWrapWidth: 150,
+    color: 'white',
+    left: 30,
   },
   title: {
     // align: 'center',
@@ -125,6 +123,7 @@ const style = {
     width: 150,
     wordWrap: true,
     wordWrapWidth: 150,
+    color: 'white',
   },
 }
 
