@@ -1,15 +1,14 @@
+import React from 'react'
+import MDX from 'unitx-docs-pack/mdx-runtime'
+import {TSDoc} from 'unitx-docs-pack'
+import * as R from 'unitx/ramda'
+import * as UnitxUI from 'unitx-ui'
+import components from '@storybookComponents'
 
-  import React from 'react';
-  import MDX from 'unitx-docs-pack/mdx-runtime'
-  import { TSDoc } from 'unitx-docs-pack'
-  import * as R from 'unitx/ramda';
-  import * as UnitxUI from 'unitx-ui';
-  import components from '@storybookComponents';
-
-  export const GettingStarted = () => (
-      <>
-        <MDX components={components}>
-          {`# PerfectGraph
+export const GettingStarted = () => (
+  <>
+    <MDX components={components}>
+      {`# PerfectGraph
 
 ## Motivation
 
@@ -58,12 +57,10 @@ function MyGraph() {
 
 Furthermore please refer to the Components Section.
 `}
-        </MDX>
-        
-      </>
-    )
-    export default {
-      component: GettingStarted,
-      title: 'intro/GettingStarted',
-    };
-  
+    </MDX>
+  </>
+)
+export default {
+  component: GettingStarted,
+  title: 'intro/GettingStarted'
+}

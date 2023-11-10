@@ -1,15 +1,14 @@
+import React from 'react'
+import MDX from 'unitx-docs-pack/mdx-runtime'
+import {TSDoc} from 'unitx-docs-pack'
+import * as R from 'unitx/ramda'
+import * as UnitxUI from 'unitx-ui'
+import components from '@storybookComponents'
 
-  import React from 'react';
-  import MDX from 'unitx-docs-pack/mdx-runtime'
-  import { TSDoc } from 'unitx-docs-pack'
-  import * as R from 'unitx/ramda';
-  import * as UnitxUI from 'unitx-ui';
-  import components from '@storybookComponents';
-
-  export const Profile = () => (
-      <>
-        <MDX components={components}>
-          {`## Usage
+export const Profile = () => (
+  <>
+    <MDX components={components}>
+      {`## Usage
 To create a Profile View easily, you can just pass data and Profile Template.
 Check example
 
@@ -48,12 +47,11 @@ Check example
 )}
 />
 \`\`\``}
-        </MDX>
-        <TSDoc relativePath={'src/components/templates/Profile'} root="/tsdoc" title="Types"/>
-      </>
-    )
-    export default {
-      component: Profile,
-      title: 'components/templates',
-    };
-  
+    </MDX>
+    <TSDoc relativePath={'src/components/templates/Profile'} root="/tsdoc" title="Types" />
+  </>
+)
+export default {
+  component: Profile,
+  title: 'components/templates'
+}

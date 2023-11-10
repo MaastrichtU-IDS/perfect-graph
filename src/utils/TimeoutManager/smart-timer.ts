@@ -24,9 +24,8 @@ class MetadataRecord {
     public callback: Callback,
     public key: string,
     public ms: number,
-    public params: any[],
-  ) {
-  }
+    public params: any[]
+  ) {}
 }
 
 interface Metadata {
@@ -34,17 +33,17 @@ interface Metadata {
 }
 
 export interface TimeoutInstance {
-  clear: (erase?: boolean) => void;
-  executed: () => boolean;
-  exists: () => boolean;
-  lastExecuted: () => Date;
-  pause: () => number | boolean;
-  paused: () => boolean;
-  pending: () => boolean;
-  remaining: () => number;
-  restart: () => boolean | Checker;
-  resume: () => boolean | Checker;
-  set: (newCallback: Callback, newMs?: number, ...newParams: any[]) => Checker;
+  clear: (erase?: boolean) => void
+  executed: () => boolean
+  exists: () => boolean
+  lastExecuted: () => Date
+  pause: () => number | boolean
+  paused: () => boolean
+  pending: () => boolean
+  remaining: () => number
+  restart: () => boolean | Checker
+  resume: () => boolean | Checker
+  set: (newCallback: Callback, newMs?: number, ...newParams: any[]) => Checker
 }
 
 export class Timeout {
@@ -96,9 +95,9 @@ export class Timeout {
     }
 
     if (typeof args[1] === 'function') {
-      [key, callback, ms, ...params] = args
+      ;[key, callback, ms, ...params] = args
     } else {
-      [callback, ms, ...params] = args
+      ;[callback, ms, ...params] = args
       key = callback.toString()
     }
 
@@ -116,12 +115,7 @@ export class Timeout {
     Timeout.keyId[key] = setTimeout(invoke, ms || 0)
     Timeout.originalMs[key] = Timeout.originalMs[key] || ms
 
-    Timeout.metadata[key] = new MetadataRecord(
-      callback,
-      key,
-      ms,
-      params,
-    )
+    Timeout.metadata[key] = new MetadataRecord(callback, key, ms, params)
 
     return () => Timeout.executed(key)
   }
@@ -149,7 +143,7 @@ export class Timeout {
     let key: string
 
     if (typeof args[1] === 'function') {
-      [key] = args
+      ;[key] = args
     } else {
       const [callback] = args
       key = callback.toString()
@@ -163,7 +157,7 @@ export class Timeout {
    * @param key
    */
   static exists(key: string): boolean {
-    return key in Timeout.keyId || (Timeout.metadata)[key] !== undefined
+    return key in Timeout.keyId || Timeout.metadata[key] !== undefined
   }
 
   /**
@@ -179,9 +173,7 @@ export class Timeout {
    * @param key
    */
   static lastExecuted(key: string): Date {
-    return !Timeout.executed(key)
-      ? null
-      : new Date(Timeout.metadata[key].executedTime)
+    return !Timeout.executed(key) ? null : new Date(Timeout.metadata[key].executedTime)
   }
 
   /**
@@ -197,9 +189,7 @@ export class Timeout {
    * @param key
    */
   static paused(key: string): boolean {
-    return Timeout.exists(key)
-      && !Timeout.executed(key)
-      && Timeout.metadata[key].paused
+    return Timeout.exists(key) && !Timeout.executed(key) && Timeout.metadata[key].paused
   }
 
   /**
@@ -298,7 +288,7 @@ export class Timeout {
       remaining: () => Timeout.remaining(key),
       restart: () => Timeout.restart(key),
       resume: () => Timeout.resume(key),
-      set: (newCallback: Callback, newMs = 0, ...newParams: any[]) => Timeout.set(key, newCallback, newMs, ...newParams),
+      set: (newCallback: Callback, newMs = 0, ...newParams: any[]) => Timeout.set(key, newCallback, newMs, ...newParams)
     }
   }
 }

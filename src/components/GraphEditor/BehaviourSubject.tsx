@@ -1,5 +1,5 @@
 export type Subscription<V> = {
-  unsubscribe: () => void;
+  unsubscribe: () => void
 }
 export const BehaviorSubject = <T,>(value: T) => {
   type Subscriber = (val: T) => void
@@ -12,19 +12,17 @@ export const BehaviorSubject = <T,>(value: T) => {
       subject.subscribers.push(subscriber)
       const subscription = {
         unsubscribe: () => {
-          subject.subscribers = subject.subscribers.filter(
-            (subscriberItem) => subscriberItem !== subscriber,
-          )
-        },
+          subject.subscribers = subject.subscribers.filter(subscriberItem => subscriberItem !== subscriber)
+        }
       }
       return subscription
     },
     next: (nextValue: T) => {
       subject.value = nextValue
-      subject.subscribers.forEach((subscriber) => {
+      subject.subscribers.forEach(subscriber => {
         subscriber(subject.value)
       })
-    },
+    }
   }
   return subject
 }

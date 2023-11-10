@@ -17,8 +17,6 @@
     "cytoscape-fcose": "2.1.0",
     "cytoscape-spread": "3.0.0"
   },
-  "devDependencies": {
-    
-  },
+  "devDependencies": {},
   "private": true
 }

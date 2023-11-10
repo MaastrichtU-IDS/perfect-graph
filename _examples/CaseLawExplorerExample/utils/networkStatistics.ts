@@ -3,64 +3,48 @@ import * as R from 'colay/ramda'
 
 type Props = {
   nodes: {
-    id: string;
-    data: any;
+    id: string
+    data: any
   }[]
   edges: {
-    id: string;
-    source: string;
-    target: string;
-    data: any;
+    id: string
+    source: string
+    target: string
+    data: any
   }[]
 }
 export const calculateStatistics = (props: Props) => {
-  const {
-    nodes = [],
-    edges = []
-  } = props
+  const {nodes = [], edges = []} = props
   const cy = cytoscape({
     elements: R.concat(
-      nodes.map((n) => ({
+      nodes.map(n => ({
         data: n,
         group: 'nodes'
       })),
-      edges.map((e) => ({
+      edges.map(e => ({
         data: e,
         group: 'edges'
       }))
     ),
     headless: true
   })
-  const {
-    indegree: indegreeCentralityCalc,
-    outdegree: outdegreeCentralityCalc
-  } = cy.$().degreeCentralityNormalized({
+  const {indegree: indegreeCentralityCalc, outdegree: outdegreeCentralityCalc} = cy.$().degreeCentralityNormalized({
     // weight: (edge) => {
     //   return edge.connectedNodes().length
     // },
     // alpha: 1
     directed: true
   })
-  const {
-    degree: degreeCentralityCalc,
-  } = cy.$().degreeCentralityNormalized({
+  const {degree: degreeCentralityCalc} = cy.$().degreeCentralityNormalized({
     // weight: (edge) => {
     //   return edge.connectedNodes().length
     // },
     // alpha: 1
   })
-  const {
-    closeness: closenessCentralityCalc
-  } = cy.$().closenessCentralityNormalized({
-  })
-  const {
-    betweenness: betweennessCentralityCalc
-  } = cy.$().betweennessCentrality({})
-  const {
-    rank: pageRankCalc
-  } = cy.$().pageRank({
-  })
-  return cy.nodes().map((node) => {
+  const {closeness: closenessCentralityCalc} = cy.$().closenessCentralityNormalized({})
+  const {betweenness: betweennessCentralityCalc} = cy.$().betweennessCentrality({})
+  const {rank: pageRankCalc} = cy.$().pageRank({})
+  return cy.nodes().map(node => {
     return {
       id: node.id(),
       degree: degreeCentralityCalc(node),
@@ -68,7 +52,7 @@ export const calculateStatistics = (props: Props) => {
       outdegree: outdegreeCentralityCalc(node),
       closeness: closenessCentralityCalc(node),
       betweenness: betweennessCentralityCalc(node),
-      pageRank: pageRankCalc(node),
+      pageRank: pageRankCalc(node)
     }
   })
 }

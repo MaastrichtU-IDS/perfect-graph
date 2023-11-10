@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js'
-import { IS_FLEX_DEFAULT } from '@utils'
-import { initializeYogaLayout, yogaSetRenderer } from './flex-layout'
+import {IS_FLEX_DEFAULT} from '@utils'
+import {initializeYogaLayout, yogaSetRenderer} from './flex-layout'
 
 if (IS_FLEX_DEFAULT) {
   console.log('FLEX_LAYOUT_ADDED')

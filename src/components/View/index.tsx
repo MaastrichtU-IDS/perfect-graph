@@ -1,17 +1,15 @@
-import { drawGraphics } from '@components/Graphics'
-import { ThemeProps, useTheme } from '@core/theme'
-import { Graphics as InletGraphics, PixiComponent } from '@inlet/react-pixi'
-import {
-  applyDefaultProps, preprocessProps,
-} from '@utils'
-import { wrapComponent } from 'colay-ui'
-import { PropsWithRef } from '@type'
+import {drawGraphics} from '@components/Graphics'
+import {ThemeProps, useTheme} from '@core/theme'
+import {Graphics as InletGraphics, PixiComponent} from '@inlet/react-pixi'
+import {applyDefaultProps, preprocessProps} from '@utils'
+import {wrapComponent} from 'colay-ui'
+import {PropsWithRef} from '@type'
 import * as R from 'colay/ramda'
 import * as PIXI from 'pixi.js'
 import React from 'react'
 
 export type ViewProps = React.ComponentProps<typeof InletGraphics> & {
-  children?: React.ReactNode;
+  children?: React.ReactNode
   /**
    * Background color
    */
@@ -42,33 +40,19 @@ const ViewPIXI = PixiComponent<ViewProps & ThemeProps, PIXI.Graphics>('View', {
     // @ts-ignore
     drawGraphics(instance, props)
     const EXCLUDE_KEYS = ['fill', 'width', 'height']
-    applyDefaultProps(
-      instance, 
-      R.omit(EXCLUDE_KEYS, oldProps),
-      R.omit(EXCLUDE_KEYS, props),
-    )
-  },
+    applyDefaultProps(instance, R.omit(EXCLUDE_KEYS, oldProps), R.omit(EXCLUDE_KEYS, props))
+  }
 })
 
-const ViewElement = (
-  props: ViewProps,
-  forwardedRef: React.ForwardedRef<ViewRef>,
-) => {
+const ViewElement = (props: ViewProps, forwardedRef: React.ForwardedRef<ViewRef>) => {
   const theme = useTheme()
-  return (
-    <ViewPIXI
-      ref={forwardedRef}
-      theme={theme}
-      {...props}
-    />
-
-  )
+  return <ViewPIXI ref={forwardedRef} theme={theme} {...props} />
 }
 
 /**
  * The rectangle creator for PIXI.
  */
 export const View = wrapComponent<
-PropsWithRef<PIXI.Container, ViewProps>
-// @ts-ignore
->(ViewElement, { isForwardRef: true })
+  PropsWithRef<PIXI.Container, ViewProps>
+  // @ts-ignore
+>(ViewElement, {isForwardRef: true})

@@ -1,23 +1,21 @@
-import {
-  Box,
-} from '@mui/material'
-import { DataItem, OnEventLite } from '@type'
-import { DATA_TYPE, EVENT } from '@constants'
+import {Box} from '@mui/material'
+import {DataItem, OnEventLite} from '@type'
+import {DATA_TYPE, EVENT} from '@constants'
 import * as R from 'colay/ramda'
 import React from 'react'
-import { TripleInput } from '../TripleInput'
-import { AdditionalInfo } from './AdditionalInfo'
-import { ValueBox } from './ValueBox'
-import { IconBox } from './IconBox'
+import {TripleInput} from '../TripleInput'
+import {AdditionalInfo} from './AdditionalInfo'
+import {ValueBox} from './ValueBox'
+import {IconBox} from './IconBox'
 
 export type EventType = keyof typeof EVENT
 
 export type TripleItemProps = {
-  isAdditional?: boolean;
-  onEvent: OnEventLite;
-  isLocalLabel?: boolean;
-  isGlobalLabel?: boolean;
-  isGlobalLabelFirst?: boolean;
+  isAdditional?: boolean
+  onEvent: OnEventLite
+  isLocalLabel?: boolean
+  isGlobalLabel?: boolean
+  isGlobalLabelFirst?: boolean
 } & DataItem
 
 export const ICON_SIZE = 15
@@ -26,9 +24,8 @@ export const MockTripleItemProps: TripleItemProps = {
   name: 'foaf:name',
   value: ['Holland', 'Netherlands'],
   type: DATA_TYPE.string,
-  additional: [{ name: '@lang', value: ['en'], type: DATA_TYPE.string }],
-  onEvent: (event) => {
-  },
+  additional: [{name: '@lang', value: ['en'], type: DATA_TYPE.string}],
+  onEvent: event => {}
 }
 
 export const TripleItem = (props: TripleItemProps) => {
@@ -40,19 +37,19 @@ export const TripleItem = (props: TripleItemProps) => {
     onEvent = R.identity,
     isGlobalLabel,
     isLocalLabel,
-    isGlobalLabelFirst,
+    isGlobalLabelFirst
   } = props
   const value = R.ensureArray(props.value)
   const [state, setState] = React.useState({
     extended: false,
     settingsOpened: true,
-    newDataValue: '',
+    newDataValue: ''
   })
   const isMulti = value.length > 1
   const onExtend = React.useCallback(() => {
     setState({
       ...state,
-      extended: !state.extended,
+      extended: !state.extended
     })
   }, [])
   return (
@@ -64,24 +61,22 @@ export const TripleItem = (props: TripleItemProps) => {
           display: 'grid',
           gridTemplateRows: 'repeat(3, 1fr)',
           gridTemplateAreas: `"type type value value icons"
-          `,
+          `
         }}
       >
-        <Box
-          sx={{ gridArea: 'type' }}
-        >
+        <Box sx={{gridArea: 'type'}}>
           <TripleInput
             placeholder="Enter Type"
             value={name}
-            onValueChange={(value) => onEvent({
-              type: EVENT.CHANGE_DATA_NAME,
-              payload: { value },
-            })}
+            onValueChange={value =>
+              onEvent({
+                type: EVENT.CHANGE_DATA_NAME,
+                payload: {value}
+              })
+            }
           />
         </Box>
-        <Box
-          sx={{ gridArea: 'value' }}
-        >
+        <Box sx={{gridArea: 'value'}}>
           <ValueBox
             isMulti={isMulti}
             isAdditional={isAdditional}
@@ -91,9 +86,7 @@ export const TripleItem = (props: TripleItemProps) => {
             value={value}
           />
         </Box>
-        <Box
-          sx={{ gridArea: 'icons' }}
-        >
+        <Box sx={{gridArea: 'icons'}}>
           <IconBox
             isAdditional={isAdditional}
             extended={state.extended}
@@ -106,11 +99,7 @@ export const TripleItem = (props: TripleItemProps) => {
           />
         </Box>
       </Box>
-      <AdditionalInfo
-        extended={state.extended}
-        additional={additional}
-        onEvent={onEvent}
-      />
+      <AdditionalInfo extended={state.extended} additional={additional} onEvent={onEvent} />
     </>
   )
 }

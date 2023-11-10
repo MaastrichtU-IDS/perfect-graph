@@ -1,10 +1,6 @@
-import {
-  Button,
-  CircularProgress, Modal,
-  Paper, Typography, CircularProgressProps,
-} from '@mui/material'
-import { TimeoutManager } from '@utils/TimeoutManager'
-import { View } from 'colay-ui'
+import {Button, CircularProgress, Modal, Paper, Typography, CircularProgressProps} from '@mui/material'
+import {TimeoutManager} from '@utils/TimeoutManager'
+import {View} from 'colay-ui'
 import React from 'react'
 
 type EventsModalProps = {
@@ -12,74 +8,64 @@ type EventsModalProps = {
   onClose: () => void
 }
 export const RecordedEventsModal = (props: EventsModalProps) => {
-  const {
-    timeoutManager,
-    onClose,
-  } = props
+  const {timeoutManager, onClose} = props
   const isOpen = !timeoutManager.finished
   const [state, setState] = React.useState({
     alert: {
-      visible: false,
-    },
+      visible: false
+    }
   })
   const currentTimer = timeoutManager.timers?.[timeoutManager.currentIndex]
-  const {
-    duration,
-    totalDuration,
-    currentIndex,
-    paused,
-    timeoutInstances,
-  } = timeoutManager
+  const {duration, totalDuration, currentIndex, paused, timeoutInstances} = timeoutManager
   return (
     <Modal
       open={isOpen}
-    // onClose={onClose}
+      // onClose={onClose}
       style={{
         display: 'flex',
-        flexDirection: 'column-reverse',
+        flexDirection: 'column-reverse'
       }}
       BackdropProps={{
         style: {
-          backgroundColor: 'rgba(0, 0, 0, 0)',
+          backgroundColor: 'rgba(0, 0, 0, 0)'
         },
         onClick: () => {
           setState({
             ...state,
             alert: {
               ...state.alert,
-              visible: true,
-            },
+              visible: true
+            }
           })
           setTimeout(() => {
             setState({
               ...state,
               alert: {
                 ...state.alert,
-                visible: false,
-              },
+                visible: false
+              }
             })
           }, 1500)
-        },
+        }
       }}
     >
-      <Paper style={{
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-      >
-        <View style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
+      <Paper
+        style={{
+          display: 'flex',
+          flexDirection: 'column'
         }}
+      >
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between'
+          }}
         >
           <Typography variant="h6">Play Events</Typography>
           {state.alert.visible && (
-          <Typography
-            variant="h6"
-            color="error"
-          >
-            You cannot take action while the events are playing
-          </Typography>
+            <Typography variant="h6" color="error">
+              You cannot take action while the events are playing
+            </Typography>
           )}
         </View>
 
@@ -88,16 +74,14 @@ export const RecordedEventsModal = (props: EventsModalProps) => {
             display: 'flex',
             flexDirection: 'row',
             justifyContent: 'space-between',
-            alignItems: 'center',
+            alignItems: 'center'
           }}
         >
-          <View style={{ flexDirection: 'row' }}>
+          <View style={{flexDirection: 'row'}}>
             <Button
               color={paused ? 'primary' : 'secondary'}
               onClick={() => {
-                paused
-                  ? timeoutManager.start()
-                  : timeoutManager.pause()
+                paused ? timeoutManager.start() : timeoutManager.pause()
               }}
             >
               {paused ? 'Play' : 'Pause'}
@@ -111,24 +95,17 @@ export const RecordedEventsModal = (props: EventsModalProps) => {
               Close
             </Button>
           </View>
-          <Typography variant="subtitle1">
-            {`Current Event: ${currentTimer?.type}`}
-          </Typography>
+          <Typography variant="subtitle1">{`Current Event: ${currentTimer?.type}`}</Typography>
           <View
             style={{
               flexDirection: 'row',
               height: '100%',
-              alignItems: 'center',
+              alignItems: 'center'
             }}
           >
             <Typography variant="subtitle2">{`Events: ${currentIndex} / ${timeoutInstances.length}`}</Typography>
-            <CircularProgressWithLabel
-              value={
-            (duration / totalDuration) * 100
-          }
-            />
+            <CircularProgressWithLabel value={(duration / totalDuration) * 100} />
           </View>
-
         </View>
       </Paper>
     </Modal>
@@ -138,10 +115,7 @@ export const RecordedEventsModal = (props: EventsModalProps) => {
 function CircularProgressWithLabel(props: CircularProgressProps) {
   return (
     <View>
-      <CircularProgress
-        variant="determinate"
-        {...props}
-      />
+      <CircularProgress variant="determinate" {...props} />
       <View
         style={{
           position: 'absolute',
@@ -150,18 +124,11 @@ function CircularProgressWithLabel(props: CircularProgressProps) {
           bottom: 0,
           right: 0,
           alignItems: 'center',
-          justifyContent: 'center',
+          justifyContent: 'center'
         }}
       >
-        <Typography
-          variant="caption"
-          component="div"
-          color="textSecondary"
-        >
-          {`${Math.round(
-            props.value!,
-          )}%`}
-
+        <Typography variant="caption" component="div" color="textSecondary">
+          {`${Math.round(props.value!)}%`}
         </Typography>
       </View>
     </View>

@@ -2,11 +2,11 @@
 
 import Yoga from 'yoga-layout-prebuilt'
 import * as PIXI from 'pixi.js'
-import { YogaConstants, YogaEdges } from './YogaContants'
-import { YogaLayoutConfig } from './YogaLayoutConfig'
-import { yogaAnimationManager } from './YogaAnimationManager'
+import {YogaConstants, YogaEdges} from './YogaContants'
+import {YogaLayoutConfig} from './YogaLayoutConfig'
+import {yogaAnimationManager} from './YogaAnimationManager'
 
-export { YogaConstants } from './YogaLayoutConfig'
+export {YogaConstants} from './YogaLayoutConfig'
 export type YogaEdges = typeof YogaConstants.YogaEdges
 export type DisplayObject = typeof PIXI.DisplayObject
 export type ComputedLayout = typeof YogaConstants.ComputedLayout
@@ -21,35 +21,34 @@ export type PixelsOrPercentage = number | string
 export type YogaSize = PixelsOrPercentage | 'pixi' | 'auto'
 
 export type IAnimationState = {
-  fromX: number;
-  fromY: number;
-  curX: number;
-  curY: number;
-  toX: number;
-  toY: number;
-  time: number;
-  elapsed: number;
-  easing: (progress: number) => number;
+  fromX: number
+  fromY: number
+  curX: number
+  curY: number
+  toX: number
+  toY: number
+  time: number
+  elapsed: number
+  easing: (progress: number) => number
 }
 
 export type IYogaAnimationConfig = {
-  time: number;
-  easing: (progress: number) => number;
+  time: number
+  easing: (progress: number) => number
 
   // @ts-ignore
-  shouldRunAnimation?(yoga: YogaLayout, prev: ComputedLayout, newLayout: ComputedLayout): boolean;
-
+  shouldRunAnimation?(yoga: YogaLayout, prev: ComputedLayout, newLayout: ComputedLayout): boolean
 }
 
 export class YogaLayout {
   /**
-     * Internal value. True if we are currently in WebGLRenderer.render() (based on 'prerender' and 'postrender' events). Used to skip some updateTransform calls.
-     */
+   * Internal value. True if we are currently in WebGLRenderer.render() (based on 'prerender' and 'postrender' events). Used to skip some updateTransform calls.
+   */
   public static isRendering = true
 
   /**
-     * Experimental feature for building layouts independent of pixi tree
-     */
+   * Experimental feature for building layouts independent of pixi tree
+   */
   public static roots: Map<string, YogaLayout> = new Map()
 
   public static readonly LAYOUT_UPDATED_EVENT = 'LAYOUT_UPDATED_EVENT'
@@ -67,19 +66,19 @@ export class YogaLayout {
   public parent?: YogaLayout
 
   /**
-     * If set, position transitions will be animated
-     */
+   * If set, position transitions will be animated
+   */
   public animationConfig: IYogaAnimationConfig
 
   /**
-     * True if Yoga should manage PIXI objects width/height
-     */
+   * True if Yoga should manage PIXI objects width/height
+   */
   public rescaleToYoga = false
 
   /**
-     * If true and rescaleToYoga===true, resizing will keep aspect ratio of obejct.
-     * Defaults to true on PIXI.Text and PIXI.Sprite.
-     */
+   * If true and rescaleToYoga===true, resizing will keep aspect ratio of obejct.
+   * Defaults to true on PIXI.Text and PIXI.Sprite.
+   */
   public keepAspectRatio: boolean | undefined
 
   private _width: YogaSize
@@ -95,20 +94,20 @@ export class YogaLayout {
   private _animation: IAnimationState
 
   /**
-     * Will be recalculated in next frame
-     */
+   * Will be recalculated in next frame
+   */
   private _needUpdateAsRoot = false
 
   /**
-     * Used instead of Yoga.AspectRatio because of Yoga issue https://github.com/facebook/yoga/issues/677
-     */
+   * Used instead of Yoga.AspectRatio because of Yoga issue https://github.com/facebook/yoga/issues/677
+   */
   private _aspectRatio: number
 
   private _gap = 0
 
   /**
-     * Internal values stored to reduce calls to nbind
-     */
+   * Internal values stored to reduce calls to nbind
+   */
   private _marginTop = 0
 
   private _marginLeft = 0
@@ -118,7 +117,7 @@ export class YogaLayout {
     pixiObject.__hasYoga = true
     this.fillDefaults()
     this.target = pixiObject
-    if ((<any> this.target)._texture) {
+    if ((<any>this.target)._texture) {
       this.width = this.height = 'pixi'
     } else {
       this.width = this.height = 'auto'
@@ -132,12 +131,15 @@ export class YogaLayout {
     pixiObject.on(YogaLayout.LAYOUT_UPDATED_EVENT as any, () => {
       this._lastLayout = this._cachedLayout
       this._cachedLayout = undefined
-      this.children.forEach((child) => child.target.emit(YogaLayout.LAYOUT_UPDATED_EVENT))
+      this.children.forEach(child => child.target.emit(YogaLayout.LAYOUT_UPDATED_EVENT))
     })
 
     pixiObject.on(YogaLayout.NEED_LAYOUT_UPDATE as any, () => {
       // size change of this element wont change size/positions of its parent, so there is no need to update whole tree
-      if (!this.parent /* || (this.hasContantDeclaredSize && this.parent.width !== "auto" && this.parent.height !== "auto") */) {
+      if (
+        !this
+          .parent /* || (this.hasContantDeclaredSize && this.parent.width !== "auto" && this.parent.height !== "auto") */
+      ) {
         this._needUpdateAsRoot = true
       } else {
         this.parent.target.emit(YogaLayout.NEED_LAYOUT_UPDATE)
@@ -157,25 +159,25 @@ export class YogaLayout {
   }
 
   /**
-     * Assigns given properties to this yoga layout
-     * @param config
-     */
+   * Assigns given properties to this yoga layout
+   * @param config
+   */
   public fromConfig(config: YogaLayoutConfig) {
     Object.assign(this, config)
   }
 
   /**
-     * Same as 'fromConfig()'
-     * @param config
-     */
+   * Same as 'fromConfig()'
+   * @param config
+   */
   public set config(config: YogaLayoutConfig) {
     this.fromConfig(config)
   }
 
   /**
-     * Copies all properties (styles, size, rescaleToYoga etc) from other YogaLayout objects
-     * @param layout
-     */
+   * Copies all properties (styles, size, rescaleToYoga etc) from other YogaLayout objects
+   * @param layout
+   */
   public copy(layout: YogaLayout): void {
     this.node.copyStyle(layout.node)
     this.rescaleToYoga = layout.rescaleToYoga
@@ -204,8 +206,8 @@ export class YogaLayout {
   }
 
   public removeChild(yoga: YogaLayout): void {
-    const { length } = this.children
-    this.children = this.children.filter((child) => child !== yoga)
+    const {length} = this.children
+    this.children = this.children.filter(child => child !== yoga)
     if (length !== this.children.length) {
       this.node.removeChild(yoga.node)
     }
@@ -213,8 +215,8 @@ export class YogaLayout {
   }
 
   /**
-     * Mark object as dirty and request layout recalculation
-     */
+   * Mark object as dirty and request layout recalculation
+   */
   public requestLayoutUpdate(): void {
     this.target.emit(YogaLayout.NEED_LAYOUT_UPDATE)
   }
@@ -243,11 +245,17 @@ export class YogaLayout {
   }
 
   /**
-     * Returns true if object size is independent of its children sizes.
-     */
+   * Returns true if object size is independent of its children sizes.
+   */
   public get hasContantDeclaredSize(): boolean {
-    return !!this._width && this._width !== 'pixi' && this._width !== 'auto'
-            && !!this._height && this._height !== 'pixi' && this._height !== 'auto'
+    return (
+      !!this._width &&
+      this._width !== 'pixi' &&
+      this._width !== 'auto' &&
+      !!this._height &&
+      this._height !== 'pixi' &&
+      this._height !== 'auto'
+    )
   }
 
   public willLayoutWillBeRecomputed(): boolean {
@@ -261,11 +269,13 @@ export class YogaLayout {
 
       // YOGA FIX for percent widht/height for absolute positioned elements
       if (this.position === 'absolute' && this.parent && this.node.getWidth().unit === Yoga.UNIT_PERCENT) {
-        this._cachedLayout.width = Math.round(parseFloat(this._width as string) / 100 * this.parent.calculatedWidth)
+        this._cachedLayout.width = Math.round((parseFloat(this._width as string) / 100) * this.parent.calculatedWidth)
       }
 
       if (this.position === 'absolute' && this.parent && this.node.getHeight().unit === Yoga.UNIT_PERCENT) {
-        this._cachedLayout.height = Math.round(parseFloat(this._height as string) / 100 * this.parent.calculatedHeight)
+        this._cachedLayout.height = Math.round(
+          (parseFloat(this._height as string) / 100) * this.parent.calculatedHeight
+        )
       }
 
       // if (this.position === "absolute" && this.parent && !this.bottom && !this.right) {
@@ -281,7 +291,11 @@ export class YogaLayout {
         this.height = this.calculatedHeight
       }
 
-      if (this.animationConfig && (!this.animationConfig.shouldRunAnimation || this.animationConfig.shouldRunAnimation(this, this._lastLayout || this._cachedLayout, this._cachedLayout))) {
+      if (
+        this.animationConfig &&
+        (!this.animationConfig.shouldRunAnimation ||
+          this.animationConfig.shouldRunAnimation(this, this._lastLayout || this._cachedLayout, this._cachedLayout))
+      ) {
         this._animation = {
           fromX: this._lastLayout?.left || this._cachedLayout.left,
           fromY: this._lastLayout?.top || this._cachedLayout.top,
@@ -291,14 +305,14 @@ export class YogaLayout {
           toY: this._cachedLayout.top,
           time: this.animationConfig.time,
           elapsed: 0,
-          easing: this.animationConfig.easing,
+          easing: this.animationConfig.easing
         }
 
         yogaAnimationManager.add(this._animation)
       } else {
         this._animation = <any>{
           curX: this._cachedLayout.left,
-          curY: this._cachedLayout.top,
+          curY: this._cachedLayout.top
         }
       }
     }
@@ -330,27 +344,27 @@ export class YogaLayout {
   }
 
   /**
-     * Returns computed width in pixels
-     */
+   * Returns computed width in pixels
+   */
   public get calculatedWidth(): number {
     return this._cachedLayout ? this._cachedLayout.width : this.node.getComputedWidth()
   }
 
   /**
-     * Returns computed height in pixels
-     */
+   * Returns computed height in pixels
+   */
   public get calculatedHeight(): number {
     return this._cachedLayout ? this._cachedLayout.height : this.node.getComputedHeight()
   }
 
   /**
-     * Can handle:
-     * - pixels (eg 150)
-     * - percents ("50%")
-     * - "auto" to use values from yoga
-     * - "pixi" to use DisplayObject.width/height
-     * @param value
-     */
+   * Can handle:
+   * - pixels (eg 150)
+   * - percents ("50%")
+   * - "auto" to use values from yoga
+   * - "pixi" to use DisplayObject.width/height
+   * @param value
+   */
   public set width(value: YogaSize) {
     if (this._width === value) {
       return
@@ -367,13 +381,13 @@ export class YogaLayout {
   }
 
   /**
-     * Can handle:
-     * - pixels (eg 150)
-     * - percents ("50%")
-     * - "auto" to use values from yoga
-     * - "pixi" to use DisplayObject.width/height
-     * @param value
-     */
+   * Can handle:
+   * - pixels (eg 150)
+   * - percents ("50%")
+   * - "auto" to use values from yoga
+   * - "pixi" to use DisplayObject.width/height
+   * @param value
+   */
   public set height(value: YogaSize) {
     if (this._height === value) {
       return
@@ -508,7 +522,7 @@ export class YogaLayout {
   }
 
   public get padding(): number[] {
-    return YogaEdges.map((edge) => this.node.getPadding(edge).value || 0)
+    return YogaEdges.map(edge => this.node.getPadding(edge).value || 0)
   }
 
   public set paddingAll(value: number) {
@@ -564,7 +578,7 @@ export class YogaLayout {
   }
 
   public get margin(): number[] {
-    return YogaEdges.map((edge) => this.node.getMargin(edge).value || 0)
+    return YogaEdges.map(edge => this.node.getMargin(edge).value || 0)
   }
 
   public set marginTop(value: number) {
@@ -618,7 +632,7 @@ export class YogaLayout {
   }
 
   public get border(): number[] {
-    return YogaEdges.map((edge) => this.node.getBorder(edge))
+    return YogaEdges.map(edge => this.node.getBorder(edge))
   }
 
   public set borderAll(value: number) {
@@ -766,7 +780,7 @@ export class YogaLayout {
     let firstChildrenSkipped = false
     this.children.forEach((child, index) => {
       if (firstChildrenSkipped) {
-        this.flexDirection === 'column' ? child.marginTop = this._gap : child.marginLeft = this._gap
+        this.flexDirection === 'column' ? (child.marginTop = this._gap) : (child.marginLeft = this._gap)
       }
 
       if (child.position !== 'absolute') {
@@ -775,7 +789,7 @@ export class YogaLayout {
     })
   }
 
-  private _parseValue(value: { unit: any; value: any }): PixelsOrPercentage {
+  private _parseValue(value: {unit: any; value: any}): PixelsOrPercentage {
     if (value.unit === Yoga.UNIT_POINT) {
       return parseFloat(value.value)
     }

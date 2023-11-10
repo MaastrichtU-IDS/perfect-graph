@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { YogaLayout } from './YogaLayout'
+import {YogaLayout} from './YogaLayout'
 import * as PIXI from 'pixi.js'
 
 // declare module 'pixi.js' {
@@ -23,7 +23,7 @@ export function applyContainerPolyfill(proto: any = PIXI.Container.prototype) {
     },
     set(newFlex: boolean): void {
       if (!this.flex && newFlex) {
-        this.children.forEach((child) => {
+        this.children.forEach(child => {
           this.yoga.addChild(child.yoga)
           if (this.flexRecursive && child instanceof PIXI.Container && child.flex !== false) {
             child.flexRecursive = true
@@ -33,12 +33,12 @@ export function applyContainerPolyfill(proto: any = PIXI.Container.prototype) {
       }
 
       if (this.flex && !newFlex) {
-        this.children.forEach((child) => {
+        this.children.forEach(child => {
           this.yoga.removeChild(child.yoga)
         })
       }
       this.__flex = newFlex
-    },
+    }
   })
 
   Object.defineProperty(proto, 'flexRecursive', {
@@ -48,13 +48,13 @@ export function applyContainerPolyfill(proto: any = PIXI.Container.prototype) {
     set(newFlex: boolean): void {
       this.__flexRecursive = newFlex
       this.flex = newFlex
-    },
+    }
   })
 
-  const { addChild } = proto
-  const { removeChildren } = proto
-  const { addChildAt } = proto
-  const { removeChild } = proto
+  const {addChild} = proto
+  const {removeChildren} = proto
+  const {addChildAt} = proto
+  const {removeChild} = proto
   const containerUpdateTransform = proto.updateTransform
 
   proto.addChild = function (...children) {
@@ -107,7 +107,7 @@ export function applyContainerPolyfill(proto: any = PIXI.Container.prototype) {
 
       if (range > 0 && range <= end) {
         const removed = this.children.slice(begin, range)
-        removed.forEach((child) => child.__hasYoga && this.yoga.removeChild(child.yoga))
+        removed.forEach(child => child.__hasYoga && this.yoga.removeChild(child.yoga))
       }
       this.emit(YogaLayout.NEED_LAYOUT_UPDATE)
     }

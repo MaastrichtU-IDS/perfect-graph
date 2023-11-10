@@ -1,7 +1,7 @@
 import React from 'react'
 import App from './_examples/CaseLawExplorerExample'
-import { ThemeProvider, createTheme } from '@mui/material'
-import { useMeasure,View } from 'colay-ui'
+import {ThemeProvider, createTheme} from '@mui/material'
+import {useMeasure, View} from 'colay-ui'
 
 const theme = createTheme()
 
@@ -33,25 +33,18 @@ cytoscape.use(cola)
 cytoscape.use(d3Force)
 
 export default () => {
-  const [containerRef, { width, height, initialized }] = useMeasure()
+  const [containerRef, {width, height, initialized}] = useMeasure()
   return (
     <ThemeProvider theme={theme}>
-          <View 
-      ref={containerRef}
-      style={{
-        width: '100%', height: '100%'
-      }}
-    >
-      {
-        initialized && (
-          <App
-            dispatch={() => {}}
-            {...{width, height}}
-          />
-        )
-      }
-    </View>
+      <View
+        ref={containerRef}
+        style={{
+          width: '100%',
+          height: '100%'
+        }}
+      >
+        {initialized && <App dispatch={() => {}} {...{width, height}} />}
+      </View>
     </ThemeProvider>
-    
   )
 }

@@ -1,15 +1,10 @@
-import { createStoreProvider } from 'colay-ui'
+import {createStoreProvider} from 'colay-ui'
 // import { createStoreProvider } from '@root/components/GraphEditor/createStoreProvider'
-import {
-  GraphEditorContextType,
-} from '@type'
+import {GraphEditorContextType} from '@type'
 
-const {
-  Context,
-  useSelector,
-  Provider,
-} = createStoreProvider<GraphEditorContextType>(
-  {} as unknown as GraphEditorContextType, { immer: false },
+const {Context, useSelector, Provider} = createStoreProvider<GraphEditorContextType>(
+  {} as unknown as GraphEditorContextType,
+  {immer: false}
 )
 
 export const GraphEditorContext = Context

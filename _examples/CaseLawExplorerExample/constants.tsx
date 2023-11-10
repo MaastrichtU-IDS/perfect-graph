@@ -1,8 +1,7 @@
 import React from 'react'
-import { Button, Slider, Typography } from '@mui/material'
+import {Button, Slider, Typography} from '@mui/material'
 
-const SliderUIField = ({ formData, schema, onChange, name }) => {
-
+const SliderUIField = ({formData, schema, onChange, name}) => {
   return (
     <>
       <Typography id={`${schema.title}-continuous-slider`} gutterBottom>
@@ -10,7 +9,7 @@ const SliderUIField = ({ formData, schema, onChange, name }) => {
       </Typography>
       <Slider
         value={formData ?? [schema.minimum, schema.maximum]}
-        onChange={(e) => {
+        onChange={e => {
           onChange(e.target.value)
         }}
         valueLabelDisplay="auto"
@@ -22,8 +21,7 @@ const SliderUIField = ({ formData, schema, onChange, name }) => {
   )
 }
 export const getFilterSchema = (props: {} = {}) => {
-  const {
-  } = props
+  const {} = props
   return {
     schema: {
       title: 'Filter',
@@ -42,50 +40,50 @@ export const getFilterSchema = (props: {} = {}) => {
         year: {
           type: 'array',
           items: {
-            type: 'number',
+            type: 'number'
           },
           minimum: 1969,
-          maximum: 2015,
+          maximum: 2015
         },
         degree: {
           type: 'array',
           items: {
-            type: 'number',
+            type: 'number'
           },
           minimum: 0,
-          maximum: 100,
+          maximum: 100
         },
         indegree: {
           type: 'array',
           items: {
-            type: 'number',
+            type: 'number'
           },
           minimum: 0,
-          maximum: 100,
+          maximum: 100
         },
         outdegree: {
           type: 'array',
           items: {
-            type: 'number',
+            type: 'number'
           },
           minimum: 0,
-          maximum: 100,
-        },
-      },
+          maximum: 100
+        }
+      }
     },
     uiSchema: {
-      'year': {
-        'ui:field': SliderUIField,
+      year: {
+        'ui:field': SliderUIField
       },
-      'degree': {
-        'ui:field': SliderUIField,
+      degree: {
+        'ui:field': SliderUIField
       },
-      'indegree': {
-        'ui:field': SliderUIField,
+      indegree: {
+        'ui:field': SliderUIField
       },
-      'outdegree': {
-        'ui:field': SliderUIField,
-      },
+      outdegree: {
+        'ui:field': SliderUIField
+      }
     }
   }
 }
@@ -109,18 +107,10 @@ export const getQueryBuilderSchema = () => {
           title: 'Data sources',
           uniqueItems: true,
           items: {
-            enum: [
-              'RS',
-              'ECHR',
-              'Eurlex'
-            ],
-            enumNames: [
-              'Rechtspraak',
-              'European Court of Human Rights',
-              'Eurlex'
-            ],
+            enum: ['RS', 'ECHR', 'Eurlex'],
+            enumNames: ['Rechtspraak', 'European Court of Human Rights', 'Eurlex'],
             type: 'string'
-          },
+          }
         },
         Eclis: {
           type: 'string',
@@ -138,22 +128,22 @@ export const getQueryBuilderSchema = () => {
           type: 'array',
           title: 'Date',
           items: {
-            type: 'number',
+            type: 'number'
           },
           minimum: 1969,
-          maximum: 2015,
+          maximum: 2015
         },
         DegreesSources: {
           type: 'integer',
           title: 'Degrees Sources',
           minimum: 1,
-          maximum: 5,
+          maximum: 5
         },
         DegreesTargets: {
           type: 'integer',
           title: 'Degrees Targets',
           minimum: 1,
-          maximum: 5,
+          maximum: 5
         },
         Instances: {
           type: 'array',
@@ -169,45 +159,36 @@ export const getQueryBuilderSchema = () => {
               'Gerechtshof Arnhem-Leeuwarden'
             ],
             type: 'string'
-          },
+          }
         },
         Domains: {
           type: 'array',
           title: 'Domains',
           uniqueItems: true,
           items: {
-            enum: [
-              '',
-              'Not',
-              'Sure',
-              'What'
-            ],
+            enum: ['', 'Not', 'Sure', 'What'],
             type: 'string'
-          },
+          }
         },
         Doctypes: {
           type: 'array',
           title: 'Document types',
           uniqueItems: true,
           items: {
-            enum: [
-              '',
-              'DEC',
-              'OPI'
-            ],
+            enum: ['', 'DEC', 'OPI'],
             type: 'string'
-          },
+          }
         },
         LiPermission: {
           type: 'boolean',
-          title: 'LI Permission',
-        },
-      },
+          title: 'LI Permission'
+        }
+      }
     },
     uiSchema: {
-      'Date': {
-        'ui:field': SliderUIField,
-      },
+      Date: {
+        'ui:field': SliderUIField
+      }
       // 'degreesSources': {
       //   'ui:field': SliderUIField,
       // },
@@ -224,10 +205,8 @@ export const getQueryBuilderSchema = () => {
   }
 }
 
-export const getFetchSchema = (props: { onPopupPress: () => void }) => {
-  const {
-    onPopupPress
-  } = props
+export const getFetchSchema = (props: {onPopupPress: () => void}) => {
+  const {onPopupPress} = props
   return {
     children: <div></div>,
     schema: {
@@ -237,13 +216,13 @@ export const getFetchSchema = (props: { onPopupPress: () => void }) => {
       properties: {
         popup: {
           title: 'Build Query',
-          type: 'boolean',
-        },
-      },
+          type: 'boolean'
+        }
+      }
     },
     uiSchema: {
-      'Date': {
-        'ui:field': SliderUIField,
+      Date: {
+        'ui:field': SliderUIField
       },
       // 'degreesSources': {
       //   'ui:field': SliderUIField,
@@ -257,13 +236,11 @@ export const getFetchSchema = (props: { onPopupPress: () => void }) => {
       // 'liPermission':{
       //   'ui:widget': 'select'
       // },
-      'popup': {
-        'ui:field': ({ formData, schema, onChange }) => {
-          return (
-            <Button onClick={onPopupPress}>Open Query Builder</Button>
-          )
-        },
-      },
+      popup: {
+        'ui:field': ({formData, schema, onChange}) => {
+          return <Button onClick={onPopupPress}>Open Query Builder</Button>
+        }
+      }
     }
   }
 }
@@ -275,27 +252,15 @@ export const VIEW_CONFIG_SCHEMA = {
     additionalProperties: false,
     properties: {
       nodeSize: {
-        "type": "string",
-        "title": "Node Size",
-        "enum": [
-          "degree",
-          "out_degree",
-          "in_degree",
-          "year",
-        ]
+        type: 'string',
+        title: 'Node Size',
+        enum: ['degree', 'out_degree', 'in_degree', 'year']
       },
       nodeColor: {
-        "type": "string",
-        "title": "Node Color",
-        "enum": [
-          "community",
-          "degree",
-          "out_degree",
-          "in_degree",
-          "year",
-        ]
-      },
-    },
-  },
+        type: 'string',
+        title: 'Node Color',
+        enum: ['community', 'degree', 'out_degree', 'in_degree', 'year']
+      }
+    }
+  }
 }
-

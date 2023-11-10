@@ -1,14 +1,14 @@
-import Amplify, { API } from "aws-amplify";
+import Amplify, {API} from 'aws-amplify'
 // import awsExports from "./aws-exports";
 
 const API_AUTH_MODE = {
   API_KEY: 'API_KEY'
 } as const
 
-const convertJSONStringFields = (item) => {
+const convertJSONStringFields = item => {
   return {
     ...item,
-    ...(item.position ? { position: JSON.parse(item.position) } : {}),
+    ...(item.position ? {position: JSON.parse(item.position)} : {}),
     data: JSON.parse(item.data)
   }
 }
@@ -69,7 +69,7 @@ const TEST_AUTH = `query TestAuth($id: String) {
 }`
 
 type listCasesVariables = {
-  DataSources: string[];
+  DataSources: string[]
 }
 
 export async function listCases(variables: listCasesVariables) {
@@ -88,7 +88,7 @@ export async function listCases(variables: listCasesVariables) {
       nodes: caseResults.nodes.map(convertJSONStringFields),
       edges: caseResults.edges.map(convertJSONStringFields),
       networkStatistics: JSON.parse(caseResults.statistics),
-      message: caseResults.message,
+      message: caseResults.message
       // edges: project.edges.items.map(convertJSONStringFields),
     }
 
@@ -136,7 +136,7 @@ export async function complexQuery(query: any) {
 }
 
 type GetElementDataVariables = {
-  id: string;
+  id: string
 }
 
 export async function getElementData(variables: GetElementDataVariables) {
@@ -157,7 +157,6 @@ export async function getElementData(variables: GetElementDataVariables) {
     console.log('error getElementData node:', err)
   }
 }
-
 
 export async function testAuth(variables: GetElementDataVariables) {
   try {

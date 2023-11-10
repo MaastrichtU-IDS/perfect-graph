@@ -1,58 +1,48 @@
 import React from 'react'
-import { wrapComponent } from 'colay-ui'
-import { Position } from 'colay-ui/type'
-import { Pressable } from '../../../src/components/Pressable'
-import { Image } from '../../../src/components/Image'
-import { Text } from '../../../src/components/Text'
-import { View, ViewProps } from '../../../src/components/View'
+import {wrapComponent} from 'colay-ui'
+import {Position} from 'colay-ui/type'
+import {Pressable} from '../../../src/components/Pressable'
+import {Image} from '../../../src/components/Image'
+import {Text} from '../../../src/components/Text'
+import {View, ViewProps} from '../../../src/components/View'
 
 export type ProfileProps = {
-  name: string;
-  story: string;
-  image: string;
-  link?: string;
-  style?: ViewProps['style'];
-  onClick?: () => void;
+  name: string
+  story: string
+  image: string
+  link?: string
+  style?: ViewProps['style']
+  onClick?: () => void
 }
 
 export type ProfileType = React.FC<ProfileProps>
 
-const ProfileElement = (
-  props: ProfileProps,
-  __: React.ForwardedRef<ProfileType>,
-) => {
-  const {
-    name,
-    image,
-    story,
-    link,
-    onClick,
-  } = props
+const ProfileElement = (props: ProfileProps, __: React.ForwardedRef<ProfileType>) => {
+  const {name, image, story, link, onClick} = props
   return (
     <>
-      <View style={{
-        width: 300,
-        height: 150,
-        flexDirection: 'row',
-        borderRadius: 30,
-        backgroundColor: '#304e57',
-        paddingLeft: 10,
-        paddingTop: 10,
-      }}
+      <View
+        style={{
+          width: 300,
+          height: 150,
+          flexDirection: 'row',
+          borderRadius: 30,
+          backgroundColor: '#304e57',
+          paddingLeft: 10,
+          paddingTop: 10
+        }}
       >
         <Image
-          source={{ uri: image }}
+          source={{uri: image}}
           style={{
             width: 100,
-            height: 100,
+            height: 100
           }}
         />
-        <View
-          style={{ flexDirection: 'column', width: 200 }}
-        >
+        <View style={{flexDirection: 'column', width: 200}}>
           <View
             style={{
-              left: 10,
+              left: 10
             }}
             interactive
             buttonMode
@@ -63,32 +53,23 @@ const ProfileElement = (
               onClick?.()
             }}
           >
-            <Text
-              style={style.title}
-            >
-              {name}
-            </Text>
+            <Text style={style.title}>{name}</Text>
           </View>
           <Text
-          // @ts-ignore
+            // @ts-ignore
             style={style.paragraph}
           >
             {story}
           </Text>
-
         </View>
       </View>
-
     </>
   )
 }
 
-export const ProfileTemplate = wrapComponent<ProfileProps>(
-  ProfileElement,
-  {
-    isForwardRef: true,
-  },
-)
+export const ProfileTemplate = wrapComponent<ProfileProps>(ProfileElement, {
+  isForwardRef: true
+})
 
 const style = {
   paragraph: {
@@ -109,7 +90,7 @@ const style = {
     wordWrap: true,
     wordWrapWidth: 150,
     color: 'white',
-    left: 30,
+    left: 30
   },
   title: {
     // align: 'center',
@@ -128,8 +109,8 @@ const style = {
     width: 150,
     wordWrap: true,
     wordWrapWidth: 150,
-    color: 'white',
-  },
+    color: 'white'
+  }
 }
 
 // const createLayout = layoutCreator({

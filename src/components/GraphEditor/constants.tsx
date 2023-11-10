@@ -1,20 +1,16 @@
 import React from 'react'
-import { IconButton, Typography } from '@mui/material'
-import { Icon } from '@components/Icon'
-import { DATA_TYPE } from '@constants'
+import {IconButton, Typography} from '@mui/material'
+import {Icon} from '@components/Icon'
+import {DATA_TYPE} from '@constants'
 
 export const TYPE_ICONS = {
   [DATA_TYPE.number]: (props: any) => (
-    <IconButton
-      {...props}
-    >
+    <IconButton {...props}>
       <Icon name="repeat_one" />
     </IconButton>
   ),
   [DATA_TYPE.string]: (props: any) => (
-    <IconButton
-      {...props}
-    >
+    <IconButton {...props}>
       <Icon name="sort_by_alpha" />
     </IconButton>
   ),
@@ -27,7 +23,7 @@ export const TYPE_ICONS = {
         justifyContent: 'center',
         alignItems: 'center',
         margin: 3,
-        ...props.style,
+        ...props.style
       }}
     >
       <Typography
@@ -35,7 +31,7 @@ export const TYPE_ICONS = {
         style={{
           fontSize: props.size - 5,
           fontWeight: 'bold',
-          letterSpacing: 1,
+          letterSpacing: 1
         }}
       >
         iri
@@ -43,10 +39,8 @@ export const TYPE_ICONS = {
     </IconButton>
   ),
   [DATA_TYPE.unknown]: (props: any) => (
-    <IconButton
-      {...props}
-    >
+    <IconButton {...props}>
       <Icon name="close" />
     </IconButton>
-  ),
+  )
 } as const

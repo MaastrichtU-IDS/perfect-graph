@@ -1,5 +1,5 @@
 const cytoscape = require('cytoscape')
-const { Layouts } = require('./layouts')
+const {Layouts} = require('./layouts')
 const euler = require('cytoscape-euler')
 const cola = require('cytoscape-cola')
 const dagre = require('cytoscape-dagre')
@@ -10,33 +10,28 @@ cytoscape.use(dagre)
 cytoscape.use(euler)
 cytoscape.use(cola)
 
-exports.calculateLayout =  async (params) => {
-  const {
-    graph,
-    layoutName,
-    boundingBox,
-  } = params
-  const nodes = graph.nodes.map((node) => ({
-    data: { id: node.id },
-    group: 'nodes',
+exports.calculateLayout = async params => {
+  const {graph, layoutName, boundingBox} = params
+  const nodes = graph.nodes.map(node => ({
+    data: {id: node.id},
+    group: 'nodes'
   }))
-  const edges = graph.edges.map((edge) => ({
+  const edges = graph.edges.map(edge => ({
     data: {
-      id: edge.id, source: edge.source, target: edge.target,
+      id: edge.id,
+      source: edge.source,
+      target: edge.target
     },
-    group: 'edges',
+    group: 'edges'
   }))
   const cy = cytoscape({
-    elements: [
-      ...nodes,
-      ...edges,
-    ],
+    elements: [...nodes, ...edges],
     headless: true,
-    styleEnabled: true,
+    styleEnabled: true
   })
   const layout = cy.createLayout({
     ...Layouts[layoutName],
-    boundingBox,
+    boundingBox
   })
   console.log('layout', layout)
 
@@ -46,7 +41,7 @@ exports.calculateLayout =  async (params) => {
         // @ts-ignore
         const nodePositions = {}
         // Fix the edge lines
-        cy.nodes().forEach((node) => {
+        cy.nodes().forEach(node => {
           nodePositions[node.id()] = node.position()
         })
         console.log('nodePositions', nodePositions)

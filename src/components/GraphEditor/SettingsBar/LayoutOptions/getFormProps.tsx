@@ -1,15 +1,11 @@
-import { LAYOUT_NAMES } from '@constants'
-import {
-  Card,
-  CardActionArea, CardContent, CardMedia, MenuItem, TextField,
-  Typography,
-} from '@mui/material'
-import { utils, WidgetProps } from '@rjsf/core'
-import { useDisclosure, View } from 'colay-ui'
+import {LAYOUT_NAMES} from '@constants'
+import {Card, CardActionArea, CardContent, CardMedia, MenuItem, TextField, Typography} from '@mui/material'
+import {utils, WidgetProps} from '@rjsf/core'
+import {useDisclosure, View} from 'colay-ui'
 import React from 'react'
-import { LAYOUT_INFO } from './layoutInfo'
+import {LAYOUT_INFO} from './layoutInfo'
 
-const { asNumber, guessType } = utils
+const {asNumber, guessType} = utils
 
 const nums = new Set(['number', 'integer'])
 
@@ -22,14 +18,17 @@ export const HEIGHT = 300
  */
 const processValue = (schema: any, value: any) => {
   // "enum" is a reserved word, so only "type" and "items" can be destructured
-  const { type, items } = schema
+  const {type, items} = schema
   if (value === '') {
     return undefined
-  } if (type === 'array' && items && nums.has(items.type)) {
+  }
+  if (type === 'array' && items && nums.has(items.type)) {
     return value.map(asNumber)
-  } if (type === 'boolean') {
+  }
+  if (type === 'boolean') {
     return value === 'true'
-  } if (type === 'number') {
+  }
+  if (type === 'number') {
     return asNumber(value)
   }
 
@@ -38,7 +37,8 @@ const processValue = (schema: any, value: any) => {
   if (schema.enum) {
     if (schema.enum.every((x: any) => guessType(x) === 'number')) {
       return asNumber(value)
-    } if (schema.enum.every((x: any) => guessType(x) === 'boolean')) {
+    }
+    if (schema.enum.every((x: any) => guessType(x) === 'boolean')) {
       return value === 'true'
     }
   }
@@ -61,24 +61,21 @@ const LayoutNameSelect = (props: WidgetProps) => {
     onChange,
     onBlur,
     onFocus,
-    rawErrors = [],
+    rawErrors = []
   } = props
-  const { enumOptions, enumDisabled } = options
+  const {enumOptions, enumDisabled} = options
 
   const emptyValue = multiple ? [] : ''
 
-  const _onChange = ({
-    target: { value },
-  }: React.ChangeEvent<{ name?: string; value: unknown }>) => onChange(processValue(schema, value))
-  const _onBlur = ({ target: { value } }: React.FocusEvent<HTMLInputElement>) => onBlur(id, processValue(schema, value))
-  const _onFocus = ({
-    target: { value },
-  }: React.FocusEvent<HTMLInputElement>) => onFocus(id, processValue(schema, value))
+  const _onChange = ({target: {value}}: React.ChangeEvent<{name?: string; value: unknown}>) =>
+    onChange(processValue(schema, value))
+  const _onBlur = ({target: {value}}: React.FocusEvent<HTMLInputElement>) => onBlur(id, processValue(schema, value))
+  const _onFocus = ({target: {value}}: React.FocusEvent<HTMLInputElement>) => onFocus(id, processValue(schema, value))
   const {
     anchorEl,
     // isOpen,
     onClose,
-    onOpen,
+    onOpen
   } = useDisclosure({})
   const hoveredIndexRef = React.useRef(-1)
   return (
@@ -95,20 +92,20 @@ const LayoutNameSelect = (props: WidgetProps) => {
       onBlur={_onBlur}
       onFocus={_onFocus}
       InputLabelProps={{
-        shrink: true,
+        shrink: true
       }}
       SelectProps={{
-        multiple: typeof multiple === 'undefined' ? false : multiple,
+        multiple: typeof multiple === 'undefined' ? false : multiple
       }}
     >
-      {(enumOptions as any).map(({ value, label }: any, i: number) => {
+      {(enumOptions as any).map(({value, label}: any, i: number) => {
         const disabled: any = enumDisabled && (enumDisabled as any).indexOf(value) != -1
         return (
           <MenuItem
             key={i}
             value={value}
             disabled={disabled}
-            onMouseEnter={(e) => {
+            onMouseEnter={e => {
               hoveredIndexRef.current = i
               onOpen(e)
             }}
@@ -117,7 +114,7 @@ const LayoutNameSelect = (props: WidgetProps) => {
             <LayoutNameItem
               openInfo={{
                 anchorEl,
-                isOpen: hoveredIndexRef.current === i,
+                isOpen: hoveredIndexRef.current === i
               }}
               value={value}
               label={label}
@@ -125,30 +122,30 @@ const LayoutNameSelect = (props: WidgetProps) => {
             />
           </MenuItem>
 
-        // <MenuItem
-        //   key={i}
-        //   value={value}
-        //   disabled={disabled}
-        // >
+          // <MenuItem
+          //   key={i}
+          //   value={value}
+          //   disabled={disabled}
+          // >
 
-        //   <View
-        //   style={{
-        //     flexDirection: 'row',
-        //     justifyContent: 'space-between',
-        //     width: '100%',
-        //   }}
-        // >
-        //   <Typography>
-        //     {label}
-        //   </Typography>
-        //   <img
-        //     src={`https://raw.githubusercontent.com/sabaturgay/assets/main/gifs/${value}Layout.gif`}
-        //     width={32}
-        //     height={32}
-        //     alt={label}
-        //   />
-        // </View>
-        // </MenuItem>
+          //   <View
+          //   style={{
+          //     flexDirection: 'row',
+          //     justifyContent: 'space-between',
+          //     width: '100%',
+          //   }}
+          // >
+          //   <Typography>
+          //     {label}
+          //   </Typography>
+          //   <img
+          //     src={`https://raw.githubusercontent.com/sabaturgay/assets/main/gifs/${value}Layout.gif`}
+          //     width={32}
+          //     height={32}
+          //     alt={label}
+          //   />
+          // </View>
+          // </MenuItem>
         )
       })}
     </TextField>
@@ -156,18 +153,18 @@ const LayoutNameSelect = (props: WidgetProps) => {
 }
 
 type LayoutNameItemProps = {
-  value: string;
-  label: string;
-  disabled?: boolean;
+  value: string
+  label: string
+  disabled?: boolean
   openInfo: {
-    anchorEl?: any;
+    anchorEl?: any
     isOpen?: boolean
-  };
+  }
 }
 const LayoutNameItem = (props: LayoutNameItemProps) => {
   const {
     label,
-    value,
+    value
     // openInfo = {},
   } = props
   // const {
@@ -181,12 +178,10 @@ const LayoutNameItem = (props: LayoutNameItemProps) => {
         style={{
           flexDirection: 'row',
           justifyContent: 'space-between',
-          width: '100%',
+          width: '100%'
         }}
       >
-        <Typography>
-          {label}
-        </Typography>
+        <Typography>{label}</Typography>
         <img
           src={`https://raw.githubusercontent.com/sabaturgay/assets/main/gifs/${value}Layout.gif`}
           width={32}
@@ -214,43 +209,25 @@ const LayoutNameItem = (props: LayoutNameItemProps) => {
   )
 }
 
-type LayoutCardProps = typeof LAYOUT_INFO['breadthfirst']
+type LayoutCardProps = (typeof LAYOUT_INFO)['breadthfirst']
 
 export const LayoutCard = (props: LayoutCardProps) => {
-  const {
-    content,
-    image,
-    title,
-  } = props
+  const {content, image, title} = props
   return (
     <>
       <Card
         sx={{
           width: WIDTH,
-          zIndex: (theme) => theme.zIndex.modal,
+          zIndex: theme => theme.zIndex.modal
         }}
       >
         <CardActionArea>
-          <CardMedia
-            component="img"
-            height={`${HEIGHT}`}
-            width={`${WIDTH}`}
-            image={image}
-            title={title}
-          />
+          <CardMedia component="img" height={`${HEIGHT}`} width={`${WIDTH}`} image={image} title={title} />
           <CardContent>
-            <Typography
-              gutterBottom
-              variant="h5"
-              component="h2"
-            >
+            <Typography gutterBottom variant="h5" component="h2">
               {title}
             </Typography>
-            <Typography
-              variant="body2"
-              color="textSecondary"
-              component="p"
-            >
+            <Typography variant="body2" color="textSecondary" component="p">
               {content}
             </Typography>
           </CardContent>
@@ -266,87 +243,83 @@ export const LayoutCard = (props: LayoutCardProps) => {
       </CardActions> */}
       </Card>
     </>
-  //   <Paper
-  //   sx={{
-  //     width: { sx: '8vw', md: '50vw' },
-  //     display: 'flex',
-  //     padding: 10,
-  //     flexDirection: 'column',
-  //   }}
-  // >
-  //   <Typography variant="h1">
-  //     {info.title}
-  //   </Typography>
-  //   <img
-  //     src={info.image}
-  //     width={250}
-  //     height={250}
-  //     alt={label}
-  //   />
-  //   <Typography
-  //     variant="body1"
-  //   >
-  //     {info.content}
-  //   </Typography>
-  // </Paper>
+    //   <Paper
+    //   sx={{
+    //     width: { sx: '8vw', md: '50vw' },
+    //     display: 'flex',
+    //     padding: 10,
+    //     flexDirection: 'column',
+    //   }}
+    // >
+    //   <Typography variant="h1">
+    //     {info.title}
+    //   </Typography>
+    //   <img
+    //     src={info.image}
+    //     width={250}
+    //     height={250}
+    //     alt={label}
+    //   />
+    //   <Typography
+    //     variant="body1"
+    //   >
+    //     {info.content}
+    //   </Typography>
+    // </Paper>
   )
 }
-export const getFormProps = () => ({
-  schema: {
-    properties: {
+export const getFormProps = () =>
+  ({
+    schema: {
+      properties: {
+        name: {
+          type: 'string',
+          enum: LAYOUT_NAMES
+        },
+        animationDuration: {
+          type: 'number',
+          minimum: 0,
+          maximum: 10000
+        },
+        refresh: {
+          type: 'number',
+          minimum: 0,
+          maximum: 100
+        },
+        maxIterations: {
+          type: 'number',
+          minimum: 0,
+          maximum: 1000
+        },
+        maxSimulationTime: {
+          type: 'number',
+          minimum: 0,
+          maximum: 1000
+        },
+        expansion: {
+          type: 'number',
+          minimum: 0,
+          maximum: 1
+        }
+      }
+    },
+    uiSchema: {
       name: {
-        type: 'string',
-        enum: LAYOUT_NAMES,
-      },
-      animationDuration: {
-        type: 'number',
-        minimum: 0,
-        maximum: 10000,
-      },
-      refresh: {
-        type: 'number',
-        minimum: 0,
-        maximum: 100,
-      },
-      maxIterations: {
-        type: 'number',
-        minimum: 0,
-        maximum: 1000,
-      },
-      maxSimulationTime: {
-        type: 'number',
-        minimum: 0,
-        maximum: 1000,
-      },
-      expansion: {
-        type: 'number',
-        minimum: 0,
-        maximum: 1,
-      },
-    },
-  },
-  uiSchema: {
-    name: {
-      'ui:field': (props: any) => {
-        const {
-          schema,
-          formData,
-        } = props
-        return (
-          <LayoutNameSelect
-            {...props}
-            value={formData}
-            options={{
-              enumOptions: schema.enum.map(
-                (value: string) => ({
+        'ui:field': (props: any) => {
+          const {schema, formData} = props
+          return (
+            <LayoutNameSelect
+              {...props}
+              value={formData}
+              options={{
+                enumOptions: schema.enum.map((value: string) => ({
                   label: value,
-                  value,
-                }),
-              ),
-            }}
-          />
-        )
-      },
-    },
-  },
-}) as const
+                  value
+                }))
+              }}
+            />
+          )
+        }
+      }
+    }
+  }) as const

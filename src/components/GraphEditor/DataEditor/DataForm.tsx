@@ -1,41 +1,40 @@
 import React from 'react'
 // @ts-ignore
 import Form from '@rjsf/semantic-ui'
-import { Box, BoxProps } from '@mui/material'
-import { EVENT } from '@constants'
-import { OnEventLite, DataItem } from '@type'
+import {Box, BoxProps} from '@mui/material'
+import {EVENT} from '@constants'
+import {OnEventLite, DataItem} from '@type'
 
 export type DataEditorProps = {
-  style?: BoxProps['style'];
-  data: DataItem[];
-  onEvent: OnEventLite;
-  localLabel?: string[]| null;
-  globalLabel?: string[] | null;
-  isGlobalLabelFirst?: boolean;
+  style?: BoxProps['style']
+  data: DataItem[]
+  onEvent: OnEventLite
+  localLabel?: string[] | null
+  globalLabel?: string[] | null
+  isGlobalLabelFirst?: boolean
 }
 
 export const DataForm = (props: DataEditorProps) => {
-  const {
-    data,
-    onEvent,
-  } = props
+  const {data, onEvent} = props
   return (
     <Box
       sx={{
         overflow: 'scroll',
         height: '100%',
-        pb: 12,
+        pb: 12
       }}
     >
       <Form
         formData={data ?? []}
-        onSubmit={(e: React.MouseEvent<HTMLButtonElement>) => onEvent({
-          type: EVENT.UPDATE_DATA,
-          payload: {
-            // @ts-ignore
-            value: e.formData,
-          },
-        })}
+        onSubmit={(e: React.MouseEvent<HTMLButtonElement>) =>
+          onEvent({
+            type: EVENT.UPDATE_DATA,
+            payload: {
+              // @ts-ignore
+              value: e.formData
+            }
+          })
+        }
         schema={{
           title: 'DataEditor',
           type: 'array',
@@ -45,7 +44,7 @@ export const DataForm = (props: DataEditorProps) => {
             properties: {
               name: {
                 title: 'Name',
-                type: 'string',
+                type: 'string'
               },
               value: {
                 title: 'Value List',
@@ -55,7 +54,7 @@ export const DataForm = (props: DataEditorProps) => {
                   properties: {
                     value: {
                       title: 'Item',
-                      type: 'string',
+                      type: 'string'
                     },
                     additional: {
                       title: 'Item Additional List',
@@ -65,18 +64,18 @@ export const DataForm = (props: DataEditorProps) => {
                         properties: {
                           name: {
                             title: 'Additional Name',
-                            type: 'string',
+                            type: 'string'
                           },
                           value: {
                             title: 'Additional Value',
-                            type: 'string',
-                          },
-                        },
-                      },
-                    },
-                  },
-                },
-              },
+                            type: 'string'
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
               // additional: {
               //   type: 'object',
               //   properties: {
@@ -91,8 +90,8 @@ export const DataForm = (props: DataEditorProps) => {
               //     },
               //   },
               // },
-            },
-          },
+            }
+          }
         }}
       />
     </Box>

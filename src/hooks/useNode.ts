@@ -1,84 +1,67 @@
 import React from 'react'
-import { useStateWithCallback } from 'colay-ui'
-import { NodeSingular, Core } from 'cytoscape'
-import { Position } from 'colay/type'
-import {
-  NodeContext,
-  NodeConfig,
-  Cluster,
-  NodeData,
-  NodeElement,
-} from '@type'
-import { getClusterVisibility, calculateVisibilityByContext, contextUtils } from '@utils'
-import { CYTOSCAPE_EVENT, ELEMENT_DATA_FIELDS } from '@constants'
-import { useInitializedRef } from 'colay-ui/hooks/useInitializedRef'
-import { mutableGraphMap } from './useGraph'
-import { useElement } from './useElement'
+import {useStateWithCallback} from 'colay-ui'
+import {NodeSingular, Core} from 'cytoscape'
+import {Position} from 'colay/type'
+import {NodeContext, NodeConfig, Cluster, NodeData, NodeElement} from '@type'
+import {getClusterVisibility, calculateVisibilityByContext, contextUtils} from '@utils'
+import {CYTOSCAPE_EVENT, ELEMENT_DATA_FIELDS} from '@constants'
+import {useInitializedRef} from 'colay-ui/hooks/useInitializedRef'
+import {mutableGraphMap} from './useGraph'
+import {useElement} from './useElement'
 
 export type Props = {
   /**
    * Node data
    */
-  item: NodeData;
+  item: NodeData
   /**
    * Related graph id
    */
-  graphID: string;
+  graphID: string
   /**
    * Node initial position
    */
-  position: Position;
+  position: Position
   /**
    * Node is cluster or not
    */
-  isCluster?: boolean;
+  isCluster?: boolean
   /**
    * Position change handler
    */
-  onPositionChange?: (c: { element: NodeSingular; context: NodeContext }) => void | any;
+  onPositionChange?: (c: {element: NodeSingular; context: NodeContext}) => void | any
   /**
    * Node config data
    */
-  config?: NodeConfig;
+  config?: NodeConfig
 }
 
 type Result = {
-  element: NodeSingular;
-  context: NodeContext;
-  clusters?: Cluster[];
-  cy: Core;
+  element: NodeSingular
+  context: NodeContext
+  clusters?: Cluster[]
+  cy: Core
 }
 
 const DEFAULT_BOUNDING_BOX = {
   x: 0,
   y: 0,
   width: 0,
-  height: 0,
+  height: 0
 }
 
 export const useNode = (props: Props): Result => {
-  const {
-    position,
-    onPositionChange,
-    graphID,
-    config = {} as NodeConfig,
-    item,
-    isCluster = false,
-  } = props
-  const {
-    id,
-  } = item
+  const {position, onPositionChange, graphID, config = {} as NodeConfig, item, isCluster = false} = props
+  const {id} = item
   const initializedRef = useInitializedRef()
-  const { cy, clustersByNodeId, clustersByChildClusterId } = mutableGraphMap[graphID]
-  const clusters = isCluster
-    ? clustersByChildClusterId[id]
-    : clustersByNodeId[id]
+  const {cy, clustersByNodeId, clustersByChildClusterId} = mutableGraphMap[graphID]
+  const clusters = isCluster ? clustersByChildClusterId[id] : clustersByNodeId[id]
   const [, setState] = useStateWithCallback({}, () => {})
   const contextRef = React.useRef<NodeContext>({
     render: (callback: () => void) => setState({}, callback),
     onPositionChange: () => {
-      onPositionChange?.({ element, context: contextRef.current })
-      element.connectedEdges().forEach((mutableEdge) => {
+      onPositionChange?.({element, context: contextRef.current})
+      element.connectedEdges().forEach(mutableEdge => {
         const edgeContext = contextUtils.get(mutableEdge)
         edgeContext.onPositionChange()
       })
@@ -87,10 +70,10 @@ export const useNode = (props: Props): Result => {
     settings: {
       filtered: true,
       visibility: {
-        cluster: getClusterVisibility(id, clusters),
+        cluster: getClusterVisibility(id, clusters)
       },
-      hovered: false,
-    },
+      hovered: false
+    }
   } as NodeContext)
   const element: NodeElement = React.useMemo(() => {
     let _element: NodeElement = cy.$id(id)[0]
@@ -99,10 +82,10 @@ export const useNode = (props: Props): Result => {
         data: {
           id,
           [ELEMENT_DATA_FIELDS.CONTEXT]: contextRef.current,
-          [ELEMENT_DATA_FIELDS.DATA]: item?.data,
+          [ELEMENT_DATA_FIELDS.DATA]: item?.data
         }, // ...(parentID ? { parent: parentID } : {}),
-        position: { ...position },
-        group: 'nodes',
+        position: {...position},
+        group: 'nodes'
         // eslint-disable-next-line react-hooks/exhaustive-deps
       }) as unknown as NodeElement
     }
@@ -111,9 +94,7 @@ export const useNode = (props: Props): Result => {
   React.useEffect(
     () => {
       const {
-        current: {
-          onPositionChange,
-        },
+        current: {onPositionChange}
       } = contextRef
       const onHover = () => {
         contextRef.current.settings.hovered = true
@@ -136,7 +117,7 @@ export const useNode = (props: Props): Result => {
         cy!.remove(element!)
       }
     }, // destroy
-    [cy, id],
+    [cy, id]
   )
   React.useMemo(() => {
     if (initializedRef.current) {
@@ -164,12 +145,12 @@ export const useNode = (props: Props): Result => {
     cy,
     element,
     config,
-    item,
+    item
   })
   return {
     element,
     context: contextRef.current,
     clusters,
-    cy,
+    cy
   }
 }

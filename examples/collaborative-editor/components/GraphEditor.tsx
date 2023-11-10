@@ -1,34 +1,30 @@
 import React from 'react'
-import { Graph, GraphEditor, } from "perfect-graph";
-import { DefaultTheme } from "perfect-graph/core/theme";
-import { getSelectedItemByElement, getSelectedElementInfo } from "perfect-graph/utils";
-import { EVENT, EDITOR_MODE } from "perfect-graph/constants";
-import { useController } from "perfect-graph/plugins/controller";
-import { getPointerPositionOnViewport } from "perfect-graph/utils";
-import * as API from "../api/firebase";
-import * as R from "colay/ramda";
-import { useImmer } from "colay-ui/hooks/useImmer";
-import { MouseArrow } from './MouseArrow'
+import {Graph, GraphEditor} from 'perfect-graph'
+import {DefaultTheme} from 'perfect-graph/core/theme'
+import {getSelectedItemByElement, getSelectedElementInfo} from 'perfect-graph/utils'
+import {EVENT, EDITOR_MODE} from 'perfect-graph/constants'
+import {useController} from 'perfect-graph/plugins/controller'
+import {getPointerPositionOnViewport} from 'perfect-graph/utils'
+import * as API from '../api/firebase'
+import * as R from 'colay/ramda'
+import {useImmer} from 'colay-ui/hooks/useImmer'
+import {MouseArrow} from './MouseArrow'
 
 const PROJECT_ID = 'daa9975c-6bdc-4ab3-9a01-2d1dca1f2290'
 
 type User = {
-  id: string;
-  name: string;
+  id: string
+  name: string
   position: {
-    x: number;
-    y: number;
+    x: number
+    y: number
   }
 }
 
 export function MyGraphEditor(props: any) {
-  const {
-    width,
-    height,
-    userName,
-  } = props
+  const {width, height, userName} = props
   const [state, updateState] = useImmer({
-    users: [] as User[],
+    users: [] as User[]
   })
   const userId = React.useMemo(() => R.uuid(), [])
   const [controllerProps, controller] = useController({
@@ -38,42 +34,22 @@ export function MyGraphEditor(props: any) {
       editable: true
     },
     networkStatistics: {
-      local: {
-
-      },
+      local: {}
     },
-    onEvent: ({
-      type,
-      payload,
-      elementId,
-      graphRef,
-      graphEditor,
-      update,
-      state,
-    }, draft) => {
-      const {
-        cy,
-        context: graphEditorContext
-      } = graphEditor
+    onEvent: ({type, payload, elementId, graphRef, graphEditor, update, state}, draft) => {
+      const {cy, context: graphEditorContext} = graphEditor
       const element = cy.$id(elementId!)
-      const {
-        item: selectedItem,
-        index: selectedItemIndex,
-      } = (element && getSelectedItemByElement(element, draft)) ?? {}
+      const {item: selectedItem, index: selectedItemIndex} = (element && getSelectedItemByElement(element, draft)) ?? {}
       switch (type) {
         case EVENT.UPDATE_DATA: {
-          const {
-            value
-          } = payload
-          const {
-            type, selectedItem
-          } = getSelectedElementInfo(draft, graphEditor)
+          const {value} = payload
+          const {type, selectedItem} = getSelectedElementInfo(draft, graphEditor)
           if (type === 'nodes') {
             API.updateNode({
               projectId: PROJECT_ID,
               item: {
                 id: selectedItem.id,
-                data: value,
+                data: value
               }
             })
           } else {
@@ -81,17 +57,14 @@ export function MyGraphEditor(props: any) {
               projectId: PROJECT_ID,
               item: {
                 id: selectedItem!.id,
-                data: value,
+                data: value
               }
             })
           }
           return false
         }
         case EVENT.ADD_NODE: {
-          const {
-            items,
-            edgeItems,
-          } = payload
+          const {items, edgeItems} = payload
           // draft.nodes = draft.nodes.concat(items)
           // draft.edges = draft.edges.concat(edgeItems ?? [])
           // const { position } = payload
@@ -100,7 +73,7 @@ export function MyGraphEditor(props: any) {
           //   position,
           //   data: [],
           // })
-          items.forEach((item) => {
+          items.forEach(item => {
             API.createNode({
               projectId: PROJECT_ID,
               item
@@ -112,9 +85,7 @@ export function MyGraphEditor(props: any) {
           return false
         }
         case EVENT.DELETE_NODE: {
-          const {
-            itemIds = [],
-          } = payload as {
+          const {itemIds = []} = payload as {
             itemIds: string[]
           }
           console.log('AA', itemIds)
@@ -123,7 +94,7 @@ export function MyGraphEditor(props: any) {
           //   (edgeItem) => !itemIds.includes(edgeItem.source)
           //   && !itemIds.includes(edgeItem.target),
           // )
-          itemIds.forEach((id) => {
+          itemIds.forEach(id => {
             API.deleteNode({
               projectId: PROJECT_ID,
               id
@@ -135,10 +106,8 @@ export function MyGraphEditor(props: any) {
           return false
         }
         case EVENT.ADD_EDGE: {
-          const {
-            items,
-          } = payload
-          items.forEach((item) => {
+          const {items} = payload
+          items.forEach(item => {
             API.createEdge({
               projectId: PROJECT_ID,
               item
@@ -150,12 +119,10 @@ export function MyGraphEditor(props: any) {
           return false
         }
         case EVENT.DELETE_EDGE: {
-          const {
-            itemIds = [],
-          } = payload as {
+          const {itemIds = []} = payload as {
             itemIds: string[]
           }
-          itemIds.forEach((id) => {
+          itemIds.forEach(id => {
             API.deleteEdge({
               projectId: PROJECT_ID,
               id
@@ -166,15 +133,15 @@ export function MyGraphEditor(props: any) {
           }
           return false
         }
-      //   case EVENT.MODE_CHANGED: {
-      //     targetNodeRef.current = null
-      //     break
-      //   }
+        //   case EVENT.MODE_CHANGED: {
+        //     targetNodeRef.current = null
+        //     break
+        //   }
         default:
-          break;
+          break
       }
     }
-  });
+  })
   const graphEditorRef = controllerProps.ref
   const removeUser = React.useCallback(() => {
     API.deleteUser({
@@ -182,7 +149,7 @@ export function MyGraphEditor(props: any) {
       id: userId
     })
   }, [userId])
-  const  createUser = React.useCallback(() => {
+  const createUser = React.useCallback(() => {
     API.updateUser({
       projectId: PROJECT_ID,
       user: {
@@ -197,111 +164,92 @@ export function MyGraphEditor(props: any) {
   }, [userId])
   API.useProjectSubscription({
     projectId: PROJECT_ID,
-    onEvent: (event) => {
-       const {
-        type,
-        data,
-        elementType
-       } = event
-       controller.update((draft) => {
+    onEvent: event => {
+      const {type, data, elementType} = event
+      controller.update(draft => {
         const targetList = draft[elementType]
         switch (type) {
           case 'added':
             targetList.push(data)
-            break;
-          case 'modified':{
-            targetList.forEach(
-              (item, index) => {
-                if (item.id === data.id) {
-                  targetList[index] = data
-                }
+            break
+          case 'modified': {
+            targetList.forEach((item, index) => {
+              if (item.id === data.id) {
+                targetList[index] = data
               }
-            )
+            })
             // .filter((item) => item.id !== data.id)))
-            break;
+            break
           }
           case 'removed':
-            draft[elementType] = targetList.filter(
-              (item) => item.id !== data.id
-            )
+            draft[elementType] = targetList.filter(item => item.id !== data.id)
             if (elementType === 'nodes') {
-              draft.edges = draft.edges.filter(
-            (edgeItem) => data.id !==edgeItem.source
-              && data.id !== edgeItem.target,
-            )
+              draft.edges = draft.edges.filter(edgeItem => data.id !== edgeItem.source && data.id !== edgeItem.target)
             }
-            break;
-        
+            break
+
           default:
-            break;
+            break
         }
-       })
+      })
     }
   })
   API.useUserSubscription({
     projectId: PROJECT_ID,
-    onEvent: (event) => {
-       const {
-        type,
-        data,
-        elementType
-       } = event
-       if (data.id === userId) {
-         return
-       }
-       updateState((draft) => {
+    onEvent: event => {
+      const {type, data, elementType} = event
+      if (data.id === userId) {
+        return
+      }
+      updateState(draft => {
         switch (type) {
           case 'added':
             draft.users.push(data)
-            break;
-          case 'modified':{
-            draft.users.forEach(
-              (item, index) => {
-                if (item.id === data.id) {
-                  draft.users[index] = data
-                }
+            break
+          case 'modified': {
+            draft.users.forEach((item, index) => {
+              if (item.id === data.id) {
+                draft.users[index] = data
               }
-            )
-            break;
+            })
+            break
           }
           case 'removed':
-            draft.users = draft.users.filter(
-              (item) => item.id !== data.id
-            )
-            break;
-        
+            draft.users = draft.users.filter(item => item.id !== data.id)
+            break
+
           default:
-            break;
+            break
         }
-       })
+      })
     }
   })
   React.useEffect(() => {
     createUser()
-    const handleWindowChange = (type: string) => (e) => {
+    const handleWindowChange = (type: string) => e => {
       switch (type) {
         case 'visibilitychange':
           if (document.visibilityState === 'visible') {
             createUser()
           } else {
             removeUser()
-          }          
-          break;
+          }
+          break
         case 'focus':
           createUser()
-          break;
+          break
         case 'blur':
           removeUser()
-          break;
+          break
         case 'blur':
           removeUser()
-          break;
+          break
         case 'beforeunload':
           removeUser()
-          break;
-      
+          break
+
         default:
-          break;
+          break
       }
       console.log('Focus change', e)
     }
@@ -312,31 +260,28 @@ export function MyGraphEditor(props: any) {
     window.addEventListener('visibilitychange', visibilityChangeHandler, false)
     window.addEventListener('blur', blurHandler, false)
     window.addEventListener('focus', focusHandler, false)
-    window.addEventListener('beforeunload', beforeUnloadHandler, false);
+    window.addEventListener('beforeunload', beforeUnloadHandler, false)
     let isTrackRef = {
       current: true
     }
     const interval = setInterval(() => {
       isTrackRef.current = true
     }, 1000)
-    const debounced = R.debounce((event) => {
-        // if (isTrackRef.current) {
-          isTrackRef.current = false
-          const position = getPointerPositionOnViewport(
-            graphEditorRef.current.viewport,
-            event
-          )
-          API.updateUser({
-            projectId: PROJECT_ID,
-            user: {
-              id: userId,
-              name: userName,
-              position
-            }
-          })
-        // }
-      }, 1000)
-    const onMouseMove = (event) => {
+    const debounced = R.debounce(event => {
+      // if (isTrackRef.current) {
+      isTrackRef.current = false
+      const position = getPointerPositionOnViewport(graphEditorRef.current.viewport, event)
+      API.updateUser({
+        projectId: PROJECT_ID,
+        user: {
+          id: userId,
+          name: userName,
+          position
+        }
+      })
+      // }
+    }, 1000)
+    const onMouseMove = event => {
       debounced(event)
     }
     document.addEventListener('mousemove', onMouseMove)
@@ -350,35 +295,27 @@ export function MyGraphEditor(props: any) {
       window.removeEventListener('visibilitychange', visibilityChangeHandler, false)
       window.removeEventListener('blur', blurHandler, false)
       window.removeEventListener('focus', focusHandler, false)
-      window.removeEventListener('beforeunload', beforeUnloadHandler, false);
+      window.removeEventListener('beforeunload', beforeUnloadHandler, false)
     }
   }, [])
   console.log(state.users)
   return (
-    <GraphEditor
-      style={{ width, height }}
-      {...controllerProps}
-    >
-      {
-        state.users.map((user) => userId !== user.id && (
-          // <Graph.View
-          //   width={10}
-          //   height={10}
-          //   fill={DefaultTheme.palette.primary.main}
-          //   x={user.position.x}
-          //   y={user.position.y}
-          // >
-          //   <Graph.Text text={R.takeLast(4, user.id)} />
-          // </Graph.View>
-          <MouseArrow 
-            key={user.id}
-            user={user}
-            color={0xff3300}
-            position={user.position}
-            label={user.name}
-          />
-        ))
-      }
+    <GraphEditor style={{width, height}} {...controllerProps}>
+      {state.users.map(
+        user =>
+          userId !== user.id && (
+            // <Graph.View
+            //   width={10}
+            //   height={10}
+            //   fill={DefaultTheme.palette.primary.main}
+            //   x={user.position.x}
+            //   y={user.position.y}
+            // >
+            //   <Graph.Text text={R.takeLast(4, user.id)} />
+            // </Graph.View>
+            <MouseArrow key={user.id} user={user} color={0xff3300} position={user.position} label={user.name} />
+          )
+      )}
     </GraphEditor>
-  );
+  )
 }

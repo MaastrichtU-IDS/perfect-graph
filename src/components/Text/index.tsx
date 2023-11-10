@@ -2,7 +2,7 @@
 // import * as PIXI from 'pixi.js'
 // import { wrapComponent } from 'colay-ui'
 // import { PropsWithRef } from 'colay-ui/type'
-import { Text as ReactPIXIText } from '@inlet/react-pixi'
+import {Text as ReactPIXIText} from '@inlet/react-pixi'
 // import { PixiComponent,} from '@inlet/react-pixi'
 // import { useTheme, ThemeProps } from '@core/theme'
 // import * as C from 'colay/color'
@@ -66,7 +66,7 @@ import { Text as ReactPIXIText } from '@inlet/react-pixi'
 //   create: (props) => {
 //     const {
 //       style = {},
-//       text = '', 
+//       text = '',
 //       isSprite,
 //     } = props
 //     // processTextProps({
@@ -96,7 +96,7 @@ import { Text as ReactPIXIText } from '@inlet/react-pixi'
 //   ) => {
 //     const {
 //       style = {},
-//       text = '', 
+//       text = '',
 //       isSprite,
 //     } = props
 //     instance.forceToRender = props.forceToRender

@@ -45,9 +45,9 @@ import {
   DragHandle,
   CancelRounded,
   CenterFocusStrong,
-  TuneOutlined,
+  TuneOutlined
 } from '@mui/icons-material'
-import { IconProps as MUIIconProps } from '@mui/material'
+import {IconProps as MUIIconProps} from '@mui/material'
 
 const ICONS = {
   app_registration_outlined: AppRegistrationOutlined,
@@ -95,20 +95,17 @@ const ICONS = {
   drag_handle: DragHandle,
   toc_outlined: TocOutlined,
   tune_outlined: TuneOutlined,
-  settings_outlined: SettingsOutlined,
+  settings_outlined: SettingsOutlined
 } as const
 
 type IconName = keyof typeof ICONS
 
 export type IconProps = Omit<MUIIconProps, 'name'> & {
-  name: IconName;
+  name: IconName
 }
 
 export const Icon = (props: IconProps) => {
-  const {
-    name,
-    ...rest
-  } = props
+  const {name, ...rest} = props
   const IconSelected = ICONS[name]
   return (
     // @ts-ignore

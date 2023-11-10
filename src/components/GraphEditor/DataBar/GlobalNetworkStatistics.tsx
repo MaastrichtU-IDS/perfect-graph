@@ -1,98 +1,70 @@
-import {
-  Collapsible,
-  CollapsibleContainer,
-  CollapsibleTitle,
-} from '@components/Collapsible'
-import { Icon } from '@components/Icon'
-import { EVENT } from '@constants'
-import {
-  IconButton,
-} from '@mui/material'
-import { OnEventLite } from '@type'
-import { View } from 'colay-ui/components/View'
+import {Collapsible, CollapsibleContainer, CollapsibleTitle} from '@components/Collapsible'
+import {Icon} from '@components/Icon'
+import {EVENT} from '@constants'
+import {IconButton} from '@mui/material'
+import {OnEventLite} from '@type'
+import {View} from 'colay-ui/components/View'
 import React from 'react'
-import {
-  JSONViewer,
-} from './JSONViewer'
+import {JSONViewer} from './JSONViewer'
 export type GlobalNetworkStatisticsProps = {
-  data?: any;
-  onEvent: OnEventLite;
-  sort?: any;
+  data?: any
+  onEvent: OnEventLite
+  sort?: any
 }
 
 export const GlobalNetworkStatistics = (props: GlobalNetworkStatisticsProps) => {
-  const {
-    data,
-    onEvent,
-    sort = -1,
-  } = props
+  const {data, onEvent, sort = -1} = props
   return (
-    <Collapsible
-      defaultIsOpen
-    >
-      {
-        ({ isOpen, onToggle }) => (
-          <>
-            <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            width: '100%',
-          }}
-        >
+    <Collapsible defaultIsOpen>
+      {({isOpen, onToggle}) => (
+        <>
           <View
             style={{
               flexDirection: 'row',
+              justifyContent: 'space-between',
               alignItems: 'center',
+              width: '100%'
             }}
           >
-            <CollapsibleTitle
-              onClick={onToggle}
-            >
-              Global Network Statistics
-            </CollapsibleTitle>
-          </View>
-          <View
-            style={{
-              // alignItems: 'space-between',
-              flexDirection: 'row',
-            }}
-          >
-            <IconButton
-              onClick={(e) => {
-                e.stopPropagation()
-                onEvent({
-                  type: EVENT.CALCULATE_GLOBAL_NETWORK_STATISTICS,
-                })
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center'
               }}
             >
-              <Icon
-                name="assessment"
-              />
-            </IconButton>
+              <CollapsibleTitle onClick={onToggle}>Global Network Statistics</CollapsibleTitle>
+            </View>
+            <View
+              style={{
+                // alignItems: 'space-between',
+                flexDirection: 'row'
+              }}
+            >
+              <IconButton
+                onClick={e => {
+                  e.stopPropagation()
+                  onEvent({
+                    type: EVENT.CALCULATE_GLOBAL_NETWORK_STATISTICS
+                  })
+                }}
+              >
+                <Icon name="assessment" />
+              </IconButton>
+            </View>
           </View>
-        </View>
-        {
-          isOpen && (
+          {isOpen && (
             <CollapsibleContainer>
-          <JSONViewer
-            data={data}
-            sort={sort}
-            />
-        </CollapsibleContainer>
-          )
-        }
-          </>
-        )
-      }
-
+              <JSONViewer data={data} sort={sort} />
+            </CollapsibleContainer>
+          )}
+        </>
+      )}
     </Collapsible>
   )
 }
 
-
-{/* <JSONViewer
+{
+  /* <JSONViewer
           data={data}
           sort={sort}
           left={({ collapsed, onCollapse, noChild }) => (
@@ -141,4 +113,5 @@ export const GlobalNetworkStatistics = (props: GlobalNetworkStatisticsProps) => 
                 : null}
             </View>
           )}
-        /> */}
+        /> */
+}

@@ -1,60 +1,44 @@
-import {
-  Collapsible,
-  CollapsibleContainer,
-  CollapsibleTitle,
-} from '@components/Collapsible'
-import { OnEventLite } from '@type'
-import { View } from 'colay-ui/components/View'
+import {Collapsible, CollapsibleContainer, CollapsibleTitle} from '@components/Collapsible'
+import {OnEventLite} from '@type'
+import {View} from 'colay-ui/components/View'
 import React from 'react'
-import {
-  JSONViewer,
-} from './JSONViewer'
+import {JSONViewer} from './JSONViewer'
 
 export type LocalNetworkStatisticsProps = {
-  data?: any;
-  onEvent: OnEventLite;
-  sort?: any;
+  data?: any
+  onEvent: OnEventLite
+  sort?: any
 }
 
 export const LocalNetworkStatistics = (props: LocalNetworkStatisticsProps) => {
-  const {
-    data,
-    sort = -1,
-  } = props
+  const {data, sort = -1} = props
   return (
-    <Collapsible
-      defaultIsOpen
-    >
-      {
-        ({ isOpen, onToggle }) => (
-          <>
-            <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            width: '100%',
-          }}
-        >
+    <Collapsible defaultIsOpen>
+      {({isOpen, onToggle}) => (
+        <>
           <View
             style={{
               flexDirection: 'row',
+              justifyContent: 'space-between',
               alignItems: 'center',
+              width: '100%'
             }}
           >
-            <CollapsibleTitle
-              onClick={onToggle}
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center'
+              }}
             >
-              Local Network Statistics
-            </CollapsibleTitle>
-          </View>
-          <View
-            style={{
-              // alignItems: 'space-between',
-              flexDirection: 'row',
-            }}
-          >
-            {/* <IconButton
+              <CollapsibleTitle onClick={onToggle}>Local Network Statistics</CollapsibleTitle>
+            </View>
+            <View
+              style={{
+                // alignItems: 'space-between',
+                flexDirection: 'row'
+              }}
+            >
+              {/* <IconButton
               onClick={(e) => {
                 e.stopPropagation()
                 onEvent({
@@ -66,21 +50,15 @@ export const LocalNetworkStatistics = (props: LocalNetworkStatisticsProps) => {
                 name="assessment"
               />
             </IconButton> */}
+            </View>
           </View>
-        </View>
-      {
-        isOpen && (
-          <CollapsibleContainer>
-      <JSONViewer
-          data={data}
-          sort={sort}
-          />
-      </CollapsibleContainer>
-        )
-      }
-          </>
-        )
-      }
+          {isOpen && (
+            <CollapsibleContainer>
+              <JSONViewer data={data} sort={sort} />
+            </CollapsibleContainer>
+          )}
+        </>
+      )}
     </Collapsible>
   )
 }

@@ -1,31 +1,23 @@
-import { Timeout, TimeoutInstance } from './smart-timer'
+import {Timeout, TimeoutInstance} from './smart-timer'
 
-export type {
-  TimeoutInstance,
-} from './smart-timer'
+export type {TimeoutInstance} from './smart-timer'
 export type Timer<T> = {
-  after: number;
+  after: number
 } & T
 
-export {
-  Timeout,
-} from './smart-timer'
+export {Timeout} from './smart-timer'
 
 export type Options = {
-  onFinish?: () => void;
-  onPlayChanged?: () => void;
+  onFinish?: () => void
+  onPlayChanged?: () => void
   autostart?: boolean
 }
 export const createTimeoutManager = <T extends Timer<Record<string, any>>>(
   timers: T[] = [],
   callback: (timer: T, index: number, timeout: TimeoutInstance) => void,
-  options: Options = {},
+  options: Options = {}
 ) => {
-  const {
-    onFinish: onFinishCallback,
-    autostart = true,
-    onPlayChanged: onPlayChangedCallback,
-  } = options
+  const {onFinish: onFinishCallback, autostart = true, onPlayChanged: onPlayChangedCallback} = options
   const isEmpty = timers.length === 0
   const timeoutInstances: TimeoutInstance[] = []
   let afterTotal = 0
@@ -45,12 +37,13 @@ export const createTimeoutManager = <T extends Timer<Record<string, any>>>(
     onPlayChangedCallback?.()
   }
   let totalDuration = 0
-  timers.forEach(({ after }: T) => {
+  timers.forEach(({after}: T) => {
     totalDuration += after
   })
-  const createDurationCounter = () => setInterval(() => {
-    controller.duration += 100
-  }, 100)
+  const createDurationCounter = () =>
+    setInterval(() => {
+      controller.duration += 100
+    }, 100)
   const controller = {
     currentIndex: 0,
     totalDuration,
@@ -77,13 +70,13 @@ export const createTimeoutManager = <T extends Timer<Record<string, any>>>(
       onPlayChanged(true)
     },
     clear: () => {
-      timeoutInstances.forEach((timeoutInstance) => {
+      timeoutInstances.forEach(timeoutInstance => {
         timeoutInstance.clear()
       })
       // @ts-ignore
       controller.durationCounter && clearInterval(controller.durationCounter)
       onFinish()
-    },
+    }
   }
   timers.forEach((timer, index) => {
     afterTotal += timer.after
@@ -97,9 +90,7 @@ export const createTimeoutManager = <T extends Timer<Record<string, any>>>(
     if (!autostart) {
       timeoutInstance.pause()
     }
-    timeoutInstances.push(
-      timeoutInstance,
-    )
+    timeoutInstances.push(timeoutInstance)
   })
   if (autostart) {
     controller.durationCounter = createDurationCounter()

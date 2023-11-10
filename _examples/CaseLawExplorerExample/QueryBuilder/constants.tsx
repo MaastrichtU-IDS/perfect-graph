@@ -1,8 +1,7 @@
 import React from 'react'
-import { Button, Slider, Typography } from '@mui/material'
+import {Button, Slider, Typography} from '@mui/material'
 
-const SliderUIField = ({ formData, schema, onChange, name }) => {
-
+const SliderUIField = ({formData, schema, onChange, name}) => {
   return (
     <>
       <Typography id={`${schema.title}-continuous-slider`} gutterBottom>
@@ -10,7 +9,7 @@ const SliderUIField = ({ formData, schema, onChange, name }) => {
       </Typography>
       <Slider
         value={formData ?? [schema.minimum, schema.maximum]}
-        onChange={(e) => {
+        onChange={e => {
           onChange(e.target.value)
         }}
         valueLabelDisplay="auto"
@@ -40,18 +39,10 @@ export const getQueryBuilderSchema = () => {
           title: 'Data sources',
           uniqueItems: true,
           items: {
-            enum: [
-              'RS',
-              'ECHR',
-              'Eurlex'
-            ],
-            enumNames: [
-              'Rechtspraak',
-              'European Court of Human Rights',
-              'Eurlex'
-            ],
+            enum: ['RS', 'ECHR', 'Eurlex'],
+            enumNames: ['Rechtspraak', 'European Court of Human Rights', 'Eurlex'],
             type: 'string'
-          },
+          }
         },
         Eclis: {
           type: 'string',
@@ -69,10 +60,10 @@ export const getQueryBuilderSchema = () => {
           type: 'array',
           title: 'Date',
           items: {
-            type: 'number',
+            type: 'number'
           },
           minimum: 1969,
-          maximum: 2015,
+          maximum: 2015
         },
         Instances: {
           type: 'array',
@@ -89,58 +80,45 @@ export const getQueryBuilderSchema = () => {
               'Gerechtshof Amsterdam'
             ],
             type: 'string'
-          },
+          }
         },
         Domains: {
           type: 'array',
           title: 'Domains',
           uniqueItems: true,
           items: {
-            enum: [
-              '',
-              'Not',
-              'Sure',
-              'What'
-            ],
+            enum: ['', 'Not', 'Sure', 'What'],
             type: 'string'
-          },
+          }
         },
         Doctypes: {
           type: 'array',
           title: 'Document types',
           uniqueItems: true,
           items: {
-            enum: [
-              '',
-              'DEC',
-              'OPI'
-            ],
-            enumNames: [
-              '',
-              'Decision',
-              'Opinion'
-            ],
+            enum: ['', 'DEC', 'OPI'],
+            enumNames: ['', 'Decision', 'Opinion'],
             type: 'string'
-          },
+          }
         },
         DegreesSources: {
           type: 'integer',
           title: 'Degrees Sources',
           minimum: 1,
-          maximum: 5,
+          maximum: 5
         },
         DegreesTargets: {
           type: 'integer',
           title: 'Degrees Targets',
           minimum: 1,
-          maximum: 5,
-        },
-      },
+          maximum: 5
+        }
+      }
     },
     uiSchema: {
-      'Date': {
-        'ui:field': SliderUIField,
-      },
+      Date: {
+        'ui:field': SliderUIField
+      }
       // 'degreesSources': {
       //   'ui:field': SliderUIField,
       // },

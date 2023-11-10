@@ -1,15 +1,14 @@
+import React from 'react'
+import MDX from 'unitx-docs-pack/mdx-runtime'
+import {TSDoc} from 'unitx-docs-pack'
+import * as R from 'unitx/ramda'
+import * as UnitxUI from 'unitx-ui'
+import components from '@storybookComponents'
 
-  import React from 'react';
-  import MDX from 'unitx-docs-pack/mdx-runtime'
-  import { TSDoc } from 'unitx-docs-pack'
-  import * as R from 'unitx/ramda';
-  import * as UnitxUI from 'unitx-ui';
-  import components from '@storybookComponents';
-
-  export const Graph = () => (
-      <>
-        <MDX components={components}>
-          {`## Usage
+export const Graph = () => (
+  <>
+    <MDX components={components}>
+      {`## Usage
 To create a Graph View easily, you can just pass data and render methods.
 Check example
 
@@ -42,12 +41,11 @@ function MyGraph() {
   )
 }
 \`\`\``}
-        </MDX>
-        <TSDoc relativePath={'src/components/components/Graph'} root="/tsdoc" title="Types"/>
-      </>
-    )
-    export default {
-      component: Graph,
-      title: 'components/Graph',
-    };
-  
+    </MDX>
+    <TSDoc relativePath={'src/components/components/Graph'} root="/tsdoc" title="Types" />
+  </>
+)
+export default {
+  component: Graph,
+  title: 'components/Graph'
+}

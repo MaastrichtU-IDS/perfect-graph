@@ -22,7 +22,8 @@
     "fire": "yarn build && yarn version --patch && cp ./package.json ./dist && cd dist && npm publish",
     "fire:beta": "rm -rf dist && yarn build:js && yarn version --patch && cp ./package.json ./dist && cd dist && npm publish --tag beta",
     "auth": "cd dist && npm login --always-auth && cd ..",
-    "generate:docs": "typedoc --excludeExternals --out /Users/turgaysaba/Desktop/projects/perfect-graph-docs/docs/type src/**/**/*"
+    "generate:docs": "typedoc --excludeExternals --out /Users/turgaysaba/Desktop/projects/perfect-graph-docs/docs/type src/**/**/*",
+    "fmt": "prettier \"**/*.{ts,tsx,js,cjs,json,md,html}\" --ignore-path .gitignore --write"
   },
   "dependencies": {
     "@inlet/react-pixi": "6.6.5",
@@ -74,6 +75,7 @@
     "jsonld-context-parser": "2.1.5",
     "n3": "1.11.2",
     "pixi-flex-layout": "1.0.3",
+    "prettier": "^3.0.3",
     "rdf-literal": "1.3.0",
     "rdflib": "2.2.10",
     "react": "^17.0.2",
@@ -96,5 +98,15 @@
     "colay-ui": "*",
     "react": "*",
     "react-dom": "*"
+  },
+  "prettier": {
+    "trailingComma": "none",
+    "semi": false,
+    "tabWidth": 2,
+    "singleQuote": true,
+    "bracketSpacing": false,
+    "arrowParens": "avoid",
+    "useTabs": false,
+    "printWidth": 120
   }
 }

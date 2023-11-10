@@ -1,7 +1,7 @@
 // @ts-nocheck
 import cytoscape from 'cytoscape'
 import * as R from 'colay/ramda'
-import { NodeData, EdgeData } from '@type'
+import {NodeData, EdgeData} from '@type'
 
 type Props = {
   nodes: NodeData[]
@@ -12,56 +12,42 @@ type Props = {
  * Calculate local network statistics
  */
 export const calculateStatistics = (params: Props) => {
-  const {
-    nodes = [],
-    edges = [],
-  } = params
+  const {nodes = [], edges = []} = params
   const cy = cytoscape({
     // @ts-ignore
     elements: R.concat(
-      nodes.map((n) => ({
+      nodes.map(n => ({
         data: n,
-        group: 'nodes',
+        group: 'nodes'
       })),
-      edges.map((e) => ({
+      edges.map(e => ({
         data: e,
-        group: 'edges',
-      })),
+        group: 'edges'
+      }))
     ),
-    headless: true,
+    headless: true
   })
-  const {
-    indegree: indegreeCentralityCalc,
-    outdegree: outdegreeCentralityCalc,
-  } = cy.elements().degreeCentralityNormalized({
+  const {indegree: indegreeCentralityCalc, outdegree: outdegreeCentralityCalc} = cy
+    .elements()
+    .degreeCentralityNormalized({
+      // weight: (edge) => {
+      //   return edge.connectedNodes().length
+      // },
+      // alpha: 1
+      directed: true
+    })
+  const {degree: degreeCentralityCalc} = cy.elements().degreeCentralityNormalized({
     // weight: (edge) => {
     //   return edge.connectedNodes().length
     // },
     // alpha: 1
-    directed: true,
   })
-  const {
-    degree: degreeCentralityCalc,
-  } = cy.elements().degreeCentralityNormalized({
-    // weight: (edge) => {
-    //   return edge.connectedNodes().length
-    // },
-    // alpha: 1
-  })
-  const {
-    closeness: closenessCentralityCalc,
-  } = cy.elements().closenessCentralityNormalized({
-  })
-  const {
-    betweenness: betweennessCentralityCalc,
-  } = cy.elements().betweennessCentrality({})
-  const {
-    rank: pageRankCalc,
-  } = cy.elements().pageRank({
-  })
+  const {closeness: closenessCentralityCalc} = cy.elements().closenessCentralityNormalized({})
+  const {betweenness: betweennessCentralityCalc} = cy.elements().betweennessCentrality({})
+  const {rank: pageRankCalc} = cy.elements().pageRank({})
   const nodeStatisticsMap: Record<string, any> = {}
   // const nodesStatistics =
-  cy.nodes().map((node) => {
+  cy.nodes().map(node => {
     const nodeId = node.id()
     nodeStatisticsMap[nodeId] = {
       degree: degreeCentralityCalc(node),
@@ -69,11 +55,11 @@ export const calculateStatistics = (params: Props) => {
       outdegree: outdegreeCentralityCalc(node),
       closeness: closenessCentralityCalc(node),
       betweenness: betweennessCentralityCalc(node),
-      pageRank: pageRankCalc(node),
+      pageRank: pageRankCalc(node)
     }
     return {
       id: nodeId,
-      ...nodeStatisticsMap[nodeId],
+      ...nodeStatisticsMap[nodeId]
     }
   })
   cy.destroy()

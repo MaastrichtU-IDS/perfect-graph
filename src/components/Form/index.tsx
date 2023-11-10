@@ -1,27 +1,25 @@
-import { Button } from '@mui/material'
-import { FormProps as FormPropsDefault } from '@rjsf/core'
+import {Button} from '@mui/material'
+import {FormProps as FormPropsDefault} from '@rjsf/core'
 import FormDefault from '@rjsf/material-ui'
-import {
-  View,
-} from 'colay-ui'
+import {View} from 'colay-ui'
 import React from 'react'
 
 export type FormProps<T> = FormPropsDefault<T> & {
-  onClear?: (params: { formData: any }) => void;
+  onClear?: (params: {formData: any}) => void
 }
 
 export const Form = <T,>(props: FormProps<T>) => {
   const {
     // onClear: onClearCallback,
-    formData: formDataValue,
+    formData: formDataValue
   } = props
   const [defaultValue] = React.useState(formDataValue)
   const [, refresh] = React.useState(0)
   const formDataRef = React.useRef(formDataValue)
   const onClear = React.useCallback(() => {
     // @ts-ignore
-    formDataRef.current = { ...defaultValue }
-    refresh((c) => c + 1)
+    formDataRef.current = {...defaultValue}
+    refresh(c => c + 1)
     // if (!onClearCallback) {
     //   formDataRef.current = { ...defaultValue }
     //   refresh((c) => c + 1)
@@ -38,16 +36,11 @@ export const Form = <T,>(props: FormProps<T>) => {
     keyRef.current += 1
   }, [formData])
   return (
-    <FormDefault
-       {...props}
-       key={keyRef.current}
-       formData={formData}
-     >
-    {
-      props.children ?? (
-        <View 
+    <FormDefault {...props} key={keyRef.current} formData={formData}>
+      {props.children ?? (
+        <View
           style={{
-            flexDirection: 'row',
+            flexDirection: 'row'
           }}
         >
           <Button
@@ -55,23 +48,17 @@ export const Form = <T,>(props: FormProps<T>) => {
             color="warning"
             fullWidth
             variant="contained"
-              style={{
-                marginRight: 2,
-              }}
+            style={{
+              marginRight: 2
+            }}
           >
             Default
           </Button>
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-          >
+          <Button type="submit" fullWidth variant="contained">
             Apply
           </Button>
         </View>
-      
-      )
-  }
-  </FormDefault>
+      )}
+    </FormDefault>
   )
 }

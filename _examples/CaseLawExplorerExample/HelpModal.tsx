@@ -1,8 +1,5 @@
-import {
-  Modal
-} from '@mui/material';
-import React from 'react';
-
+import {Modal} from '@mui/material'
+import React from 'react'
 
 type HelpModalProps = {
   isOpen: boolean
@@ -11,11 +8,7 @@ type HelpModalProps = {
 }
 
 export const HelpModal = (props: HelpModalProps) => {
-  const {
-    isOpen,
-    videoId,
-    onClose
-  } = props
+  const {isOpen, videoId, onClose} = props
   return (
     <Modal
       open={isOpen}
@@ -23,7 +16,7 @@ export const HelpModal = (props: HelpModalProps) => {
       style={{
         display: 'flex',
         justifyContent: 'center',
-        alignItems: 'center',
+        alignItems: 'center'
       }}
     >
       <iframe

@@ -34,8 +34,8 @@ import * as PIXI from 'pixi.js'
 // PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.LINEAR
 
 // LOW
-PIXI.settings.ROUND_PIXELS = false// true
+PIXI.settings.ROUND_PIXELS = false // true
 // @ts-ignore
 PIXI.settings.PRECISION_FRAGMENT = PIXI.PRECISION.LOW
-PIXI.settings.RESOLUTION = 1// 32// 64// window.devicePixelRatio
+PIXI.settings.RESOLUTION = 1 // 32// 64// window.devicePixelRatio
 PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST

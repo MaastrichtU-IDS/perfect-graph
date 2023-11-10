@@ -1,58 +1,43 @@
 import React from 'react'
-import { wrapComponent } from 'colay-ui'
-import { useNode } from '@hooks'
-import { CYTOSCAPE_EVENT } from '@constants'
-import {
-  RenderNode, NodeConfig, GraphRef,
-} from '@type'
-import {
-  calculateObjectBoundsWithoutChildren,
-  calculateVisibilityByContext,
-  isFiltered,
-} from '@utils'
-import { useTheme } from '@core/theme'
-import { Container } from '../Container'
+import {wrapComponent} from 'colay-ui'
+import {useNode} from '@hooks'
+import {CYTOSCAPE_EVENT} from '@constants'
+import {RenderNode, NodeConfig, GraphRef} from '@type'
+import {calculateObjectBoundsWithoutChildren, calculateVisibilityByContext, isFiltered} from '@utils'
+import {useTheme} from '@core/theme'
+import {Container} from '../Container'
 
 export type NodeContainerProps = {
-  children: RenderNode;
+  children: RenderNode
   /**
    * Node data
    */
-  item: any;
+  item: any
   /**
    * Related graph id
    */
-  graphID: string;
+  graphID: string
   /**
    * Related graph instance ref
    */
-  graphRef: React.RefObject<GraphRef>;
+  graphRef: React.RefObject<GraphRef>
   /**
    * Node config data
    */
-  config: NodeConfig;
+  config: NodeConfig
 }
 
 export type NodeContainerType = React.ForwardedRef<NodeContainerProps>
-const DEFAULT_POSITION = { x: 0, y: 0 }
-const NodeContainerElement = (
-  props: NodeContainerProps,
-  __: React.ForwardedRef<NodeContainerType>,
-) => {
-  const {
-    item,
-    graphID,
-    children,
-    config,
-    graphRef,
-  } = props
+const DEFAULT_POSITION = {x: 0, y: 0}
+const NodeContainerElement = (props: NodeContainerProps, __: React.ForwardedRef<NodeContainerType>) => {
+  const {item, graphID, children, config, graphRef} = props
   const containerRef = React.useRef(null)
-  const { element, context, cy } = useNode({
+  const {element, context, cy} = useNode({
     graphID,
     config,
     position: config.position ?? item.position ?? DEFAULT_POSITION,
-    onPositionChange: ({ element }) => {
-      const { x, y } = element.position()
+    onPositionChange: ({element}) => {
+      const {x, y} = element.position()
       // @ts-ignore
       containerRef.current.x = x
       // @ts-ignore
@@ -60,26 +45,22 @@ const NodeContainerElement = (
       context.boundingBox.x = x
       context.boundingBox.y = y
     },
-    item,
+    item
   })
-  const { x, y } = element.position()
+  const {x, y} = element.position()
   const onDrag = React.useCallback(
-    (pos) => {
+    pos => {
       element.position(pos)
     },
-    [element],
+    [element]
   )
   React.useEffect(() => {
     // @ts-ignore
-    context.boundingBox = calculateObjectBoundsWithoutChildren(
-      containerRef.current!,
-    )
+    context.boundingBox = calculateObjectBoundsWithoutChildren(containerRef.current!)
   })
   const theme = useTheme()
   const visible = calculateVisibilityByContext(element)
-  const opacity = isFiltered(element)
-    ? 1
-    : (config.filter?.settings?.opacity ?? 0.2)
+  const opacity = isFiltered(element) ? 1 : config.filter?.settings?.opacity ?? 0.2
   return (
     <Container
       ref={containerRef}
@@ -108,7 +89,7 @@ const NodeContainerElement = (
         graphRef,
         context,
         config,
-        label: item.id,
+        label: item.id
       })}
     </Container>
   )
@@ -118,9 +99,6 @@ const NodeContainerElement = (
  * The container for Node Elements. It facilitates drag, visibility, and other
  * operations.
  */
-export const NodeContainer = wrapComponent<NodeContainerProps>(
-  NodeContainerElement,
-  {
-    isForwardRef: true,
-  },
-)
+export const NodeContainer = wrapComponent<NodeContainerProps>(NodeContainerElement, {
+  isForwardRef: true
+})

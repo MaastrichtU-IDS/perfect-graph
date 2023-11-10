@@ -2,13 +2,14 @@ import React from 'react'
 import * as R from 'colay/ramda'
 import {
   DragDropContext,
-  Droppable, Draggable,
+  Droppable,
+  Draggable,
   DropResult,
   DraggableProvided,
   DraggableStateSnapshot,
   DraggableRubric,
   DroppableProvided,
-  DroppableStateSnapshot,
+  DroppableStateSnapshot
 } from 'react-beautiful-dnd'
 
 // const grid = 8
@@ -37,60 +38,49 @@ export type SortableListProps<T> = {
   onDragEnd?: (result: DropResult) => void
   data: T[]
   renderItem: (props: {
-    item: T;
-    index: number;
-    provided: DraggableProvided;
-    snapshot: DraggableStateSnapshot;
-    rubric: DraggableRubric;
-    droppableProvided: DroppableProvided;
+    item: T
+    index: number
+    provided: DraggableProvided
+    snapshot: DraggableStateSnapshot
+    rubric: DraggableRubric
+    droppableProvided: DroppableProvided
     droppableSnapshot: DroppableStateSnapshot
-  }) => React.ReactNode;
+  }) => React.ReactNode
   // renderContainer: (props: {})
 }
 
-export const SortableList = <T extends { id: string }>(props: SortableListProps<T>) => {
-  const {
-    onReorder,
-    onDragEnd,
-    data = [],
-    renderItem,
-  } = props
+export const SortableList = <T extends {id: string}>(props: SortableListProps<T>) => {
+  const {onReorder, onDragEnd, data = [], renderItem} = props
   const droppableId = React.useMemo(() => R.uuid(), [])
   return (
-    <DragDropContext onDragEnd={(result) => {
-      onDragEnd?.(result)
-      if (!result.destination && (result.destination!.index === result.source.index)) {
-        return
-      }
-      onReorder?.(result)
-    }}
+    <DragDropContext
+      onDragEnd={result => {
+        onDragEnd?.(result)
+        if (!result.destination && result.destination!.index === result.source.index) {
+          return
+        }
+        onReorder?.(result)
+      }}
     >
       <Droppable droppableId={droppableId}>
         {(droppableProvided, droppableSnapshot) => (
-          <div
-            {...droppableProvided.droppableProps}
-            ref={droppableProvided.innerRef}
-          >
-            {
-              data.map((item, index) => (
-                <Draggable
-                  key={item.id}
-                  draggableId={item.id}
-                  index={index}
-                >
-                  {
+          <div {...droppableProvided.droppableProps} ref={droppableProvided.innerRef}>
+            {data.map((item, index) => (
+              <Draggable key={item.id} draggableId={item.id} index={index}>
+                {
                   // @ts-ignore
-                  (provided, snapshot, rubric) => renderItem({
-                    item,
-                    index,
-                    provided,
-                    snapshot,
-                    rubric,
-                    droppableProvided,
-                    droppableSnapshot,
-                  })
-}
-                  {/* {(provided, snapshot) => (
+                  (provided, snapshot, rubric) =>
+                    renderItem({
+                      item,
+                      index,
+                      provided,
+                      snapshot,
+                      rubric,
+                      droppableProvided,
+                      droppableSnapshot
+                    })
+                }
+                {/* {(provided, snapshot) => (
                     <div
                       ref={provided.innerRef}
                       {...provided.draggableProps}
@@ -99,9 +89,8 @@ export const SortableList = <T extends { id: string }>(props: SortableListProps<
                       {child}
                     </div>
                   )} */}
-                </Draggable>
-              ))
-            }
+              </Draggable>
+            ))}
             {droppableProvided.placeholder}
           </div>
         )}

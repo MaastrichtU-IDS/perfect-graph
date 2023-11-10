@@ -1,35 +1,21 @@
 import React from 'react'
-import  { StyleSheet } from 'react-native'
-import {Graph } from '../../../src/components'
+import {StyleSheet} from 'react-native'
+import {Graph} from '../../../src/components'
 
 export type CategoryProps = {
-  name: string;
-  description: string;
-  imageURL: string;
+  name: string
+  description: string
+  imageURL: string
 }
 
-
 export default (props: CategoryProps) => {
-  const { name, description, imageURL } = props
+  const {name, description, imageURL} = props
   return (
-    <Graph.View
-      style={styles.container}
-    >
-      <Graph.Image 
-         source={{ uri: imageURL}}
-         style={styles.image}
-      />
+    <Graph.View style={styles.container}>
+      <Graph.Image source={{uri: imageURL}} style={styles.image} />
       <Graph.View style={styles.bottomBar}>
-        <Graph.Text 
-          style={styles.title}
-        >
-          {name}
-        </Graph.Text>
-        <Graph.Text 
-          style={styles.description}
-        >
-          {description}
-        </Graph.Text>
+        <Graph.Text style={styles.title}>{name}</Graph.Text>
+        <Graph.Text style={styles.description}>{description}</Graph.Text>
       </Graph.View>
     </Graph.View>
   )
@@ -38,11 +24,11 @@ export default (props: CategoryProps) => {
 const styles = StyleSheet.create({
   container: {
     width: 200,
-    height: 200,
+    height: 200
   },
   image: {
     width: 200,
-    height: 150,
+    height: 150
   },
   bottomBar: {
     width: 200,
@@ -61,6 +47,5 @@ const styles = StyleSheet.create({
     width: 200,
     height: 30,
     color: 'white'
-  },
-
+  }
 })

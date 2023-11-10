@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { IAnimationState } from './YogaLayout'
+import {IAnimationState} from './YogaLayout'
 
 export class YogaAnimationManager {
   public animations: IAnimationState[] = []

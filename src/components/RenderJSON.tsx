@@ -1,64 +1,47 @@
 import React from 'react'
-import { RenderNode } from '@type'
+import {RenderNode} from '@type'
 import * as R from 'colay/ramda'
-import { DynamicRender, DynamicRenderProps } from 'colay-ui'
-import { Graph } from './Graph'
+import {DynamicRender, DynamicRenderProps} from 'colay-ui'
+import {Graph} from './Graph'
 
 type RenderJSONContext = Parameters<RenderNode>[0]
 
 export type RenderJSONProps = {
-  params?: string;
-  select?: string;
-  context: RenderJSONContext;
-  ui: DynamicRenderProps['data'][];
+  params?: string
+  select?: string
+  context: RenderJSONContext
+  ui: DynamicRenderProps['data'][]
 }
 type RenderJSONCalculatedContext = RenderJSONContext & {
-  ui: RenderJSONProps['ui'];
-  params: any;
+  ui: RenderJSONProps['ui']
+  params: any
 }
-const runFunctionByString = (
-  functionString: string,
-  params: any[] = [],
-) => Function(`"use strict";return (${functionString})`)()(
-  ...params,
-)
+const runFunctionByString = (functionString: string, params: any[] = []) =>
+  Function(`"use strict";return (${functionString})`)()(...params)
 
 export const RenderJSON = (props: RenderJSONProps) => {
-  const {
-    context,
-    ui,
-    select,
-    params,
-  } = props
-  const calculatedContext = { ...context } as RenderJSONCalculatedContext
+  const {context, ui, select, params} = props
+  const calculatedContext = {...context} as RenderJSONCalculatedContext
   calculatedContext.ui = ui
   calculatedContext.params = React.useMemo(
     () => (params ? runFunctionByString(params, [calculatedContext]) : {}),
-    [params, context],
+    [params, context]
   )
   const selectedUI = React.useMemo(
     () => (select ? runFunctionByString(select, [calculatedContext]) : ui[0]),
-    [ui, context, select],
+    [ui, context, select]
   )
-  const data = R.traverseJSON(
-    selectedUI,
-    (value) => {
-      if (typeof value === 'string' && value.startsWith('$.')) {
-        return R.path(value.split('.'), calculatedContext)
-        // return json.path({
-        //   json: calculatedContext,
-        //   path: value,
-        // })[0]
-      }
-      return value
-    },
-  )
-  return (
-    <DynamicRender
-      components={Graph as unknown as DynamicRenderProps['components']}
-      data={data}
-    />
-  )
+  const data = R.traverseJSON(selectedUI, value => {
+    if (typeof value === 'string' && value.startsWith('$.')) {
+      return R.path(value.split('.'), calculatedContext)
+      // return json.path({
+      //   json: calculatedContext,
+      //   path: value,
+      // })[0]
+    }
+    return value
+  })
+  return <DynamicRender components={Graph as unknown as DynamicRenderProps['components']} data={data} />
 }
 
 export const mockRenderJSON: RenderJSONProps = {
@@ -75,18 +58,18 @@ export const mockRenderJSON: RenderJSONProps = {
             justifyContent: 'center',
             alignItems: 'center',
             borderRadius: 50,
-            backgroundColor: '$.params.color',
-          },
+            backgroundColor: '$.params.color'
+          }
         },
         children: [
           {
             id: '1',
             type: 'Text',
             props: {},
-            children: [{ id: '1', component: '$.label' }],
-          },
-        ],
-      },
+            children: [{id: '1', component: '$.label'}]
+          }
+        ]
+      }
     ],
     [
       {
@@ -98,19 +81,19 @@ export const mockRenderJSON: RenderJSONProps = {
             height: 100,
             justifyContent: 'center',
             alignItems: 'center',
-            backgroundColor: '$.params.color',
-          },
+            backgroundColor: '$.params.color'
+          }
         },
         children: [
           {
             id: '1',
             type: 'Text',
             props: {},
-            children: [{ id: '1', component: '$.label' }],
-          },
-        ],
-      },
-    ],
+            children: [{id: '1', component: '$.label'}]
+          }
+        ]
+      }
+    ]
   ],
   select: `function(context) {
     return context.item.id > '3'
@@ -121,5 +104,5 @@ export const mockRenderJSON: RenderJSONProps = {
     return {
       color: context.element.selected() ? 'red' : 'blue'
     }
-  }`,
+  }`
 }

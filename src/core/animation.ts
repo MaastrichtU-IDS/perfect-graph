@@ -22,6 +22,5 @@ export const animationOptions = {
 
   // // The layout animates only after this many milliseconds for animate:true
   // // (prevents flashing on fast runs)
-  animationThreshold: 250,
-
+  animationThreshold: 250
 } as const

@@ -1,201 +1,179 @@
-import {
-  ColorPicker,
-} from '@components/GraphEditor/ColorPicker'
-import { Icon } from '@components/Icon'
-import { EVENT } from '@constants'
-import { useGraphEditor } from '@hooks'
+import {ColorPicker} from '@components/GraphEditor/ColorPicker'
+import {Icon} from '@components/Icon'
+import {EVENT} from '@constants'
+import {useGraphEditor} from '@hooks'
 import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
 import {
   Button,
-  Collapse, Divider, List,
+  Collapse,
+  Divider,
+  List,
   ListItem,
   ListItemIcon,
-  ListItemText, Modal,
-  Paper, Slide, Typography,
+  ListItemText,
+  Modal,
+  Paper,
+  Slide,
+  Typography
 } from '@mui/material'
-import { Form } from '@components/Form'
-import { DataRender, dataRenderPath, View } from 'colay-ui'
+import {Form} from '@components/Form'
+import {DataRender, dataRenderPath, View} from 'colay-ui'
 // import * as ReactIs from 'colay-ui/utils/is-react'
-import { GraphConfig, FormProps } from '@type'
-import { useImmer } from 'colay-ui/hooks/useImmer'
+import {GraphConfig, FormProps} from '@type'
+import {useImmer} from 'colay-ui/hooks/useImmer'
 import * as R from 'colay/ramda'
 import React from 'react'
 
-
-type SidebarItemData = {
-  label?: string;
-  children?: SidebarItemData[];
-  icon?: string;
-  id: string
-} | string
+type SidebarItemData =
+  | {
+      label?: string
+      children?: SidebarItemData[]
+      icon?: string
+      id: string
+    }
+  | string
 
 type NormalizedSidebarItemData = Exclude<SidebarItemData, string>
 
 export type PreferencesModalProps = {
-  isOpen?: boolean;
-  sidebar?: SidebarItemData[];
-  components?: Record<string, React.ReactNode | FormProps>;
+  isOpen?: boolean
+  sidebar?: SidebarItemData[]
+  components?: Record<string, React.ReactNode | FormProps>
 }
 
 const getId = (sidebarItem: NormalizedSidebarItemData) => sidebarItem?.id ?? sidebarItem
 
 export const PreferencesModal = (props: PreferencesModalProps) => {
-  const {
-    sidebar: sidebar_ = DefaultSidebarData,
-    components = DefaultComponents,
-    isOpen = false,
-  } = props
+  const {sidebar: sidebar_ = DefaultSidebarData, components = DefaultComponents, isOpen = false} = props
 
-  const [
-    {
-      onEvent,
-      graphConfig,
-    },
-  ] = useGraphEditor(
-    (editor) => ({
-      onEvent: editor.onEvent,
-      graphEditorLocalDataRef: editor.localDataRef,
-      graphConfig: editor.graphConfig,
-    }),
-  )
+  const [{onEvent, graphConfig}] = useGraphEditor(editor => ({
+    onEvent: editor.onEvent,
+    graphEditorLocalDataRef: editor.localDataRef,
+    graphConfig: editor.graphConfig
+  }))
   const sidebar = React.useMemo(() => {
     const normalize = (sidebar: SidebarItemData): SidebarItemData => {
       if (typeof sidebar === 'string') {
         return {
           id: sidebar,
-          label: sidebar,
+          label: sidebar
         }
       }
       return {
         label: sidebar.id,
         ...sidebar,
-        children: sidebar.children?.map((item) => normalize(item)),
+        children: sidebar.children?.map(item => normalize(item))
       }
     }
     // @ts-ignore
-    return sidebar_?.map((item) => normalize(item)) ?? []
+    return sidebar_?.map(item => normalize(item)) ?? []
   }, [sidebar_])
-  const [
-    initialComponentId,
-    initialSelectedPath,
-  ] = React.useMemo(()=>{
-    const selectedPath = getSelectedPath(
-      sidebar[0], 
-      [getId(sidebar[0] as NormalizedSidebarItemData)],
-    )
-    const selectedItem = dataRenderPath(
-      ['children'],
-      selectedPath, 
-      sidebar,
-    ) as unknown as NormalizedSidebarItemData
+  const [initialComponentId, initialSelectedPath] = React.useMemo(() => {
+    const selectedPath = getSelectedPath(sidebar[0], [getId(sidebar[0] as NormalizedSidebarItemData)])
+    const selectedItem = dataRenderPath(['children'], selectedPath, sidebar) as unknown as NormalizedSidebarItemData
     const componentId = getId(selectedItem)
     return [componentId, selectedPath]
   }, [])
   const [state, update] = useImmer({
     componentId: initialComponentId,
-    selectedPath: initialSelectedPath,
+    selectedPath: initialSelectedPath
   })
 
   const onSelect = React.useCallback((path: string[]) => {
-    const item = dataRenderPath(
-      ['children'], 
-      path, 
-      sidebar,
-    ) as unknown as NormalizedSidebarItemData
-    update((draft) => {
+    const item = dataRenderPath(['children'], path, sidebar) as unknown as NormalizedSidebarItemData
+    update(draft => {
       draft.selectedPath = path
       draft.componentId = getId(item)
     })
   }, [])
 
   // @ts-ignore
-  const drawer = React.useMemo(() => createDrawer({
-    sidebar,
-    onSelect,
-    selectedPath: state.selectedPath,
-  }), [sidebar, components, state.selectedPath])
+  const drawer = React.useMemo(
+    () =>
+      createDrawer({
+        sidebar,
+        onSelect,
+        selectedPath: state.selectedPath
+      }),
+    [sidebar, components, state.selectedPath]
+  )
   const Component = components[state.componentId] ?? React.Fragment
   // @ts-ignore
-  let form = (components[state.componentId]!)(graphConfig) as FormProps // components[state.componentId]
+  let form = components[state.componentId]!(graphConfig) as FormProps // components[state.componentId]
   // @ts-ignore
-  const isComponent = !form.schema//ReactIs.isValidElementType(Component)
+  const isComponent = !form.schema //ReactIs.isValidElementType(Component)
   // if (!isComponent && components[state.componentId]) {
   //   // @ts-ignore
   //   form = (components[state.componentId]!)(graphConfig)
   // }
   const isExist = components[state.componentId]
-  const onSubmitCallback = ({ formData }: { formData: any }) => {
+  const onSubmitCallback = ({formData}: {formData: any}) => {
     onEvent({
       type: EVENT.PREFERENCES_FORM_SUBMIT,
       payload: {
         value: formData,
         preferenceId: state.componentId,
-        preferencePath: state.selectedPath,
-      },
+        preferencePath: state.selectedPath
+      }
     })
   }
-  const onClearCallback = ({ formData }: { formData: any }) => {
+  const onClearCallback = ({formData}: {formData: any}) => {
     onEvent({
       type: EVENT.PREFERENCES_FORM_CLEAR,
       payload: {
         value: formData,
         preferenceId: state.componentId,
-        preferencePath: state.selectedPath,
-      },
+        preferencePath: state.selectedPath
+      }
     })
   }
   return (
     <Modal
       open={isOpen}
-      onClose={() => onEvent({
-        type: EVENT.TOGGLE_PREFERENCES_MODAL,
-      })}
+      onClose={() =>
+        onEvent({
+          type: EVENT.TOGGLE_PREFERENCES_MODAL
+        })
+      }
       style={{
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'center'
       }}
     >
       <Paper
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        width: '80vw',
-        height: '80vh',
-      }}
-    >
-      <View>
-        <Typography variant="h6">Preferences</Typography>
-      </View>
-      <View
         style={{
-          flexDirection: 'row',
-          height: '95%',
+          display: 'flex',
+          flexDirection: 'column',
+          width: '80vw',
+          height: '80vh'
         }}
       >
-        <View
-          style={{
-            marginRight: 4,
-            flexDirection: 'row',
-          }}
-        >
-          <Slide
-            in
-          >
-            {drawer}
-          </Slide>
-          <Divider
-            orientation="vertical"
-            flexItem
-          />
+        <View>
+          <Typography variant="h6">Preferences</Typography>
         </View>
         <View
           style={{
-            flex: 1,
+            flexDirection: 'row',
+            height: '95%'
           }}
         >
-          {/* <Breadcrumbs aria-label="breadcrumb">
+          <View
+            style={{
+              marginRight: 4,
+              flexDirection: 'row'
+            }}
+          >
+            <Slide in>{drawer}</Slide>
+            <Divider orientation="vertical" flexItem />
+          </View>
+          <View
+            style={{
+              flex: 1
+            }}
+          >
+            {/* <Breadcrumbs aria-label="breadcrumb">
             {
               R.dropLast(1, state.selectedPath).map((pathName) => (
                 <Link
@@ -208,86 +186,67 @@ export const PreferencesModal = (props: PreferencesModalProps) => {
             }
             <Typography color="text.primary">{R.last(state.selectedPath)}</Typography>
           </Breadcrumbs> */}
-          {
-      isExist && (
-        !isComponent ? (
-          <Paper
-            style={{
-              width: '97%',
-              height: '97%',
-              overflow: 'scroll',
-              padding: 2,
-            }}
-          >
-            <Form
-              {...form}
-              // @ts-ignore
-              style={{
-                width: '100%',
-                height: '100%',
-              }}
-              schema={form.schema}
-              onSubmit={onSubmitCallback}
-              onClear={onClearCallback}
-            >
-              {
-                form.children ?? (
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
+            {isExist &&
+              (!isComponent ? (
+                <Paper
+                  style={{
+                    width: '97%',
+                    height: '97%',
+                    overflow: 'scroll',
+                    padding: 2
+                  }}
                 >
-                  Save
-                </Button>
-                )
-            }
-            </Form>
-          </Paper>
-        )
-        // @ts-ignore
-          : <Component />
-      )
-      }
+                  <Form
+                    {...form}
+                    // @ts-ignore
+                    style={{
+                      width: '100%',
+                      height: '100%'
+                    }}
+                    schema={form.schema}
+                    onSubmit={onSubmitCallback}
+                    onClear={onClearCallback}
+                  >
+                    {form.children ?? (
+                      <Button type="submit" fullWidth variant="contained">
+                        Save
+                      </Button>
+                    )}
+                  </Form>
+                </Paper>
+              ) : (
+                // @ts-ignore
+                <Component />
+              ))}
+          </View>
         </View>
-      </View>
-    </Paper>
+      </Paper>
     </Modal>
   )
 }
 
 type CreateDrawerParams = {
-  sidebar: SidebarItemData[];
+  sidebar: SidebarItemData[]
   onSelect: (path: string[]) => void
   selectedPath: string[]
 }
 const createDrawer = (params: CreateDrawerParams) => {
-  const {
-    sidebar,
-    onSelect,
-    selectedPath,
-  } = params
+  const {sidebar, onSelect, selectedPath} = params
   return (
     <View>
       {/* <Toolbar /> */}
       <Divider />
       <List>
         <DataRender
-      // @ts-ignore
+          // @ts-ignore
           data={sidebar}
           extraData={[selectedPath, onSelect]}
           accessor={['children']}
-          renderItem={(params) => {
-            const {
-              children,
-            } = params
+          renderItem={params => {
+            const {children} = params
             const item = params.item as unknown as SidebarItemData
             return (
-              <SidebarItem
-                item={item}
-                onSelect={onSelect}
-                path={params.path}
-                selectedPath={selectedPath}
-              >
+              <SidebarItem item={item} onSelect={onSelect} path={params.path} selectedPath={selectedPath}>
                 {children}
               </SidebarItem>
             )
@@ -299,33 +258,31 @@ const createDrawer = (params: CreateDrawerParams) => {
 }
 
 type SidebarItemProps = {
-  item: SidebarItemData;
-  children: React.ReactNode;
-  onSelect: (path: string[])=>void
-  selectedPath: string[];
-  path: string[];
+  item: SidebarItemData
+  children: React.ReactNode
+  onSelect: (path: string[]) => void
+  selectedPath: string[]
+  path: string[]
 }
 const getSelectedPath = (item: SidebarItemData, path: string[] = []): string[] => {
   // @ts-ignore
   const firstChild = item?.children?.[0]
   if (firstChild) {
-    return getSelectedPath(firstChild, [...path,  getId(firstChild)])
+    return getSelectedPath(firstChild, [...path, getId(firstChild)])
   }
   return path
 }
 const SidebarItem = (props: SidebarItemProps) => {
-  const {
-    children,
-    item: propItem,
-    onSelect,
-    path,
-    selectedPath,
-  } = props
+  const {children, item: propItem, onSelect, path, selectedPath} = props
   const [open, setOpen] = React.useState(false)
-  const item = (R.is(String)(propItem) ? {
-    label: propItem,
-    id: propItem,
-  } : propItem) as NormalizedSidebarItemData
+  const item = (
+    R.is(String)(propItem)
+      ? {
+          label: propItem,
+          id: propItem
+        }
+      : propItem
+  ) as NormalizedSidebarItemData
   const handleClick = () => {
     onSelect(getSelectedPath(propItem, path))
     setOpen(!open)
@@ -334,27 +291,13 @@ const SidebarItem = (props: SidebarItemProps) => {
   const selected = selectedPath.join('').includes(path.join(''))
   return (
     <>
-      <ListItem
-        button
-        onClick={handleClick}
-        selected={selected}
-      >
-        <ListItemIcon>
-          {item.icon}
-        </ListItemIcon>
+      <ListItem button onClick={handleClick} selected={selected}>
+        <ListItemIcon>{item.icon}</ListItemIcon>
         <ListItemText primary={item.label} />
-        {hasChildren ? (open ? <ExpandLess /> : <ExpandMore />) : null}
+        {hasChildren ? open ? <ExpandLess /> : <ExpandMore /> : null}
       </ListItem>
-      <Collapse
-        in={open}
-        timeout="auto"
-        unmountOnExit
-      >
-        <List
-          component="div"
-          disablePadding
-          sx={{ ml: 2 }}
-        >
+      <Collapse in={open} timeout="auto" unmountOnExit>
+        <List component="div" disablePadding sx={{ml: 2}}>
           {children}
         </List>
       </Collapse>
@@ -365,162 +308,134 @@ const SidebarItem = (props: SidebarItemProps) => {
 export const DefaultComponents = {
   NodeView: (graphConfig: GraphConfig) => ({
     schema: {
-      'type': 'object',
-      'properties': {
-        'width': {
+      type: 'object',
+      properties: {
+        width: {
           title: 'Width',
-          'type': 'number',
+          type: 'number'
         },
-        'height': {
+        height: {
           title: 'Height',
-          'type': 'number',
+          type: 'number'
         },
-        'radius': {
+        radius: {
           title: 'Radius',
-          'type': 'number',
+          type: 'number'
         },
-        'fill': {
+        fill: {
           title: 'Fill',
-          'type': 'object',
-          'properties': {
-            'default': {
+          type: 'object',
+          properties: {
+            default: {
               title: 'Default',
-              'type': 'number',
+              type: 'number'
             },
-            'hovered': {
+            hovered: {
               title: 'Hovered',
-              'type': 'number',
+              type: 'number'
             },
-            'selected': {
+            selected: {
               title: 'Selected',
-              'type': 'number',
+              type: 'number'
             },
-            'edgeSelected': {
+            edgeSelected: {
               title: 'Edge Selected',
-              'type': 'number',
-            },
+              type: 'number'
+            }
           },
-          'required': [
-            'default',
-            'hovered',
-            'selected',
-            'edgeSelected',
-          ],
+          required: ['default', 'hovered', 'selected', 'edgeSelected']
         },
-        'labelVisible': {
+        labelVisible: {
           title: 'Label Visible',
-          'type': 'boolean',
-        },
+          type: 'boolean'
+        }
       },
-      'required': [
-        'width',
-        'height',
-        'radius',
-        'fill',
-        'labelVisible',
-      ],
+      required: ['width', 'height', 'radius', 'fill', 'labelVisible']
     },
     uiSchema: {
       fill: {
         selected: {
-          'ui:widget': ColorPicker,
+          'ui:widget': ColorPicker
         },
         hovered: {
-          'ui:widget': ColorPicker,
+          'ui:widget': ColorPicker
         },
         edgeSelected: {
-          'ui:widget': ColorPicker,
+          'ui:widget': ColorPicker
         },
         default: {
-          'ui:widget': ColorPicker,
-        },
-      },
+          'ui:widget': ColorPicker
+        }
+      }
     },
-    formData: R.omit(['ids'], graphConfig!.nodes!.view),
+    formData: R.omit(['ids'], graphConfig!.nodes!.view)
   }),
   EdgeView: (graphConfig: GraphConfig) => ({
     schema: {
-      'type': 'object',
-      'properties': {
-        'width': {
-          'title': 'Width',
-          'type': 'number',
+      type: 'object',
+      properties: {
+        width: {
+          title: 'Width',
+          type: 'number'
         },
-        'alpha': {
-          'title': 'Alpha',
-          'type': 'number',
+        alpha: {
+          title: 'Alpha',
+          type: 'number'
         },
-        'lineType': {
-          'title': 'Line Type',
-          'type': 'string',
-          'enum': [
-            'line',
-            'bezier',
-            'segments',
-          ],
-          'enumNames': [
-            'Line',
-            'Bezier',
-            'Segments',
-          ],
+        lineType: {
+          title: 'Line Type',
+          type: 'string',
+          enum: ['line', 'bezier', 'segments'],
+          enumNames: ['Line', 'Bezier', 'Segments']
         },
-        'fill': {
-          'title': 'Fill',
-          'type': 'object',
-          'properties': {
-            'default': {
+        fill: {
+          title: 'Fill',
+          type: 'object',
+          properties: {
+            default: {
               title: 'Default',
-              'type': 'number',
+              type: 'number'
             },
-            'hovered': {
+            hovered: {
               title: 'Hovered',
-              'type': 'number',
+              type: 'number'
             },
-            'selected': {
+            selected: {
               title: 'Selected',
-              'type': 'number',
+              type: 'number'
             },
-            'nodeSelected': {
+            nodeSelected: {
               title: 'Node Selected',
-              'type': 'number',
-            },
+              type: 'number'
+            }
           },
-          'required': [
-            'default',
-            'hovered',
-            'selected',
-            'nodeSelected',
-          ],
+          required: ['default', 'hovered', 'selected', 'nodeSelected']
         },
-        'labelVisible': {
+        labelVisible: {
           title: 'Label Visible',
-          'type': 'boolean',
-        },
+          type: 'boolean'
+        }
       },
-      'required': [
-        'width',
-        'fill',
-        'labelVisible',
-      ],
+      required: ['width', 'fill', 'labelVisible']
     },
     uiSchema: {
       fill: {
         selected: {
-          'ui:widget': ColorPicker,
+          'ui:widget': ColorPicker
         },
         hovered: {
-          'ui:widget': ColorPicker,
+          'ui:widget': ColorPicker
         },
         nodeSelected: {
-          'ui:widget': ColorPicker,
+          'ui:widget': ColorPicker
         },
         default: {
-          'ui:widget': ColorPicker,
-        },
-      },
+          'ui:widget': ColorPicker
+        }
+      }
     },
-    formData: R.omit(['ids'], graphConfig!.edges!.view),
-  }),
+    formData: R.omit(['ids'], graphConfig!.edges!.view)
+  })
   // GeneralUI: () => ({
   //   schema: {
   //     type: 'object',
@@ -548,15 +463,15 @@ export const DefaultComponents = {
 
 export const DefaultSidebarData = [
   {
-    id:  'General',
+    id: 'General',
     icon: <Icon name="settings" />,
     label: 'General',
     children: [
       // { id: 'GeneralUI' },
-      { id: 'NodeView' },
-      { id: 'EdgeView' },
-    ],
-  },
+      {id: 'NodeView'},
+      {id: 'EdgeView'}
+    ]
+  }
   // {
   //   id:  'Bookmarks',
   //   icon: <Icon name="bookmark" />,
@@ -574,4 +489,3 @@ export const DefaultSidebarData = [
   //   ],
   // },
 ]
-

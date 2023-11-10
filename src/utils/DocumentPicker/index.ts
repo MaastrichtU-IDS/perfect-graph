@@ -1,6 +1,6 @@
 import * as R from 'colay/ramda'
 
-import { DocumentResult, DocumentPickerOptions } from './types'
+import {DocumentResult, DocumentPickerOptions} from './types'
 
 const uuidv4 = R.uuid
 
@@ -9,10 +9,7 @@ export default {
     return 'ExpoDocumentPicker'
   },
 
-  async getDocumentAsync({
-    type = '*/*',
-    multiple = false,
-  }: DocumentPickerOptions): Promise<DocumentResult> {
+  async getDocumentAsync({type = '*/*', multiple = false}: DocumentPickerOptions): Promise<DocumentResult> {
     const input = document.createElement('input')
     input.style.display = 'none'
     input.setAttribute('type', 'file')
@@ -32,7 +29,7 @@ export default {
           reader.onerror = () => {
             reject(new Error('Failed to read the selected media because the operation failed.'))
           }
-          reader.onload = ({ target }) => {
+          reader.onload = ({target}) => {
             const uri = (target as any).result
             resolve({
               type: 'success',
@@ -41,13 +38,13 @@ export default {
               file: targetFile,
               lastModified: targetFile.lastModified,
               size: targetFile.size,
-              output: input.files,
+              output: input.files
             })
           }
           // Read in the image file as a binary string.
           reader.readAsDataURL(targetFile)
         } else {
-          resolve({ type: 'cancel' })
+          resolve({type: 'cancel'})
         }
 
         document.body.removeChild(input)
@@ -56,5 +53,5 @@ export default {
       const event = new MouseEvent('click')
       input.dispatchEvent(event)
     })
-  },
+  }
 }

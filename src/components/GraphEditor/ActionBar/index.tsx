@@ -1,87 +1,94 @@
+import {Icon} from '@components/Icon'
+import {EDITOR_MODE, EVENT} from '@constants'
+import {useGraphEditor} from '@hooks'
 import {
-  Icon,
-} from '@components/Icon'
-import { EDITOR_MODE, EVENT } from '@constants'
-import { useGraphEditor } from '@hooks'
-import {
-  Box, Button, Divider, FormControl, IconButton, InputLabel, Menu,
-  MenuItem, Select, SelectProps, useTheme,
+  Box,
+  Button,
+  Divider,
+  FormControl,
+  IconButton,
+  InputLabel,
+  Menu,
+  MenuItem,
+  Select,
+  SelectProps,
+  useTheme
 } from '@mui/material'
-import { OnEventLite } from '@type'
-import { readTextFile } from '@utils'
+import {OnEventLite} from '@type'
+import {readTextFile} from '@utils'
 import DocumentPicker from '@utils/DocumentPicker'
-import { useAnimation, useDisclosure, wrapComponent } from 'colay-ui'
-import { Recorder } from 'colay-ui/components/Recorder'
+import {useAnimation, useDisclosure, wrapComponent} from 'colay-ui'
+import {Recorder} from 'colay-ui/components/Recorder'
 import * as R from 'colay/ramda'
 import React from 'react'
 // export const ACTION = {
 //   EXPORT_DATA: 'EXPORT_DATA',
 // }
 type ActionOption = {
-  visible?: boolean;
+  visible?: boolean
 }
 
 type Actions = {
-  add: ActionOption;
-  recordEvents: ActionOption;
-  delete: ActionOption;
+  add: ActionOption
+  recordEvents: ActionOption
+  delete: ActionOption
   // record: { visible: boolean; };
   options: {
-    actions: { import: ActionOption };
-  };
+    actions: {import: ActionOption}
+  }
 }
 
 export type ActionBarConfig = {
-  renderMoreAction?: () => React.ReactElement;
-  left?: React.FC;
-  right?: React.FC;
-  isOpen?: boolean;
+  renderMoreAction?: () => React.ReactElement
+  left?: React.FC
+  right?: React.FC
+  isOpen?: boolean
   theming?: {
     options?: {
-      name: string;
-      value: string;
-    }[];
-    value?: string;
+      name: string
+      value: string
+    }[]
+    value?: string
   }
-  recording?: boolean;
-  eventRecording?: boolean;
-  actions?: Actions;
-  autoOpen?: boolean;
+  recording?: boolean
+  eventRecording?: boolean
+  actions?: Actions
+  autoOpen?: boolean
 }
 
 export type ActionBarProps = {
-  renderMoreAction?: () => React.ReactElement;
-  left?: React.FC;
-  right?: React.FC;
-  isOpen?: boolean;
+  renderMoreAction?: () => React.ReactElement
+  left?: React.FC
+  right?: React.FC
+  isOpen?: boolean
   theming?: {
     options?: {
-      name: string;
-      value: string;
-    }[];
-    value?: string;
+      name: string
+      value: string
+    }[]
+    value?: string
   }
-  recording?: boolean;
-  eventRecording?: boolean;
-  onAction: (action: { type: string; value?: any }) => void;
-  actions?: Actions;
-  autoOpen?: boolean;
+  recording?: boolean
+  eventRecording?: boolean
+  onAction: (action: {type: string; value?: any}) => void
+  actions?: Actions
+  autoOpen?: boolean
 }
 
 const DEFAULT_ACTIONS = {
-  add: { visible: true },
-  delete: { visible: true },
-  recordEvents: { visible: true },
+  add: {visible: true},
+  delete: {visible: true},
+  recordEvents: {visible: true},
   options: {
-    actions: { import: { visible: true } },
+    actions: {import: {visible: true}}
   },
-  layout: { visible: true },
+  layout: {visible: true}
 }
 const RECORDING_STATUS_MAP = {
   START: 'START',
   STOP: 'STOP',
   RECORDING: 'RECORDING',
-  IDLE: 'IDLE',
+  IDLE: 'IDLE'
 }
 
 const HEIGHT = 40
@@ -98,60 +105,43 @@ const ActionBarElement = (props: ActionBarProps) => {
     right: RightComponent,
     theming = {
       options: [
-        { name: 'Light', value: 'Default' },
-        { name: 'Dark', value: 'Dark' },
+        {name: 'Light', value: 'Default'},
+        {name: 'Dark', value: 'Dark'}
       ],
-      value: 'Default',
-    },
+      value: 'Default'
+    }
   } = props
-  const [
-    {
-      onEvent,
-      graphEditorRef,
-      mode,
-    },
-  ] = useGraphEditor(
-    (editor) => ({
-      onEvent: editor.onEvent,
-      graphEditorRef: editor.graphEditorRef,
-      mode: editor.mode,
-      graphConfig: editor.graphConfig,
-    }),
-  )
-  const {
-    style: animationStyle,
-    ref: animationRef,
-  } = useAnimation({
+  const [{onEvent, graphEditorRef, mode}] = useGraphEditor(editor => ({
+    onEvent: editor.onEvent,
+    graphEditorRef: editor.graphEditorRef,
+    mode: editor.mode,
+    graphConfig: editor.graphConfig
+  }))
+  const {style: animationStyle, ref: animationRef} = useAnimation({
     from: {
-      bottom: -HEIGHT,
+      bottom: -HEIGHT
     },
     to: {
-      bottom: 0,
+      bottom: 0
     },
-    autoPlay: false,
+    autoPlay: false
   })
   // const initialized = React.useRef(false)
   React.useEffect(() => {
     animationRef.current.play(isOpen)
   }, [animationRef.current, isOpen])
   const theme = useTheme()
-  const recordingRef = React.useRef(
-    RECORDING_STATUS_MAP.IDLE,
-  )
+  const recordingRef = React.useRef(RECORDING_STATUS_MAP.IDLE)
   React.useMemo(() => {
     switch (recordingRef.current) {
       case RECORDING_STATUS_MAP.IDLE:
         recordingRef.current = recording ? RECORDING_STATUS_MAP.START : RECORDING_STATUS_MAP.IDLE
         break
       case RECORDING_STATUS_MAP.START:
-        recordingRef.current = recording
-          ? RECORDING_STATUS_MAP.RECORDING
-          : RECORDING_STATUS_MAP.STOP
+        recordingRef.current = recording ? RECORDING_STATUS_MAP.RECORDING : RECORDING_STATUS_MAP.STOP
         break
       case RECORDING_STATUS_MAP.RECORDING:
-        recordingRef.current = recording
-          ? RECORDING_STATUS_MAP.RECORDING
-          : RECORDING_STATUS_MAP.STOP
+        recordingRef.current = recording ? RECORDING_STATUS_MAP.RECORDING : RECORDING_STATUS_MAP.STOP
         break
       case RECORDING_STATUS_MAP.STOP:
         recordingRef.current = recording ? RECORDING_STATUS_MAP.START : RECORDING_STATUS_MAP.IDLE
@@ -177,7 +167,7 @@ const ActionBarElement = (props: ActionBarProps) => {
         justifyContent: 'space-between',
         // @ts-ignore
         backgroundColor: theme.palette.background.paper,
-        ...animationStyle,
+        ...animationStyle
       }}
     >
       {LeftComponent && <LeftComponent />}
@@ -186,80 +176,86 @@ const ActionBarElement = (props: ActionBarProps) => {
           flexDirection: 'row',
           alignItems: 'center',
           display: 'flex',
-          height: HEIGHT,
+          height: HEIGHT
           // width: '100%',
         }}
       >
-        {
-          actions.add.visible && (
+        {actions.add.visible && (
           <Button
             style={styles.button}
-            startIcon={(
-              <Icon name="add_circle" />
-)}
-            onClick={() => onEvent({
-              type: EVENT.MODE_CHANGED,
-              payload: {
-                value: [
-                  EDITOR_MODE.ADD,
-                  EDITOR_MODE.CONTINUES_ADD,
-                  // @ts-ignore
-                ].includes(mode)
-                  ? EDITOR_MODE.DEFAULT
-                  : EDITOR_MODE.ADD,
-              },
-            })}
+            startIcon={<Icon name="add_circle" />}
+            onClick={() =>
+              onEvent({
+                type: EVENT.MODE_CHANGED,
+                payload: {
+                  value: [
+                    EDITOR_MODE.ADD,
+                    EDITOR_MODE.CONTINUES_ADD
+                    // @ts-ignore
+                  ].includes(mode)
+                    ? EDITOR_MODE.DEFAULT
+                    : EDITOR_MODE.ADD
+                }
+              })
+            }
             variant={EDITOR_MODE.CONTINUES_ADD === mode ? 'contained' : 'outlined'}
-            color={[
-              EDITOR_MODE.ADD,
-              EDITOR_MODE.CONTINUES_ADD,
-              // @ts-ignore
-            ].includes(mode) ? 'secondary' : 'primary'}
-            onDoubleClick={() => onEvent({
-              type: EVENT.MODE_CHANGED,
-              payload: { value: EDITOR_MODE.CONTINUES_ADD },
-            })}
+            color={
+              [
+                EDITOR_MODE.ADD,
+                EDITOR_MODE.CONTINUES_ADD
+                // @ts-ignore
+              ].includes(mode)
+                ? 'secondary'
+                : 'primary'
+            }
+            onDoubleClick={() =>
+              onEvent({
+                type: EVENT.MODE_CHANGED,
+                payload: {value: EDITOR_MODE.CONTINUES_ADD}
+              })
+            }
           >
             Add
           </Button>
-          )
-        }
-        {
-          actions.delete.visible && (
+        )}
+        {actions.delete.visible && (
           <Button
             style={styles.button}
-            startIcon={(
-              <Icon name="delete_rounded" />
-            )}
-            color={[
-              EDITOR_MODE.DELETE,
-              EDITOR_MODE.CONTINUES_DELETE,
-              // @ts-ignore
-            ].includes(mode)
-              ? 'primary'
-              : 'secondary'}
-            variant={EDITOR_MODE.CONTINUES_DELETE === mode ? 'contained' : 'outlined'}
-            onClick={() => onEvent({
-              type: EVENT.MODE_CHANGED,
-              payload: {
-                value: [
-                  EDITOR_MODE.DELETE,
-                  EDITOR_MODE.CONTINUES_DELETE,
+            startIcon={<Icon name="delete_rounded" />}
+            color={
+              [
+                EDITOR_MODE.DELETE,
+                EDITOR_MODE.CONTINUES_DELETE
                 // @ts-ignore
-                ].includes(mode)
-                  ? EDITOR_MODE.DEFAULT
-                  : EDITOR_MODE.DELETE,
-              },
-            })}
-            onDoubleClick={() => onEvent({
-              type: EVENT.MODE_CHANGED,
-              payload: { value: EDITOR_MODE.CONTINUES_DELETE },
-            })}
+              ].includes(mode)
+                ? 'primary'
+                : 'secondary'
+            }
+            variant={EDITOR_MODE.CONTINUES_DELETE === mode ? 'contained' : 'outlined'}
+            onClick={() =>
+              onEvent({
+                type: EVENT.MODE_CHANGED,
+                payload: {
+                  value: [
+                    EDITOR_MODE.DELETE,
+                    EDITOR_MODE.CONTINUES_DELETE
+                    // @ts-ignore
+                  ].includes(mode)
+                    ? EDITOR_MODE.DEFAULT
+                    : EDITOR_MODE.DELETE
+                }
+              })
+            }
+            onDoubleClick={() =>
+              onEvent({
+                type: EVENT.MODE_CHANGED,
+                payload: {value: EDITOR_MODE.CONTINUES_DELETE}
+              })
+            }
           >
             Delete
           </Button>
-          )
-        }
+        )}
         {/* {
           actions.layout.visible && (
           <LayoutOptions
@@ -269,26 +265,15 @@ const ActionBarElement = (props: ActionBarProps) => {
           />
           )
         } */}
-        {
-          actions.recordEvents.visible && (
-          <IconButton
-            onClick={() => onEvent({ type: EVENT.TOGGLE_RECORD_EVENTS })}
-          >
-            <Icon
-              name="addjust"
-              color={!eventRecording ? 'inherit' : 'error'}
-            />
+        {actions.recordEvents.visible && (
+          <IconButton onClick={() => onEvent({type: EVENT.TOGGLE_RECORD_EVENTS})}>
+            <Icon name="addjust" color={!eventRecording ? 'inherit' : 'error'} />
           </IconButton>
-          )
-        }
+        )}
         <Recorder
           // @ts-ignore
           getStream={() => graphEditorRef.current.app.renderer.view.captureStream(25)}
-          render={({
-            startRecording,
-            stopRecording,
-            status,
-          }) => {
+          render={({startRecording, stopRecording, status}) => {
             if (recordingRef.current === RECORDING_STATUS_MAP.START) {
               recordingRef.current = RECORDING_STATUS_MAP.RECORDING
               startRecording()
@@ -298,29 +283,19 @@ const ActionBarElement = (props: ActionBarProps) => {
               stopRecording()
             }
             return (
-              <IconButton
-                onClick={() => onEvent({ type: EVENT.TOGGLE_RECORD })}
-              >
-                <Icon
-                  name="videocam"
-                  color={status !== 'recording' ? 'inherit' : 'error'}
-                />
+              <IconButton onClick={() => onEvent({type: EVENT.TOGGLE_RECORD})}>
+                <Icon name="videocam" color={status !== 'recording' ? 'inherit' : 'error'} />
               </IconButton>
             )
           }}
           onStop={(_, blob) => {
             onEvent({
               type: EVENT.RECORD_FINISHED,
-              payload: { value: blob },
+              payload: {value: blob}
             })
           }}
         />
-        <MoreOptions
-          renderMoreAction={renderMoreAction}
-          theming={theming}
-          onEvent={onEvent}
-          onAction={onAction}
-        />
+        <MoreOptions renderMoreAction={renderMoreAction} theming={theming} onEvent={onEvent} onAction={onAction} />
       </Box>
       {RightComponent && <RightComponent />}
       {/* {
@@ -340,67 +315,56 @@ const ActionBarElement = (props: ActionBarProps) => {
           </IconButton>
         )
       } */}
-
     </Box>
   )
 }
 type MoreOptionsProps = {
-  onEvent: OnEventLite;
+  onEvent: OnEventLite
 } & Pick<ActionBarProps, 'renderMoreAction' | 'onAction' | 'theming'>
 
 const OPTIONS = {
   Preferences: 'Preferences',
   Import: 'Import',
   Export: 'Export',
-  ImportEvents: 'Import Events',
+  ImportEvents: 'Import Events'
 } as const
 const MoreOptions = (props: MoreOptionsProps) => {
-  const {
-    renderMoreAction = () => <Box />,
-    onEvent,
-    onAction,
-    theming,
-  } = props
-  const {
-    anchorEl,
-    isOpen,
-    onClose,
-    onOpen,
-  } = useDisclosure({})
+  const {renderMoreAction = () => <Box />, onEvent, onAction, theming} = props
+  const {anchorEl, isOpen, onClose, onOpen} = useDisclosure({})
   const handleMenuItemClick = async (event: React.MouseEvent<HTMLLIElement>, index: number) => {
     onClose()
     const action = Object.values(OPTIONS)[index]
     switch (action) {
       case OPTIONS.Preferences: {
         onEvent({
-          type: EVENT.TOGGLE_PREFERENCES_MODAL,
+          type: EVENT.TOGGLE_PREFERENCES_MODAL
         })
         break
       }
       case OPTIONS.Import: {
-        const result = await DocumentPicker.getDocumentAsync({ type: 'application/json' })
+        const result = await DocumentPicker.getDocumentAsync({type: 'application/json'})
         if (result.type === 'success') {
           const fileText = await readTextFile(result.file!)
           onEvent({
             type: EVENT.IMPORT_DATA,
-            payload: { value: JSON.parse(fileText) },
+            payload: {value: JSON.parse(fileText)}
           })
         }
         break
       }
       case OPTIONS.ImportEvents: {
-        const result = await DocumentPicker.getDocumentAsync({ type: 'application/json' })
+        const result = await DocumentPicker.getDocumentAsync({type: 'application/json'})
         if (result.type === 'success') {
           const fileText = await readTextFile(result.file!)
           onEvent({
             type: EVENT.IMPORT_EVENTS,
-            payload: { value: JSON.parse(fileText) },
+            payload: {value: JSON.parse(fileText)}
           })
         }
         break
       }
       case OPTIONS.Export:
-        onAction({ type: EVENT.EXPORT_DATA })
+        onAction({type: EVENT.EXPORT_DATA})
         break
 
       default:
@@ -408,31 +372,28 @@ const MoreOptions = (props: MoreOptionsProps) => {
     }
   }
 
-  const handleThemeChange: SelectProps['onChange'] = (e) => {
-    onAction({ type: EVENT.CHANGE_THEME, value: e.target.value })
+  const handleThemeChange: SelectProps['onChange'] = e => {
+    onAction({type: EVENT.CHANGE_THEME, value: e.target.value})
     onClose()
   }
 
   return (
     <>
-    {// @ts-ignore
-      <IconButton
+      {
         // @ts-ignore
-        onClick={onOpen}
-      >
-        <Icon name="more_vert" />
-      </IconButton>}
-      <Menu
-        anchorEl={anchorEl}
-        open={isOpen}
-        onClose={onClose}
-        style={{ width: 400 }}
-      >
+        <IconButton
+          // @ts-ignore
+          onClick={onOpen}
+        >
+          <Icon name="more_vert" />
+        </IconButton>
+      }
+      <Menu anchorEl={anchorEl} open={isOpen} onClose={onClose} style={{width: 400}}>
         {Object.values(OPTIONS).map((option, index) => (
           <MenuItem
             key={option}
             // selected={index === selectedIndex}
-            onClick={(event) => handleMenuItemClick(event, index)}
+            onClick={event => handleMenuItemClick(event, index)}
           >
             {option}
           </MenuItem>
@@ -440,16 +401,9 @@ const MoreOptions = (props: MoreOptionsProps) => {
         <Divider />
         <FormControl fullWidth>
           <InputLabel id="theme-select-label">Theme</InputLabel>
-          <Select
-            labelId="theme-select-label"
-            onChange={handleThemeChange}
-            value={theming?.value}
-          >
-            {theming?.options?.map((themeOption) => (
-              <MenuItem
-                key={themeOption.value}
-                value={themeOption.value}
-              >
+          <Select labelId="theme-select-label" onChange={handleThemeChange} value={theming?.value}>
+            {theming?.options?.map(themeOption => (
+              <MenuItem key={themeOption.value} value={themeOption.value}>
                 {themeOption.name}
               </MenuItem>
             ))}
@@ -470,9 +424,9 @@ const styles = {
     position: 'absolute',
     left: 2,
     top: -26,
-    fontSize: 24,
+    fontSize: 24
   },
   button: {
-    marginRight: 10,
-  },
+    marginRight: 10
+  }
 } as const

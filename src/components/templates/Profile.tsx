@@ -1,38 +1,35 @@
-import { Text } from '@components/Text'
-import { View } from '@components/View'
-import { wrapComponent } from 'colay-ui'
+import {Text} from '@components/Text'
+import {View} from '@components/View'
+import {wrapComponent} from 'colay-ui'
 import React from 'react'
 // import { Image } from '@components/Image'
 
 export type ProfileProps = {
-  name: string;
-  story: string;
-  image: string;
-  link?: string;
-  onClick?: () => void;
+  name: string
+  story: string
+  image: string
+  link?: string
+  onClick?: () => void
 }
 // const SWITCH_COLLAPSE = 'SWITCH_COLLAPSE'
 
 export type ProfileType = React.FC<ProfileProps>
 
-const ProfileElement = (
-  props: ProfileProps,
-  __: React.ForwardedRef<ProfileType>,
-) => {
+const ProfileElement = (props: ProfileProps, __: React.ForwardedRef<ProfileType>) => {
   const {
     name,
     // image,
     story,
     link,
-    onClick,
+    onClick
   } = props
   return (
     <>
-      <View 
+      <View
         width={300}
         height={150}
         radius={30}
-      // backgroundColor: '#304e57',
+        // backgroundColor: '#304e57',
       >
         {/* <Image
           source={{ uri: image }}
@@ -41,9 +38,7 @@ const ProfileElement = (
             height: 100,
           }}
         /> */}
-        <View
-          width={200} 
-        >
+        <View width={200}>
           <View
             x={10}
             interactive
@@ -55,22 +50,16 @@ const ProfileElement = (
               onClick?.()
             }}
           >
-            <Text
-              style={style.title}
-            >
-              {name}
-            </Text>
+            <Text style={style.title}>{name}</Text>
           </View>
           <Text
-          // @ts-ignore
+            // @ts-ignore
             style={style.paragraph}
           >
             {story}
           </Text>
-
         </View>
       </View>
-
     </>
   )
 }
@@ -78,12 +67,9 @@ const ProfileElement = (
 /**
  * The simple profile component.
  */
-export const ProfileTemplate = wrapComponent<ProfileProps>(
-  ProfileElement,
-  {
-    isForwardRef: true,
-  },
-)
+export const ProfileTemplate = wrapComponent<ProfileProps>(ProfileElement, {
+  isForwardRef: true
+})
 
 const style = {
   paragraph: {
@@ -104,7 +90,7 @@ const style = {
     wordWrap: true,
     wordWrapWidth: 150,
     color: 'white',
-    left: 30,
+    left: 30
   },
   title: {
     // align: 'center',
@@ -123,8 +109,8 @@ const style = {
     width: 150,
     wordWrap: true,
     wordWrapWidth: 150,
-    color: 'white',
-  },
+    color: 'white'
+  }
 }
 
 // const createLayout = layoutCreator({

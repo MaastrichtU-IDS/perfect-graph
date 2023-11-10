@@ -1,34 +1,33 @@
 // @ts-nocheck
-import { Parser, Quad } from 'n3'
+import {Parser, Quad} from 'n3'
 import * as jsonld from 'jsonld'
 import * as R from 'colay/ramda'
-import {  data2 } from './example'
+import {data2} from './example'
 
 type ToNquadResult = {
-  quadList: Quad[];
-  prefixes: Record<string, string>;
+  quadList: Quad[]
+  prefixes: Record<string, string>
 }
 
 const toNquad = async (text: string) => {
   const parser = new Parser()
   const result: ToNquadResult = {
     quadList: [],
-    prefixes: {},
+    prefixes: {}
   }
   await new Promise((res, rej) => {
-    parser.parse(
-      text,
-      async (error, quad, prefixes) => {
-        if (error) {
-          rej(error)
-        }
-        if (quad) { result.quadList.push(quad) } else {
+    parser.parse(text, async (error, quad, prefixes) => {
+      if (error) {
+        rej(error)
+      }
+      if (quad) {
+        result.quadList.push(quad)
+      } else {
         // @ts-ignore
-          result.prefixes = prefixes
-          res(result)
-        }
-      },
-    )
+        result.prefixes = prefixes
+        res(result)
+      }
+    })
   })
   return result
 }
@@ -59,11 +58,10 @@ export const convertToJSONLD = async (text: string): Promise<Record<string, any>
   const jsonLDList = await jsonld.fromRDF(result.quadList)
 
   const resultList: Record<string, any>[] = await R.mapAsync(
-    async (jsonLDItem) =>
+    async jsonLDItem =>
       // const itemResult = await jsonld.compact(jsonLDItem, {})// result.prefixes)
       // return itemResult
       jsonLDItem
-    ,
   )(jsonLDList)
   return resultList
 }
@@ -164,27 +162,24 @@ export const convertToJSONLD = async (text: string): Promise<Record<string, any>
 export const convertJSONLDToGraphData = (
   jsonLDList: Record<string, any>[],
   graph: {
-    nodes: {},
-    edges: {},
-  } = {},
+    nodes: {}
+    edges: {}
+  } = {}
 ) => {
-  const {
-    nodes = {},
-    edges = {},
-  } = graph
-  jsonLDList.forEach((item) => {
+  const {nodes = {}, edges = {}} = graph
+  jsonLDList.forEach(item => {
     const nodeId = item['@id']
     const node = {
       id: nodeId,
       data: [],
-      ...(nodes[nodeId] ?? {}),
+      ...(nodes[nodeId] ?? {})
     }
-    Object.keys(R.omit(['@id'], item)).forEach((fieldKey) => {
+    Object.keys(R.omit(['@id'], item)).forEach(fieldKey => {
       const noDataItem = {
         name: fieldKey,
-        value: [],
+        value: []
       }
-      item[fieldKey].forEach((fieldValue) => {
+      item[fieldKey].forEach(fieldValue => {
         const edgeId = fieldValue['@id']
         const isEdge = !!edgeId
         if (isEdge) {
@@ -192,24 +187,28 @@ export const convertJSONLDToGraphData = (
             id: R.uuid(),
             source: nodeId,
             target: fieldValue['@id'],
-            data: [{
-              name: 'name',
-              value: [{
-                value: fieldKey,
-                additional: [],
-              }],
-            }],
+            data: [
+              {
+                name: 'name',
+                value: [
+                  {
+                    value: fieldKey,
+                    additional: []
+                  }
+                ]
+              }
+            ]
           }
         } else {
-          const isPlainObject = R.isPlainObject((fieldValue))
+          const isPlainObject = R.isPlainObject(fieldValue)
           noDataItem.value.push({
             value: isPlainObject ? fieldValue['@value'] : fieldValue,
             additional: isPlainObject
-              ? Object.keys(R.omit(['@value'])(fieldValue)).map((valueFieldKey) => ({
-                value: fieldValue[valueFieldKey],
-                name: valueFieldKey,
-              }))
-              : [],
+              ? Object.keys(R.omit(['@value'])(fieldValue)).map(valueFieldKey => ({
+                  value: fieldValue[valueFieldKey],
+                  name: valueFieldKey
+                }))
+              : []
           })
         }
       })
@@ -220,18 +219,14 @@ export const convertJSONLDToGraphData = (
   const nodeList = Object.values(nodes)
   return {
     nodes: nodeList,
-    edges: filterEdges(nodeList)(Object.values(edges)),
+    edges: filterEdges(nodeList)(Object.values(edges))
   }
 }
 
 // @ts-ignore
-export const filterEdges = (nodes: {id: string}[]) => (
-  edges: {source:string;target:string}[],
-) => {
+export const filterEdges = (nodes: {id: string}[]) => (edges: {source: string; target: string}[]) => {
   const nodeMap = R.groupBy(R.prop('id'))(nodes)
-  return R.filter(
-    (edge) => nodeMap[edge.source] && nodeMap[edge.target],
-  )(edges)
+  return R.filter(edge => nodeMap[edge.source] && nodeMap[edge.target])(edges)
 }
 
 // export const convertToGraphData = (resultList: Record<string, any>[]) => {
@@ -280,25 +275,16 @@ export const filterEdges = (nodes: {id: string}[]) => (
 //         a foaf:Person ;    # in the context of the Marvel universe
 //         foaf:name "Green Goblin" .
 
-export const sparqlResultToRDF = (sparqlResult) => {
+export const sparqlResultToRDF = sparqlResult => {
   const prefixMap = {}
   let rdfText = `@base <http://example.org/> .
   @prefix rel: <http://www.perceive.net/schemas/relationship/> .`
-  sparqlResult.results.bindings.forEach((binding) => {
-    const {
-      subject,
-      predicate,
-      object,
-      ...rest
-    } = binding
+  sparqlResult.results.bindings.forEach(binding => {
+    const {subject, predicate, object, ...rest} = binding
     const isObjectUri = object.type === 'uri'
-    const prefixSplitter = predicate.value.includes('#')
-      ? '#'
-      : '/'
+    const prefixSplitter = predicate.value.includes('#') ? '#' : '/'
     const hasPrefix = predicate.value.includes('http')
-    const prefix = hasPrefix
-      ? R.replace(/:/g, '_', R.last(predicate.value.split(prefixSplitter)))
-      : 'rel'
+    const prefix = hasPrefix ? R.replace(/:/g, '_', R.last(predicate.value.split(prefixSplitter))) : 'rel'
     const prefixValue = hasPrefix
       ? R.dropLast(1, predicate.value.split(prefixSplitter)).join(prefixSplitter) + prefixSplitter
       : 'http://www.perceive.net/schemas/relationship'
@@ -307,19 +293,18 @@ export const sparqlResultToRDF = (sparqlResult) => {
     <#${subject.value}>
       ${prefix}:${predicate.value.replace(prefixValue, '')}
       ${isObjectUri ? '<#' : ''}${object.value}${isObjectUri ? '>' : ''} ;
-      ${
-  Object.keys(rest).map((key) => {
-    const prop = rest[key]
-    const isObjectUri = prop.type === 'uri'
-    return `rel:${key} ${isObjectUri ? '<#' : ''}${prop.value}${isObjectUri ? '>' : ''} `
-  }).join(';\n')
-} ; .
+      ${Object.keys(rest)
+        .map(key => {
+          const prop = rest[key]
+          const isObjectUri = prop.type === 'uri'
+          return `rel:${key} ${isObjectUri ? '<#' : ''}${prop.value}${isObjectUri ? '>' : ''} `
+        })
+        .join(';\n')} ; .
     `
   })
-  rdfText = `${
-    Object.keys(prefixMap).map((key) => `@prefix ${key}: <${prefixMap[key]}> .`)
-      .join('\n')
-  }
+  rdfText = `${Object.keys(prefixMap)
+    .map(key => `@prefix ${key}: <${prefixMap[key]}> .`)
+    .join('\n')}
   ${rdfText}`
   console.log('rdf:', rdfText)
   return rdfText
@@ -328,8 +313,8 @@ export const sparqlResultToRDF = (sparqlResult) => {
 export const convertRDFToGraphData = async () => {
   const example1 = sparqlResultToRDF({
     results: {
-      bindings: R.splitEvery(100, data2.results.bindings)[0],
-    },
+      bindings: R.splitEvery(100, data2.results.bindings)[0]
+    }
   })
   // <#green-goblin>
   // rel:enemyOf <#spiderman> ;

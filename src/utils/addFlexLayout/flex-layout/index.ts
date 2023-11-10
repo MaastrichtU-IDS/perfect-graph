@@ -1,28 +1,28 @@
 // @ts-nocheck
 import * as PIXI from 'pixi.js'
-import { applyContainerPolyfill } from './containerPolyfill'
-import { applyDisplayObjectPolyfill } from './displayObjectPolyfill'
-import { yogaAnimationManager } from './YogaAnimationManager'
-import { YogaLayout } from './YogaLayout'
+import {applyContainerPolyfill} from './containerPolyfill'
+import {applyDisplayObjectPolyfill} from './displayObjectPolyfill'
+import {yogaAnimationManager} from './YogaAnimationManager'
+import {YogaLayout} from './YogaLayout'
 
-export { YogaLayout } from './YogaLayout'
-export type { IYogaAnimationConfig } from './YogaLayout'
-export { YogaLayoutConfig } from './YogaLayoutConfig'
+export {YogaLayout} from './YogaLayout'
+export type {IYogaAnimationConfig} from './YogaLayout'
+export {YogaLayoutConfig} from './YogaLayoutConfig'
 export * from './YogaContants'
 
 export type IFlexLayoutOptions = {
-  usePixiSharedTicker: boolean;
+  usePixiSharedTicker: boolean
 }
 
 /**
  * Polyfills PIXI.DisplayObject and PIXI.Container
  *
  */
-export function initializeYogaLayout(options: IFlexLayoutOptions = { usePixiSharedTicker: true }) {
+export function initializeYogaLayout(options: IFlexLayoutOptions = {usePixiSharedTicker: true}) {
   applyDisplayObjectPolyfill()
   applyContainerPolyfill()
   if (options.usePixiSharedTicker) {
-    PIXI.Ticker.shared.add((delta) => yogaAnimationManager.update(delta))
+    PIXI.Ticker.shared.add(delta => yogaAnimationManager.update(delta))
   }
 }
 
@@ -32,6 +32,6 @@ export function initializeYogaLayout(options: IFlexLayoutOptions = { usePixiShar
  * @param renderer
  */
 export function yogaSetRenderer(renderer: PIXI.Renderer) {
-  renderer.on('prerender', () => YogaLayout.isRendering = true)
-  renderer.on('postrender', () => YogaLayout.isRendering = false)
+  renderer.on('prerender', () => (YogaLayout.isRendering = true))
+  renderer.on('postrender', () => (YogaLayout.isRendering = false))
 }
