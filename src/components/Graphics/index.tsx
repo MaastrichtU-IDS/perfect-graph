@@ -115,7 +115,7 @@ export const drawLine = (config: {
     type,
     graphics,
     arrowHead = {
-      radius: 2
+      radius: 10
     },
     distance,
     margin = {
