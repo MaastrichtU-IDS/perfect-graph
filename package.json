@@ -13,7 +13,7 @@
   "keywords": [],
   "homepage": "http://maastrichtu-ids.github.io/perfect-graph",
   "scripts": {
-    "web": "expo start",
+    "web": "expo web",
     "build-docs": "build-storybook -o docs-build",
     "build:types": "tsc -p tsconfig.json  && tscpaths -p tsconfig.json -s ./src -o ./dist",
     "type-check": "tsc --noEmit",
