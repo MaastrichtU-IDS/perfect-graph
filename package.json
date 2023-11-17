@@ -13,7 +13,7 @@
   "keywords": [],
   "homepage": "http://maastrichtu-ids.github.io/perfect-graph",
   "scripts": {
-    "web": "EXPO_BETA=1 expo web",
+    "web": "expo start",
     "build-docs": "build-storybook -o docs-build",
     "build:types": "tsc -p tsconfig.json  && tscpaths -p tsconfig.json -s ./src -o ./dist",
     "type-check": "tsc --noEmit",
@@ -36,6 +36,7 @@
   "devDependencies": {
     "@emotion/react": "11.5.0",
     "@emotion/styled": "11.3.0",
+    "@expo/cli": "^0.10.15",
     "@expo/webpack-config": "0.16.7",
     "@mui/icons-material": "5.1.0",
     "@mui/material": "5.1.0",

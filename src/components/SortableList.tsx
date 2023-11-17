@@ -67,18 +67,17 @@ export const SortableList = <T extends {id: string}>(props: SortableListProps<T>
           <div {...droppableProvided.droppableProps} ref={droppableProvided.innerRef}>
             {data.map((item, index) => (
               <Draggable key={item.id} draggableId={item.id} index={index}>
-                {
+                {(provided, snapshot, rubric) =>
                   // @ts-ignore
-                  (provided, snapshot, rubric) =>
-                    renderItem({
-                      item,
-                      index,
-                      provided,
-                      snapshot,
-                      rubric,
-                      droppableProvided,
-                      droppableSnapshot
-                    })
+                  renderItem({
+                    item,
+                    index,
+                    provided,
+                    snapshot,
+                    rubric,
+                    droppableProvided,
+                    droppableSnapshot
+                  })
                 }
                 {/* {(provided, snapshot) => (
                     <div

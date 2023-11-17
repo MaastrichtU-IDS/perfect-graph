@@ -553,8 +553,8 @@ const GraphEditorElement = (props: GraphEditorProps, ref: React.MutableRefObject
                   if (
                     [
                       EDITOR_MODE.DELETE,
-                      // @ts-ignore
                       EDITOR_MODE.CONTINUES_DELETE
+                      // @ts-ignore
                     ].includes(mode)
                   ) {
                     onEvent({
@@ -653,8 +653,8 @@ const GraphEditorElement = (props: GraphEditorProps, ref: React.MutableRefObject
                 if (
                   [
                     EDITOR_MODE.DELETE,
-                    // @ts-ignore
                     EDITOR_MODE.CONTINUES_DELETE
+                    // @ts-ignore
                   ].includes(mode)
                 ) {
                   onEvent({
