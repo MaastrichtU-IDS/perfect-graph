@@ -5,7 +5,7 @@ import {ResizeDivider} from '@components/ResizeDivider'
 import {EVENT, SIDE_PANEL_DEFAULT_HEIGHT, SIDE_PANEL_DEFAULT_WIDTH} from '@constants'
 import {useGraphEditor} from '@hooks'
 import {useDrag} from '@hooks/useDrag'
-import {Box, Divider, IconButton, Paper} from '@mui/material'
+import {Box, Divider, IconButton, Paper, Tooltip} from '@mui/material'
 import {FormProps, CollapsibleSectionCommon} from '@type'
 import {useAnimation, View, wrapComponent} from 'colay-ui'
 import {useImmer} from 'colay-ui/hooks/useImmer'
@@ -292,51 +292,57 @@ const SettingsBarElement = (props: SettingsBarProps) => {
           top: 2
         }}
       >
-        <IconButton
-          style={{
-            fontSize: 24
-          }}
-          onClick={() => {
-            onEvent({
-              type: EVENT.TOGGLE_FILTER_BAR,
-              avoidHistoryRecording: true
-            })
-          }}
-        >
-          <Icon
-            name="settings_outlined" //"build_circle_outlined"
-          />
-        </IconButton>
-        <IconButton
-          style={{
-            fontSize: 24
-          }}
-          onClick={() => {
-            onEvent({
-              type: EVENT.TOGGLE_DATA_BAR,
-              avoidHistoryRecording: true
-            })
-          }}
-        >
-          <Icon
-            name="article_outlined" //"info_outlined"
-          />
-        </IconButton>
-        <IconButton
-          style={{
-            fontSize: 24
-          }}
-          onClick={() => {
-            onEvent({
-              type: EVENT.TOGGLE_ACTION_BAR,
-              avoidHistoryRecording: true
-            })
-          }}
-        >
-          <Icon
-            name="app_registration_outlined" //"tune_outlined" // "settings"
-          />
-        </IconButton>
+        <Tooltip title="Toggle Settings">
+          <IconButton
+            style={{
+              fontSize: 24
+            }}
+            onClick={() => {
+              onEvent({
+                type: EVENT.TOGGLE_FILTER_BAR,
+                avoidHistoryRecording: true
+              })
+            }}
+          >
+            <Icon
+              name="settings_outlined" //"build_circle_outlined"
+            />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Toggle Data Bar">
+          <IconButton
+            style={{
+              fontSize: 24
+            }}
+            onClick={() => {
+              onEvent({
+                type: EVENT.TOGGLE_DATA_BAR,
+                avoidHistoryRecording: true
+              })
+            }}
+          >
+            <Icon
+              name="article_outlined" //"info_outlined"
+            />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Toggle Action Bar">
+          <IconButton
+            style={{
+              fontSize: 24
+            }}
+            onClick={() => {
+              onEvent({
+                type: EVENT.TOGGLE_ACTION_BAR,
+                avoidHistoryRecording: true
+              })
+            }}
+          >
+            <Icon
+              name="app_registration_outlined" //"tune_outlined" // "settings"
+            />
+          </IconButton>
+        </Tooltip>
       </View>
     </Box>
   )
